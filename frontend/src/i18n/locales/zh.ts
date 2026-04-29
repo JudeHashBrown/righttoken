@@ -47,45 +47,73 @@ export default {
     },
     features: {
       unifiedGateway: '一键接入',
-      unifiedGatewayDesc: '获取一个 API 密钥，即可调用所有已接入的 AI 模型，无需分别申请。',
-      multiAccount: '稳定可靠',
-      multiAccountDesc: '智能调度多个上游账号，自动切换和负载均衡，告别频繁报错。',
-      balanceQuota: '用多少付多少',
-      balanceQuotaDesc: '按实际使用量计费，支持设置配额上限，团队用量一目了然。'
+      unifiedGatewayDesc: '获取一个 API 密钥，即可调用所有已接入的 AI 模型，无需分别申请',
+      multiAccount: '真号直连',
+      multiAccountDesc: '所有 API 来源可追溯，经反复检测稳定可用，拒绝回收号 / 共享号 / 垃圾号',
+      balanceQuota: '两种计费方式',
+      balanceQuotaDesc: '按量充值（用多少付多少）或包月套餐（无需充值）任你选择，配额可控、无超支风险'
+    },
+    // 三步上手流程
+    flow: {
+      title: '三步上手',
+      subtitle: '从注册到调用，不到一分钟',
+      step1: {
+        title: '注册账户',
+        desc: '创建账户，几秒即可开始'
+      },
+      step2: {
+        title: '充值额度',
+        desc: '额度通用于所有模型与供应商'
+      },
+      step3: {
+        title: '获取 API Key',
+        desc: '完全兼容领先级别大模型'
+      }
+    },
+    // 适用人群区块
+    audience: {
+      title: '谁适合使用 RightToken？',
+      items: {
+        developers: '独立开发者、AI 创业者、产品/工程师',
+        agents: '需要构建 Agent 工作流和自动化工具的同学',
+        creators: '内容创作者和营销团队',
+        teams: '想稳定、高性价比使用顶级大模型的个人与团队'
+      }
     },
     // 优势对比
     comparison: {
       title: '为什么选择我们？',
+      subtitle: '优质API直连，拒绝风险',
       headers: {
         feature: '对比项',
-        official: '官方订阅',
-        us: '本平台'
+        official: '其他普通平台',
+        us: 'RightToken'
       },
       items: {
-        pricing: {
-          feature: '付费方式',
-          official: '固定月费，用不完也付',
-          us: '按量付费，用多少付多少'
+        source: {
+          feature: 'API 来源',
+          official: 'API 来源不明',
+          us: '正规订阅，来源可追溯'
         },
-        models: {
-          feature: '模型选择',
-          official: '单一服务商',
-          us: '多模型随意切换'
+        concurrency: {
+          feature: '并发上限',
+          official: '经常撞墙掉线',
+          us: '高并发稳定跑满'
         },
-        management: {
-          feature: '账号管理',
-          official: '每个服务单独管理',
-          us: '统一密钥，一站管理'
+        availability: {
+          feature: '可用性',
+          official: '高峰期频繁 503',
+          us: '7×24 实时监控，故障秒切'
         },
-        stability: {
-          feature: '服务稳定性',
-          official: '单账号易触发限制',
-          us: '多账号池，自动切换'
+        latency: {
+          feature: '延迟',
+          official: '多层转发，明显卡顿',
+          us: '就近直连，低延迟'
         },
-        control: {
-          feature: '用量控制',
-          official: '无法限制',
-          us: '可设配额、查明细'
+        banRisk: {
+          feature: '封禁风险',
+          official: '共享号高频风控',
+          us: '反复验证，极低风险'
         }
       }
     },
@@ -99,6 +127,99 @@ export default {
       antigravity: 'Antigravity',
       more: '更多'
     },
+    // 信任保障
+    trust: {
+      enterprise: '企业采购可询',
+      enterpriseDesc: '团队 / 企业方案支持定制',
+      invoice: '可开正规发票',
+      invoiceDesc: '增值税普票 / 专票均可',
+      lifetime: '终身售后保障',
+      lifetimeDesc: '账号有效期内持续服务'
+    },
+    // 定价区块
+    pricing: {
+      title: '透明定价',
+      subtitle: '几乎是官方原价，仅收极少代付服务费',
+      tabs: {
+        standard: '按量充值',
+        shared: '包月套餐'
+      },
+      standard: {
+        headline: '按官方计价 + 极低代付服务费',
+        subheadline: '充值永不过期，只为你实际使用的 token 付费',
+        headers: {
+          model: '模型',
+          input: '输入价格',
+          output: '输出价格',
+          official: '官方原价（¥折算）'
+        },
+        unit: '价格单位：元 / 百万 token',
+        cta: '立即充值'
+      },
+      example: {
+        title: '¥100 可用量说明（基于纯输出，参考值）',
+        subtitle: '实际消耗取决于对话长度、提示复杂度与模型设置',
+        models: {
+          gpt5: {
+            tag: '高质量生成',
+            tokens: '约 125万 输出 tokens',
+            chars: '≈ 100万 – 180万中文字符',
+            articles: '≈ 1000 – 2000 篇中等长度文章（800–1200字）',
+            code: '≈ 8万 – 15万行常规代码',
+            bestFor: '适合：高质量写作 / 编程 / 深度内容'
+          },
+          gpt4oMini: {
+            tag: '高性价比',
+            tokens: '约 2100万 输出 tokens',
+            chars: '≈ 2000万 – 3000万中文字符',
+            articles: '≈ 2万 – 3万篇短内容（500–800字）',
+            bestFor: '适合：批量生成 / 轻内容 / 日常问答'
+          },
+          geminiFlash: {
+            tag: '快速低成本',
+            tokens: '约 500万 输出 tokens',
+            chars: '≈ 500万 – 800万中文字符',
+            articles: '≈ 6000 – 12000 篇短内容（500–800字）',
+            bestFor: '适合：快速生成 / 轻量任务 / 辅助处理'
+          }
+        },
+        notes: {
+          title: '使用说明',
+          items: [
+            'token 为计量单位，非固定"篇数/字数"',
+            '实际可用量受输入长度、输出长度设置、多轮对话累计影响',
+            '上述为连续输出、无浪费情况下的估算'
+          ]
+        }
+      },
+      shared: {
+        openai: {
+          title: 'OpenAI 旗舰包月',
+          badge: '市面顶配',
+          price: '¥199',
+          priceUnit: '/ 月',
+          tagline: '业内最强的 OpenAI 包月套餐',
+          features: [
+            '市面顶配规格，远超普通共享方案',
+            '始终接入最新旗舰模型',
+            '兼容所有 OpenAI 模型 API 名',
+            '包月畅用，无需充值',
+            '智能调度，高可用保障'
+          ],
+          cta: '订阅'
+        },
+        more: {
+          title: '更多模型即将上线',
+          comingSoon: '即将上线',
+          tagline: '正在接入更多旗舰模型，敬请期待',
+          providers: [
+            'Gemini Pro 包月',
+            'Claude Pro 包月',
+            'Grok (X AI) 包月'
+          ]
+        }
+      }
+    },
     // CTA 区块
     cta: {
       title: '准备好开始了吗？',
@@ -106,7 +227,7 @@ export default {
       button: '免费注册'
     },
     footer: {
-      allRightsReserved: '保留所有权利。'
+      allRightsReserved: '保留所有权利'
     }
   },
 

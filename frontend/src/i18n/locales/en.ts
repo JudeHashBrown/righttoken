@@ -48,44 +48,72 @@ export default {
     features: {
       unifiedGateway: 'One-Click Access',
       unifiedGatewayDesc: 'Get a single API key to call all connected AI models. No separate applications needed.',
-      multiAccount: 'Always Reliable',
-      multiAccountDesc: 'Smart routing across multiple upstream accounts with automatic failover. Say goodbye to errors.',
-      balanceQuota: 'Pay What You Use',
-      balanceQuotaDesc: 'Usage-based billing with quota limits. Full visibility into team consumption.'
+      multiAccount: 'Authentic & Verified',
+      multiAccountDesc: 'Every API source is traceable and continuously verified. No recycled, shared or throwaway credentials.',
+      balanceQuota: 'Two Billing Modes',
+      balanceQuotaDesc: 'Choose pay-as-you-go top-up or fixed monthly subscription. Quota controls prevent overspending.'
+    },
+    // 3-step onboarding flow
+    flow: {
+      title: 'Get started in 3 steps',
+      subtitle: 'From sign-up to first call in under a minute',
+      step1: {
+        title: 'Signup',
+        desc: 'Create an account to get started.'
+      },
+      step2: {
+        title: 'Buy credits',
+        desc: 'Credits can be used with any model or provider.'
+      },
+      step3: {
+        title: 'Get your API key',
+        desc: 'Fully compatible with leading-edge LLMs.'
+      }
+    },
+    // Target audience section
+    audience: {
+      title: 'Who is RightToken for?',
+      items: {
+        developers: 'Independent developers, AI founders, product managers and engineers',
+        agents: 'Builders of agent workflows and automation tools',
+        creators: 'Content creators and marketing teams',
+        teams: 'Individuals and teams seeking stable, cost-effective access to top AI models'
+      }
     },
     // Comparison section
     comparison: {
       title: 'Why Choose Us?',
+      subtitle: 'Premium API, direct access — zero risk',
       headers: {
         feature: 'Comparison',
-        official: 'Official Subscriptions',
-        us: 'Our Platform'
+        official: 'Other ordinary platforms',
+        us: 'RightToken'
       },
       items: {
-        pricing: {
-          feature: 'Pricing',
-          official: 'Fixed monthly fee, pay even if unused',
-          us: 'Pay only for what you use'
+        source: {
+          feature: 'API Source',
+          official: 'Unknown API source',
+          us: 'Legit subscription, fully traceable'
         },
-        models: {
-          feature: 'Model Selection',
-          official: 'Single provider only',
-          us: 'Switch between models freely'
+        concurrency: {
+          feature: 'Concurrency',
+          official: 'Hits ceilings, frequent drops',
+          us: 'Sustains high concurrency reliably'
         },
-        management: {
-          feature: 'Account Management',
-          official: 'Manage each service separately',
-          us: 'Unified key, one dashboard'
+        availability: {
+          feature: 'Availability',
+          official: 'Frequent 503s at peak hours',
+          us: '24/7 real-time monitoring, instant failover'
         },
-        stability: {
-          feature: 'Stability',
-          official: 'Single account rate limits',
-          us: 'Multi-account pool, auto-failover'
+        latency: {
+          feature: 'Latency',
+          official: 'Multi-hop proxying, visible lag',
+          us: 'Direct nearest-region routing'
         },
-        control: {
-          feature: 'Usage Control',
-          official: 'Not available',
-          us: 'Quotas & detailed analytics'
+        banRisk: {
+          feature: 'Ban / Rate-limit Risk',
+          official: 'Shared credentials heavily throttled',
+          us: 'Continuously validated, minimal risk'
         }
       }
     },
@@ -98,6 +126,99 @@ export default {
       gemini: 'Gemini',
       antigravity: 'Antigravity',
       more: 'More'
+    },
+    // Trust signals
+    trust: {
+      enterprise: 'Enterprise Procurement',
+      enterpriseDesc: 'Team / B2B plans available on request',
+      invoice: 'Tax Invoices',
+      invoiceDesc: 'Standard or VAT invoices supported',
+      lifetime: 'Lifetime Support',
+      lifetimeDesc: 'Continuous service throughout account validity'
+    },
+    // Pricing section
+    pricing: {
+      title: 'Transparent Pricing',
+      subtitle: 'Near-official rates with a minimal service fee.',
+      tabs: {
+        standard: 'Pay-as-you-go',
+        shared: 'Monthly Plans'
+      },
+      standard: {
+        headline: 'Official-rate billing with a minimal service fee',
+        subheadline: 'Credits never expire. Pay only for tokens you actually use.',
+        headers: {
+          model: 'Model',
+          input: 'Input',
+          output: 'Output',
+          official: 'Official (¥ equiv.)'
+        },
+        unit: 'Prices are CNY per million tokens',
+        cta: 'Top Up Now'
+      },
+      example: {
+        title: 'What ¥100 buys you (output only, reference)',
+        subtitle: 'Actual consumption depends on conversation length, prompt complexity, and model settings',
+        models: {
+          gpt5: {
+            tag: 'High-quality generation',
+            tokens: '~1.25M output tokens',
+            chars: '≈ 1M – 1.8M Chinese characters',
+            articles: '≈ 1000 – 2000 medium articles (800–1200 chars)',
+            code: '≈ 80K – 150K lines of code',
+            bestFor: 'Best for: high-quality writing / coding / deep content'
+          },
+          gpt4oMini: {
+            tag: 'Best value',
+            tokens: '~21M output tokens',
+            chars: '≈ 20M – 30M Chinese characters',
+            articles: '≈ 20K – 30K short pieces (500–800 chars)',
+            bestFor: 'Best for: bulk generation / light content / daily Q&A'
+          },
+          geminiFlash: {
+            tag: 'Fast & low-cost',
+            tokens: '~5M output tokens',
+            chars: '≈ 5M – 8M Chinese characters',
+            articles: '≈ 6000 – 12000 short pieces (500–800 chars)',
+            bestFor: 'Best for: rapid generation / light tasks / assistive workflows'
+          }
+        },
+        notes: {
+          title: 'Usage Notes',
+          items: [
+            'Token is the metric, not a fixed "articles/characters" count',
+            'Actual capacity is affected by input length, output length settings, and multi-turn accumulation',
+            'Estimates assume continuous output with no waste'
+          ]
+        }
+      },
+      shared: {
+        openai: {
+          title: 'OpenAI Flagship Monthly',
+          badge: 'Top Tier',
+          price: '¥199',
+          priceUnit: '/ month',
+          tagline: 'The strongest OpenAI monthly plan available',
+          features: [
+            'Top-tier capacity, far beyond ordinary shared plans',
+            'Always the latest flagship model',
+            'Compatible with all OpenAI model API names',
+            'Unlimited within plan, no top-ups required',
+            'Smart routing, high availability'
+          ],
+          cta: 'Subscribe'
+        },
+        more: {
+          title: 'More Providers Coming',
+          comingSoon: 'Coming Soon',
+          tagline: 'Adding more flagship models — stay tuned',
+          providers: [
+            'Gemini Pro Monthly',
+            'Claude Pro Monthly',
+            'Grok (X AI) Monthly'
+          ]
+        }
+      }
     },
     // CTA section
     cta: {

@@ -138,41 +138,15 @@
             </div>
           </div>
 
-          <!-- Right: Terminal Animation -->
+          <!-- Right: Hero Image -->
           <div class="flex flex-1 justify-center lg:justify-end">
-            <div class="terminal-container">
-              <div class="terminal-window">
-                <!-- Window header -->
-                <div class="terminal-header">
-                  <div class="terminal-buttons">
-                    <span class="btn-close"></span>
-                    <span class="btn-minimize"></span>
-                    <span class="btn-maximize"></span>
-                  </div>
-                  <span class="terminal-title">terminal</span>
-                </div>
-                <!-- Terminal content -->
-                <div class="terminal-body">
-                  <div class="code-line line-1">
-                    <span class="code-prompt">$</span>
-                    <span class="code-cmd">curl</span>
-                    <span class="code-flag">-X POST</span>
-                    <span class="code-url">/v1/messages</span>
-                  </div>
-                  <div class="code-line line-2">
-                    <span class="code-comment"># Routing to upstream...</span>
-                  </div>
-                  <div class="code-line line-3">
-                    <span class="code-success">200 OK</span>
-                    <span class="code-response">{ "content": "Hello!" }</span>
-                  </div>
-                  <div class="code-line line-4">
-                    <span class="code-prompt">$</span>
-                    <span class="cursor"></span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <img
+              :src="heroImage"
+              :alt="siteName"
+              loading="eager"
+              fetchpriority="high"
+              class="w-full max-w-[560px] rounded-2xl shadow-2xl shadow-primary-500/10 ring-1 ring-gray-200/50 dark:ring-dark-700/50"
+            />
           </div>
         </div>
 
@@ -282,6 +256,545 @@
           </div>
         </div>
 
+        <!-- Comparison Table -->
+        <div class="mb-8 text-center">
+          <h2 class="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
+            {{ t('home.comparison.title') }}
+          </h2>
+          <p class="text-sm text-gray-600 dark:text-dark-400">
+            {{ t('home.comparison.subtitle') }}
+          </p>
+        </div>
+
+        <div class="mb-16">
+          <div
+            class="overflow-hidden rounded-2xl border border-gray-200/50 bg-white/60 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/60"
+          >
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead>
+                  <tr class="border-b border-gray-200/50 dark:border-dark-700/50">
+                    <th
+                      class="px-4 py-4 font-semibold text-gray-700 dark:text-dark-200 md:px-6"
+                    >
+                      {{ t('home.comparison.headers.feature') }}
+                    </th>
+                    <th
+                      class="px-4 py-4 font-semibold text-gray-500 dark:text-dark-400 md:px-6"
+                    >
+                      {{ t('home.comparison.headers.official') }}
+                    </th>
+                    <th
+                      class="px-4 py-4 font-semibold text-primary-600 dark:text-primary-400 md:px-6"
+                    >
+                      <span class="inline-flex items-center gap-1.5">
+                        {{ t('home.comparison.headers.us') }}
+                        <span
+                          class="inline-flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-[10px] text-white"
+                          >★</span
+                        >
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="key in ['source', 'concurrency', 'availability', 'latency', 'banRisk']"
+                    :key="key"
+                    class="border-b border-gray-200/30 last:border-0 dark:border-dark-700/30"
+                  >
+                    <td
+                      class="px-4 py-4 font-medium text-gray-900 dark:text-white md:px-6"
+                    >
+                      {{ t(`home.comparison.items.${key}.feature`) }}
+                    </td>
+                    <td class="px-4 py-4 text-gray-500 dark:text-dark-400 md:px-6">
+                      <span class="inline-flex items-start gap-1.5">
+                        <svg
+                          class="mt-0.5 h-4 w-4 shrink-0 text-gray-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          stroke-width="2.5"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                        {{ t(`home.comparison.items.${key}.official`) }}
+                      </span>
+                    </td>
+                    <td
+                      class="bg-primary-50/40 px-4 py-4 text-gray-800 dark:bg-primary-900/10 dark:text-dark-100 md:px-6"
+                    >
+                      <span class="inline-flex items-start gap-1.5">
+                        <svg
+                          class="mt-0.5 h-4 w-4 shrink-0 text-primary-500"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          stroke-width="2.5"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        {{ t(`home.comparison.items.${key}.us`) }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audience -->
+        <div class="mb-8 text-center">
+          <h2 class="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
+            {{ t('home.audience.title') }}
+          </h2>
+        </div>
+
+        <div class="mx-auto mb-16 grid max-w-4xl gap-4 md:grid-cols-2">
+          <div
+            class="flex items-start gap-3 rounded-xl border border-gray-200/50 bg-white/60 p-5 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/60"
+          >
+            <div
+              class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-xs font-bold text-white"
+            >
+              1
+            </div>
+            <p class="text-sm leading-relaxed text-gray-700 dark:text-dark-200">
+              {{ t('home.audience.items.developers') }}
+            </p>
+          </div>
+          <div
+            class="flex items-start gap-3 rounded-xl border border-gray-200/50 bg-white/60 p-5 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/60"
+          >
+            <div
+              class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-xs font-bold text-white"
+            >
+              2
+            </div>
+            <p class="text-sm leading-relaxed text-gray-700 dark:text-dark-200">
+              {{ t('home.audience.items.agents') }}
+            </p>
+          </div>
+          <div
+            class="flex items-start gap-3 rounded-xl border border-gray-200/50 bg-white/60 p-5 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/60"
+          >
+            <div
+              class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-xs font-bold text-white"
+            >
+              3
+            </div>
+            <p class="text-sm leading-relaxed text-gray-700 dark:text-dark-200">
+              {{ t('home.audience.items.creators') }}
+            </p>
+          </div>
+          <div
+            class="flex items-start gap-3 rounded-xl border border-gray-200/50 bg-white/60 p-5 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/60"
+          >
+            <div
+              class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-xs font-bold text-white"
+            >
+              4
+            </div>
+            <p class="text-sm leading-relaxed text-gray-700 dark:text-dark-200">
+              {{ t('home.audience.items.teams') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Trust Signals -->
+        <div class="mb-16 grid gap-4 md:grid-cols-3">
+          <!-- 企业采购 -->
+          <div class="flex items-start gap-3 rounded-2xl border border-gray-200/50 bg-white/60 p-5 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/60">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600">
+              <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+              </svg>
+            </div>
+            <div class="min-w-0">
+              <h4 class="text-sm font-semibold text-gray-900 dark:text-white">
+                {{ t('home.trust.enterprise') }}
+              </h4>
+              <p class="mt-1 text-xs leading-relaxed text-gray-500 dark:text-dark-400">
+                {{ t('home.trust.enterpriseDesc') }}
+              </p>
+            </div>
+          </div>
+
+          <!-- 开发票 -->
+          <div class="flex items-start gap-3 rounded-2xl border border-gray-200/50 bg-white/60 p-5 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/60">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600">
+              <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div class="min-w-0">
+              <h4 class="text-sm font-semibold text-gray-900 dark:text-white">
+                {{ t('home.trust.invoice') }}
+              </h4>
+              <p class="mt-1 text-xs leading-relaxed text-gray-500 dark:text-dark-400">
+                {{ t('home.trust.invoiceDesc') }}
+              </p>
+            </div>
+          </div>
+
+          <!-- 终身售后 -->
+          <div class="flex items-start gap-3 rounded-2xl border border-gray-200/50 bg-white/60 p-5 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/60">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-purple-600">
+              <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+              </svg>
+            </div>
+            <div class="min-w-0">
+              <h4 class="text-sm font-semibold text-gray-900 dark:text-white">
+                {{ t('home.trust.lifetime') }}
+              </h4>
+              <p class="mt-1 text-xs leading-relaxed text-gray-500 dark:text-dark-400">
+                {{ t('home.trust.lifetimeDesc') }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pricing -->
+        <div class="mb-8 text-center">
+          <h2 class="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
+            {{ t('home.pricing.title') }}
+          </h2>
+          <p class="text-sm text-gray-600 dark:text-dark-400">
+            {{ t('home.pricing.subtitle') }}
+          </p>
+        </div>
+
+        <!-- Tab buttons -->
+        <div class="mb-6 flex justify-center">
+          <div class="inline-flex rounded-xl border border-gray-200/50 bg-white/60 p-1 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/60">
+            <button
+              type="button"
+              :class="[
+                'rounded-lg px-5 py-2 text-sm font-medium transition-all',
+                pricingTab === 'standard'
+                  ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-md shadow-primary-500/30'
+                  : 'text-gray-600 hover:text-gray-900 dark:text-dark-300 dark:hover:text-white'
+              ]"
+              @click="pricingTab = 'standard'"
+            >
+              {{ t('home.pricing.tabs.standard') }}
+            </button>
+            <button
+              type="button"
+              :class="[
+                'rounded-lg px-5 py-2 text-sm font-medium transition-all',
+                pricingTab === 'shared'
+                  ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-md shadow-primary-500/30'
+                  : 'text-gray-600 hover:text-gray-900 dark:text-dark-300 dark:hover:text-white'
+              ]"
+              @click="pricingTab = 'shared'"
+            >
+              {{ t('home.pricing.tabs.shared') }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Standard pricing table -->
+        <div v-if="pricingTab === 'standard'" class="mb-16">
+          <div class="mb-4 text-center">
+            <p class="text-base font-medium text-gray-800 dark:text-dark-100">
+              {{ t('home.pricing.standard.headline') }}
+            </p>
+            <p class="mt-1 text-xs text-gray-500 dark:text-dark-400">
+              {{ t('home.pricing.standard.subheadline') }}
+            </p>
+          </div>
+          <div
+            class="overflow-hidden rounded-2xl border border-gray-200/50 bg-white/60 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/60"
+          >
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead>
+                  <tr class="border-b border-gray-200/50 dark:border-dark-700/50">
+                    <th class="px-4 py-4 font-semibold text-gray-700 dark:text-dark-200 md:px-6">
+                      {{ t('home.pricing.standard.headers.model') }}
+                    </th>
+                    <th class="px-4 py-4 font-semibold text-primary-600 dark:text-primary-400 md:px-6">
+                      {{ t('home.pricing.standard.headers.input') }}
+                    </th>
+                    <th class="px-4 py-4 font-semibold text-primary-600 dark:text-primary-400 md:px-6">
+                      {{ t('home.pricing.standard.headers.output') }}
+                    </th>
+                    <th class="px-4 py-4 font-semibold text-gray-500 dark:text-dark-400 md:px-6">
+                      {{ t('home.pricing.standard.headers.official') }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="row in pricingRows"
+                    :key="row.model"
+                    class="border-b border-gray-200/30 last:border-0 dark:border-dark-700/30"
+                  >
+                    <td class="px-4 py-4 font-mono text-sm font-medium text-gray-900 dark:text-white md:px-6">
+                      {{ row.model }}
+                    </td>
+                    <td class="bg-primary-50/40 px-4 py-4 text-gray-800 dark:bg-primary-900/10 dark:text-dark-100 md:px-6">
+                      <span class="font-semibold">¥{{ row.inputCny }}</span>
+                      <span class="ml-1 text-xs text-gray-500 dark:text-dark-400">/ M</span>
+                    </td>
+                    <td class="bg-primary-50/40 px-4 py-4 text-gray-800 dark:bg-primary-900/10 dark:text-dark-100 md:px-6">
+                      <span class="font-semibold">¥{{ row.outputCny }}</span>
+                      <span class="ml-1 text-xs text-gray-500 dark:text-dark-400">/ M</span>
+                    </td>
+                    <td class="px-4 py-4 text-xs text-gray-500 dark:text-dark-400 md:px-6">
+                      <span>¥{{ row.inputOfficialCny }} / ¥{{ row.outputOfficialCny }}</span>
+                      <span class="ml-1 text-[10px] text-gray-400 dark:text-dark-500">(≈ ${{ row.inputUsd }} / ${{ row.outputUsd }})</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <p class="mt-3 text-center text-xs text-gray-500 dark:text-dark-400">
+            {{ t('home.pricing.standard.unit') }}
+          </p>
+
+          <!-- ¥100 example block -->
+          <div class="mt-8 rounded-2xl border border-gray-200/50 bg-gradient-to-br from-primary-50/40 to-white/40 p-6 backdrop-blur-sm dark:border-dark-700/50 dark:from-primary-900/10 dark:to-dark-800/40">
+            <div class="mb-5 text-center">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                {{ t('home.pricing.example.title') }}
+              </h3>
+              <p class="mt-1 text-xs text-gray-500 dark:text-dark-400">
+                {{ t('home.pricing.example.subtitle') }}
+              </p>
+            </div>
+
+            <!-- 3 model cards -->
+            <div class="grid gap-4 md:grid-cols-3">
+              <!-- gpt-5 -->
+              <div class="rounded-xl bg-white/70 p-4 dark:bg-dark-800/70">
+                <div class="mb-2 flex items-center gap-2">
+                  <span class="font-mono text-sm font-semibold text-primary-600 dark:text-primary-400">GPT-5</span>
+                  <span class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">
+                    {{ t('home.pricing.example.models.gpt5.tag') }}
+                  </span>
+                </div>
+                <ul class="space-y-1 text-xs leading-relaxed text-gray-600 dark:text-dark-300">
+                  <li>{{ t('home.pricing.example.models.gpt5.tokens') }}</li>
+                  <li>{{ t('home.pricing.example.models.gpt5.chars') }}</li>
+                  <li>{{ t('home.pricing.example.models.gpt5.articles') }}</li>
+                  <li>{{ t('home.pricing.example.models.gpt5.code') }}</li>
+                </ul>
+                <div class="mt-3 border-t border-gray-200/50 pt-2 text-xs text-gray-700 dark:border-dark-700/50 dark:text-dark-200">
+                  {{ t('home.pricing.example.models.gpt5.bestFor') }}
+                </div>
+              </div>
+
+              <!-- gpt-4o mini -->
+              <div class="rounded-xl bg-white/70 p-4 dark:bg-dark-800/70">
+                <div class="mb-2 flex items-center gap-2">
+                  <span class="font-mono text-sm font-semibold text-primary-600 dark:text-primary-400">GPT-4o mini</span>
+                  <span class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">
+                    {{ t('home.pricing.example.models.gpt4oMini.tag') }}
+                  </span>
+                </div>
+                <ul class="space-y-1 text-xs leading-relaxed text-gray-600 dark:text-dark-300">
+                  <li>{{ t('home.pricing.example.models.gpt4oMini.tokens') }}</li>
+                  <li>{{ t('home.pricing.example.models.gpt4oMini.chars') }}</li>
+                  <li>{{ t('home.pricing.example.models.gpt4oMini.articles') }}</li>
+                </ul>
+                <div class="mt-3 border-t border-gray-200/50 pt-2 text-xs text-gray-700 dark:border-dark-700/50 dark:text-dark-200">
+                  {{ t('home.pricing.example.models.gpt4oMini.bestFor') }}
+                </div>
+              </div>
+
+              <!-- gemini flash -->
+              <div class="rounded-xl bg-white/70 p-4 dark:bg-dark-800/70">
+                <div class="mb-2 flex items-center gap-2">
+                  <span class="font-mono text-sm font-semibold text-primary-600 dark:text-primary-400">Gemini 2.5 Flash</span>
+                  <span class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">
+                    {{ t('home.pricing.example.models.geminiFlash.tag') }}
+                  </span>
+                </div>
+                <ul class="space-y-1 text-xs leading-relaxed text-gray-600 dark:text-dark-300">
+                  <li>{{ t('home.pricing.example.models.geminiFlash.tokens') }}</li>
+                  <li>{{ t('home.pricing.example.models.geminiFlash.chars') }}</li>
+                  <li>{{ t('home.pricing.example.models.geminiFlash.articles') }}</li>
+                </ul>
+                <div class="mt-3 border-t border-gray-200/50 pt-2 text-xs text-gray-700 dark:border-dark-700/50 dark:text-dark-200">
+                  {{ t('home.pricing.example.models.geminiFlash.bestFor') }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Usage notes -->
+            <div class="mt-5 rounded-xl bg-gray-50/80 p-4 dark:bg-dark-800/40">
+              <div class="mb-2 text-sm font-semibold text-gray-800 dark:text-dark-100">
+                {{ t('home.pricing.example.notes.title') }}
+              </div>
+              <ul class="ml-1 list-inside space-y-1 text-xs leading-relaxed text-gray-600 dark:text-dark-300">
+                <li
+                  v-for="(item, idx) in (tm('home.pricing.example.notes.items') as string[])"
+                  :key="idx"
+                >
+                  • {{ item }}
+                </li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Shared monthly cards -->
+        <div v-else class="mb-16">
+          <div class="grid gap-6 md:grid-cols-2">
+            <!-- OpenAI Flagship Monthly -->
+            <div
+              class="relative flex flex-col rounded-2xl border-2 border-primary-500/60 bg-gradient-to-br from-white/80 to-primary-50/40 p-6 shadow-lg shadow-primary-500/10 backdrop-blur-sm dark:border-primary-500/50 dark:from-dark-800/80 dark:to-primary-900/20"
+            >
+              <div
+                class="absolute -top-3 left-6 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 px-3 py-1 text-xs font-semibold text-white shadow-md shadow-primary-500/30"
+              >
+                {{ t('home.pricing.shared.openai.badge') }}
+              </div>
+              <h3 class="mb-1 mt-2 text-xl font-bold text-gray-900 dark:text-white">
+                {{ t('home.pricing.shared.openai.title') }}
+              </h3>
+              <p class="mb-4 text-sm font-medium text-primary-600 dark:text-primary-400">
+                {{ t('home.pricing.shared.openai.tagline') }}
+              </p>
+              <div class="mb-4 flex items-baseline gap-1">
+                <span class="text-4xl font-bold text-primary-600 dark:text-primary-400">
+                  {{ t('home.pricing.shared.openai.price') }}
+                </span>
+                <span class="text-sm text-gray-500 dark:text-dark-400">
+                  {{ t('home.pricing.shared.openai.priceUnit') }}
+                </span>
+              </div>
+              <ul class="mb-6 flex-1 space-y-2">
+                <li
+                  v-for="(feature, idx) in (tm('home.pricing.shared.openai.features') as string[])"
+                  :key="idx"
+                  class="flex items-start gap-2 text-sm text-gray-700 dark:text-dark-200"
+                >
+                  <svg class="mt-0.5 h-4 w-4 shrink-0 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>{{ feature }}</span>
+                </li>
+              </ul>
+              <RouterLink
+                to="/login"
+                class="rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-md shadow-primary-500/30 transition-all hover:shadow-lg hover:shadow-primary-500/40"
+              >
+                {{ t('home.pricing.shared.openai.cta') }}
+              </RouterLink>
+            </div>
+
+            <!-- More Providers Coming Soon -->
+            <div
+              class="relative flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300/70 bg-white/40 p-6 backdrop-blur-sm dark:border-dark-600/70 dark:bg-dark-800/40"
+            >
+              <div
+                class="absolute -top-3 left-6 rounded-full bg-gray-400 px-3 py-1 text-xs font-semibold text-white dark:bg-dark-600"
+              >
+                {{ t('home.pricing.shared.more.comingSoon') }}
+              </div>
+              <h3 class="mb-2 mt-2 text-xl font-bold text-gray-700 dark:text-dark-200">
+                {{ t('home.pricing.shared.more.title') }}
+              </h3>
+              <p class="mb-6 text-center text-sm text-gray-500 dark:text-dark-400">
+                {{ t('home.pricing.shared.more.tagline') }}
+              </p>
+              <ul class="space-y-2 text-center">
+                <li
+                  v-for="(provider, idx) in (tm('home.pricing.shared.more.providers') as string[])"
+                  :key="idx"
+                  class="rounded-lg border border-gray-200/50 bg-white/60 px-4 py-2 text-sm font-medium text-gray-600 dark:border-dark-700/50 dark:bg-dark-800/60 dark:text-dark-300"
+                >
+                  {{ provider }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3-Step Flow -->
+        <div class="mb-8 text-center">
+          <h2 class="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
+            {{ t('home.flow.title') }}
+          </h2>
+          <p class="text-sm text-gray-600 dark:text-dark-400">
+            {{ t('home.flow.subtitle') }}
+          </p>
+        </div>
+
+        <div class="relative mb-16 grid gap-6 md:grid-cols-3">
+          <!-- Connector line (desktop only) -->
+          <div
+            class="pointer-events-none absolute left-[16.67%] right-[16.67%] top-7 hidden h-px bg-gradient-to-r from-primary-300/0 via-primary-400/60 to-primary-300/0 md:block dark:via-primary-500/40"
+          ></div>
+
+          <!-- Step 1 -->
+          <div
+            class="relative rounded-2xl border border-gray-200/50 bg-white/60 p-6 text-center backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 dark:border-dark-700/50 dark:bg-dark-800/60"
+          >
+            <div
+              class="relative z-10 mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-xl font-bold text-white shadow-lg shadow-primary-500/30"
+            >
+              1
+            </div>
+            <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+              {{ t('home.flow.step1.title') }}
+            </h3>
+            <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">
+              {{ t('home.flow.step1.desc') }}
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div
+            class="relative rounded-2xl border border-gray-200/50 bg-white/60 p-6 text-center backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 dark:border-dark-700/50 dark:bg-dark-800/60"
+          >
+            <div
+              class="relative z-10 mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-xl font-bold text-white shadow-lg shadow-primary-500/30"
+            >
+              2
+            </div>
+            <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+              {{ t('home.flow.step2.title') }}
+            </h3>
+            <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">
+              {{ t('home.flow.step2.desc') }}
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div
+            class="relative rounded-2xl border border-gray-200/50 bg-white/60 p-6 text-center backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 dark:border-dark-700/50 dark:bg-dark-800/60"
+          >
+            <div
+              class="relative z-10 mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-xl font-bold text-white shadow-lg shadow-primary-500/30"
+            >
+              3
+            </div>
+            <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+              {{ t('home.flow.step3.title') }}
+            </h3>
+            <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">
+              {{ t('home.flow.step3.desc') }}
+            </p>
+          </div>
+        </div>
+
         <!-- Supported Providers -->
         <div class="mb-8 text-center">
           <h2 class="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
@@ -292,22 +805,7 @@
           </p>
         </div>
 
-        <div class="mb-16 flex flex-wrap items-center justify-center gap-4">
-          <!-- Claude - Supported -->
-          <div
-            class="flex items-center gap-2 rounded-xl border border-primary-200 bg-white/60 px-5 py-3 ring-1 ring-primary-500/20 backdrop-blur-sm dark:border-primary-800 dark:bg-dark-800/60"
-          >
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-400 to-orange-500"
-            >
-              <span class="text-xs font-bold text-white">C</span>
-            </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.providers.claude') }}</span>
-            <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
-              >{{ t('home.providers.supported') }}</span
-            >
-          </div>
+        <div class="mb-8 flex flex-wrap items-center justify-center gap-4">
           <!-- GPT - Supported -->
           <div
             class="flex items-center gap-2 rounded-xl border border-primary-200 bg-white/60 px-5 py-3 ring-1 ring-primary-500/20 backdrop-blur-sm dark:border-primary-800 dark:bg-dark-800/60"
@@ -338,21 +836,6 @@
               >{{ t('home.providers.supported') }}</span
             >
           </div>
-          <!-- Antigravity - Supported -->
-          <div
-            class="flex items-center gap-2 rounded-xl border border-primary-200 bg-white/60 px-5 py-3 ring-1 ring-primary-500/20 backdrop-blur-sm dark:border-primary-800 dark:bg-dark-800/60"
-          >
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-pink-600"
-            >
-              <span class="text-xs font-bold text-white">A</span>
-            </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.providers.antigravity') }}</span>
-            <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
-              >{{ t('home.providers.supported') }}</span
-            >
-          </div>
           <!-- More - Coming Soon -->
           <div
             class="flex items-center gap-2 rounded-xl border border-gray-200/50 bg-white/40 px-5 py-3 opacity-60 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/40"
@@ -378,7 +861,7 @@
         class="mx-auto flex max-w-6xl flex-col items-center justify-center gap-4 text-center sm:flex-row sm:text-left"
       >
         <p class="text-sm text-gray-500 dark:text-dark-400">
-          &copy; {{ currentYear }} {{ siteName }}. {{ t('home.footer.allRightsReserved') }}
+          &copy; {{ currentYear }} RightToken. {{ t('home.footer.allRightsReserved') }}
         </p>
         <div class="flex items-center gap-4">
           <a
@@ -390,14 +873,6 @@
           >
             {{ t('home.docs') }}
           </a>
-          <a
-            :href="githubUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
-          >
-            GitHub
-          </a>
         </div>
       </div>
     </footer>
@@ -407,11 +882,30 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { RouterLink } from 'vue-router'
 import { useAuthStore, useAppStore } from '@/stores'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'
+import heroImage from '@/assets/hero.png'
 
-const { t } = useI18n()
+const { t, tm } = useI18n()
+
+// Pricing section state
+const pricingTab = ref<'standard' | 'shared'>('standard')
+
+// Pricing data: input/output USD per MTok from upstream
+// inputCny / outputCny  = USD × 8.0 (final user price, ~10% service fee on top of fx)
+// inputOfficialCny / outputOfficialCny = USD × 7.2 (official equivalent at FX, for comparison)
+const pricingRows = [
+  { model: 'gpt-5',            inputUsd: '1.25', outputUsd: '10',   inputCny: '10',   outputCny: '80',    inputOfficialCny: '9',     outputOfficialCny: '72' },
+  { model: 'gpt-5.4',          inputUsd: '1.25', outputUsd: '10',   inputCny: '10',   outputCny: '80',    inputOfficialCny: '9',     outputOfficialCny: '72' },
+  { model: 'gpt-4o',           inputUsd: '2.50', outputUsd: '10',   inputCny: '20',   outputCny: '80',    inputOfficialCny: '18',    outputOfficialCny: '72' },
+  { model: 'gpt-4o-mini',      inputUsd: '0.15', outputUsd: '0.60', inputCny: '1.20', outputCny: '4.80',  inputOfficialCny: '1.08',  outputOfficialCny: '4.32' },
+  { model: 'o3',               inputUsd: '2.00', outputUsd: '8.00', inputCny: '16',   outputCny: '64',    inputOfficialCny: '14.4',  outputOfficialCny: '57.6' },
+  { model: 'o4-mini',          inputUsd: '1.10', outputUsd: '4.40', inputCny: '8.80', outputCny: '35.20', inputOfficialCny: '7.92',  outputOfficialCny: '31.68' },
+  { model: 'gemini-2.5-pro',   inputUsd: '1.25', outputUsd: '10',   inputCny: '10',   outputCny: '80',    inputOfficialCny: '9',     outputOfficialCny: '72' },
+  { model: 'gemini-2.5-flash', inputUsd: '0.30', outputUsd: '2.50', inputCny: '2.40', outputCny: '20',    inputOfficialCny: '2.16',  outputOfficialCny: '18' }
+]
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
@@ -431,9 +925,6 @@ const isHomeContentUrl = computed(() => {
 
 // Theme
 const isDark = ref(document.documentElement.classList.contains('dark'))
-
-// GitHub URL
-const githubUrl = 'https://github.com/Wei-Shaw/sub2api'
 
 // Auth state
 const isAuthenticated = computed(() => authStore.isAuthenticated)
