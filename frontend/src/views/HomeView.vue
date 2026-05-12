@@ -546,16 +546,16 @@
                       {{ row.model }}
                     </td>
                     <td class="bg-primary-50/40 px-4 py-4 text-gray-800 dark:bg-primary-900/10 dark:text-dark-100 md:px-6">
-                      <span class="font-semibold">¥{{ row.inputCny }}</span>
+                      <span class="font-semibold">${{ row.userIn }}</span>
                       <span class="ml-1 text-xs text-gray-500 dark:text-dark-400">/ M</span>
                     </td>
                     <td class="bg-primary-50/40 px-4 py-4 text-gray-800 dark:bg-primary-900/10 dark:text-dark-100 md:px-6">
-                      <span class="font-semibold">¥{{ row.outputCny }}</span>
+                      <span class="font-semibold">${{ row.userOut }}</span>
                       <span class="ml-1 text-xs text-gray-500 dark:text-dark-400">/ M</span>
+                      <span class="ml-2 inline-block rounded bg-green-100 px-1.5 py-0.5 text-[10px] font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">-{{ row.discount }}</span>
                     </td>
-                    <td class="px-4 py-4 text-xs text-gray-500 dark:text-dark-400 md:px-6">
-                      <span>¥{{ row.inputOfficialCny }} / ¥{{ row.outputOfficialCny }}</span>
-                      <span class="ml-1 text-[10px] text-gray-400 dark:text-dark-500">(≈ ${{ row.inputUsd }} / ${{ row.outputUsd }})</span>
+                    <td class="px-4 py-4 text-xs text-gray-500 line-through dark:text-dark-400 md:px-6">
+                      <span>${{ row.inputUsd }} / ${{ row.outputUsd }}</span>
                     </td>
                   </tr>
                 </tbody>
@@ -699,30 +699,47 @@
               </RouterLink>
             </div>
 
-            <!-- More Providers Coming Soon -->
+            <!-- Gemini Flagship Monthly -->
             <div
-              class="relative flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300/70 bg-white/40 p-6 backdrop-blur-sm dark:border-dark-600/70 dark:bg-dark-800/40"
+              class="relative flex flex-col rounded-2xl border-2 border-emerald-500/60 bg-gradient-to-br from-white/80 to-emerald-50/40 p-6 shadow-lg shadow-emerald-500/10 backdrop-blur-sm dark:border-emerald-500/50 dark:from-dark-800/80 dark:to-emerald-900/20"
             >
               <div
-                class="absolute -top-3 left-6 rounded-full bg-gray-400 px-3 py-1 text-xs font-semibold text-white dark:bg-dark-600"
+                class="absolute -top-3 left-6 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 px-3 py-1 text-xs font-semibold text-white shadow-md shadow-emerald-500/30"
               >
-                {{ t('home.pricing.shared.more.comingSoon') }}
+                {{ t('home.pricing.shared.gemini.badge') }}
               </div>
-              <h3 class="mb-2 mt-2 text-xl font-bold text-gray-700 dark:text-dark-200">
-                {{ t('home.pricing.shared.more.title') }}
+              <h3 class="mb-1 mt-2 text-xl font-bold text-gray-900 dark:text-white">
+                {{ t('home.pricing.shared.gemini.title') }}
               </h3>
-              <p class="mb-6 text-center text-sm text-gray-500 dark:text-dark-400">
-                {{ t('home.pricing.shared.more.tagline') }}
+              <p class="mb-4 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                {{ t('home.pricing.shared.gemini.tagline') }}
               </p>
-              <ul class="space-y-2 text-center">
+              <div class="mb-4 flex items-baseline gap-1">
+                <span class="text-4xl font-bold text-emerald-600 dark:text-emerald-400">
+                  {{ t('home.pricing.shared.gemini.price') }}
+                </span>
+                <span class="text-sm text-gray-500 dark:text-dark-400">
+                  {{ t('home.pricing.shared.gemini.priceUnit') }}
+                </span>
+              </div>
+              <ul class="mb-6 flex-1 space-y-2">
                 <li
-                  v-for="(provider, idx) in (tm('home.pricing.shared.more.providers') as string[])"
+                  v-for="(feature, idx) in (tm('home.pricing.shared.gemini.features') as string[])"
                   :key="idx"
-                  class="rounded-lg border border-gray-200/50 bg-white/60 px-4 py-2 text-sm font-medium text-gray-600 dark:border-dark-700/50 dark:bg-dark-800/60 dark:text-dark-300"
+                  class="flex items-start gap-2 text-sm text-gray-700 dark:text-dark-200"
                 >
-                  {{ provider }}
+                  <svg class="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>{{ feature }}</span>
                 </li>
               </ul>
+              <RouterLink
+                to="/login"
+                class="rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-md shadow-emerald-500/30 transition-all hover:shadow-lg hover:shadow-emerald-500/40"
+              >
+                {{ t('home.pricing.shared.gemini.cta') }}
+              </RouterLink>
             </div>
           </div>
         </div>
@@ -876,6 +893,84 @@
         </div>
       </div>
     </footer>
+
+    <!-- Floating Customer Support -->
+    <div class="fixed bottom-6 right-6 z-40">
+      <!-- Popover Card -->
+      <Transition
+        enter-active-class="transition ease-out duration-200"
+        enter-from-class="opacity-0 translate-y-2"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition ease-in duration-150"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 translate-y-2"
+      >
+        <div
+          v-if="supportOpen"
+          class="absolute bottom-16 right-0 w-72 rounded-2xl border border-gray-200/60 bg-white p-5 shadow-2xl shadow-black/10 dark:border-dark-700/60 dark:bg-dark-800 dark:shadow-black/40"
+        >
+          <!-- Close -->
+          <button
+            @click="supportOpen = false"
+            class="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-dark-700 dark:hover:text-white"
+            :aria-label="t('home.support.close')"
+          >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <h3 class="mb-3 text-base font-semibold text-gray-900 dark:text-white">
+            {{ t('home.support.title') }}
+          </h3>
+
+          <!-- QR -->
+          <div class="mb-4 overflow-hidden rounded-xl bg-white p-2 ring-1 ring-gray-200 dark:ring-dark-700">
+            <img
+              src="/wechat-qr.png"
+              :alt="t('home.support.title')"
+              class="block h-56 w-full object-contain"
+              loading="lazy"
+            />
+          </div>
+
+          <!-- WeChat ID + Copy -->
+          <div class="mb-2 flex items-center justify-between gap-2 rounded-lg bg-gray-50 px-3 py-2 dark:bg-dark-900">
+            <div class="min-w-0 flex-1">
+              <p class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-dark-400">
+                {{ t('home.support.wechatLabel') }}
+              </p>
+              <p class="truncate font-mono text-sm font-semibold text-gray-900 dark:text-white">
+                {{ t('home.support.wechatId') }}
+              </p>
+            </div>
+            <button
+              @click="copyWechat"
+              class="shrink-0 rounded-md bg-primary-500 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-primary-600"
+            >
+              {{ wechatCopied ? t('home.support.copied') : t('home.support.copy') }}
+            </button>
+          </div>
+
+          <p class="text-center text-xs text-gray-500 dark:text-dark-400">
+            {{ t('home.support.hint') }}
+          </p>
+        </div>
+      </Transition>
+
+      <!-- Trigger Button -->
+      <button
+        @click="supportOpen = !supportOpen"
+        class="group flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 shadow-lg shadow-green-500/40 transition-transform hover:scale-110"
+        :aria-label="t('home.support.buttonLabel')"
+        :title="t('home.support.buttonLabel')"
+      >
+        <svg class="h-7 w-7 text-white" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9.5 4C5.36 4 2 6.69 2 10c0 1.89 1.08 3.56 2.78 4.66l-.7 2.34 2.66-1.45c.86.27 1.78.45 2.76.45.16 0 .32-.01.48-.02-.16-.49-.24-1-.24-1.53 0-2.93 2.94-5.31 6.56-5.31.18 0 .35.01.52.02C15.39 6.42 12.78 4 9.5 4zm-2 3.5c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm5 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z" />
+          <path d="M22 14.5c0-2.49-2.46-4.5-5.5-4.5S11 12.01 11 14.5c0 2.49 2.46 4.5 5.5 4.5.7 0 1.36-.11 1.97-.31L20.4 20l-.5-1.74c1.24-.83 2.1-2.05 2.1-3.76zM15 13.5c.41 0 .75.34.75.75s-.34.75-.75.75-.75-.34-.75-.75.34-.75.75-.75zm3 0c.41 0 .75.34.75.75s-.34.75-.75.75-.75-.34-.75-.75.34-.75.75-.75z" />
+        </svg>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -893,18 +988,19 @@ const { t, tm } = useI18n()
 // Pricing section state
 const pricingTab = ref<'standard' | 'shared'>('standard')
 
-// Pricing data: input/output USD per MTok from upstream
-// inputCny / outputCny  = USD × 8.0 (final user price, ~10% service fee on top of fx)
-// inputOfficialCny / outputOfficialCny = USD × 7.2 (official equivalent at FX, for comparison)
+// Pricing data: prices in REAL USD per MTok
+// userIn / userOut = what user pays (= official × group multiplier)
+// inputUsd / outputUsd = official upstream price for comparison
+// OpenAI group multiplier = 0.7 (30% off), Gemini group multiplier = 0.3 (70% off)
 const pricingRows = [
-  { model: 'gpt-5',            inputUsd: '1.25', outputUsd: '10',   inputCny: '10',   outputCny: '80',    inputOfficialCny: '9',     outputOfficialCny: '72' },
-  { model: 'gpt-5.4',          inputUsd: '1.25', outputUsd: '10',   inputCny: '10',   outputCny: '80',    inputOfficialCny: '9',     outputOfficialCny: '72' },
-  { model: 'gpt-4o',           inputUsd: '2.50', outputUsd: '10',   inputCny: '20',   outputCny: '80',    inputOfficialCny: '18',    outputOfficialCny: '72' },
-  { model: 'gpt-4o-mini',      inputUsd: '0.15', outputUsd: '0.60', inputCny: '1.20', outputCny: '4.80',  inputOfficialCny: '1.08',  outputOfficialCny: '4.32' },
-  { model: 'o3',               inputUsd: '2.00', outputUsd: '8.00', inputCny: '16',   outputCny: '64',    inputOfficialCny: '14.4',  outputOfficialCny: '57.6' },
-  { model: 'o4-mini',          inputUsd: '1.10', outputUsd: '4.40', inputCny: '8.80', outputCny: '35.20', inputOfficialCny: '7.92',  outputOfficialCny: '31.68' },
-  { model: 'gemini-2.5-pro',   inputUsd: '1.25', outputUsd: '10',   inputCny: '10',   outputCny: '80',    inputOfficialCny: '9',     outputOfficialCny: '72' },
-  { model: 'gemini-2.5-flash', inputUsd: '0.30', outputUsd: '2.50', inputCny: '2.40', outputCny: '20',    inputOfficialCny: '2.16',  outputOfficialCny: '18' }
+  { model: 'gpt-5',            inputUsd: '1.25', outputUsd: '10',   userIn: '0.88',  userOut: '7.00',  discount: '30%' },
+  { model: 'gpt-5.4',          inputUsd: '1.25', outputUsd: '10',   userIn: '0.88',  userOut: '7.00',  discount: '30%' },
+  { model: 'gpt-4o',           inputUsd: '2.50', outputUsd: '10',   userIn: '1.75',  userOut: '7.00',  discount: '30%' },
+  { model: 'gpt-4o-mini',      inputUsd: '0.15', outputUsd: '0.60', userIn: '0.11',  userOut: '0.42', discount: '30%' },
+  { model: 'o3',               inputUsd: '2.00', outputUsd: '8.00', userIn: '1.40',  userOut: '5.60', discount: '30%' },
+  { model: 'o4-mini',          inputUsd: '1.10', outputUsd: '4.40', userIn: '0.77',  userOut: '3.08', discount: '30%' },
+  { model: 'gemini-2.5-pro',   inputUsd: '1.25', outputUsd: '10',   userIn: '0.38',  userOut: '3.00', discount: '70%' },
+  { model: 'gemini-2.5-flash', inputUsd: '0.30', outputUsd: '2.50', userIn: '0.09',  userOut: '0.75', discount: '70%' }
 ]
 
 const authStore = useAuthStore()
@@ -925,6 +1021,27 @@ const isHomeContentUrl = computed(() => {
 
 // Theme
 const isDark = ref(document.documentElement.classList.contains('dark'))
+
+// Floating support widget
+const supportOpen = ref(false)
+const wechatCopied = ref(false)
+async function copyWechat() {
+  const id = 'RightToken'
+  try {
+    await navigator.clipboard.writeText(id)
+  } catch {
+    const ta = document.createElement('textarea')
+    ta.value = id
+    ta.style.position = 'fixed'
+    ta.style.opacity = '0'
+    document.body.appendChild(ta)
+    ta.select()
+    try { document.execCommand('copy') } catch { /* ignore */ }
+    document.body.removeChild(ta)
+  }
+  wechatCopied.value = true
+  setTimeout(() => { wechatCopied.value = false }, 1500)
+}
 
 // Auth state
 const isAuthenticated = computed(() => authStore.isAuthenticated)

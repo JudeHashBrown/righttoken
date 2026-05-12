@@ -139,21 +139,21 @@ export default {
     // 定价区块
     pricing: {
       title: '透明定价',
-      subtitle: '几乎是官方原价，仅收极少代付服务费',
+      subtitle: '比官方 API 便宜 30-70%，按量计费、永不过期',
       tabs: {
         standard: '按量充值',
         shared: '包月套餐'
       },
       standard: {
-        headline: '按官方计价 + 极低代付服务费',
-        subheadline: '充值永不过期，只为你实际使用的 token 付费',
+        headline: '比官方 API 直降 30-70%',
+        subheadline: '账号资源池化共享，价格直接打折给你',
         headers: {
           model: '模型',
           input: '输入价格',
           output: '输出价格',
-          official: '官方原价（¥折算）'
+          official: '官方原价'
         },
-        unit: '价格单位：元 / 百万 token',
+        unit: '价格单位：美元 / 百万 token（充值时按 ¥7 = $1 折算）',
         cta: '立即充值'
       },
       example: {
@@ -162,24 +162,24 @@ export default {
         models: {
           gpt5: {
             tag: '高质量生成',
-            tokens: '约 125万 输出 tokens',
-            chars: '≈ 100万 – 180万中文字符',
-            articles: '≈ 1000 – 2000 篇中等长度文章（800–1200字）',
-            code: '≈ 8万 – 15万行常规代码',
+            tokens: '约 200万 输出 tokens',
+            chars: '≈ 200万 – 320万中文字符',
+            articles: '≈ 2000 – 3200 篇中等长度文章（800–1200字）',
+            code: '≈ 13万 – 24万行常规代码',
             bestFor: '适合：高质量写作 / 编程 / 深度内容'
           },
           gpt4oMini: {
             tag: '高性价比',
-            tokens: '约 2100万 输出 tokens',
-            chars: '≈ 2000万 – 3000万中文字符',
-            articles: '≈ 2万 – 3万篇短内容（500–800字）',
+            tokens: '约 3400万 输出 tokens',
+            chars: '≈ 3500万 – 5400万中文字符',
+            articles: '≈ 4万 – 7万篇短内容（500–800字）',
             bestFor: '适合：批量生成 / 轻内容 / 日常问答'
           },
           geminiFlash: {
-            tag: '快速低成本',
-            tokens: '约 500万 输出 tokens',
-            chars: '≈ 500万 – 800万中文字符',
-            articles: '≈ 6000 – 12000 篇短内容（500–800字）',
+            tag: '极致便宜',
+            tokens: '约 1900万 输出 tokens',
+            chars: '≈ 2000万 – 3000万中文字符',
+            articles: '≈ 2.5万 – 4万篇短内容（500–800字）',
             bestFor: '适合：快速生成 / 轻量任务 / 辅助处理'
           }
         },
@@ -198,11 +198,26 @@ export default {
           badge: '市面顶配',
           price: '¥199',
           priceUnit: '/ 月',
-          tagline: '业内最强的 OpenAI 包月套餐',
+          tagline: '订阅级 GPT-5 / Codex，无需关心 token',
           features: [
-            '市面顶配规格，远超普通共享方案',
-            '始终接入最新旗舰模型',
+            'GPT-5 / GPT-4o / o3 / Codex 全系',
+            '日均 $5 等额额度（约 40 次重度调用）',
             '兼容所有 OpenAI 模型 API 名',
+            '包月畅用，无需充值',
+            '智能调度，高可用保障'
+          ],
+          cta: '订阅'
+        },
+        gemini: {
+          title: 'Gemini 旗舰包月',
+          badge: '极致便宜',
+          price: '¥99',
+          priceUnit: '/ 月',
+          tagline: 'Gemini 2.5 Pro / Flash / 3.0 全系畅享',
+          features: [
+            'Gemini 2.5 Pro / Flash / 3.0 全系',
+            '日均 $1.50 等额额度（约 200K Pro tokens）',
+            '兼容 OpenAI / Anthropic 多种 SDK 调用',
             '包月畅用，无需充值',
             '智能调度，高可用保障'
           ],
@@ -228,6 +243,17 @@ export default {
     },
     footer: {
       allRightsReserved: '保留所有权利'
+    },
+    // 悬浮客服
+    support: {
+      buttonLabel: '客服',
+      title: '联系客服',
+      wechatLabel: '微信号',
+      wechatId: 'RightToken',
+      copy: '复制',
+      copied: '已复制',
+      hint: '扫码或搜索微信号添加',
+      close: '关闭'
     }
   },
 

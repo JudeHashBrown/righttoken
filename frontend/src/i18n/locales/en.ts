@@ -139,21 +139,21 @@ export default {
     // Pricing section
     pricing: {
       title: 'Transparent Pricing',
-      subtitle: 'Near-official rates with a minimal service fee.',
+      subtitle: '30-70% off official APIs. Pay-as-you-go, credits never expire.',
       tabs: {
         standard: 'Pay-as-you-go',
         shared: 'Monthly Plans'
       },
       standard: {
-        headline: 'Official-rate billing with a minimal service fee',
-        subheadline: 'Credits never expire. Pay only for tokens you actually use.',
+        headline: '30-70% off official API rates',
+        subheadline: 'Pooled subscription accounts, savings passed to you.',
         headers: {
           model: 'Model',
           input: 'Input',
           output: 'Output',
-          official: 'Official (¥ equiv.)'
+          official: 'Official price'
         },
-        unit: 'Prices are CNY per million tokens',
+        unit: 'USD per million tokens (paid in CNY at ¥7 = $1)',
         cta: 'Top Up Now'
       },
       example: {
@@ -162,24 +162,24 @@ export default {
         models: {
           gpt5: {
             tag: 'High-quality generation',
-            tokens: '~1.25M output tokens',
-            chars: '≈ 1M – 1.8M Chinese characters',
-            articles: '≈ 1000 – 2000 medium articles (800–1200 chars)',
-            code: '≈ 80K – 150K lines of code',
+            tokens: '~2M output tokens',
+            chars: '≈ 2M – 3.2M Chinese characters',
+            articles: '≈ 2000 – 3200 medium articles (800–1200 chars)',
+            code: '≈ 130K – 240K lines of code',
             bestFor: 'Best for: high-quality writing / coding / deep content'
           },
           gpt4oMini: {
             tag: 'Best value',
-            tokens: '~21M output tokens',
-            chars: '≈ 20M – 30M Chinese characters',
-            articles: '≈ 20K – 30K short pieces (500–800 chars)',
+            tokens: '~34M output tokens',
+            chars: '≈ 35M – 54M Chinese characters',
+            articles: '≈ 40K – 70K short pieces (500–800 chars)',
             bestFor: 'Best for: bulk generation / light content / daily Q&A'
           },
           geminiFlash: {
-            tag: 'Fast & low-cost',
-            tokens: '~5M output tokens',
-            chars: '≈ 5M – 8M Chinese characters',
-            articles: '≈ 6000 – 12000 short pieces (500–800 chars)',
+            tag: 'Ultra cheap',
+            tokens: '~19M output tokens',
+            chars: '≈ 20M – 30M Chinese characters',
+            articles: '≈ 25K – 40K short pieces (500–800 chars)',
             bestFor: 'Best for: rapid generation / light tasks / assistive workflows'
           }
         },
@@ -198,11 +198,26 @@ export default {
           badge: 'Top Tier',
           price: '¥199',
           priceUnit: '/ month',
-          tagline: 'The strongest OpenAI monthly plan available',
+          tagline: 'Subscription-grade GPT-5 / Codex — no token math',
           features: [
-            'Top-tier capacity, far beyond ordinary shared plans',
-            'Always the latest flagship model',
+            'GPT-5 / GPT-4o / o3 / Codex full lineup',
+            '$5/day equivalent quota (~40 heavy GPT-5 calls)',
             'Compatible with all OpenAI model API names',
+            'Unlimited within plan, no top-ups required',
+            'Smart routing, high availability'
+          ],
+          cta: 'Subscribe'
+        },
+        gemini: {
+          title: 'Gemini Flagship Monthly',
+          badge: 'Best Value',
+          price: '¥99',
+          priceUnit: '/ month',
+          tagline: 'Gemini 2.5 Pro / Flash / 3.0 — unlimited usage',
+          features: [
+            'Gemini 2.5 Pro / Flash / 3.0 full lineup',
+            '$1.50/day equivalent quota (~200K Pro tokens)',
+            'Compatible with OpenAI / Anthropic SDKs',
             'Unlimited within plan, no top-ups required',
             'Smart routing, high availability'
           ],
@@ -228,6 +243,17 @@ export default {
     },
     footer: {
       allRightsReserved: 'All rights reserved.'
+    },
+    // Floating customer support
+    support: {
+      buttonLabel: 'Support',
+      title: 'Contact Support',
+      wechatLabel: 'WeChat ID',
+      wechatId: 'RightToken',
+      copy: 'Copy',
+      copied: 'Copied',
+      hint: 'Scan the QR or search the WeChat ID to add',
+      close: 'Close'
     }
   },
 
