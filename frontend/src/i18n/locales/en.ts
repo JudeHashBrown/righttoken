@@ -244,6 +244,12 @@ export default {
     footer: {
       allRightsReserved: 'All rights reserved.'
     },
+    // Tutorials entry card (homepage CTA)
+    tutorialsCta: {
+      title: 'Browse Deployment Guides',
+      subtitle: 'Hermes, Workbuddy, OpenClaw and more — wired up to RightToken in minutes',
+      button: 'View Tutorials'
+    },
     // Floating customer support
     support: {
       buttonLabel: 'Support',
@@ -254,6 +260,83 @@ export default {
       copied: 'Copied',
       hint: 'Scan the QR or search the WeChat ID to add',
       close: 'Close'
+    }
+  },
+
+  // Tutorials center
+  tutorials: {
+    nav: {
+      title: 'Tutorials',
+      backToHome: 'Back to home'
+    },
+    sidebar: {
+      title: 'Tools'
+    },
+    welcome: {
+      title: 'Start here',
+      subtitle: 'Pick any tool on the left to see step-by-step deployment guides',
+      hint: 'More tools coming soon'
+    },
+    common: {
+      placeholderTitle: 'Content coming soon',
+      placeholderBody: 'Deployment steps, configuration examples, and FAQs will land in the next update.',
+      backToList: 'Back to tools'
+    },
+    tools: {
+      hermes: {
+        name: 'Hermes',
+        tagline: 'Multi-personality CLI agent — local, Slack, Discord and beyond',
+        sections: {
+          install: {
+            title: 'Install Hermes',
+            desc: 'Follow the official installation guide for your platform.',
+            linkLabel: 'View official install docs',
+            linkUrl: 'https://hermes-agent.nousresearch.com/docs/getting-started/installation'
+          },
+          config: {
+            title: 'Model configuration',
+            desc: 'In the Hermes model provider config, set base_url to https://righttoken.ai/v1 and paste your RightToken sk-... key.',
+            linkLabel: 'View configuration docs',
+            linkUrl: 'https://hermes-agent.nousresearch.com/docs/user-guide/configuration'
+          }
+        }
+      },
+      workbuddy: {
+        name: 'Workbuddy',
+        tagline: 'Workflow-oriented AI assistant',
+        sections: {
+          install: {
+            title: 'Install Workbuddy',
+            desc: 'Download and install Workbuddy from the official CodeBuddy site.',
+            linkLabel: 'Go to download page',
+            linkUrl: 'https://www.codebuddy.cn/work/'
+          },
+          config: {
+            title: 'Model configuration',
+            desc: 'In the model configuration, set base_url to https://righttoken.ai/v1 and paste your RightToken sk-... key.',
+            linkLabel: 'View model configuration docs',
+            linkUrl: 'https://www.codebuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Model'
+          }
+        }
+      },
+      openclaw: {
+        name: 'OpenClaw',
+        tagline: 'Open-source client',
+        sections: {
+          install: {
+            title: 'Install OpenClaw',
+            desc: 'Follow the official installation guide for your platform.',
+            linkLabel: 'View official install docs',
+            linkUrl: 'https://docs.openclaw.ai/zh-CN/install'
+          },
+          openai: {
+            title: 'Configure OpenAI to use RightToken',
+            desc: 'In the OpenAI provider config, set base_url to https://righttoken.ai/v1 and paste your RightToken sk-... key.',
+            linkLabel: 'View OpenAI provider docs',
+            linkUrl: 'https://docs.openclaw.ai/zh-CN/providers/openai'
+          }
+        }
+      }
     }
   },
 
@@ -5437,6 +5520,17 @@ export default {
     amountNoMethod: 'No payment method available for this amount',
     refundReason: 'Refund Reason',
     refundReasonPlaceholder: 'Please describe your refund reason',
+    refundPolicy: {
+      title: 'Refund policy',
+      cooldown: 'Orders within 24 hours of payment are not auto-refunded; they go to manual review',
+      window: 'Only one auto-refund is allowed per 30 days — please contact support for more',
+      balance: 'Refund is unavailable when balance falls short (contact support for spent portions)',
+      outcome: 'Eligible orders are refunded immediately; funds return to the original method in 1–3 business days'
+    },
+    refundOutcome: {
+      autoApproved: 'Refund processed — funds will return to your original payment method in 1–3 business days',
+      pendingReview: 'Refund request submitted — pending manual review'
+    },
     stripeLoadFailed: 'Failed to load payment component. Please refresh and try again.',
     stripeMissingParams: 'Missing order ID or client secret',
     stripeNotConfigured: 'Stripe is not configured',

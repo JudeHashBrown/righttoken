@@ -51,6 +51,18 @@
           <!-- Language Switcher -->
           <LocaleSwitcher />
 
+          <!-- Tutorials Link -->
+          <router-link
+            to="/tutorials"
+            class="hidden items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 sm:inline-flex dark:text-dark-300 dark:hover:bg-dark-800 dark:hover:text-white"
+            :title="t('tutorials.nav.title')"
+          >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            {{ t('tutorials.nav.title') }}
+          </router-link>
+
           <!-- Doc Link -->
           <a
             v-if="docUrl"
@@ -869,6 +881,44 @@
             >
           </div>
         </div>
+
+        <!-- Tutorials CTA -->
+        <router-link
+          to="/tutorials"
+          class="group relative mb-8 block overflow-hidden rounded-2xl border border-primary-200/60 bg-gradient-to-br from-primary-50 via-white to-primary-50/40 p-6 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary-500/20 dark:border-primary-800/40 dark:from-primary-950/40 dark:via-dark-800 dark:to-dark-800"
+        >
+          <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <div class="flex items-center gap-4">
+              <div
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/30"
+              >
+                <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                  />
+                </svg>
+              </div>
+              <div class="text-center sm:text-left">
+                <h3 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white">
+                  {{ t('home.tutorialsCta.title') }}
+                </h3>
+                <p class="text-sm text-gray-600 dark:text-dark-300">
+                  {{ t('home.tutorialsCta.subtitle') }}
+                </p>
+              </div>
+            </div>
+            <span
+              class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary-500 px-4 py-2 text-sm font-medium text-white shadow-md shadow-primary-500/30 transition-transform group-hover:translate-x-1"
+            >
+              {{ t('home.tutorialsCta.button') }}
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </span>
+          </div>
+        </router-link>
       </div>
     </main>
 

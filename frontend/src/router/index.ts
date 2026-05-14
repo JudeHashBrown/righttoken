@@ -37,6 +37,41 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/tutorials',
+    component: () => import('@/views/tutorials/TutorialsLayout.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Tutorials',
+      titleKey: 'tutorials.nav.title'
+    },
+    children: [
+      {
+        path: '',
+        name: 'TutorialsIndex',
+        component: () => import('@/views/tutorials/TutorialsIndexView.vue'),
+        meta: { requiresAuth: false, title: 'Tutorials', titleKey: 'tutorials.nav.title' }
+      },
+      {
+        path: 'hermes',
+        name: 'TutorialHermes',
+        component: () => import('@/views/tutorials/ToolHermesView.vue'),
+        meta: { requiresAuth: false, title: 'Hermes' }
+      },
+      {
+        path: 'workbuddy',
+        name: 'TutorialWorkbuddy',
+        component: () => import('@/views/tutorials/ToolWorkbuddyView.vue'),
+        meta: { requiresAuth: false, title: 'Workbuddy' }
+      },
+      {
+        path: 'openclaw',
+        name: 'TutorialOpenClaw',
+        component: () => import('@/views/tutorials/ToolOpenClawView.vue'),
+        meta: { requiresAuth: false, title: 'OpenClaw' }
+      }
+    ]
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/auth/LoginView.vue'),

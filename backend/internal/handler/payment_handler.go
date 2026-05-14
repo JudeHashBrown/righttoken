@@ -328,11 +328,16 @@ func (h *PaymentHandler) RequestRefund(c *gin.Context) {
 		return
 	}
 
-	if err := h.paymentService.RequestRefund(c.Request.Context(), orderID, subject.UserID, req.Reason); err != nil {
+	result, err := h.paymentService.RequestRefund(c.Request.Context(), orderID, subject.UserID, req.Reason)
+	if err != nil {
 		response.ErrorFrom(c, err)
 		return
 	}
-	response.Success(c, gin.H{"message": "refund requested"})
+	response.Success(c, gin.H{
+		"message":        "refund requested",
+		"auto_processed": result.AutoProcessed,
+		"final_status":   result.FinalStatus,
+	})
 }
 
 // VerifyOrderRequest is the request body for verifying a payment order.

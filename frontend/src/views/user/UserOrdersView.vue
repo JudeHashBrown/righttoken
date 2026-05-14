@@ -65,6 +65,23 @@
             <span class="text-gray-900 dark:text-white">${{ refundTarget.amount.toFixed(2) }}</span>
           </div>
         </div>
+
+        <!-- Refund policy notice -->
+        <div class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-800 dark:border-amber-700/40 dark:bg-amber-900/20 dark:text-amber-200">
+          <div class="mb-1.5 flex items-center gap-1.5 font-semibold">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {{ t('payment.refundPolicy.title') }}
+          </div>
+          <ul class="ml-1 list-disc space-y-0.5 pl-4">
+            <li>{{ t('payment.refundPolicy.cooldown') }}</li>
+            <li>{{ t('payment.refundPolicy.window') }}</li>
+            <li>{{ t('payment.refundPolicy.balance') }}</li>
+            <li>{{ t('payment.refundPolicy.outcome') }}</li>
+          </ul>
+        </div>
+
         <div>
           <label class="input-label">{{ t('payment.refundReason') }}</label>
           <textarea v-model="refundReason" rows="3" class="input mt-1 w-full" :placeholder="t('payment.refundReasonPlaceholder')" />
@@ -159,8 +176,13 @@ async function confirmRefund() {
   if (!refundTarget.value || !refundReason.value.trim()) return
   actionLoading.value = true
   try {
-    await paymentAPI.requestRefund(refundTarget.value.id, { reason: refundReason.value.trim() })
-    appStore.showSuccess(t('common.success'))
+    const res = await paymentAPI.requestRefund(refundTarget.value.id, { reason: refundReason.value.trim() })
+    const autoProcessed = Boolean((res?.data as { auto_processed?: boolean } | undefined)?.auto_processed)
+    appStore.showSuccess(
+      autoProcessed
+        ? t('payment.refundOutcome.autoApproved')
+        : t('payment.refundOutcome.pendingReview')
+    )
     refundTarget.value = null
     refundReason.value = ''
     await fetchOrders()

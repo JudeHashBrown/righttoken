@@ -244,6 +244,12 @@ export default {
     footer: {
       allRightsReserved: '保留所有权利'
     },
+    // 教程入口卡片（主页 CTA）
+    tutorialsCta: {
+      title: '看部署教程',
+      subtitle: 'Hermes、Workbuddy、OpenClaw 等工具一键接入 RightToken',
+      button: '查看教程'
+    },
     // 悬浮客服
     support: {
       buttonLabel: '客服',
@@ -254,6 +260,83 @@ export default {
       copied: '已复制',
       hint: '扫码或搜索微信号添加',
       close: '关闭'
+    }
+  },
+
+  // 教程中心
+  tutorials: {
+    nav: {
+      title: '教程',
+      backToHome: '返回首页'
+    },
+    sidebar: {
+      title: '工具'
+    },
+    welcome: {
+      title: '从这里开始',
+      subtitle: '选择左侧任意工具，查看一步步的部署与接入指南',
+      hint: '更多工具持续上线中'
+    },
+    common: {
+      placeholderTitle: '内容即将上线',
+      placeholderBody: '此处的部署步骤、配置示例与常见问题将在下一轮更新中补齐。',
+      backToList: '返回工具列表'
+    },
+    tools: {
+      hermes: {
+        name: 'Hermes',
+        tagline: '多人格 CLI Agent，本地、Slack、Discord 多端协同',
+        sections: {
+          install: {
+            title: '安装 Hermes',
+            desc: '按官方文档完成本机安装。',
+            linkLabel: '查看官方安装文档',
+            linkUrl: 'https://hermes-agent.nousresearch.com/docs/getting-started/installation'
+          },
+          config: {
+            title: '模型配置',
+            desc: '在 Hermes 配置中，将 model provider 的 base_url 设为 https://righttoken.ai/v1，API key 填入你的 RightToken sk-... key。',
+            linkLabel: '查看模型配置文档',
+            linkUrl: 'https://hermes-agent.nousresearch.com/docs/user-guide/configuration'
+          }
+        }
+      },
+      workbuddy: {
+        name: 'Workbuddy',
+        tagline: '面向工作流的智能助手',
+        sections: {
+          install: {
+            title: '安装 Workbuddy',
+            desc: '前往 CodeBuddy 官方页面下载并安装 Workbuddy。',
+            linkLabel: '前往下载安装',
+            linkUrl: 'https://www.codebuddy.cn/work/'
+          },
+          config: {
+            title: '模型配置',
+            desc: '在模型配置中，将 base_url 设为 https://righttoken.ai/v1，API key 填入你的 RightToken sk-... key。',
+            linkLabel: '查看模型配置文档',
+            linkUrl: 'https://www.codebuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Model'
+          }
+        }
+      },
+      openclaw: {
+        name: 'OpenClaw',
+        tagline: '开源客户端',
+        sections: {
+          install: {
+            title: '安装 OpenClaw',
+            desc: '按官方文档完成本机安装。',
+            linkLabel: '查看官方安装文档',
+            linkUrl: 'https://docs.openclaw.ai/zh-CN/install'
+          },
+          openai: {
+            title: '配置 OpenAI 接入 RightToken',
+            desc: '在 OpenAI provider 配置中，将 base_url 设为 https://righttoken.ai/v1，API key 填入你的 RightToken sk-... key。',
+            linkLabel: '查看 OpenAI Provider 文档',
+            linkUrl: 'https://docs.openclaw.ai/zh-CN/providers/openai'
+          }
+        }
+      }
     }
   },
 
@@ -5625,6 +5708,17 @@ export default {
     amountNoMethod: '该金额没有可用的支付方式',
     refundReason: '退款原因',
     refundReasonPlaceholder: '请描述您的退款原因',
+    refundPolicy: {
+      title: '退款说明',
+      cooldown: '充值后 24 小时内不支持自动退款，将进入人工审核',
+      window: '每 30 天内仅可享受一次自动退款，超出请联系客服',
+      balance: '余额不足时无法退款（已使用部分请联系客服）',
+      outcome: '满足条件的订单将立即原路退款，1-3 个工作日到账'
+    },
+    refundOutcome: {
+      autoApproved: '退款已自动完成，款项将在 1-3 个工作日原路退回',
+      pendingReview: '退款申请已提交，请等待人工审核'
+    },
     stripeLoadFailed: '支付组件加载失败，请刷新页面重试',
     stripeMissingParams: '缺少订单ID或支付密钥',
     stripeNotConfigured: 'Stripe 未配置',

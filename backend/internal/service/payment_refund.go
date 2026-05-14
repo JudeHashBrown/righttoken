@@ -17,30 +17,82 @@ import (
 
 // --- Refund Flow ---
 
-func (s *PaymentService) RequestRefund(ctx context.Context, oid, uid int64, reason string) error {
+// Plan B auto-approval policy: a user-initiated refund is auto-processed when
+//   1. the order was paid at least autoRefundCooldownAfterPay ago, AND
+//   2. the user has no other refunded order within autoRefundWindow.
+// (Full-balance check is the existing protection in RequestRefund — kept as-is.)
+const (
+	autoRefundCooldownAfterPay = 24 * time.Hour
+	autoRefundWindow           = 30 * 24 * time.Hour
+)
+
+// RequestRefundResult tells the caller whether the refund was auto-processed
+// inline or merely queued for admin review.
+type RequestRefundResult struct {
+	AutoProcessed bool   `json:"auto_processed"`
+	FinalStatus   string `json:"final_status"`
+}
+
+func (s *PaymentService) RequestRefund(ctx context.Context, oid, uid int64, reason string) (*RequestRefundResult, error) {
 	o, err := s.validateRefundRequest(ctx, oid, uid)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	u, err := s.userRepo.GetByID(ctx, o.UserID)
 	if err != nil {
-		return fmt.Errorf("get user: %w", err)
+		return nil, fmt.Errorf("get user: %w", err)
 	}
 	if u.Balance < o.Amount {
-		return infraerrors.BadRequest("BALANCE_NOT_ENOUGH", "refund amount exceeds balance")
+		return nil, infraerrors.BadRequest("BALANCE_NOT_ENOUGH", "refund amount exceeds balance")
 	}
 	nr := strings.TrimSpace(reason)
 	now := time.Now()
 	by := fmt.Sprintf("%d", uid)
 	c, err := s.entClient.PaymentOrder.Update().Where(paymentorder.IDEQ(oid), paymentorder.UserIDEQ(uid), paymentorder.StatusEQ(OrderStatusCompleted), paymentorder.OrderTypeEQ(payment.OrderTypeBalance)).SetStatus(OrderStatusRefundRequested).SetRefundRequestedAt(now).SetRefundRequestReason(nr).SetRefundRequestedBy(by).SetRefundAmount(o.Amount).Save(ctx)
 	if err != nil {
-		return fmt.Errorf("update: %w", err)
+		return nil, fmt.Errorf("update: %w", err)
 	}
 	if c == 0 {
-		return infraerrors.Conflict("CONFLICT", "order status changed")
+		return nil, infraerrors.Conflict("CONFLICT", "order status changed")
 	}
 	s.writeAuditLog(ctx, oid, "REFUND_REQUESTED", fmt.Sprintf("user:%d", uid), map[string]any{"amount": o.Amount, "reason": nr})
-	return nil
+
+	result := &RequestRefundResult{FinalStatus: OrderStatusRefundRequested}
+
+	// Auto-approval attempt — eligibility failure simply leaves the order in
+	// REFUND_REQUESTED for normal admin processing.
+	if s.isAutoRefundEligible(ctx, o) {
+		plan, planRes, perr := s.PrepareRefund(ctx, oid, o.Amount, nr, false, true)
+		if perr == nil && plan != nil && (planRes == nil || planRes.Success) {
+			execRes, execErr := s.ExecuteRefund(ctx, plan)
+			if execErr == nil && execRes != nil && execRes.Success {
+				result.AutoProcessed = true
+				result.FinalStatus = OrderStatusRefunded
+				s.writeAuditLog(ctx, oid, "REFUND_AUTO_APPROVED", fmt.Sprintf("user:%d", uid), map[string]any{"amount": o.Amount})
+			}
+		}
+	}
+
+	return result, nil
+}
+
+// isAutoRefundEligible returns true when both Plan B policy conditions are met.
+// Errors during checks are treated as "not eligible" so we fall back to admin review.
+func (s *PaymentService) isAutoRefundEligible(ctx context.Context, o *dbent.PaymentOrder) bool {
+	if o.PaidAt == nil || time.Since(*o.PaidAt) < autoRefundCooldownAfterPay {
+		return false
+	}
+	cutoff := time.Now().Add(-autoRefundWindow)
+	count, err := s.entClient.PaymentOrder.Query().
+		Where(
+			paymentorder.UserIDEQ(o.UserID),
+			paymentorder.IDNEQ(o.ID),
+			paymentorder.RefundAtGTE(cutoff),
+		).Count(ctx)
+	if err != nil || count > 0 {
+		return false
+	}
+	return true
 }
 
 func (s *PaymentService) validateRefundRequest(ctx context.Context, oid, uid int64) (*dbent.PaymentOrder, error) {
