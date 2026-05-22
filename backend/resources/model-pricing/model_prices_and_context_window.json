@@ -6146,5 +6146,29 @@
     "supports_system_messages": true,
     "supports_tool_choice": true,
     "supports_vision": true
+  },
+  "qwen3.5-plus": {
+    "input_cost_per_token": 4.57143e-07,
+    "output_cost_per_token": 2.74286e-06,
+    "litellm_provider": "openai_compat",
+    "max_input_tokens": 1000000,
+    "max_output_tokens": 8192,
+    "mode": "chat"
+  },
+  "qwen3.6-plus": {
+    "input_cost_per_token": 9.14286e-07,
+    "output_cost_per_token": 5.48571e-06,
+    "litellm_provider": "openai_compat",
+    "max_input_tokens": 1000000,
+    "max_output_tokens": 8192,
+    "mode": "chat"
+  },
+  "qwen3-coder": {
+    "input_cost_per_token": 9.14286e-07,
+    "output_cost_per_token": 3.65714e-06,
+    "litellm_provider": "openai_compat",
+    "max_input_tokens": 131072,
+    "max_output_tokens": 8192,
+    "mode": "chat"
   }
 }

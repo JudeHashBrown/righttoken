@@ -22,7 +22,29 @@ const (
 	PlatformOpenAI      = "openai"
 	PlatformGemini      = "gemini"
 	PlatformAntigravity = "antigravity"
+
+	// PlatformOpenAICompat handles upstreams that already speak OpenAI Chat
+	// Completions natively (no protocol translation needed). Routed through a
+	// thin passthrough handler — auth header replaced, body forwarded as-is.
+	// Per-provider account presets (Qwen, DeepSeek, Moonshot, etc.) all share
+	// this platform code path; the provider identity is carried by
+	// account.credentials.provider_label for display only.
+	PlatformOpenAICompat = "openai_compat"
+	// PlatformQwen is a UI-facing alias for openai_compat with Qwen defaults.
+	// The gateway treats it identically to PlatformOpenAICompat.
+	PlatformQwen = "qwen"
 )
+
+// IsOpenAICompatPlatform returns true for any platform handled by the
+// chat-completions passthrough path (PlatformOpenAICompat plus all provider
+// aliases such as PlatformQwen).
+func IsOpenAICompatPlatform(p string) bool {
+	switch p {
+	case PlatformOpenAICompat, PlatformQwen:
+		return true
+	}
+	return false
+}
 
 // Account type constants
 const (

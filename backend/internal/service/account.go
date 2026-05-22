@@ -872,6 +872,39 @@ func (a *Account) GetOpenAIAccessToken() string {
 	return a.GetCredential("access_token")
 }
 
+// IsOpenAICompat reports whether this account is part of the OpenAI-compatible
+// chat-completions passthrough family (Qwen, DeepSeek, Moonshot, etc.).
+func (a *Account) IsOpenAICompat() bool {
+	return domain.IsOpenAICompatPlatform(a.Platform)
+}
+
+// GetCompatBaseURL returns the upstream base URL for openai_compat accounts.
+// Trailing slashes are stripped; the gateway appends "/v1/chat/completions"
+// when building requests.
+func (a *Account) GetCompatBaseURL() string {
+	if !a.IsOpenAICompat() {
+		return ""
+	}
+	return strings.TrimRight(strings.TrimSpace(a.GetCredential("base_url")), "/")
+}
+
+// GetCompatAPIKey returns the API key used to authenticate against the upstream.
+func (a *Account) GetCompatAPIKey() string {
+	if !a.IsOpenAICompat() {
+		return ""
+	}
+	return strings.TrimSpace(a.GetCredential("api_key"))
+}
+
+// GetProviderLabel returns the admin-facing provider name (e.g. "Qwen",
+// "DeepSeek"). Falls back to the platform constant when unset.
+func (a *Account) GetProviderLabel() string {
+	if label := strings.TrimSpace(a.GetCredential("provider_label")); label != "" {
+		return label
+	}
+	return a.Platform
+}
+
 func (a *Account) GetOpenAIRefreshToken() string {
 	if !a.IsOpenAIOAuth() {
 		return ""

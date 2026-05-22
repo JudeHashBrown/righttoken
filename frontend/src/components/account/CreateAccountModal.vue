@@ -147,6 +147,19 @@
             <Icon name="cloud" size="sm" />
             Antigravity
           </button>
+          <button
+            type="button"
+            @click="form.platform = 'qwen'"
+            :class="[
+              'flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-all',
+              form.platform === 'qwen'
+                ? 'bg-white text-amber-600 shadow-sm dark:bg-dark-600 dark:text-amber-400'
+                : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
+            ]"
+          >
+            <Icon name="cloud" size="sm" />
+            Qwen
+          </button>
         </div>
       </div>
 
@@ -860,7 +873,9 @@
                 ? 'https://api.openai.com'
                 : form.platform === 'gemini'
                   ? 'https://generativelanguage.googleapis.com'
-                  : 'https://api.anthropic.com'
+                  : form.platform === 'qwen'
+                    ? 'https://dashscope.aliyuncs.com/compatible-mode'
+                    : 'https://api.anthropic.com'
             "
           />
           <p class="input-hint">{{ baseUrlHint }}</p>
@@ -877,7 +892,9 @@
                 ? 'sk-proj-...'
                 : form.platform === 'gemini'
                   ? 'AIza...'
-                  : 'sk-ant-...'
+                  : form.platform === 'qwen'
+                    ? 'sk-...'
+                    : 'sk-ant-...'
             "
           />
           <p class="input-hint">{{ apiKeyHint }}</p>
@@ -2873,6 +2890,7 @@ const oauthStepTitle = computed(() => {
 const baseUrlHint = computed(() => {
   if (form.platform === 'openai') return t('admin.accounts.openai.baseUrlHint')
   if (form.platform === 'gemini') return t('admin.accounts.gemini.baseUrlHint')
+  if (form.platform === 'qwen') return t('admin.accounts.qwen.baseUrlHint')
   return t('admin.accounts.baseUrlHint')
 })
 
@@ -3268,10 +3286,16 @@ watch(
         ? 'https://api.openai.com'
         : newPlatform === 'gemini'
           ? 'https://generativelanguage.googleapis.com'
-          : 'https://api.anthropic.com'
+          : newPlatform === 'qwen'
+            ? 'https://dashscope.aliyuncs.com/compatible-mode'
+            : 'https://api.anthropic.com'
     // Clear model-related settings
     allowedModels.value = []
     modelMappings.value = []
+    // Qwen: only API Key type supported — skip the account-type selector.
+    if (newPlatform === 'qwen') {
+      accountCategory.value = 'apikey'
+    }
     // Antigravity: 默认使用映射模式并填充默认映射
     if (newPlatform === 'antigravity') {
       antigravityModelRestrictionMode.value = 'mapping'
@@ -3951,7 +3975,9 @@ const handleSubmit = async () => {
       ? 'https://api.openai.com'
       : form.platform === 'gemini'
         ? 'https://generativelanguage.googleapis.com'
-        : 'https://api.anthropic.com'
+        : form.platform === 'qwen'
+          ? 'https://dashscope.aliyuncs.com/compatible-mode'
+          : 'https://api.anthropic.com'
 
   // Build credentials with optional model mapping
   const credentials: Record<string, unknown> = {
@@ -3960,6 +3986,11 @@ const handleSubmit = async () => {
   }
   if (form.platform === 'gemini') {
     credentials.tier_id = geminiTierAIStudio.value
+  }
+  if (form.platform === 'qwen') {
+    // provider_label is the admin-facing tag shown in account lists.
+    // For Qwen the platform constant doubles as the label.
+    credentials.provider_label = 'Qwen'
   }
 
   // Add model mapping if configured（OpenAI 开启自动透传时不应用）

@@ -131,8 +131,6 @@ export default {
     trust: {
       enterprise: '企业采购可询',
       enterpriseDesc: '团队 / 企业方案支持定制',
-      invoice: '可开正规发票',
-      invoiceDesc: '增值税普票 / 专票均可',
       lifetime: '终身售后保障',
       lifetimeDesc: '账号有效期内持续服务'
     },
@@ -2669,6 +2667,10 @@ export default {
       apiKeyRequired: 'API Key *',
       apiKeyPlaceholder: 'sk-ant-api03-...',
       apiKeyHint: '您的 Claude Console API Key',
+      // Qwen / OpenAI 兼容供应商通用提示
+      qwen: {
+        baseUrlHint: '阿里云灵积兼容端点：https://dashscope.aliyuncs.com/compatible-mode（或第三方 OpenAI 兼容站点）'
+      },
       // OpenAI specific hints
       openai: {
         baseUrlHint: '留空使用官方 OpenAI API',

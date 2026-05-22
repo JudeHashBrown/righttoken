@@ -131,8 +131,6 @@ export default {
     trust: {
       enterprise: 'Enterprise Procurement',
       enterpriseDesc: 'Team / B2B plans available on request',
-      invoice: 'Tax Invoices',
-      invoiceDesc: 'Standard or VAT invoices supported',
       lifetime: 'Lifetime Support',
       lifetimeDesc: 'Continuous service throughout account validity'
     },
@@ -2519,6 +2517,10 @@ export default {
       apiKeyRequired: 'API Key *',
       apiKeyPlaceholder: 'sk-ant-api03-...',
       apiKeyHint: 'Your Claude Console API Key',
+      // Qwen / OpenAI-compatible provider hints
+      qwen: {
+        baseUrlHint: 'DashScope compatible endpoint: https://dashscope.aliyuncs.com/compatible-mode (or any OpenAI-compatible site)'
+      },
       // OpenAI specific hints
       openai: {
         baseUrlHint: 'Leave default for official OpenAI API',
