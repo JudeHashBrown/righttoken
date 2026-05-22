@@ -137,13 +137,13 @@ export default {
     // 定价区块
     pricing: {
       title: '透明定价',
-      subtitle: '比官方 API 便宜 30-70%，按量计费、永不过期',
+      subtitle: '比官方 API 便宜 5-70%，按量计费、永不过期',
       tabs: {
         standard: '按量充值',
         shared: '包月套餐'
       },
       standard: {
-        headline: '比官方 API 直降 30-70%',
+        headline: '比官方 API 直降 5-70%',
         subheadline: '账号资源池化共享，价格直接打折给你',
         headers: {
           model: '模型',
@@ -179,6 +179,14 @@ export default {
             chars: '≈ 2000万 – 3000万中文字符',
             articles: '≈ 2.5万 – 4万篇短内容（500–800字）',
             bestFor: '适合：快速生成 / 轻量任务 / 辅助处理'
+          },
+          claudeOpus: {
+            tag: '95 折顶配',
+            tokens: '约 60 万 输出 tokens',
+            chars: '≈ 60 万 – 100 万中文字符',
+            articles: '≈ 600 – 1000 篇中等长度文章（800–1200 字）',
+            code: '≈ 4 万 – 7 万行常规代码',
+            bestFor: '适合：深度推理 / 复杂编程 / Claude Code agent'
           }
         },
         notes: {

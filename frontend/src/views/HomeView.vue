@@ -572,8 +572,8 @@
               </p>
             </div>
 
-            <!-- 3 model cards -->
-            <div class="grid gap-4 md:grid-cols-3">
+            <!-- 4 model cards -->
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <!-- gpt-5 -->
               <div class="rounded-xl bg-white/70 p-4 dark:bg-dark-800/70">
                 <div class="mb-2 flex items-center gap-2">
@@ -626,6 +626,25 @@
                 </ul>
                 <div class="mt-3 border-t border-gray-200/50 pt-2 text-xs text-gray-700 dark:border-dark-700/50 dark:text-dark-200">
                   {{ t('home.pricing.example.models.geminiFlash.bestFor') }}
+                </div>
+              </div>
+
+              <!-- claude opus 4-7 -->
+              <div class="rounded-xl bg-white/70 p-4 dark:bg-dark-800/70">
+                <div class="mb-2 flex items-center gap-2">
+                  <span class="font-mono text-sm font-semibold text-primary-600 dark:text-primary-400">Claude Opus 4.7</span>
+                  <span class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">
+                    {{ t('home.pricing.example.models.claudeOpus.tag') }}
+                  </span>
+                </div>
+                <ul class="space-y-1 text-xs leading-relaxed text-gray-600 dark:text-dark-300">
+                  <li>{{ t('home.pricing.example.models.claudeOpus.tokens') }}</li>
+                  <li>{{ t('home.pricing.example.models.claudeOpus.chars') }}</li>
+                  <li>{{ t('home.pricing.example.models.claudeOpus.articles') }}</li>
+                  <li>{{ t('home.pricing.example.models.claudeOpus.code') }}</li>
+                </ul>
+                <div class="mt-3 border-t border-gray-200/50 pt-2 text-xs text-gray-700 dark:border-dark-700/50 dark:text-dark-200">
+                  {{ t('home.pricing.example.models.claudeOpus.bestFor') }}
                 </div>
               </div>
             </div>
@@ -833,6 +852,21 @@
               >{{ t('home.providers.supported') }}</span
             >
           </div>
+          <!-- Claude - Supported -->
+          <div
+            class="flex items-center gap-2 rounded-xl border border-primary-200 bg-white/60 px-5 py-3 ring-1 ring-primary-500/20 backdrop-blur-sm dark:border-primary-800 dark:bg-dark-800/60"
+          >
+            <div
+              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-600"
+            >
+              <span class="text-xs font-bold text-white">C</span>
+            </div>
+            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.providers.claude') }}</span>
+            <span
+              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
+              >{{ t('home.providers.supported') }}</span
+            >
+          </div>
           <!-- Gemini - Supported -->
           <div
             class="flex items-center gap-2 rounded-xl border border-primary-200 bg-white/60 px-5 py-3 ring-1 ring-primary-500/20 backdrop-blur-sm dark:border-primary-800 dark:bg-dark-800/60"
@@ -1032,6 +1066,10 @@ const pricingRows = [
   { model: 'gpt-4o-mini',      inputUsd: '0.15', outputUsd: '0.60', userIn: '0.11',  userOut: '0.42', discount: '30%' },
   { model: 'o3',               inputUsd: '2.00', outputUsd: '8.00', userIn: '1.40',  userOut: '5.60', discount: '30%' },
   { model: 'o4-mini',          inputUsd: '1.10', outputUsd: '4.40', userIn: '0.77',  userOut: '3.08', discount: '30%' },
+  { model: 'claude-opus-4-7',  inputUsd: '5.00', outputUsd: '25.00', userIn: '4.75', userOut: '23.75', discount: '5%' },
+  { model: 'claude-opus-4-6',  inputUsd: '5.00', outputUsd: '25.00', userIn: '4.75', userOut: '23.75', discount: '5%' },
+  { model: 'claude-sonnet-4-5', inputUsd: '3.00', outputUsd: '15.00', userIn: '2.85', userOut: '14.25', discount: '5%' },
+  { model: 'claude-haiku-4-5', inputUsd: '1.00', outputUsd: '5.00',  userIn: '0.95',  userOut: '4.75',  discount: '5%' },
   { model: 'gemini-2.5-pro',   inputUsd: '1.25', outputUsd: '10',   userIn: '0.38',  userOut: '3.00', discount: '70%' },
   { model: 'gemini-2.5-flash', inputUsd: '0.30', outputUsd: '2.50', userIn: '0.09',  userOut: '0.75', discount: '70%' }
 ]

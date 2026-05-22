@@ -137,13 +137,13 @@ export default {
     // Pricing section
     pricing: {
       title: 'Transparent Pricing',
-      subtitle: '30-70% off official APIs. Pay-as-you-go, credits never expire.',
+      subtitle: '5-70% off official APIs. Pay-as-you-go, credits never expire.',
       tabs: {
         standard: 'Pay-as-you-go',
         shared: 'Monthly Plans'
       },
       standard: {
-        headline: '30-70% off official API rates',
+        headline: '5-70% off official API rates',
         subheadline: 'Pooled subscription accounts, savings passed to you.',
         headers: {
           model: 'Model',
@@ -179,6 +179,14 @@ export default {
             chars: '≈ 20M – 30M Chinese characters',
             articles: '≈ 25K – 40K short pieces (500–800 chars)',
             bestFor: 'Best for: rapid generation / light tasks / assistive workflows'
+          },
+          claudeOpus: {
+            tag: '95% of official',
+            tokens: '~600K output tokens',
+            chars: '≈ 600K – 1M Chinese characters',
+            articles: '≈ 600 – 1000 medium articles (800–1200 chars)',
+            code: '≈ 40K – 70K lines of code',
+            bestFor: 'Best for: deep reasoning / complex coding / Claude Code agent'
           }
         },
         notes: {
