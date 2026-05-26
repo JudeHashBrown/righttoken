@@ -137,14 +137,14 @@ export default {
     // 定价区块
     pricing: {
       title: '透明定价',
-      subtitle: '比官方 API 便宜 5-70%，按量计费、永不过期',
+      subtitle: '比官方 API 便宜 50-70%，按量计费、永不过期',
       tabs: {
         standard: '按量充值',
         shared: '包月套餐'
       },
       standard: {
-        headline: '比官方 API 直降 5-70%',
-        subheadline: '账号资源池化共享，价格直接打折给你',
+        headline: '比官方 API 直降 50-70%',
+        subheadline: '',
         headers: {
           model: '模型',
           input: '输入价格',
@@ -181,11 +181,11 @@ export default {
             bestFor: '适合：快速生成 / 轻量任务 / 辅助处理'
           },
           claudeOpus: {
-            tag: '95 折顶配',
-            tokens: '约 60 万 输出 tokens',
-            chars: '≈ 60 万 – 100 万中文字符',
-            articles: '≈ 600 – 1000 篇中等长度文章（800–1200 字）',
-            code: '≈ 4 万 – 7 万行常规代码',
+            tag: '5 折旗舰',
+            tokens: '约 110 万 输出 tokens',
+            chars: '≈ 110 万 – 180 万中文字符',
+            articles: '≈ 1200 – 2000 篇中等长度文章（800–1200 字）',
+            code: '≈ 8 万 – 14 万行常规代码',
             bestFor: '适合：深度推理 / 复杂编程 / Claude Code agent'
           }
         },
@@ -280,8 +280,83 @@ export default {
     },
     welcome: {
       title: '从这里开始',
-      subtitle: '选择左侧任意工具，查看一步步的部署与接入指南',
-      hint: '更多工具持续上线中'
+      subtitle: '选择下面的模型快速上手，或查看更多工具配置教程',
+      hint: '更多教程持续上线中'
+    },
+    sections: {
+      models: '模型快速上手（5 分钟）',
+      tools: '工具教程'
+    },
+    quickstart: {
+      prep: {
+        title: '准备 sk-key',
+        desc: '在「API 密钥」页面创建一把绑定 {group} 分组的 sk-key，复制备用。'
+      },
+      install: {
+        title: '安装并启动 CLI',
+        note: '安装完成后，在终端运行 `{cli}` 即可进入交互式对话。'
+      },
+      python: {
+        title: 'Python SDK 直调（可选）'
+      },
+      vscode: {
+        title: '在 VS Code 里使用'
+      },
+      faq: {
+        title: '常见问题'
+      }
+    },
+    models: {
+      claude: {
+        cardName: 'Claude on macOS / Windows',
+        cardTagline: '官方 Claude Code CLI，编程 agent 首选',
+        title: '用 Claude（5 分钟）',
+        tagline: '推荐 Claude Code CLI — Anthropic 官方编程 agent',
+        groupName: 'Claude',
+        vscode: {
+          option1Title: '推荐：Claude Code 官方 VS Code 扩展',
+          option1Step1: '打开 VS Code → 扩展市场（Cmd/Ctrl + Shift + X）→ 搜索 "Claude Code" 安装官方扩展',
+          option1Step2: '确认前面 macOS/Windows 章节里两个环境变量已设：ANTHROPIC_BASE_URL + ANTHROPIC_API_KEY',
+          option1Step3: 'Cmd/Ctrl + Shift + P → 输入 "Claude Code: Start" → 启动侧面板',
+          option1Step4: '在面板里直接对话，Claude 能自动读取你打开的文件和工作区上下文',
+          option2Title: '最简方式：VS Code 集成终端',
+          option2Desc: '按 Ctrl + ` 打开 VS Code 终端，直接运行 claude 即可，跟普通 macOS/Windows 章节一致。'
+        },
+        faq: {
+          timeout: '超时报错：加 `export ANTHROPIC_TIMEOUT=300000`（5 分钟容错）',
+          models: '可用模型：后台「分组」→ Claude 组里查看'
+        }
+      },
+      codex: {
+        cardName: 'GPT on macOS / Windows',
+        cardTagline: 'OpenAI 官方 Codex CLI，编程 agent 体验',
+        title: '用 GPT / Codex（5 分钟）',
+        tagline: '推荐 Codex CLI — OpenAI 官方编程 agent',
+        groupName: 'OpenAI',
+        vscode: {
+          intro: 'Codex 暂无官方 VS Code 扩展，直接用 VS Code 集成终端跑 CLI 即可：',
+          step1: 'VS Code 打开你的项目 → 终端面板（Ctrl + `）',
+          step2: '确认 OPENAI_BASE_URL 和 OPENAI_API_KEY 已在 ~/.zshrc（macOS）或系统环境变量（Windows）里',
+          step3: '终端跑 codex，开始对话',
+          step4: 'Codex 会读取当前工作目录，可以执行命令、改文件',
+          benefit: '边写代码边对话，Codex 的修改直接在 VS Code 编辑器里看到。'
+        },
+        faq: {
+          model: '默认模型可能是 gpt-5 或 gpt-4o，用 --model 参数切换',
+          models: '可用模型：后台「分组」→ OpenAI 组里查看'
+        }
+      },
+      gemini: {
+        cardName: 'Gemini on macOS / Windows',
+        cardTagline: 'Google 官方 Gemini CLI，原生协议接入',
+        title: '用 Gemini（5 分钟）',
+        tagline: '推荐 Gemini CLI — Google 官方编程 agent',
+        groupName: 'Gemini',
+        faq: {
+          model: '可选模型：gemini-2.5-pro / gemini-2.5-flash，用 --model 参数切',
+          endpoint: '注意 base URL 不带 /v1（Gemini 走 /v1beta 协议）'
+        }
+      }
     },
     common: {
       placeholderTitle: '内容即将上线',
@@ -525,6 +600,7 @@ export default {
     available: '可用',
     copiedToClipboard: '已复制到剪贴板',
     copied: '已复制',
+    copy: '复制',
     copyFailed: '复制失败',
     verifying: '验证中...',
     processing: '处理中...',
@@ -735,6 +811,29 @@ export default {
   },
 
   // Dashboard
+  welcome: {
+    title: '👋 欢迎使用 RightToken',
+    intro: '一站式 AI API 网关。调用主流大模型，国内直连免梯子，按 token 计费、余额永不过期、支持退款。',
+    enterprise: '大额用量或企业用户可联系客服咨询专属折扣 / 定制方案。',
+    stepsTitle: '三步开始使用',
+    steps: {
+      topup: {
+        title: '充值',
+        desc: '微信扫码即可，金额由你决定，余额永不过期。'
+      },
+      key: {
+        title: '创建 API Key',
+        desc: '在「API 密钥」页面新建一把 sk-key，绑定到你想用的模型分组。'
+      },
+      code: {
+        title: '复制到你的代码',
+        desc: '在你的 SDK 里设置 base_url 为 https://righttoken.ai，把 sk-key 填进去即可开始调用。'
+      }
+    },
+    createKey: '立即创建 Key',
+    tutorials: '查看教程',
+    dismiss: '我知道了'
+  },
   dashboard: {
     title: '仪表盘',
     welcomeMessage: '欢迎回来！这是您账户的概览。',

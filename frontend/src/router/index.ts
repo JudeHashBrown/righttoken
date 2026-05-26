@@ -52,6 +52,24 @@ const routes: RouteRecordRaw[] = [
         meta: { requiresAuth: false, title: 'Tutorials', titleKey: 'tutorials.nav.title' }
       },
       {
+        path: 'claude',
+        name: 'TutorialClaudeQuickstart',
+        component: () => import('@/views/tutorials/ClaudeQuickstartView.vue'),
+        meta: { requiresAuth: false, title: 'Claude Quickstart' }
+      },
+      {
+        path: 'codex',
+        name: 'TutorialCodexQuickstart',
+        component: () => import('@/views/tutorials/CodexQuickstartView.vue'),
+        meta: { requiresAuth: false, title: 'Codex Quickstart' }
+      },
+      {
+        path: 'gemini',
+        name: 'TutorialGeminiQuickstart',
+        component: () => import('@/views/tutorials/GeminiQuickstartView.vue'),
+        meta: { requiresAuth: false, title: 'Gemini Quickstart' }
+      },
+      {
         path: 'hermes',
         name: 'TutorialHermes',
         component: () => import('@/views/tutorials/ToolHermesView.vue'),

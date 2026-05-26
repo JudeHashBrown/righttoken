@@ -78,9 +78,16 @@
             class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-dark-700 dark:bg-dark-800 dark:text-dark-200"
           >
             <option value="">— {{ t('tutorials.sidebar.title') }} —</option>
-            <option v-for="t in tools" :key="t.id" :value="t.id">
-              {{ $t(`tutorials.tools.${t.id}.name`) }}
-            </option>
+            <optgroup :label="t('tutorials.sections.models')">
+              <option v-for="m in models" :key="m.id" :value="m.id">
+                {{ $t(`tutorials.models.${m.id}.cardName`) }}
+              </option>
+            </optgroup>
+            <optgroup :label="t('tutorials.sections.tools')">
+              <option v-for="t in tools" :key="t.id" :value="t.id">
+                {{ $t(`tutorials.tools.${t.id}.name`) }}
+              </option>
+            </optgroup>
           </select>
         </div>
 
@@ -88,8 +95,29 @@
         <div
           class="sticky top-6 hidden rounded-2xl border border-gray-200/50 bg-white/60 p-4 backdrop-blur-sm lg:block dark:border-dark-700/50 dark:bg-dark-800/60"
         >
+          <!-- Models section -->
           <p class="mb-3 px-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-dark-400">
-            {{ t('tutorials.sidebar.title') }}
+            ⭐ {{ t('tutorials.sections.models') }}
+          </p>
+          <nav class="mb-5 space-y-1">
+            <router-link
+              v-for="m in models"
+              :key="m.id"
+              :to="`/tutorials/${m.id}`"
+              class="block rounded-lg px-3 py-2 text-sm transition-colors"
+              :class="
+                $route.path === `/tutorials/${m.id}`
+                  ? 'bg-primary-500/10 font-medium text-primary-700 dark:bg-primary-500/15 dark:text-primary-300'
+                  : 'text-gray-700 hover:bg-gray-100 dark:text-dark-300 dark:hover:bg-dark-700'
+              "
+            >
+              {{ $t(`tutorials.models.${m.id}.cardName`) }}
+            </router-link>
+          </nav>
+
+          <!-- Tools section -->
+          <p class="mb-3 px-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-dark-400">
+            🔧 {{ t('tutorials.sections.tools') }}
           </p>
           <nav class="space-y-1">
             <router-link
@@ -140,8 +168,14 @@ const router = useRouter()
 const authStore = useAuthStore()
 const appStore = useAppStore()
 
+// Model quickstart list (top section)
+const models = [
+  { id: 'claude' },
+  { id: 'codex' },
+  { id: 'gemini' }
+] as const
+
 // Canonical tool list — order: Hermes, Workbuddy, OpenClaw (per user spec)
-// Add new tools here; both desktop sidebar and mobile dropdown read from this array.
 const tools = [
   { id: 'hermes' },
   { id: 'workbuddy' },

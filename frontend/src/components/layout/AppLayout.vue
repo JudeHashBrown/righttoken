@@ -19,6 +19,9 @@
         <slot />
       </main>
     </div>
+
+    <!-- Global welcome modal -->
+    <WelcomeModal :show="showWelcome" @close="dismiss" />
   </div>
 </template>
 
@@ -29,23 +32,29 @@ import { useAppStore } from '@/stores'
 import { useAuthStore } from '@/stores/auth'
 import { useOnboardingTour } from '@/composables/useOnboardingTour'
 import { useOnboardingStore } from '@/stores/onboarding'
+import { useWelcomeModal } from '@/composables/useWelcomeModal'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
+import WelcomeModal from '@/components/user/WelcomeModal.vue'
 
 const appStore = useAppStore()
 const authStore = useAuthStore()
 const sidebarCollapsed = computed(() => appStore.sidebarCollapsed)
 const isAdmin = computed(() => authStore.user?.role === 'admin')
 
+// driver.js tour 暂时关闭自动启动（保留代码，将来可重新开）
 const { replayTour } = useOnboardingTour({
   storageKey: isAdmin.value ? 'admin_guide' : 'user_guide',
-  autoStart: true
+  autoStart: false
 })
 
 const onboardingStore = useOnboardingStore()
+const { showWelcome, dismiss, showIfFirstTime } = useWelcomeModal()
 
 onMounted(() => {
   onboardingStore.setReplayCallback(replayTour)
+  // 首次登录（任何 page 进入 AppLayout）显示欢迎弹窗
+  showIfFirstTime()
 })
 
 defineExpose({ replayTour })

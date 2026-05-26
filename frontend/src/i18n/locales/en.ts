@@ -137,14 +137,14 @@ export default {
     // Pricing section
     pricing: {
       title: 'Transparent Pricing',
-      subtitle: '5-70% off official APIs. Pay-as-you-go, credits never expire.',
+      subtitle: '50-70% off official APIs. Pay-as-you-go, credits never expire.',
       tabs: {
         standard: 'Pay-as-you-go',
         shared: 'Monthly Plans'
       },
       standard: {
-        headline: '5-70% off official API rates',
-        subheadline: 'Pooled subscription accounts, savings passed to you.',
+        headline: '50-70% off official API rates',
+        subheadline: '',
         headers: {
           model: 'Model',
           input: 'Input',
@@ -181,11 +181,11 @@ export default {
             bestFor: 'Best for: rapid generation / light tasks / assistive workflows'
           },
           claudeOpus: {
-            tag: '95% of official',
-            tokens: '~600K output tokens',
-            chars: '≈ 600K – 1M Chinese characters',
-            articles: '≈ 600 – 1000 medium articles (800–1200 chars)',
-            code: '≈ 40K – 70K lines of code',
+            tag: '50% off flagship',
+            tokens: '~1.1M output tokens',
+            chars: '≈ 1.1M – 1.8M Chinese characters',
+            articles: '≈ 1200 – 2000 medium articles (800–1200 chars)',
+            code: '≈ 80K – 140K lines of code',
             bestFor: 'Best for: deep reasoning / complex coding / Claude Code agent'
           }
         },
@@ -280,8 +280,83 @@ export default {
     },
     welcome: {
       title: 'Start here',
-      subtitle: 'Pick any tool on the left to see step-by-step deployment guides',
-      hint: 'More tools coming soon'
+      subtitle: 'Pick a model below for a 5-minute quickstart, or browse tool guides below',
+      hint: 'More guides coming soon'
+    },
+    sections: {
+      models: 'Model Quickstart (5 minutes)',
+      tools: 'Tool Tutorials'
+    },
+    quickstart: {
+      prep: {
+        title: 'Create an sk-key',
+        desc: 'On the "API Keys" page, create a key bound to the {group} group and copy it.'
+      },
+      install: {
+        title: 'Install and launch the CLI',
+        note: 'After install, run `{cli}` in your terminal to enter the interactive chat.'
+      },
+      python: {
+        title: 'Python SDK direct call (optional)'
+      },
+      vscode: {
+        title: 'Use it inside VS Code'
+      },
+      faq: {
+        title: 'FAQ'
+      }
+    },
+    models: {
+      claude: {
+        cardName: 'Claude on macOS / Windows',
+        cardTagline: 'Official Claude Code CLI — the top coding agent',
+        title: 'Use Claude (5 minutes)',
+        tagline: 'Recommended: Claude Code CLI — Anthropic\'s official coding agent',
+        groupName: 'Claude',
+        vscode: {
+          option1Title: 'Recommended: official Claude Code VS Code extension',
+          option1Step1: 'Open VS Code → Extensions (Cmd/Ctrl + Shift + X) → search "Claude Code" and install the official extension',
+          option1Step2: 'Make sure the two env vars from the macOS/Windows section are set: ANTHROPIC_BASE_URL + ANTHROPIC_API_KEY',
+          option1Step3: 'Cmd/Ctrl + Shift + P → type "Claude Code: Start" → opens the side panel',
+          option1Step4: 'Chat directly in the panel — Claude can read the file you have open and the whole workspace',
+          option2Title: 'Easiest: VS Code integrated terminal',
+          option2Desc: 'Press Ctrl + ` to open the VS Code terminal, then just run `claude` — same as the macOS/Windows steps.'
+        },
+        faq: {
+          timeout: 'Timeout errors: set `export ANTHROPIC_TIMEOUT=300000` (5-minute tolerance)',
+          models: 'Supported models: check the Claude group in admin > Groups'
+        }
+      },
+      codex: {
+        cardName: 'GPT on macOS / Windows',
+        cardTagline: 'OpenAI Codex CLI — official coding agent experience',
+        title: 'Use GPT / Codex (5 minutes)',
+        tagline: 'Recommended: Codex CLI — OpenAI\'s official coding agent',
+        groupName: 'OpenAI',
+        vscode: {
+          intro: 'Codex has no official VS Code extension; just run the CLI from VS Code\'s integrated terminal:',
+          step1: 'Open your project in VS Code → terminal panel (Ctrl + `)',
+          step2: 'Make sure OPENAI_BASE_URL and OPENAI_API_KEY are set in ~/.zshrc (macOS) or system env (Windows)',
+          step3: 'Run `codex` in the terminal — start chatting',
+          step4: 'Codex picks up your working directory; it can run commands and edit files',
+          benefit: 'Chat while you code — Codex\'s edits show up directly in the VS Code editor.'
+        },
+        faq: {
+          model: 'Default model may be gpt-5 or gpt-4o; switch with --model',
+          models: 'Supported models: check the OpenAI group in admin > Groups'
+        }
+      },
+      gemini: {
+        cardName: 'Gemini on macOS / Windows',
+        cardTagline: 'Google\'s official Gemini CLI, native protocol',
+        title: 'Use Gemini (5 minutes)',
+        tagline: 'Recommended: Gemini CLI — Google\'s official coding agent',
+        groupName: 'Gemini',
+        faq: {
+          model: 'Available models: gemini-2.5-pro / gemini-2.5-flash, switch with --model',
+          endpoint: 'Note: base URL has no /v1 suffix (Gemini uses the /v1beta protocol)'
+        }
+      }
     },
     common: {
       placeholderTitle: 'Content coming soon',
@@ -525,6 +600,7 @@ export default {
     available: 'Available',
     copiedToClipboard: 'Copied to clipboard',
     copied: 'Copied',
+    copy: 'Copy',
     copyFailed: 'Failed to copy',
     verifying: 'Verifying...',
     processing: 'Processing...',
@@ -736,6 +812,29 @@ export default {
   },
 
   // Dashboard
+  welcome: {
+    title: '👋 Welcome to RightToken',
+    intro: 'One-stop AI API gateway. Call all mainstream LLMs without a VPN from China, pay per token, balance never expires, refundable.',
+    enterprise: 'Enterprise and high-volume users — contact support for custom discounts and tailored plans.',
+    stepsTitle: 'Three steps to get started',
+    steps: {
+      topup: {
+        title: 'Top up',
+        desc: 'Scan the WeChat QR code, any amount works, balance never expires.'
+      },
+      key: {
+        title: 'Create an API Key',
+        desc: 'Generate a sk-key on the "API Keys" page, bind it to the model group you want to use.'
+      },
+      code: {
+        title: 'Plug into your code',
+        desc: 'Set base_url to https://righttoken.ai in your SDK and paste the sk-key to start calling.'
+      }
+    },
+    createKey: 'Create a Key',
+    tutorials: 'View Tutorials',
+    dismiss: 'Got it'
+  },
   dashboard: {
     title: 'Dashboard',
     welcomeMessage: "Welcome back! Here's an overview of your account.",

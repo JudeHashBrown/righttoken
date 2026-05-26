@@ -1066,10 +1066,10 @@ const pricingRows = [
   { model: 'gpt-4o-mini',      inputUsd: '0.15', outputUsd: '0.60', userIn: '0.11',  userOut: '0.42', discount: '30%' },
   { model: 'o3',               inputUsd: '2.00', outputUsd: '8.00', userIn: '1.40',  userOut: '5.60', discount: '30%' },
   { model: 'o4-mini',          inputUsd: '1.10', outputUsd: '4.40', userIn: '0.77',  userOut: '3.08', discount: '30%' },
-  { model: 'claude-opus-4-7',  inputUsd: '5.00', outputUsd: '25.00', userIn: '4.75', userOut: '23.75', discount: '5%' },
-  { model: 'claude-opus-4-6',  inputUsd: '5.00', outputUsd: '25.00', userIn: '4.75', userOut: '23.75', discount: '5%' },
-  { model: 'claude-sonnet-4-5', inputUsd: '3.00', outputUsd: '15.00', userIn: '2.85', userOut: '14.25', discount: '5%' },
-  { model: 'claude-haiku-4-5', inputUsd: '1.00', outputUsd: '5.00',  userIn: '0.95',  userOut: '4.75',  discount: '5%' },
+  { model: 'claude-opus-4-7',  inputUsd: '5.00', outputUsd: '25.00', userIn: '2.50', userOut: '12.50', discount: '50%' },
+  { model: 'claude-opus-4-6',  inputUsd: '5.00', outputUsd: '25.00', userIn: '2.50', userOut: '12.50', discount: '50%' },
+  { model: 'claude-sonnet-4-5', inputUsd: '3.00', outputUsd: '15.00', userIn: '1.50', userOut: '7.50',  discount: '50%' },
+  { model: 'claude-haiku-4-5', inputUsd: '1.00', outputUsd: '5.00',  userIn: '0.50',  userOut: '2.50',  discount: '50%' },
   { model: 'gemini-2.5-pro',   inputUsd: '1.25', outputUsd: '10',   userIn: '0.38',  userOut: '3.00', discount: '70%' },
   { model: 'gemini-2.5-flash', inputUsd: '0.30', outputUsd: '2.50', userIn: '0.09',  userOut: '0.75', discount: '70%' }
 ]
