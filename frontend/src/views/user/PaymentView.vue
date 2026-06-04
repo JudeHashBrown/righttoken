@@ -60,6 +60,7 @@
               />
               <p v-if="amountError" class="mt-2 text-xs text-amber-600 dark:text-amber-300">{{ amountError }}</p>
             </div>
+            <ValueEstimateCard v-if="validAmount > 0" :amount="validAmount" />
             <div v-if="enabledMethods.length >= 1" class="card p-6">
               <PaymentMethodSelector
                 :methods="methodOptions"
@@ -260,6 +261,7 @@ import { isMobileDevice } from '@/utils/device'
 import type { SubscriptionPlan, CheckoutInfoResponse } from '@/types/payment'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import AmountInput from '@/components/payment/AmountInput.vue'
+import ValueEstimateCard from '@/components/payment/ValueEstimateCard.vue'
 import PaymentMethodSelector from '@/components/payment/PaymentMethodSelector.vue'
 import { METHOD_ORDER, POPUP_WINDOW_FEATURES } from '@/components/payment/providerConfig'
 import { platformAccentBarClass, platformBadgeLightClass, platformBadgeClass, platformTextClass, platformLabel } from '@/utils/platformColors'
@@ -288,7 +290,7 @@ const loading = ref(true)
 const submitting = ref(false)
 const errorMessage = ref('')
 const activeTab = ref<'recharge' | 'subscription'>('recharge')
-const amount = ref<number | null>(null)
+const amount = ref<number | null>(20)
 const selectedMethod = ref('')
 const selectedPlan = ref<SubscriptionPlan | null>(null)
 const previewImage = ref('')

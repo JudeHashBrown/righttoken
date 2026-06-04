@@ -5738,6 +5738,21 @@ export default {
     fee: '手续费',
     actualPay: '实付金额',
     createOrder: '确认支付',
+    valueEstimate: {
+      title: '¥{amount} 大概可以用',
+      unitTokens: '总 tokens（含输入+输出）',
+      unitArticles: '篇中等文章（约 1000 字）',
+      unitCodeLines: '次代码改动',
+      claude: {
+        title: 'Claude Opus',
+        bestFor: '深度推理 / 复杂编程 / Claude Code'
+      },
+      gpt: {
+        title: 'GPT-5',
+        bestFor: '通用对话 / 写作 / 多轮任务'
+      },
+      footnote: '按 4:1 输入输出比 + 当前折扣 + 中等缓存命中率估算，实际消耗取决于上下文长度与对话内容。'
+    },
     methods: {
       easypay: '易支付',
       alipay: '支付宝',

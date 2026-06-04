@@ -5550,6 +5550,21 @@ export default {
     fee: 'Fee',
     actualPay: 'Actual Payment',
     createOrder: 'Confirm Payment',
+    valueEstimate: {
+      title: '¥{amount} roughly gets you',
+      unitTokens: 'total tokens (input + output)',
+      unitArticles: 'medium articles (~1000 chars)',
+      unitCodeLines: 'code edits',
+      claude: {
+        title: 'Claude Opus',
+        bestFor: 'Deep reasoning / complex coding / Claude Code'
+      },
+      gpt: {
+        title: 'GPT-5',
+        bestFor: 'General chat / writing / multi-turn tasks'
+      },
+      footnote: 'Estimated against 4:1 input/output ratio, current discount, and a moderate cache hit rate. Actual usage depends on context length and conversation.'
+    },
     methods: {
       easypay: 'EasyPay',
       alipay: 'Alipay',
