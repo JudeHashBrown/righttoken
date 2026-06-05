@@ -5844,6 +5844,7 @@ export default {
       pendingReview: '退款申请已提交，请等待人工审核'
     },
     stripeLoadFailed: '支付组件加载失败，请刷新页面重试',
+    stripeNetworkBlocked: '微信支付组件加载失败，可能原因：\n① 浏览器扩展拦截（请尝试无痕窗口）\n② 网络不通畅（请开启代理 / 切换网络后重试）\n③ 浏览器不兼容（建议使用 Safari 或最新版 Chrome）\n\n如多次失败请联系客服微信：RightToken',
     stripeMissingParams: '缺少订单ID或支付密钥',
     stripeNotConfigured: 'Stripe 未配置',
     errors: {

@@ -227,6 +227,12 @@ func normalizeCodexModel(model string) string {
 
 	normalized := strings.ToLower(modelID)
 
+	if strings.Contains(normalized, "gpt-5.5-pro") || strings.Contains(normalized, "gpt 5.5 pro") {
+		return "gpt-5.5-pro"
+	}
+	if strings.Contains(normalized, "gpt-5.5") || strings.Contains(normalized, "gpt 5.5") {
+		return "gpt-5.5"
+	}
 	if strings.Contains(normalized, "gpt-5.4-mini") || strings.Contains(normalized, "gpt 5.4 mini") {
 		return "gpt-5.4-mini"
 	}
@@ -276,9 +282,6 @@ func normalizeCodexModel(model string) string {
 }
 
 func normalizeOpenAIModelForUpstream(account *Account, model string) string {
-	if account == nil || account.Type == AccountTypeOAuth {
-		return normalizeCodexModel(model)
-	}
 	return strings.TrimSpace(model)
 }
 

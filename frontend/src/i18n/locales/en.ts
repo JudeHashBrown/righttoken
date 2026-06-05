@@ -5656,6 +5656,7 @@ export default {
       pendingReview: 'Refund request submitted — pending manual review'
     },
     stripeLoadFailed: 'Failed to load payment component. Please refresh and try again.',
+    stripeNetworkBlocked: 'Failed to load WeChat Pay. Possible causes:\n(1) browser extension blocking it — try incognito mode\n(2) unstable network — enable a VPN or switch network\n(3) browser incompatibility — try Safari or the latest Chrome\n\nIf the issue persists, contact us on WeChat: RightToken',
     stripeMissingParams: 'Missing order ID or client secret',
     stripeNotConfigured: 'Stripe is not configured',
     errors: {

@@ -14,7 +14,7 @@
       <!-- Error -->
       <div v-if="error" class="space-y-3">
         <div
-          class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-700 dark:bg-red-900/30 dark:text-red-400"
+          class="whitespace-pre-line rounded-lg border border-red-200 bg-red-50 p-3 text-sm leading-relaxed text-red-600 dark:border-red-700 dark:bg-red-900/30 dark:text-red-400"
         >
           {{ error }}
         </div>
@@ -118,7 +118,7 @@ async function initStripe(clientSecret: string, publishableKey: string) {
   try {
     const { loadStripe } = await import('@stripe/stripe-js')
     const stripe = await loadStripe(publishableKey)
-    if (!stripe) { error.value = t('payment.stripeLoadFailed'); return }
+    if (!stripe) { error.value = t('payment.stripeNetworkBlocked'); return }
 
     const returnUrl = window.location.origin + '/payment/result?order_id=' + orderId + '&status=success'
 
@@ -143,7 +143,13 @@ async function initStripe(clientSecret: string, publishableKey: string) {
       }
     }
   } catch (err: unknown) {
-    error.value = extractApiErrorMessage(err, t('payment.stripeLoadFailed'))
+    console.error('[StripePopup] init failed:', err)
+    const msg = (err as { message?: string })?.message || ''
+    if (/load.*stripe|stripe\.js|chunk|network|failed.*fetch/i.test(msg)) {
+      error.value = t('payment.stripeNetworkBlocked')
+    } else {
+      error.value = extractApiErrorMessage(err, t('payment.stripeNetworkBlocked'))
+    }
   }
 }
 
