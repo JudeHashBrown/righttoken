@@ -4,8 +4,8 @@
     :tagline="t('tutorials.models.claude.tagline')"
     :prep-group-name="t('tutorials.models.claude.groupName')"
     cli-command="claude"
-    :macos-code="macosCode"
-    :windows-code="windowsCode"
+    :macos-steps="macosSteps"
+    :windows-steps="windowsSteps"
     :python-code="pythonCode"
   >
     <template #vscode>
@@ -28,37 +28,48 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import ModelQuickstart from '@/components/tutorials/ModelQuickstart.vue'
+import ModelQuickstart, { type InstallStep } from '@/components/tutorials/ModelQuickstart.vue'
 
 const { t } = useI18n()
 
-const macosCode = `# 安装 Node.js（已装跳过）
-brew install node
+const tt = (key: string) => t(`tutorials.models.claude.steps.${key}`)
 
-# 安装 Claude Code 官方 CLI
-npm install -g @anthropic-ai/claude-code
-
-# 设置环境变量（写入 ~/.zshrc 永久生效）
-cat >> ~/.zshrc << 'EOF'
+const macosSteps: InstallStep[] = [
+  { title: tt('macos.s1.title'), desc: tt('macos.s1.desc'), hint: tt('macos.s1.hint') },
+  {
+    title: tt('macos.s2.title'),
+    desc: tt('macos.s2.desc'),
+    code: '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
+    hint: tt('macos.s2.hint'),
+  },
+  { title: tt('macos.s3.title'), desc: tt('macos.s3.desc'), code: 'brew install node', hint: tt('macos.s3.hint') },
+  { title: tt('macos.s4.title'), desc: tt('macos.s4.desc'), code: 'npm install -g @anthropic-ai/claude-code', hint: tt('macos.s4.hint') },
+  {
+    title: tt('macos.s5.title'),
+    desc: tt('macos.s5.desc'),
+    code: `cat >> ~/.zshrc << 'EOF'
 export ANTHROPIC_BASE_URL="https://righttoken.ai"
 export ANTHROPIC_API_KEY="sk-你的key"
 EOF
-source ~/.zshrc
+source ~/.zshrc`,
+    hint: tt('macos.s5.hint'),
+  },
+  { title: tt('macos.s6.title'), desc: tt('macos.s6.desc'), code: 'claude', hint: tt('macos.s6.hint') },
+]
 
-# 启动
-claude`
-
-const windowsCode = `# 1. 从 nodejs.org 下载安装 Node.js
-
-# 2. PowerShell 跑：
-npm install -g @anthropic-ai/claude-code
-
-# 3. 设环境变量（用户级永久）
-[System.Environment]::SetEnvironmentVariable('ANTHROPIC_BASE_URL', 'https://righttoken.ai', 'User')
-[System.Environment]::SetEnvironmentVariable('ANTHROPIC_API_KEY', 'sk-你的key', 'User')
-
-# 4. 重开 PowerShell，跑：
-claude`
+const windowsSteps: InstallStep[] = [
+  { title: tt('windows.s1.title'), desc: tt('windows.s1.desc'), hint: tt('windows.s1.hint') },
+  { title: tt('windows.s2.title'), desc: tt('windows.s2.desc'), code: 'node --version', hint: tt('windows.s2.hint') },
+  { title: tt('windows.s3.title'), desc: tt('windows.s3.desc'), code: 'npm install -g @anthropic-ai/claude-code', hint: tt('windows.s3.hint') },
+  {
+    title: tt('windows.s4.title'),
+    desc: tt('windows.s4.desc'),
+    code: `[System.Environment]::SetEnvironmentVariable('ANTHROPIC_BASE_URL', 'https://righttoken.ai', 'User')
+[System.Environment]::SetEnvironmentVariable('ANTHROPIC_API_KEY', 'sk-你的key', 'User')`,
+    hint: tt('windows.s4.hint'),
+  },
+  { title: tt('windows.s5.title'), desc: tt('windows.s5.desc'), code: 'claude', hint: tt('windows.s5.hint') },
+]
 
 const pythonCode = `from anthropic import Anthropic
 

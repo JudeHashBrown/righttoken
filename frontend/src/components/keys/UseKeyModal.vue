@@ -441,19 +441,19 @@ function generateAnthropicFiles(baseUrl: string, apiKey: string): FileConfig[] {
     case 'unix':
       path = 'Terminal'
       content = `export ANTHROPIC_BASE_URL="${baseUrl}"
-export ANTHROPIC_AUTH_TOKEN="${apiKey}"
+export ANTHROPIC_API_KEY="${apiKey}"
 export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`
       break
     case 'cmd':
       path = 'Command Prompt'
       content = `set ANTHROPIC_BASE_URL=${baseUrl}
-set ANTHROPIC_AUTH_TOKEN=${apiKey}
+set ANTHROPIC_API_KEY=${apiKey}
 set CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`
       break
     case 'powershell':
       path = 'PowerShell'
       content = `$env:ANTHROPIC_BASE_URL="${baseUrl}"
-$env:ANTHROPIC_AUTH_TOKEN="${apiKey}"
+$env:ANTHROPIC_API_KEY="${apiKey}"
 $env:CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`
       break
     default:
@@ -468,7 +468,7 @@ $env:CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`
   const vscodeContent = `{
   "env": {
     "ANTHROPIC_BASE_URL": "${baseUrl}",
-    "ANTHROPIC_AUTH_TOKEN": "${apiKey}",
+    "ANTHROPIC_API_KEY": "${apiKey}",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "CLAUDE_CODE_ATTRIBUTION_HEADER": "0"
   }
@@ -481,7 +481,7 @@ $env:CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`
 }
 
 function generateGeminiCliContent(baseUrl: string, apiKey: string): FileConfig {
-  const model = 'gemini-2.0-flash'
+  const model = 'gemini-2.5-flash'
   const modelComment = t('keys.useKeyModal.gemini.modelComment')
   let path: string
   let content: string
@@ -530,9 +530,9 @@ function generateOpenAIFiles(baseUrl: string, apiKey: string): FileConfig[] {
   const configDir = isWindows ? '%userprofile%\\.codex' : '~/.codex'
 
   // config.toml content
-  const configContent = `model_provider = "OpenAI"
-model = "gpt-5.4"
-review_model = "gpt-5.4"
+  const configContent = `model_provider = "RightToken"
+model = "gpt-5.5"
+review_model = "gpt-5.5"
 model_reasoning_effort = "xhigh"
 disable_response_storage = true
 network_access = "enabled"
@@ -540,8 +540,8 @@ windows_wsl_setup_acknowledged = true
 model_context_window = 1000000
 model_auto_compact_token_limit = 900000
 
-[model_providers.OpenAI]
-name = "OpenAI"
+[model_providers.RightToken]
+name = "RightToken"
 base_url = "${baseUrl}"
 wire_api = "responses"
 requires_openai_auth = true`
@@ -569,9 +569,9 @@ function generateOpenAIWsFiles(baseUrl: string, apiKey: string): FileConfig[] {
   const configDir = isWindows ? '%userprofile%\\.codex' : '~/.codex'
 
   // config.toml content with WebSocket v2
-  const configContent = `model_provider = "OpenAI"
-model = "gpt-5.4"
-review_model = "gpt-5.4"
+  const configContent = `model_provider = "RightToken"
+model = "gpt-5.5"
+review_model = "gpt-5.5"
 model_reasoning_effort = "xhigh"
 disable_response_storage = true
 network_access = "enabled"
@@ -579,8 +579,8 @@ windows_wsl_setup_acknowledged = true
 model_context_window = 1000000
 model_auto_compact_token_limit = 900000
 
-[model_providers.OpenAI]
-name = "OpenAI"
+[model_providers.RightToken]
+name = "RightToken"
 base_url = "${baseUrl}"
 wire_api = "responses"
 supports_websockets = true

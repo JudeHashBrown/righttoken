@@ -313,6 +313,67 @@ export default {
         title: 'Use Claude (5 minutes)',
         tagline: 'Recommended: Claude Code CLI — Anthropic\'s official coding agent',
         groupName: 'Claude',
+        steps: {
+          macos: {
+            s1: {
+              title: 'Open Terminal',
+              desc: 'Press ⌘ + Space (Spotlight) → type "Terminal" → Enter',
+              hint: 'A window with a % prompt appears = success'
+            },
+            s2: {
+              title: 'Install Homebrew (skip if installed)',
+              desc: 'First check: run "brew --version". If you see a version → skip. If "command not found" → run the command below to install (you\'ll be asked for your Mac password — typing is invisible, that\'s normal; wait 5-10 min).',
+              hint: 'After install, follow the printed instructions and run eval "$(/opt/homebrew/bin/brew shellenv)" to add brew to PATH, then verify with brew --version'
+            },
+            s3: {
+              title: 'Install Node.js (skip if already installed)',
+              desc: 'First check: run "node --version". If you see v18 or newer → skip to next step. If "command not found" → run the command below to install.',
+              hint: 'Re-run "node --version" to verify a version number appears'
+            },
+            s4: {
+              title: 'Install Claude Code CLI',
+              desc: 'Copy the command below, paste into Terminal, press Enter. Wait ~1 minute.',
+              hint: '"added N packages" means it succeeded'
+            },
+            s5: {
+              title: 'Configure RightToken (the important one)',
+              desc: 'Replace sk-your-key in the command with the actual key you copy from RightToken admin "API Keys". Then paste and run the whole block.',
+              hint: 'No errors + prompt % returns = done'
+            },
+            s6: {
+              title: 'Launch Claude',
+              desc: 'Run "claude" and press Enter.',
+              hint: 'You see the Claude welcome screen — try saying "hi" to test'
+            }
+          },
+          windows: {
+            s1: {
+              title: 'Open PowerShell',
+              desc: 'Press Win → type "PowerShell" → Enter (regular PowerShell is fine, no admin needed)',
+              hint: 'A blue or dark window opens = success'
+            },
+            s2: {
+              title: 'Install Node.js (skip if already installed)',
+              desc: 'First check: run "node --version". If you see v18+ → skip. Otherwise download the LTS installer from https://nodejs.org and re-open PowerShell after install.',
+              hint: 'After reopening, "node --version" should print a version'
+            },
+            s3: {
+              title: 'Install Claude Code CLI',
+              desc: 'Copy the command below, paste into PowerShell, press Enter. Wait ~1 minute.',
+              hint: '"added N packages" means it succeeded'
+            },
+            s4: {
+              title: 'Configure RightToken (the important one)',
+              desc: 'Replace sk-your-key in the command with the actual key you copy from RightToken admin "API Keys", then paste and run.',
+              hint: 'You MUST reopen PowerShell for env vars to take effect'
+            },
+            s5: {
+              title: 'Launch Claude',
+              desc: 'Open a NEW PowerShell window, run "claude".',
+              hint: 'You see the Claude welcome screen = success'
+            }
+          }
+        },
         vscode: {
           option1Title: 'Recommended: official Claude Code VS Code extension',
           option1Step1: 'Open VS Code → Extensions (Cmd/Ctrl + Shift + X) → search "Claude Code" and install the official extension',
@@ -332,6 +393,77 @@ export default {
         cardTagline: 'OpenAI Codex CLI — official coding agent experience',
         title: 'Use GPT / Codex (5 minutes)',
         tagline: 'Recommended: Codex CLI — OpenAI\'s official coding agent',
+        steps: {
+          macos: {
+            s1: {
+              title: 'Open Terminal',
+              desc: 'Press ⌘ + Space (Spotlight) → type "Terminal" → Enter',
+              hint: 'A window with a % prompt appears = success'
+            },
+            s2: {
+              title: 'Install Homebrew (skip if installed)',
+              desc: 'First check: run "brew --version". Version shown → skip. "command not found" → run the command below (asks for your Mac password — typing is invisible, normal; wait 5-10 min).',
+              hint: 'After install, follow the printed instructions to run eval "$(/opt/homebrew/bin/brew shellenv)" to add brew to PATH; verify with brew --version'
+            },
+            s3: {
+              title: 'Install Node.js (skip if installed)',
+              desc: 'First check: "node --version". v18+ shown → skip. Otherwise run the command below.',
+              hint: '"node --version" prints a v-prefixed version = OK'
+            },
+            s4: {
+              title: 'Install Codex CLI',
+              desc: 'Copy + paste + Enter. Wait ~1 minute.',
+              hint: '"added N packages" = installed'
+            },
+            s5: {
+              title: 'Smart-merge Codex config (the important one)',
+              desc: 'Paste the whole block. Auto-backs up your existing config.toml to .bak, inserts the RightToken provider at the right places (root keys at top, [model_providers.RightToken] at end). Idempotent — safe to re-run.',
+              hint: 'Prompt % returns = done. "grep RightToken ~/.codex/config.toml" should print a few lines'
+            },
+            s6: {
+              title: 'Write the API key file (the important one)',
+              desc: 'Replace sk-your-key with the actual key copied from RightToken admin "API Keys", then paste and run. This creates ~/.codex/auth.json which Codex reads automatically.',
+              hint: '"cat ~/.codex/auth.json" should show your key (starts with sk-...)'
+            },
+            s7: {
+              title: 'Launch Codex',
+              desc: 'Run "codex" and press Enter.',
+              hint: 'You see the Codex welcome screen — try "hi" to test'
+            }
+          },
+          windows: {
+            s1: {
+              title: 'Open PowerShell',
+              desc: 'Win → type "PowerShell" → Enter (regular PowerShell is fine, no admin needed)',
+              hint: 'A blue or dark window opens = success'
+            },
+            s2: {
+              title: 'Install Node.js (skip if installed)',
+              desc: 'First check: "node --version". v18+ → skip. Otherwise download LTS from https://nodejs.org and reopen PowerShell after install.',
+              hint: 'After reopen, "node --version" prints a version = OK'
+            },
+            s3: {
+              title: 'Install Codex CLI',
+              desc: 'Copy + paste + Enter. Wait ~1 minute.',
+              hint: '"added N packages" = installed'
+            },
+            s4: {
+              title: 'Smart-merge Codex config (the important one)',
+              desc: 'Paste the PowerShell script. Backs up existing config.toml, inserts the RightToken provider correctly. Safe to re-run.',
+              hint: '"cat $HOME\\.codex\\config.toml" should show model_provider = "RightToken" at the top'
+            },
+            s5: {
+              title: 'Write the API key file (the important one)',
+              desc: 'Replace sk-your-key with the actual key copied from RightToken admin "API Keys", then paste and run. This creates %userprofile%\\.codex\\auth.json which Codex reads automatically.',
+              hint: '"cat $HOME\\.codex\\auth.json" should show your key (starts with sk-...)'
+            },
+            s6: {
+              title: 'Launch Codex',
+              desc: 'Just run "codex" (no need to reopen PowerShell — auth.json does not need env vars).',
+              hint: 'You see the Codex welcome screen = success'
+            }
+          }
+        },
         groupName: 'OpenAI',
         vscode: {
           intro: 'OpenAI has released the official Codex VS Code extension — native IDE chat + agent experience:',
@@ -352,6 +484,67 @@ export default {
         title: 'Use Gemini (5 minutes)',
         tagline: 'Recommended: Gemini CLI — Google\'s official coding agent',
         groupName: 'Gemini',
+        steps: {
+          macos: {
+            s1: {
+              title: 'Open Terminal',
+              desc: 'Press ⌘ + Space (Spotlight) → type "Terminal" → Enter',
+              hint: 'A window with a % prompt appears = success'
+            },
+            s2: {
+              title: 'Install Homebrew (skip if installed)',
+              desc: 'First check: "brew --version". Version shown → skip. "command not found" → run the command below (asks for Mac password — typing is invisible, normal; wait 5-10 min).',
+              hint: 'After install, run eval "$(/opt/homebrew/bin/brew shellenv)" as printed, verify with brew --version'
+            },
+            s3: {
+              title: 'Install Node.js (skip if installed)',
+              desc: 'First check: "node --version". v18+ → skip. Otherwise run the command below.',
+              hint: '"node --version" prints a v-prefixed version = OK'
+            },
+            s4: {
+              title: 'Install Gemini CLI',
+              desc: 'Copy + paste + Enter. Wait ~1 minute.',
+              hint: '"added N packages" = installed'
+            },
+            s5: {
+              title: 'Set the env vars (the important one)',
+              desc: 'Replace sk-your-key with the actual key copied from RightToken admin "API Keys", then paste and run.',
+              hint: 'No errors + prompt % returns = done'
+            },
+            s6: {
+              title: 'Launch Gemini',
+              desc: 'Run "gemini" and press Enter.',
+              hint: 'You see the Gemini welcome screen — try "hi" to test'
+            }
+          },
+          windows: {
+            s1: {
+              title: 'Open PowerShell',
+              desc: 'Win → type "PowerShell" → Enter (regular PowerShell is fine, no admin needed)',
+              hint: 'A blue or dark window opens = success'
+            },
+            s2: {
+              title: 'Install Node.js (skip if installed)',
+              desc: 'First check: "node --version". v18+ → skip. Otherwise download LTS from https://nodejs.org and reopen PowerShell after install.',
+              hint: 'After reopen, "node --version" prints a version = OK'
+            },
+            s3: {
+              title: 'Install Gemini CLI',
+              desc: 'Copy + paste + Enter. Wait ~1 minute.',
+              hint: '"added N packages" = installed'
+            },
+            s4: {
+              title: 'Set env vars (the important one)',
+              desc: 'Replace sk-your-key with the actual key copied from RightToken admin "API Keys", then paste and run.',
+              hint: 'You MUST reopen PowerShell for env vars to take effect'
+            },
+            s5: {
+              title: 'Launch Gemini',
+              desc: 'Open a NEW PowerShell window, run "gemini".',
+              hint: 'You see the Gemini welcome screen = success'
+            }
+          }
+        },
         faq: {
           model: 'Available models: gemini-2.5-pro / gemini-2.5-flash, switch with --model',
           endpoint: 'Note: base URL has no /v1 suffix (Gemini uses the /v1beta protocol)'

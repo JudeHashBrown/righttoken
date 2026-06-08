@@ -4,8 +4,8 @@
     :tagline="t('tutorials.models.codex.tagline')"
     :prep-group-name="t('tutorials.models.codex.groupName')"
     cli-command="codex"
-    :macos-code="macosCode"
-    :windows-code="windowsCode"
+    :macos-steps="macosSteps"
+    :windows-steps="windowsSteps"
   >
     <template #vscode>
       <p>{{ t('tutorials.models.codex.vscode.intro') }}</p>
@@ -26,27 +26,21 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import ModelQuickstart from '@/components/tutorials/ModelQuickstart.vue'
+import ModelQuickstart, { type InstallStep } from '@/components/tutorials/ModelQuickstart.vue'
 
 const { t } = useI18n()
 
-const macosCode = `setopt interactivecomments 2>/dev/null
+const tt = (key: string) => t(`tutorials.models.codex.steps.${key}`)
 
-# 1. 安装 Node.js（已装跳过）
-brew install node
-
-# 2. 安装 OpenAI Codex CLI
-npm install -g @openai/codex
-
-# 3. 智能合并 Codex 配置：root key 放顶部、RightToken provider 放尾部、保留已有内容
+const macosMergeConfig = `setopt interactivecomments 2>/dev/null
 mkdir -p ~/.codex && touch ~/.codex/config.toml
 cp ~/.codex/config.toml ~/.codex/config.toml.bak
 {
-  echo 'model_provider = "righttoken"'
+  echo 'model_provider = "RightToken"'
   echo 'model = "gpt-5.5"'
   echo ''
   awk '
-    /^\\[model_providers\\.righttoken\\]$/ { skip=1; next }
+    /^\\[model_providers\\.(RightToken|righttoken|OpenAI)\\]$/ { skip=1; next }
     skip && /^\\[/ { skip=0 }
     skip { next }
     /^model_provider[[:space:]]*=/ { next }
@@ -54,38 +48,49 @@ cp ~/.codex/config.toml ~/.codex/config.toml.bak
     { print }
   ' ~/.codex/config.toml.bak
   echo ''
-  echo '[model_providers.righttoken]'
+  echo '[model_providers.RightToken]'
   echo 'name = "RightToken"'
   echo 'base_url = "https://righttoken.ai/v1"'
-  echo 'env_key = "OPENAI_API_KEY"'
   echo 'wire_api = "responses"'
-} > ~/.codex/config.toml
+  echo 'requires_openai_auth = true'
+} > ~/.codex/config.toml`
 
-# 4. 设 API Key 环境变量
-echo 'export OPENAI_API_KEY="sk-你的key"' >> ~/.zshrc
-source ~/.zshrc
+const macosSteps: InstallStep[] = [
+  { title: tt('macos.s1.title'), desc: tt('macos.s1.desc'), hint: tt('macos.s1.hint') },
+  {
+    title: tt('macos.s2.title'),
+    desc: tt('macos.s2.desc'),
+    code: '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
+    hint: tt('macos.s2.hint'),
+  },
+  { title: tt('macos.s3.title'), desc: tt('macos.s3.desc'), code: 'brew install node', hint: tt('macos.s3.hint') },
+  { title: tt('macos.s4.title'), desc: tt('macos.s4.desc'), code: 'npm install -g @openai/codex', hint: tt('macos.s4.hint') },
+  { title: tt('macos.s5.title'), desc: tt('macos.s5.desc'), code: macosMergeConfig, hint: tt('macos.s5.hint') },
+  {
+    title: tt('macos.s6.title'),
+    desc: tt('macos.s6.desc'),
+    code: `cat > ~/.codex/auth.json << 'EOF'
+{
+  "OPENAI_API_KEY": "sk-你的key"
+}
+EOF
+chmod 600 ~/.codex/auth.json`,
+    hint: tt('macos.s6.hint'),
+  },
+  { title: tt('macos.s7.title'), desc: tt('macos.s7.desc'), code: 'codex', hint: tt('macos.s7.hint') },
+]
 
-# 5. 启动
-codex`
-
-const windowsCode = `# 1. 从 nodejs.org 下载安装 Node.js
-
-# 2. PowerShell 跑：
-npm install -g @openai/codex
-
-# 3. 智能合并 Codex 配置：root key 放顶部、RightToken provider 放尾部、保留已有内容
-$ConfigDir = "$HOME\\.codex"
+const windowsMergeConfig = `$ConfigDir = "$HOME\\.codex"
 New-Item -ItemType Directory -Path $ConfigDir -Force | Out-Null
 $ConfigPath = "$ConfigDir\\config.toml"
 if (-not (Test-Path $ConfigPath)) { Set-Content -Path $ConfigPath -Value '' }
 Copy-Item -Path $ConfigPath -Destination "$ConfigPath.bak" -Force
 
-# 过滤旧的 model_provider / model / [model_providers.righttoken] 块
 $Lines = Get-Content $ConfigPath
 $Filtered = @()
 $Skip = $false
 foreach ($Line in $Lines) {
-  if ($Line -match '^\\[model_providers\\.righttoken\\]$') { $Skip = $true; continue }
+  if ($Line -match '^\\[model_providers\\.(RightToken|righttoken|OpenAI)\\]$') { $Skip = $true; continue }
   if ($Skip -and $Line -match '^\\[') { $Skip = $false }
   if ($Skip) { continue }
   if ($Line -match '^model_provider\\s*=') { continue }
@@ -93,25 +98,37 @@ foreach ($Line in $Lines) {
   $Filtered += $Line
 }
 
-# 拼接：root key 在顶 + 已有内容 + RightToken provider 在尾
 $Top = @"
-model_provider = "righttoken"
+model_provider = "RightToken"
 model = "gpt-5.5"
 
 "@
 $Bottom = @"
 
-[model_providers.righttoken]
+[model_providers.RightToken]
 name = "RightToken"
 base_url = "https://righttoken.ai/v1"
-env_key = "OPENAI_API_KEY"
 wire_api = "responses"
+requires_openai_auth = true
 "@
-($Top + ($Filtered -join "\`n") + $Bottom) | Set-Content -Path $ConfigPath -Encoding utf8
+($Top + ($Filtered -join "\`n") + $Bottom) | Set-Content -Path $ConfigPath -Encoding utf8`
 
-# 4. 设 API Key 环境变量（用户级永久）
-[System.Environment]::SetEnvironmentVariable('OPENAI_API_KEY', 'sk-你的key', 'User')
-
-# 5. 重开 PowerShell，跑：
-codex`
+const windowsSteps: InstallStep[] = [
+  { title: tt('windows.s1.title'), desc: tt('windows.s1.desc'), hint: tt('windows.s1.hint') },
+  { title: tt('windows.s2.title'), desc: tt('windows.s2.desc'), code: 'node --version', hint: tt('windows.s2.hint') },
+  { title: tt('windows.s3.title'), desc: tt('windows.s3.desc'), code: 'npm install -g @openai/codex', hint: tt('windows.s3.hint') },
+  { title: tt('windows.s4.title'), desc: tt('windows.s4.desc'), code: windowsMergeConfig, hint: tt('windows.s4.hint') },
+  {
+    title: tt('windows.s5.title'),
+    desc: tt('windows.s5.desc'),
+    code: `$AuthPath = "$HOME\\.codex\\auth.json"
+@"
+{
+  "OPENAI_API_KEY": "sk-你的key"
+}
+"@ | Set-Content -Path $AuthPath -Encoding utf8`,
+    hint: tt('windows.s5.hint'),
+  },
+  { title: tt('windows.s6.title'), desc: tt('windows.s6.desc'), code: 'codex', hint: tt('windows.s6.hint') },
+]
 </script>

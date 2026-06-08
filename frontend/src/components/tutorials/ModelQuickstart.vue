@@ -44,7 +44,25 @@
           >Windows</button>
         </div>
 
-        <CodeBlock :code="activeOs === 'macos' ? macosCode : windowsCode" />
+        <!-- Stepped install (preferred) -->
+        <div v-if="activeSteps && activeSteps.length > 0" class="space-y-5">
+          <div
+            v-for="(step, i) in activeSteps"
+            :key="i"
+            class="rounded-lg border border-gray-200/70 bg-white/60 p-4 dark:border-dark-700/70 dark:bg-dark-800/40"
+          >
+            <h3 class="mb-1 flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white">
+              <span class="flex h-5 w-5 items-center justify-center rounded-full bg-primary-500/15 text-[11px] font-bold text-primary-700 dark:text-primary-300">{{ i + 1 }}</span>
+              {{ step.title }}
+            </h3>
+            <p v-if="step.desc" class="mb-2 whitespace-pre-line text-sm leading-relaxed text-gray-600 dark:text-dark-300">{{ step.desc }}</p>
+            <CodeBlock v-if="step.code" :code="step.code" />
+            <p v-if="step.hint" class="mt-2 text-xs italic leading-relaxed text-gray-500 dark:text-dark-400">✓ {{ step.hint }}</p>
+          </div>
+        </div>
+
+        <!-- Single-block install (fallback for older tutorials) -->
+        <CodeBlock v-else-if="activeCode" :code="activeCode" />
 
         <p class="mt-3 text-sm leading-relaxed text-gray-600 dark:text-dark-300">
           {{ t('tutorials.quickstart.install.note', { cli: cliCommand }) }}
@@ -87,20 +105,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CodeBlock from './CodeBlock.vue'
 
-defineProps<{
+export interface InstallStep {
+  title: string
+  desc?: string
+  code?: string
+  hint?: string
+}
+
+const props = defineProps<{
   title: string
   tagline: string
   prepGroupName: string
   cliCommand: string
-  macosCode: string
-  windowsCode: string
+  macosCode?: string
+  windowsCode?: string
+  macosSteps?: InstallStep[]
+  windowsSteps?: InstallStep[]
   pythonCode?: string
 }>()
 
 const { t } = useI18n()
 const activeOs = ref<'macos' | 'windows'>('macos')
+
+const activeSteps = computed(() => (activeOs.value === 'macos' ? props.macosSteps : props.windowsSteps))
+const activeCode = computed(() => (activeOs.value === 'macos' ? props.macosCode : props.windowsCode))
 </script>

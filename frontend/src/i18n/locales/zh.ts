@@ -313,6 +313,67 @@ export default {
         title: '用 Claude（5 分钟）',
         tagline: '推荐 Claude Code CLI — Anthropic 官方编程 agent',
         groupName: 'Claude',
+        steps: {
+          macos: {
+            s1: {
+              title: '打开「终端」',
+              desc: '按 ⌘ + 空格（Spotlight 搜索）→ 输入 "终端" 或 "Terminal" → 回车',
+              hint: '看到一个带 % 提示符的窗口 = 成功'
+            },
+            s2: {
+              title: '装 Homebrew（已装跳过）',
+              desc: '先检查：输入 brew --version 回车。看到版本号 → 跳到下一步。看到 command not found → 复制下面命令安装（中途会问密码，输入你 Mac 登录密码，输入时不显示是正常的，等 5-10 分钟）。',
+              hint: '装完后按终端打印的提示，再跑一遍 eval "$(/opt/homebrew/bin/brew shellenv)" 把 brew 加入 PATH，然后 brew --version 验证'
+            },
+            s3: {
+              title: '装 Node.js（已装跳过）',
+              desc: '先检查：输入 node --version 回车。看到 v18 或以上 → 跳到下一步。看到 command not found → 复制下面命令安装。',
+              hint: '装好后再跑一次 node --version 应该看到 v 开头的版本号'
+            },
+            s4: {
+              title: '装 Claude Code CLI',
+              desc: '复制下面整条命令，粘贴到终端，按回车。等 1 分钟。',
+              hint: '看到 "added N packages" 表示装好'
+            },
+            s5: {
+              title: '配置 RightToken（关键一步）',
+              desc: '把下面命令里的 sk-你的key 换成你在 RightToken 后台「我的密钥」复制的 key，然后整段复制粘贴执行。',
+              hint: '没报错就好。终端提示符 % 重新出现 = 跑完了'
+            },
+            s6: {
+              title: '启动 Claude',
+              desc: '输入 claude，回车。',
+              hint: '看到 Claude 欢迎界面，发个 "你好" 测试是否能回复'
+            }
+          },
+          windows: {
+            s1: {
+              title: '打开「PowerShell」',
+              desc: '按 Win 键 → 输入 "PowerShell" → 回车（用普通 PowerShell 即可，不需要管理员）',
+              hint: '看到一个蓝色或深色窗口 = 成功'
+            },
+            s2: {
+              title: '装 Node.js（已装跳过）',
+              desc: '先检查：输入 node --version 回车。看到 v18 或以上 → 跳到下一步。否则去 https://nodejs.org 下载 LTS 版本安装包，装完重开 PowerShell。',
+              hint: '重开 PowerShell 后再跑 node --version 应该看到版本号'
+            },
+            s3: {
+              title: '装 Claude Code CLI',
+              desc: '复制下面命令，粘贴到 PowerShell，回车。等 1 分钟。',
+              hint: '看到 "added N packages" 表示装好'
+            },
+            s4: {
+              title: '配置 RightToken（关键一步）',
+              desc: '把下面命令里的 sk-你的key 换成你在 RightToken 后台「我的密钥」复制的 key，然后整段复制粘贴执行。',
+              hint: '设完后必须重开 PowerShell 才生效'
+            },
+            s5: {
+              title: '启动 Claude',
+              desc: '重开一个新 PowerShell 窗口，输入 claude，回车。',
+              hint: '看到 Claude 欢迎界面 = 成功'
+            }
+          }
+        },
         vscode: {
           option1Title: '推荐：Claude Code 官方 VS Code 扩展',
           option1Step1: '打开 VS Code → 扩展市场（Cmd/Ctrl + Shift + X）→ 搜索 "Claude Code" 安装官方扩展',
@@ -333,6 +394,77 @@ export default {
         title: '用 GPT / Codex（5 分钟）',
         tagline: '推荐 Codex CLI — OpenAI 官方编程 agent',
         groupName: 'OpenAI',
+        steps: {
+          macos: {
+            s1: {
+              title: '打开「终端」',
+              desc: '按 ⌘ + 空格（Spotlight）→ 输入 "终端" 或 "Terminal" → 回车',
+              hint: '看到带 % 提示符的窗口 = 成功'
+            },
+            s2: {
+              title: '装 Homebrew（已装跳过）',
+              desc: '先检查：输入 brew --version。看到版本号 → 跳过。看到 command not found → 复制下面命令安装（会问 Mac 密码，输入时不显示是正常的，等 5-10 分钟）。',
+              hint: '装完后按终端提示运行 eval "$(/opt/homebrew/bin/brew shellenv)" 把 brew 加入 PATH，brew --version 验证'
+            },
+            s3: {
+              title: '装 Node.js（已装跳过）',
+              desc: '先检查：输入 node --version。看到 v18+ → 跳过。否则跑下面命令装。',
+              hint: 'node --version 看到 v 开头 = 装好'
+            },
+            s4: {
+              title: '装 Codex CLI',
+              desc: '复制命令粘贴执行，等 1 分钟。',
+              hint: '看到 "added N packages" = 装好'
+            },
+            s5: {
+              title: '智能合并 Codex 配置（关键一步）',
+              desc: '把下面整段复制粘贴到终端执行。自动备份原有 config.toml 到 .bak，把 RightToken provider 配置插到正确位置（root key 在顶、provider 在尾），跑多次也安全（幂等）。',
+              hint: '看到提示符 % 重新出现 = 跑完了。grep RightToken ~/.codex/config.toml 应该有几行输出'
+            },
+            s6: {
+              title: '写 API Key 文件（关键一步）',
+              desc: '把下面的 sk-你的key 换成 RightToken 后台「我的密钥」复制的真实 key，然后整段粘贴执行。这会创建 ~/.codex/auth.json，Codex 启动时自动读它。',
+              hint: 'cat ~/.codex/auth.json 应看到你的 key（sk-... 开头）'
+            },
+            s7: {
+              title: '启动 Codex',
+              desc: '输入 codex，回车。',
+              hint: '看到 Codex 欢迎界面，发个 "你好" 测试'
+            }
+          },
+          windows: {
+            s1: {
+              title: '打开「PowerShell」',
+              desc: '按 Win 键 → 输入 "PowerShell" → 回车（普通 PowerShell 即可，不用管理员）',
+              hint: '看到蓝色/深色窗口 = 成功'
+            },
+            s2: {
+              title: '装 Node.js（已装跳过）',
+              desc: '先检查：输入 node --version。看到 v18+ → 跳过。否则去 https://nodejs.org 下载 LTS 版安装，装完重开 PowerShell。',
+              hint: '重开后 node --version 看到版本号 = OK'
+            },
+            s3: {
+              title: '装 Codex CLI',
+              desc: '复制命令粘贴执行，等 1 分钟。',
+              hint: '看到 "added N packages" = 装好'
+            },
+            s4: {
+              title: '智能合并 Codex 配置（关键一步）',
+              desc: '把下面整段（PowerShell 脚本）复制粘贴执行。会自动备份原 config.toml，把 RightToken provider 配置插到正确位置，多跑也安全。',
+              hint: 'cat $HOME\\.codex\\config.toml 应该看到 model_provider = "RightToken" 在文件顶部'
+            },
+            s5: {
+              title: '写 API Key 文件（关键一步）',
+              desc: '把下面的 sk-你的key 换成 RightToken 后台「我的密钥」复制的真实 key，然后整段粘贴执行。这会创建 %userprofile%\\.codex\\auth.json，Codex 启动时自动读它。',
+              hint: 'cat $HOME\\.codex\\auth.json 应看到你的 key（sk-... 开头）'
+            },
+            s6: {
+              title: '启动 Codex',
+              desc: '输入 codex，回车（不需要重开 PowerShell —— auth.json 不依赖环境变量）。',
+              hint: '看到 Codex 欢迎界面 = 成功'
+            }
+          }
+        },
         vscode: {
           intro: 'OpenAI 已发布官方 Codex VS Code 扩展，IDE 原生 chat + agent 体验：',
           step1: 'VS Code 扩展市场搜 "OpenAI Codex" 安装（发布者 openai）',
@@ -352,6 +484,67 @@ export default {
         title: '用 Gemini（5 分钟）',
         tagline: '推荐 Gemini CLI — Google 官方编程 agent',
         groupName: 'Gemini',
+        steps: {
+          macos: {
+            s1: {
+              title: '打开「终端」',
+              desc: '按 ⌘ + 空格（Spotlight）→ 输入 "终端" 或 "Terminal" → 回车',
+              hint: '看到带 % 提示符的窗口 = 成功'
+            },
+            s2: {
+              title: '装 Homebrew（已装跳过）',
+              desc: '先检查：输入 brew --version。看到版本号 → 跳过。看到 command not found → 复制下面命令安装（会问 Mac 密码，输入时不显示是正常的，等 5-10 分钟）。',
+              hint: '装完后按终端提示运行 eval "$(/opt/homebrew/bin/brew shellenv)"，brew --version 验证'
+            },
+            s3: {
+              title: '装 Node.js（已装跳过）',
+              desc: '先检查：node --version。看到 v18+ → 跳过。否则跑下面命令。',
+              hint: 'node --version 看到 v 开头 = OK'
+            },
+            s4: {
+              title: '装 Gemini CLI',
+              desc: '复制下面命令粘贴执行，等 1 分钟。',
+              hint: '看到 "added N packages" = 装好'
+            },
+            s5: {
+              title: '设环境变量（关键一步）',
+              desc: '把下面的 sk-你的key 换成 RightToken 后台「我的密钥」复制的真实 key，整段粘贴执行。',
+              hint: '没报错 + 提示符 % 重新出现 = 跑完了'
+            },
+            s6: {
+              title: '启动 Gemini',
+              desc: '输入 gemini，回车。',
+              hint: '看到 Gemini 欢迎界面，发个 "你好" 测试'
+            }
+          },
+          windows: {
+            s1: {
+              title: '打开「PowerShell」',
+              desc: '按 Win 键 → 输入 "PowerShell" → 回车（普通即可，不用管理员）',
+              hint: '看到蓝色/深色窗口 = 成功'
+            },
+            s2: {
+              title: '装 Node.js（已装跳过）',
+              desc: '先检查：node --version。看到 v18+ → 跳过。否则去 https://nodejs.org 下载 LTS 装完重开 PowerShell。',
+              hint: '重开后 node --version 看到版本号 = OK'
+            },
+            s3: {
+              title: '装 Gemini CLI',
+              desc: '复制命令粘贴执行，等 1 分钟。',
+              hint: '看到 "added N packages" = 装好'
+            },
+            s4: {
+              title: '设环境变量（关键一步）',
+              desc: '把下面的 sk-你的key 换成 RightToken 后台「我的密钥」复制的真实 key，整段粘贴执行。',
+              hint: '设完后必须重开 PowerShell 才生效'
+            },
+            s5: {
+              title: '启动 Gemini',
+              desc: '重开一个新 PowerShell 窗口，输入 gemini。',
+              hint: '看到 Gemini 欢迎界面 = 成功'
+            }
+          }
+        },
         faq: {
           model: '可选模型：gemini-2.5-pro / gemini-2.5-flash，用 --model 参数切',
           endpoint: '注意 base URL 不带 /v1（Gemini 走 /v1beta 协议）'
