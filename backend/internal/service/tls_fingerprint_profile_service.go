@@ -11,6 +11,11 @@ import (
 	"github.com/Wei-Shaw/sub2api/internal/pkg/tlsfingerprint"
 )
 
+// defaultBuiltinTLSProfile is returned for accounts that have TLS
+// fingerprinting enabled but no profile bound — singleton so every
+// request reuses the same pointer instead of allocating a fresh struct.
+var defaultBuiltinTLSProfile = &tlsfingerprint.Profile{Name: "Built-in Default (Node.js 24.x)"}
+
 // TLSFingerprintProfileRepository 定义 TLS 指纹模板的数据访问接口
 type TLSFingerprintProfileRepository interface {
 	List(ctx context.Context) ([]*model.TLSFingerprintProfile, error)
@@ -191,7 +196,7 @@ func (s *TLSFingerprintProfileService) ResolveTLSProfile(account *Account) *tlsf
 		}
 	}
 	// TLS 启用但无绑定 profile → 空 Profile → dialer 使用内置默认值
-	return &tlsfingerprint.Profile{Name: "Built-in Default (Node.js 24.x)"}
+	return defaultBuiltinTLSProfile
 }
 
 // --- 缓存管理 ---

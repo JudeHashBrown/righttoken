@@ -183,6 +183,11 @@ func (s *OpenAIGatewayService) streamCompatResponse(
 ) {
 	reader := bufio.NewReaderSize(body, 64*1024)
 	flusher, _ := c.Writer.(http.Flusher)
+	// Flush 200 + headers eagerly so the client SDK sees connection
+	// established before the first upstream chunk arrives.
+	if flusher != nil {
+		flusher.Flush()
+	}
 	var firstTokenAt time.Time
 
 	for {

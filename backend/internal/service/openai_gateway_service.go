@@ -2925,6 +2925,10 @@ func (s *OpenAIGatewayService) handleStreamingResponsePassthrough(
 	if !ok {
 		return nil, errors.New("streaming not supported")
 	}
+	// Flush headers immediately so the client SDK sees a 200 + SSE
+	// content-type before the first upstream byte arrives. Improves
+	// perceived TTFT on slow upstreams.
+	flusher.Flush()
 
 	usage := &OpenAIUsage{}
 	var firstTokenMs *int
@@ -3538,6 +3542,10 @@ func (s *OpenAIGatewayService) handleStreamingResponse(ctx context.Context, resp
 	if !ok {
 		return nil, errors.New("streaming not supported")
 	}
+	// Same rationale as in handleStreamingResponsePassthrough: flush
+	// 200 + SSE headers up front so client SDKs leave their "waiting
+	// for response" state immediately.
+	flusher.Flush()
 	bufferedWriter := bufio.NewWriterSize(w, 4*1024)
 	flushBuffered := func() error {
 		if err := bufferedWriter.Flush(); err != nil {
