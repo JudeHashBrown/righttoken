@@ -61,5 +61,3 @@ const windowsSteps: InstallStep[] = [
   { title: tt('windows.s5.title'), desc: tt('windows.s5.desc'), code: 'gemini', hint: tt('windows.s5.hint') },
 ]
 </script>
-</content>
-</invoke>
