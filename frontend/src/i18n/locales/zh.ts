@@ -334,12 +334,12 @@ export default {
         tagline: '推荐 Codex CLI — OpenAI 官方编程 agent',
         groupName: 'OpenAI',
         vscode: {
-          intro: 'Codex 暂无官方 VS Code 扩展，直接用 VS Code 集成终端跑 CLI 即可：',
-          step1: 'VS Code 打开你的项目 → 终端面板（Ctrl + `）',
-          step2: '确认 OPENAI_BASE_URL 和 OPENAI_API_KEY 已在 ~/.zshrc（macOS）或系统环境变量（Windows）里',
-          step3: '终端跑 codex，开始对话',
-          step4: 'Codex 会读取当前工作目录，可以执行命令、改文件',
-          benefit: '边写代码边对话，Codex 的修改直接在 VS Code 编辑器里看到。'
+          intro: 'OpenAI 已发布官方 Codex VS Code 扩展，IDE 原生 chat + agent 体验：',
+          step1: 'VS Code 扩展市场搜 "OpenAI Codex" 安装（发布者 openai）',
+          step2: '确认 ~/.codex/config.toml 已配好（扩展与 CLI 共用同一份配置）+ OPENAI_API_KEY 已设',
+          step3: '点左侧栏 Codex 图标 → 打开 chat 面板开始对话；或按 Ctrl+Shift+P → "Codex: New Chat"',
+          step4: '不想用扩展？打开集成终端（Ctrl + `）直接跑 codex CLI 同样可用',
+          benefit: '扩展和 CLI 共用 ~/.codex/config.toml，配一次到处生效。'
         },
         faq: {
           model: '默认模型可能是 gpt-5 或 gpt-4o，用 --model 参数切换',

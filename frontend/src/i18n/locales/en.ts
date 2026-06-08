@@ -334,12 +334,12 @@ export default {
         tagline: 'Recommended: Codex CLI — OpenAI\'s official coding agent',
         groupName: 'OpenAI',
         vscode: {
-          intro: 'Codex has no official VS Code extension; just run the CLI from VS Code\'s integrated terminal:',
-          step1: 'Open your project in VS Code → terminal panel (Ctrl + `)',
-          step2: 'Make sure OPENAI_BASE_URL and OPENAI_API_KEY are set in ~/.zshrc (macOS) or system env (Windows)',
-          step3: 'Run `codex` in the terminal — start chatting',
-          step4: 'Codex picks up your working directory; it can run commands and edit files',
-          benefit: 'Chat while you code — Codex\'s edits show up directly in the VS Code editor.'
+          intro: 'OpenAI has released the official Codex VS Code extension — native IDE chat + agent experience:',
+          step1: 'Search "OpenAI Codex" in the VS Code marketplace and install (publisher: openai)',
+          step2: 'Make sure ~/.codex/config.toml is set up (the extension shares the CLI\'s config) and OPENAI_API_KEY is exported',
+          step3: 'Click the Codex icon in the activity bar → open the chat panel; or Ctrl+Shift+P → "Codex: New Chat"',
+          step4: 'Prefer the CLI? Open the integrated terminal (Ctrl + `) and run `codex` — works the same way',
+          benefit: 'The extension and CLI share ~/.codex/config.toml — configure once, works everywhere.'
         },
         faq: {
           model: 'Default model may be gpt-5 or gpt-4o; switch with --model',
