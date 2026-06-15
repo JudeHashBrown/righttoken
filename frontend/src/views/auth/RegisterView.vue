@@ -217,6 +217,28 @@
           </transition>
         </div>
 
+        <!-- Referral Code Input (Optional, 二级分销) -->
+        <div>
+          <label for="referral_code" class="input-label">
+            {{ t('auth.referralCodeLabel') }}
+            <span class="ml-1 text-xs font-normal text-gray-400 dark:text-dark-500">({{ t('common.optional') }})</span>
+          </label>
+          <div class="relative">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+              <Icon name="users" size="md" class="text-gray-400 dark:text-dark-500" />
+            </div>
+            <input
+              id="referral_code"
+              v-model="formData.referral_code"
+              type="text"
+              :disabled="isLoading"
+              class="input pl-11 uppercase"
+              :placeholder="t('auth.referralCodePlaceholder')"
+            />
+          </div>
+          <p class="input-hint">{{ t('auth.referralCodeHint') }}</p>
+        </div>
+
         <!-- Turnstile Widget -->
         <div v-if="turnstileEnabled && turnstileSiteKey">
           <TurnstileWidget
@@ -374,7 +396,8 @@ const formData = reactive({
   email: '',
   password: '',
   promo_code: '',
-  invitation_code: ''
+  invitation_code: '',
+  referral_code: ''
 })
 
 const errors = reactive({
@@ -411,6 +434,12 @@ onMounted(async () => {
         // Validate the promo code from URL
         await validatePromoCodeDebounced(promoParam)
       }
+    }
+
+    // Read referral code from URL parameter (?ref=XXX), normalize to uppercase
+    const refParam = route.query.ref as string
+    if (refParam) {
+      formData.referral_code = refParam.trim().toUpperCase()
     }
   } catch (error) {
     console.error('Failed to load public settings:', error)
@@ -713,7 +742,8 @@ async function handleRegister(): Promise<void> {
           password: formData.password,
           turnstile_token: turnstileToken.value,
           promo_code: formData.promo_code || undefined,
-          invitation_code: formData.invitation_code || undefined
+          invitation_code: formData.invitation_code || undefined,
+          referral_code: formData.referral_code || undefined
         })
       )
 
@@ -728,7 +758,8 @@ async function handleRegister(): Promise<void> {
       password: formData.password,
       turnstile_token: turnstileEnabled.value ? turnstileToken.value : undefined,
       promo_code: formData.promo_code || undefined,
-      invitation_code: formData.invitation_code || undefined
+      invitation_code: formData.invitation_code || undefined,
+      referral_code: formData.referral_code || undefined
     })
 
     // Show success toast

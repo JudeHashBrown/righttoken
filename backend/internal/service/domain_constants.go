@@ -155,6 +155,9 @@ const (
 	SettingKeyDefaultBalance       = "default_balance"       // 新用户默认余额
 	SettingKeyDefaultSubscriptions = "default_subscriptions" // 新用户默认订阅列表（JSON）
 
+	// 邀请功能：首充奖励倍率，1.05 = +5%，1.00 或更小表示关闭
+	SettingKeyReferralFirstRechargeBonusRate = "referral_first_recharge_bonus_rate"
+
 	// 管理员 API Key
 	SettingKeyAdminAPIKey = "admin_api_key" // 全局管理员 API Key（用于外部系统集成）
 

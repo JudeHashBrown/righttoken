@@ -45,6 +45,14 @@ type User struct {
 	TotpEnabled bool `json:"totp_enabled,omitempty"`
 	// TotpEnabledAt holds the value of the "totp_enabled_at" field.
 	TotpEnabledAt *time.Time `json:"totp_enabled_at,omitempty"`
+	// InviterID holds the value of the "inviter_id" field.
+	InviterID *int64 `json:"inviter_id,omitempty"`
+	// InviteCode holds the value of the "invite_code" field.
+	InviteCode *string `json:"invite_code,omitempty"`
+	// IsReferralPartner holds the value of the "is_referral_partner" field.
+	IsReferralPartner bool `json:"is_referral_partner,omitempty"`
+	// ReferralBonusClaimedAt holds the value of the "referral_bonus_claimed_at" field.
+	ReferralBonusClaimedAt *time.Time `json:"referral_bonus_claimed_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -184,15 +192,15 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldTotpEnabled:
+		case user.FieldTotpEnabled, user.FieldIsReferralPartner:
 			values[i] = new(sql.NullBool)
 		case user.FieldBalance:
 			values[i] = new(sql.NullFloat64)
-		case user.FieldID, user.FieldConcurrency:
+		case user.FieldID, user.FieldConcurrency, user.FieldInviterID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldEmail, user.FieldPasswordHash, user.FieldRole, user.FieldStatus, user.FieldUsername, user.FieldNotes, user.FieldTotpSecretEncrypted:
+		case user.FieldEmail, user.FieldPasswordHash, user.FieldRole, user.FieldStatus, user.FieldUsername, user.FieldNotes, user.FieldTotpSecretEncrypted, user.FieldInviteCode:
 			values[i] = new(sql.NullString)
-		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldTotpEnabledAt:
+		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldTotpEnabledAt, user.FieldReferralBonusClaimedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -301,6 +309,33 @@ func (_m *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.TotpEnabledAt = new(time.Time)
 				*_m.TotpEnabledAt = value.Time
+			}
+		case user.FieldInviterID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field inviter_id", values[i])
+			} else if value.Valid {
+				_m.InviterID = new(int64)
+				*_m.InviterID = value.Int64
+			}
+		case user.FieldInviteCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field invite_code", values[i])
+			} else if value.Valid {
+				_m.InviteCode = new(string)
+				*_m.InviteCode = value.String
+			}
+		case user.FieldIsReferralPartner:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_referral_partner", values[i])
+			} else if value.Valid {
+				_m.IsReferralPartner = value.Bool
+			}
+		case user.FieldReferralBonusClaimedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field referral_bonus_claimed_at", values[i])
+			} else if value.Valid {
+				_m.ReferralBonusClaimedAt = new(time.Time)
+				*_m.ReferralBonusClaimedAt = value.Time
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -438,6 +473,24 @@ func (_m *User) String() string {
 	builder.WriteString(", ")
 	if v := _m.TotpEnabledAt; v != nil {
 		builder.WriteString("totp_enabled_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.InviterID; v != nil {
+		builder.WriteString("inviter_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.InviteCode; v != nil {
+		builder.WriteString("invite_code=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	builder.WriteString("is_referral_partner=")
+	builder.WriteString(fmt.Sprintf("%v", _m.IsReferralPartner))
+	builder.WriteString(", ")
+	if v := _m.ReferralBonusClaimedAt; v != nil {
+		builder.WriteString("referral_bonus_claimed_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteByte(')')

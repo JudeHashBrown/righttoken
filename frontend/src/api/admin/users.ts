@@ -149,6 +149,20 @@ export async function toggleStatus(id: number, status: 'active' | 'disabled'): P
 }
 
 /**
+ * 开关用户的邀请功能（即时生效；关闭时如有未发放奖励会被后端拒绝）
+ */
+export async function setReferralPartner(
+  id: number,
+  enabled: boolean
+): Promise<{ id: number; is_referral_partner: boolean }> {
+  const { data } = await apiClient.patch<{ id: number; is_referral_partner: boolean }>(
+    `/admin/users/${id}/referral-partner`,
+    { enabled }
+  )
+  return data
+}
+
+/**
  * Get user's API keys
  * @param id - User ID
  * @returns List of user's API keys
@@ -257,6 +271,7 @@ export const usersAPI = {
   updateBalance,
   updateConcurrency,
   toggleStatus,
+  setReferralPartner,
   getUserApiKeys,
   getUserUsageStats,
   getUserBalanceHistory,

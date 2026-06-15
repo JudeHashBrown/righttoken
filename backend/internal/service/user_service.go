@@ -33,6 +33,7 @@ type UserRepository interface {
 	Create(ctx context.Context, user *User) error
 	GetByID(ctx context.Context, id int64) (*User, error)
 	GetByEmail(ctx context.Context, email string) (*User, error)
+	GetByInviteCode(ctx context.Context, code string) (*User, error)
 	GetFirstAdmin(ctx context.Context) (*User, error)
 	Update(ctx context.Context, user *User) error
 	Delete(ctx context.Context, id int64) error
@@ -49,6 +50,13 @@ type UserRepository interface {
 	AddGroupToAllowedGroups(ctx context.Context, userID int64, groupID int64) error
 	// RemoveGroupFromUserAllowedGroups 移除单个用户的指定分组权限
 	RemoveGroupFromUserAllowedGroups(ctx context.Context, userID int64, groupID int64) error
+
+	// 二级分销：邀请码写入
+	SetInviteCode(ctx context.Context, userID int64, code string) error
+	// 邀请功能开关
+	SetReferralPartner(ctx context.Context, userID int64, enabled bool) error
+	// 首充奖励领取（CAS）：仅当用户有 inviter_id 且未领取过时才会成功，返回 true。
+	ClaimFirstRechargeBonus(ctx context.Context, userID int64) (bool, error)
 
 	// TOTP 双因素认证
 	UpdateTotpSecret(ctx context.Context, userID int64, encryptedSecret *string) error
@@ -74,6 +82,7 @@ type UserService struct {
 	userRepo             UserRepository
 	authCacheInvalidator APIKeyAuthCacheInvalidator
 	billingCache         BillingCache
+	referralService      *ReferralService
 }
 
 // NewUserService 创建用户服务实例
@@ -83,6 +92,11 @@ func NewUserService(userRepo UserRepository, authCacheInvalidator APIKeyAuthCach
 		authCacheInvalidator: authCacheInvalidator,
 		billingCache:         billingCache,
 	}
+}
+
+// SetReferralService 注入 ReferralService（setter 模式，避免循环依赖）
+func (s *UserService) SetReferralService(rs *ReferralService) {
+	s.referralService = rs
 }
 
 // GetFirstAdmin 获取首个管理员用户（用于 Admin API Key 认证）
@@ -120,6 +134,12 @@ func (s *UserService) UpdateProfile(ctx context.Context, userID int64, req Updat
 		}
 		if exists && *req.Email != user.Email {
 			return nil, ErrEmailExists
+		}
+		// 邀请反作弊：邮箱真的变更时，复查 E1（绑定邀请人的用户不能改成与上线同前缀）
+		if *req.Email != user.Email && s.referralService != nil {
+			if err := s.referralService.ValidateEmailChange(ctx, userID, *req.Email); err != nil {
+				return nil, err
+			}
 		}
 		user.Email = *req.Email
 	}

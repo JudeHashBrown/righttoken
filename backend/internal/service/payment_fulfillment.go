@@ -198,9 +198,23 @@ func (s *PaymentService) doBalance(ctx context.Context, o *dbent.PaymentOrder) e
 		return s.markCompleted(ctx, o, "RECHARGE_SUCCESS")
 	case redeemActionCreate:
 		// Convert CNY paid → USD balance at fixed FX rate 7.0 (RightToken 内部约定)
-		rc := &RedeemCode{Code: o.RechargeCode, Type: RedeemTypeBalance, Value: o.Amount / 7.0, Status: StatusUnused}
+		baseUSD := o.Amount / 7.0
+		// 首充奖励：CAS 尝试领取，成功则把额外金额直接计入兑换码 value（用户余额自然变多）
+		bonusUSD := 0.0
+		if s.referralService != nil {
+			bonusUSD = s.referralService.ClaimFirstRechargeBonus(ctx, o.UserID, baseUSD)
+		}
+		totalUSD := baseUSD + bonusUSD
+		rc := &RedeemCode{Code: o.RechargeCode, Type: RedeemTypeBalance, Value: totalUSD, Status: StatusUnused}
 		if err := s.redeemService.CreateCode(ctx, rc); err != nil {
 			return fmt.Errorf("create redeem code: %w", err)
+		}
+		if bonusUSD > 0 {
+			s.writeAuditLog(ctx, o.ID, "REFERRAL_FIRST_RECHARGE_BONUS", "system", map[string]any{
+				"base_usd":  baseUSD,
+				"bonus_usd": bonusUSD,
+				"total_usd": totalUSD,
+			})
 		}
 	case redeemActionRedeem:
 		// Code exists but unused — skip creation, proceed to redeem

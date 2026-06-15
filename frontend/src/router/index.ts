@@ -228,6 +228,19 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/referral',
+    name: 'Referral',
+    component: () => import('@/views/user/ReferralView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: false,
+      requiresReferralPartner: true,
+      title: 'My Invites',
+      titleKey: 'referral.pageTitle',
+      descriptionKey: 'referral.pageDescription'
+    }
+  },
+  {
     path: '/profile',
     name: 'Profile',
     component: () => import('@/views/user/ProfileView.vue'),
@@ -473,6 +486,30 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/admin/referral/rules',
+    name: 'AdminReferralRules',
+    component: () => import('@/views/admin/ReferralRulesView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Referral Rules',
+      titleKey: 'admin.referral.rulesTitle',
+      descriptionKey: 'admin.referral.rulesDescription'
+    }
+  },
+  {
+    path: '/admin/referral/commissions',
+    name: 'AdminReferralCommissions',
+    component: () => import('@/views/admin/ReferralCommissionsView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: 'Referral Commissions',
+      titleKey: 'admin.referral.commissionsTitle',
+      descriptionKey: 'admin.referral.commissionsDescription'
+    }
+  },
+  {
     path: '/admin/settings',
     name: 'AdminSettings',
     component: () => import('@/views/admin/SettingsView.vue'),
@@ -648,6 +685,12 @@ router.beforeEach((to, _from, next) => {
   // Check admin requirement
   if (requiresAdmin && !authStore.isAdmin) {
     // User is authenticated but not admin, redirect to user dashboard
+    next('/dashboard')
+    return
+  }
+
+  // Check referral partner requirement
+  if (to.meta.requiresReferralPartner && !authStore.user?.is_referral_partner) {
     next('/dashboard')
     return
   }

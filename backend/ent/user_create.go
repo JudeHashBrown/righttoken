@@ -211,6 +211,62 @@ func (_c *UserCreate) SetNillableTotpEnabledAt(v *time.Time) *UserCreate {
 	return _c
 }
 
+// SetInviterID sets the "inviter_id" field.
+func (_c *UserCreate) SetInviterID(v int64) *UserCreate {
+	_c.mutation.SetInviterID(v)
+	return _c
+}
+
+// SetNillableInviterID sets the "inviter_id" field if the given value is not nil.
+func (_c *UserCreate) SetNillableInviterID(v *int64) *UserCreate {
+	if v != nil {
+		_c.SetInviterID(*v)
+	}
+	return _c
+}
+
+// SetInviteCode sets the "invite_code" field.
+func (_c *UserCreate) SetInviteCode(v string) *UserCreate {
+	_c.mutation.SetInviteCode(v)
+	return _c
+}
+
+// SetNillableInviteCode sets the "invite_code" field if the given value is not nil.
+func (_c *UserCreate) SetNillableInviteCode(v *string) *UserCreate {
+	if v != nil {
+		_c.SetInviteCode(*v)
+	}
+	return _c
+}
+
+// SetIsReferralPartner sets the "is_referral_partner" field.
+func (_c *UserCreate) SetIsReferralPartner(v bool) *UserCreate {
+	_c.mutation.SetIsReferralPartner(v)
+	return _c
+}
+
+// SetNillableIsReferralPartner sets the "is_referral_partner" field if the given value is not nil.
+func (_c *UserCreate) SetNillableIsReferralPartner(v *bool) *UserCreate {
+	if v != nil {
+		_c.SetIsReferralPartner(*v)
+	}
+	return _c
+}
+
+// SetReferralBonusClaimedAt sets the "referral_bonus_claimed_at" field.
+func (_c *UserCreate) SetReferralBonusClaimedAt(v time.Time) *UserCreate {
+	_c.mutation.SetReferralBonusClaimedAt(v)
+	return _c
+}
+
+// SetNillableReferralBonusClaimedAt sets the "referral_bonus_claimed_at" field if the given value is not nil.
+func (_c *UserCreate) SetNillableReferralBonusClaimedAt(v *time.Time) *UserCreate {
+	if v != nil {
+		_c.SetReferralBonusClaimedAt(*v)
+	}
+	return _c
+}
+
 // AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
 func (_c *UserCreate) AddAPIKeyIDs(ids ...int64) *UserCreate {
 	_c.mutation.AddAPIKeyIDs(ids...)
@@ -440,6 +496,10 @@ func (_c *UserCreate) defaults() error {
 		v := user.DefaultTotpEnabled
 		_c.mutation.SetTotpEnabled(v)
 	}
+	if _, ok := _c.mutation.IsReferralPartner(); !ok {
+		v := user.DefaultIsReferralPartner
+		_c.mutation.SetIsReferralPartner(v)
+	}
 	return nil
 }
 
@@ -502,6 +562,14 @@ func (_c *UserCreate) check() error {
 	}
 	if _, ok := _c.mutation.TotpEnabled(); !ok {
 		return &ValidationError{Name: "totp_enabled", err: errors.New(`ent: missing required field "User.totp_enabled"`)}
+	}
+	if v, ok := _c.mutation.InviteCode(); ok {
+		if err := user.InviteCodeValidator(v); err != nil {
+			return &ValidationError{Name: "invite_code", err: fmt.Errorf(`ent: validator failed for field "User.invite_code": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.IsReferralPartner(); !ok {
+		return &ValidationError{Name: "is_referral_partner", err: errors.New(`ent: missing required field "User.is_referral_partner"`)}
 	}
 	return nil
 }
@@ -585,6 +653,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.TotpEnabledAt(); ok {
 		_spec.SetField(user.FieldTotpEnabledAt, field.TypeTime, value)
 		_node.TotpEnabledAt = &value
+	}
+	if value, ok := _c.mutation.InviterID(); ok {
+		_spec.SetField(user.FieldInviterID, field.TypeInt64, value)
+		_node.InviterID = &value
+	}
+	if value, ok := _c.mutation.InviteCode(); ok {
+		_spec.SetField(user.FieldInviteCode, field.TypeString, value)
+		_node.InviteCode = &value
+	}
+	if value, ok := _c.mutation.IsReferralPartner(); ok {
+		_spec.SetField(user.FieldIsReferralPartner, field.TypeBool, value)
+		_node.IsReferralPartner = value
+	}
+	if value, ok := _c.mutation.ReferralBonusClaimedAt(); ok {
+		_spec.SetField(user.FieldReferralBonusClaimedAt, field.TypeTime, value)
+		_node.ReferralBonusClaimedAt = &value
 	}
 	if nodes := _c.mutation.APIKeysIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -988,6 +1072,78 @@ func (u *UserUpsert) ClearTotpEnabledAt() *UserUpsert {
 	return u
 }
 
+// SetInviterID sets the "inviter_id" field.
+func (u *UserUpsert) SetInviterID(v int64) *UserUpsert {
+	u.Set(user.FieldInviterID, v)
+	return u
+}
+
+// UpdateInviterID sets the "inviter_id" field to the value that was provided on create.
+func (u *UserUpsert) UpdateInviterID() *UserUpsert {
+	u.SetExcluded(user.FieldInviterID)
+	return u
+}
+
+// AddInviterID adds v to the "inviter_id" field.
+func (u *UserUpsert) AddInviterID(v int64) *UserUpsert {
+	u.Add(user.FieldInviterID, v)
+	return u
+}
+
+// ClearInviterID clears the value of the "inviter_id" field.
+func (u *UserUpsert) ClearInviterID() *UserUpsert {
+	u.SetNull(user.FieldInviterID)
+	return u
+}
+
+// SetInviteCode sets the "invite_code" field.
+func (u *UserUpsert) SetInviteCode(v string) *UserUpsert {
+	u.Set(user.FieldInviteCode, v)
+	return u
+}
+
+// UpdateInviteCode sets the "invite_code" field to the value that was provided on create.
+func (u *UserUpsert) UpdateInviteCode() *UserUpsert {
+	u.SetExcluded(user.FieldInviteCode)
+	return u
+}
+
+// ClearInviteCode clears the value of the "invite_code" field.
+func (u *UserUpsert) ClearInviteCode() *UserUpsert {
+	u.SetNull(user.FieldInviteCode)
+	return u
+}
+
+// SetIsReferralPartner sets the "is_referral_partner" field.
+func (u *UserUpsert) SetIsReferralPartner(v bool) *UserUpsert {
+	u.Set(user.FieldIsReferralPartner, v)
+	return u
+}
+
+// UpdateIsReferralPartner sets the "is_referral_partner" field to the value that was provided on create.
+func (u *UserUpsert) UpdateIsReferralPartner() *UserUpsert {
+	u.SetExcluded(user.FieldIsReferralPartner)
+	return u
+}
+
+// SetReferralBonusClaimedAt sets the "referral_bonus_claimed_at" field.
+func (u *UserUpsert) SetReferralBonusClaimedAt(v time.Time) *UserUpsert {
+	u.Set(user.FieldReferralBonusClaimedAt, v)
+	return u
+}
+
+// UpdateReferralBonusClaimedAt sets the "referral_bonus_claimed_at" field to the value that was provided on create.
+func (u *UserUpsert) UpdateReferralBonusClaimedAt() *UserUpsert {
+	u.SetExcluded(user.FieldReferralBonusClaimedAt)
+	return u
+}
+
+// ClearReferralBonusClaimedAt clears the value of the "referral_bonus_claimed_at" field.
+func (u *UserUpsert) ClearReferralBonusClaimedAt() *UserUpsert {
+	u.SetNull(user.FieldReferralBonusClaimedAt)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -1247,6 +1403,90 @@ func (u *UserUpsertOne) UpdateTotpEnabledAt() *UserUpsertOne {
 func (u *UserUpsertOne) ClearTotpEnabledAt() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearTotpEnabledAt()
+	})
+}
+
+// SetInviterID sets the "inviter_id" field.
+func (u *UserUpsertOne) SetInviterID(v int64) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetInviterID(v)
+	})
+}
+
+// AddInviterID adds v to the "inviter_id" field.
+func (u *UserUpsertOne) AddInviterID(v int64) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.AddInviterID(v)
+	})
+}
+
+// UpdateInviterID sets the "inviter_id" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateInviterID() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateInviterID()
+	})
+}
+
+// ClearInviterID clears the value of the "inviter_id" field.
+func (u *UserUpsertOne) ClearInviterID() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearInviterID()
+	})
+}
+
+// SetInviteCode sets the "invite_code" field.
+func (u *UserUpsertOne) SetInviteCode(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetInviteCode(v)
+	})
+}
+
+// UpdateInviteCode sets the "invite_code" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateInviteCode() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateInviteCode()
+	})
+}
+
+// ClearInviteCode clears the value of the "invite_code" field.
+func (u *UserUpsertOne) ClearInviteCode() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearInviteCode()
+	})
+}
+
+// SetIsReferralPartner sets the "is_referral_partner" field.
+func (u *UserUpsertOne) SetIsReferralPartner(v bool) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetIsReferralPartner(v)
+	})
+}
+
+// UpdateIsReferralPartner sets the "is_referral_partner" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateIsReferralPartner() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateIsReferralPartner()
+	})
+}
+
+// SetReferralBonusClaimedAt sets the "referral_bonus_claimed_at" field.
+func (u *UserUpsertOne) SetReferralBonusClaimedAt(v time.Time) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetReferralBonusClaimedAt(v)
+	})
+}
+
+// UpdateReferralBonusClaimedAt sets the "referral_bonus_claimed_at" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateReferralBonusClaimedAt() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateReferralBonusClaimedAt()
+	})
+}
+
+// ClearReferralBonusClaimedAt clears the value of the "referral_bonus_claimed_at" field.
+func (u *UserUpsertOne) ClearReferralBonusClaimedAt() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearReferralBonusClaimedAt()
 	})
 }
 
@@ -1675,6 +1915,90 @@ func (u *UserUpsertBulk) UpdateTotpEnabledAt() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearTotpEnabledAt() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearTotpEnabledAt()
+	})
+}
+
+// SetInviterID sets the "inviter_id" field.
+func (u *UserUpsertBulk) SetInviterID(v int64) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetInviterID(v)
+	})
+}
+
+// AddInviterID adds v to the "inviter_id" field.
+func (u *UserUpsertBulk) AddInviterID(v int64) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.AddInviterID(v)
+	})
+}
+
+// UpdateInviterID sets the "inviter_id" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateInviterID() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateInviterID()
+	})
+}
+
+// ClearInviterID clears the value of the "inviter_id" field.
+func (u *UserUpsertBulk) ClearInviterID() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearInviterID()
+	})
+}
+
+// SetInviteCode sets the "invite_code" field.
+func (u *UserUpsertBulk) SetInviteCode(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetInviteCode(v)
+	})
+}
+
+// UpdateInviteCode sets the "invite_code" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateInviteCode() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateInviteCode()
+	})
+}
+
+// ClearInviteCode clears the value of the "invite_code" field.
+func (u *UserUpsertBulk) ClearInviteCode() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearInviteCode()
+	})
+}
+
+// SetIsReferralPartner sets the "is_referral_partner" field.
+func (u *UserUpsertBulk) SetIsReferralPartner(v bool) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetIsReferralPartner(v)
+	})
+}
+
+// UpdateIsReferralPartner sets the "is_referral_partner" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateIsReferralPartner() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateIsReferralPartner()
+	})
+}
+
+// SetReferralBonusClaimedAt sets the "referral_bonus_claimed_at" field.
+func (u *UserUpsertBulk) SetReferralBonusClaimedAt(v time.Time) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetReferralBonusClaimedAt(v)
+	})
+}
+
+// UpdateReferralBonusClaimedAt sets the "referral_bonus_claimed_at" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateReferralBonusClaimedAt() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateReferralBonusClaimedAt()
+	})
+}
+
+// ClearReferralBonusClaimedAt clears the value of the "referral_bonus_claimed_at" field.
+func (u *UserUpsertBulk) ClearReferralBonusClaimedAt() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearReferralBonusClaimedAt()
 	})
 }
 

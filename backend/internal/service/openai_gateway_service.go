@@ -342,6 +342,30 @@ type OpenAIGatewayService struct {
 	openaiWSRetryMetrics  openAIWSRetryMetrics
 	responseHeaderFilter  *responseheaders.CompiledHeaderFilter
 	codexSnapshotThrottle *accountWriteThrottle
+	referralService       *ReferralService
+}
+
+// SetReferralService 注入二级分销服务（构造后设置，避免循环依赖）。
+func (s *OpenAIGatewayService) SetReferralService(rs *ReferralService) {
+	s.referralService = rs
+}
+
+// scheduleReferralAccrual 异步触发二级分销抽佣。失败仅打日志，不影响主计费。
+func (s *OpenAIGatewayService) scheduleReferralAccrual(ctx context.Context, usageLog *UsageLog, subscriptionBilled bool) {
+	if s.referralService == nil || usageLog == nil || subscriptionBilled {
+		return
+	}
+	if usageLog.ActualCost <= 0 || usageLog.RequestID == "" || usageLog.UserID == 0 {
+		return
+	}
+	downlineID := usageLog.UserID
+	requestID := usageLog.RequestID
+	base := usageLog.ActualCost
+	detachedCtx, cancel := detachedBillingContext(ctx)
+	go func() {
+		defer cancel()
+		s.referralService.AccrueCommission(detachedCtx, downlineID, requestID, base)
+	}()
 }
 
 // NewOpenAIGatewayService creates a new OpenAIGatewayService
@@ -4603,6 +4627,8 @@ func (s *OpenAIGatewayService) RecordUsage(ctx context.Context, input *OpenAIRec
 		return billingErr
 	}
 	writeUsageLogBestEffort(ctx, s.usageLogRepo, usageLog, "service.openai_gateway")
+
+	s.scheduleReferralAccrual(ctx, usageLog, isSubscriptionBilling)
 
 	return nil
 }

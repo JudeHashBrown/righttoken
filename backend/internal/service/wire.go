@@ -383,7 +383,8 @@ func ProvideSettingService(settingRepo SettingRepository, groupRepo GroupReposit
 // ProviderSet is the Wire provider set for all services
 var ProviderSet = wire.NewSet(
 	// Core services
-	NewAuthService,
+	ProvideAuthServiceWithReferral,
+	NewReferralService,
 	NewUserService,
 	NewAPIKeyService,
 	ProvideAPIKeyAuthCacheInvalidator,
@@ -465,12 +466,47 @@ var ProviderSet = wire.NewSet(
 	ProvidePaymentConfigService,
 	NewPaymentService,
 	ProvidePaymentOrderExpiryService,
+	ProvideReferralWiring,
 )
 
 // ProvidePaymentConfigService wraps NewPaymentConfigService to accept the named
 // payment.EncryptionKey type instead of raw []byte, avoiding Wire ambiguity.
 func ProvidePaymentConfigService(entClient *dbent.Client, settingRepo SettingRepository, key payment.EncryptionKey) *PaymentConfigService {
 	return NewPaymentConfigService(entClient, settingRepo, []byte(key))
+}
+
+// ProvideAuthServiceWithReferral 在 NewAuthService 之后注入分销服务，避免循环依赖。
+func ProvideAuthServiceWithReferral(
+	entClient *dbent.Client,
+	userRepo UserRepository,
+	redeemRepo RedeemCodeRepository,
+	refreshTokenCache RefreshTokenCache,
+	cfg *config.Config,
+	settingService *SettingService,
+	emailService *EmailService,
+	turnstileService *TurnstileService,
+	emailQueueService *EmailQueueService,
+	promoService *PromoService,
+	defaultSubAssigner DefaultSubscriptionAssigner,
+	referralService *ReferralService,
+) *AuthService {
+	svc := NewAuthService(entClient, userRepo, redeemRepo, refreshTokenCache, cfg,
+		settingService, emailService, turnstileService, emailQueueService, promoService, defaultSubAssigner)
+	svc.SetReferralService(referralService)
+	return svc
+}
+
+// ReferralWiring 是一个零值哨兵，仅用于让 Wire 在生成代码时执行 attach 副作用。
+type ReferralWiring struct{}
+
+// ProvideReferralWiring 将 ReferralService 注入到两个 Gateway 服务 + PaymentService + UserService。
+// 需被 wire 依赖（任何引用了该类型的 provider 会触发执行）。
+func ProvideReferralWiring(gw *GatewayService, ogw *OpenAIGatewayService, ps *PaymentService, us *UserService, rs *ReferralService) ReferralWiring {
+	gw.SetReferralService(rs)
+	ogw.SetReferralService(rs)
+	ps.SetReferralService(rs)
+	us.SetReferralService(rs)
+	return ReferralWiring{}
 }
 
 // ProvidePaymentOrderExpiryService creates and starts PaymentOrderExpiryService.

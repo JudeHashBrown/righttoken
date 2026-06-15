@@ -51,6 +51,16 @@
               <p class="text-gray-500 dark:text-gray-400">{{ t('payment.notAvailable') }}</p>
             </div>
             <template v-else>
+            <!-- 首充奖励 Banner（仅邀请码注册且未领取过的用户可见） -->
+            <div v-if="firstRechargeEligible" class="card overflow-hidden">
+              <div class="bg-gradient-to-r from-amber-400 to-orange-400 px-5 py-4 flex items-center gap-3">
+                <span class="text-2xl">🎁</span>
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-white">{{ t('payment.firstRechargeBonus.title', { percent: firstRechargeBonusPercent }) }}</p>
+                  <p class="text-xs text-white/90 mt-0.5">{{ t('payment.firstRechargeBonus.subtitle', { percent: firstRechargeBonusPercent }) }}</p>
+                </div>
+              </div>
+            </div>
             <div class="card p-6">
               <AmountInput
                 v-model="amount"
@@ -59,6 +69,12 @@
                 :max="globalMaxAmount"
               />
               <p v-if="amountError" class="mt-2 text-xs text-amber-600 dark:text-amber-300">{{ amountError }}</p>
+              <p v-if="firstRechargeEligible && validAmount > 0" class="mt-2 text-xs font-medium text-orange-600 dark:text-orange-400">
+                {{ t('payment.firstRechargeBonus.amountHint', {
+                  paid: validAmount.toFixed(2),
+                  received: (validAmount * firstRechargeBonusRate).toFixed(2)
+                }) }}
+              </p>
             </div>
             <ValueEstimateCard v-if="validAmount > 0" :amount="validAmount" />
             <div v-if="enabledMethods.length >= 1" class="card p-6">
@@ -256,6 +272,7 @@ import { usePaymentStore } from '@/stores/payment'
 import { useSubscriptionStore } from '@/stores/subscriptions'
 import { useAppStore } from '@/stores'
 import { paymentAPI } from '@/api/payment'
+import referralAPI from '@/api/referral'
 import { extractApiErrorMessage } from '@/utils/apiError'
 import { isMobileDevice } from '@/utils/device'
 import type { SubscriptionPlan, CheckoutInfoResponse } from '@/types/payment'
@@ -291,6 +308,11 @@ const submitting = ref(false)
 const errorMessage = ref('')
 const activeTab = ref<'recharge' | 'subscription'>('recharge')
 const amount = ref<number | null>(20)
+
+// 首充奖励资格
+const firstRechargeEligible = ref(false)
+const firstRechargeBonusRate = ref(1.0)
+const firstRechargeBonusPercent = computed(() => Math.round((firstRechargeBonusRate.value - 1) * 100))
 const selectedMethod = ref('')
 const selectedPlan = ref<SubscriptionPlan | null>(null)
 const previewImage = ref('')
@@ -622,5 +644,15 @@ onMounted(async () => {
   finally { loading.value = false }
   // Fetch active subscriptions (uses cache, non-blocking)
   subscriptionStore.fetchActiveSubscriptions().catch(() => {})
+  // Fetch first-recharge eligibility (non-blocking)
+  referralAPI
+    .getFirstRechargeEligibility()
+    .then((res) => {
+      firstRechargeEligible.value = res.eligible
+      firstRechargeBonusRate.value = res.bonus_rate
+    })
+    .catch(() => {
+      firstRechargeEligible.value = false
+    })
 })
 </script>

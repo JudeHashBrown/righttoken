@@ -30,6 +30,12 @@ type User struct {
 	TotpEnabled         bool       // 是否启用 TOTP
 	TotpEnabledAt       *time.Time // TOTP 启用时间
 
+	// 邀请功能：邀请人 + 个人邀请码 + 是否开启邀请功能
+	InviterID              *int64
+	InviteCode             *string
+	IsReferralPartner      bool
+	ReferralBonusClaimedAt *time.Time // 首充奖励领取时间；NULL = 未领取
+
 	APIKeys       []APIKey
 	Subscriptions []UserSubscription
 }

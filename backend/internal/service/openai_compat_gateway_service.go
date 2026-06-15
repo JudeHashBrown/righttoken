@@ -414,6 +414,7 @@ func (s *OpenAIGatewayService) RecordCompatUsage(ctx context.Context, input *Com
 	}
 
 	writeUsageLogBestEffort(ctx, s.usageLogRepo, usageLog, "service.openai_compat")
+	s.scheduleReferralAccrual(ctx, usageLog, isSubscriptionBilling)
 	return nil
 }
 

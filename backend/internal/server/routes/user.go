@@ -90,5 +90,16 @@ func RegisterUserRoutes(
 			subscriptions.GET("/progress", h.Subscription.GetProgress)
 			subscriptions.GET("/summary", h.Subscription.GetSummary)
 		}
+
+		// 邀请功能
+		if h.Referral != nil {
+			referral := authenticated.Group("/referral")
+			{
+				referral.GET("/dashboard", h.Referral.Dashboard)
+				referral.GET("/commissions", h.Referral.ListMyCommissions)
+				// 首充奖励资格（充值页用，公开端点：任何已登录用户都可调）
+				referral.GET("/first-recharge-eligibility", h.Referral.FirstRechargeEligibility)
+			}
+		}
 	}
 }

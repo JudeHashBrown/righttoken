@@ -55,7 +55,7 @@ func (r *userRepository) Create(ctx context.Context, userIn *service.User) error
 		txClient = r.client
 	}
 
-	created, err := txClient.User.Create().
+	createBuilder := txClient.User.Create().
 		SetEmail(userIn.Email).
 		SetUsername(userIn.Username).
 		SetNotes(userIn.Notes).
@@ -63,8 +63,14 @@ func (r *userRepository) Create(ctx context.Context, userIn *service.User) error
 		SetRole(userIn.Role).
 		SetBalance(userIn.Balance).
 		SetConcurrency(userIn.Concurrency).
-		SetStatus(userIn.Status).
-		Save(ctx)
+		SetStatus(userIn.Status)
+	if userIn.InviterID != nil {
+		createBuilder = createBuilder.SetInviterID(*userIn.InviterID)
+	}
+	if userIn.InviteCode != nil {
+		createBuilder = createBuilder.SetInviteCode(*userIn.InviteCode)
+	}
+	created, err := createBuilder.Save(ctx)
 	if err != nil {
 		return translatePersistenceError(err, nil, service.ErrEmailExists)
 	}
@@ -115,6 +121,50 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*service
 		out.AllowedGroups = v
 	}
 	return out, nil
+}
+
+func (r *userRepository) GetByInviteCode(ctx context.Context, code string) (*service.User, error) {
+	m, err := r.client.User.Query().Where(dbuser.InviteCodeEQ(code)).Only(ctx)
+	if err != nil {
+		return nil, translatePersistenceError(err, service.ErrReferralCodeNotFound, nil)
+	}
+	return userEntityToService(m), nil
+}
+
+func (r *userRepository) SetInviteCode(ctx context.Context, userID int64, code string) error {
+	client := clientFromContext(ctx, r.client)
+	_, err := client.User.UpdateOneID(userID).SetInviteCode(code).Save(ctx)
+	if err != nil {
+		return translatePersistenceError(err, service.ErrUserNotFound, nil)
+	}
+	return nil
+}
+
+func (r *userRepository) SetReferralPartner(ctx context.Context, userID int64, enabled bool) error {
+	client := clientFromContext(ctx, r.client)
+	_, err := client.User.UpdateOneID(userID).SetIsReferralPartner(enabled).Save(ctx)
+	if err != nil {
+		return translatePersistenceError(err, service.ErrUserNotFound, nil)
+	}
+	return nil
+}
+
+// ClaimFirstRechargeBonus 原子 CAS 操作：将 referral_bonus_claimed_at 从 NULL 改为 NOW()，
+// 仅在用户有 inviter_id 且未领取过时成功。返回 true=成功领取，false=不符合条件或已领过。
+func (r *userRepository) ClaimFirstRechargeBonus(ctx context.Context, userID int64) (bool, error) {
+	client := clientFromContext(ctx, r.client)
+	n, err := client.User.Update().
+		Where(
+			dbuser.IDEQ(userID),
+			dbuser.ReferralBonusClaimedAtIsNil(),
+			dbuser.InviterIDNotNil(),
+		).
+		SetReferralBonusClaimedAt(time.Now()).
+		Save(ctx)
+	if err != nil {
+		return false, err
+	}
+	return n == 1, nil
 }
 
 func (r *userRepository) Update(ctx context.Context, userIn *service.User) error {

@@ -871,6 +871,21 @@ func (s *SettingService) GetDefaultBalance(ctx context.Context) float64 {
 	return s.cfg.Default.UserBalance
 }
 
+// GetReferralFirstRechargeBonusRate 获取首充奖励倍率（默认 1.05）。
+// 返回 <= 1.0 表示功能关闭。
+func (s *SettingService) GetReferralFirstRechargeBonusRate(ctx context.Context) float64 {
+	const defaultRate = 1.05
+	value, err := s.settingRepo.GetValue(ctx, SettingKeyReferralFirstRechargeBonusRate)
+	if err != nil {
+		return defaultRate
+	}
+	v, err := strconv.ParseFloat(value, 64)
+	if err != nil || v < 1.0 || v > 10.0 {
+		return defaultRate
+	}
+	return v
+}
+
 // GetDefaultSubscriptions 获取新用户默认订阅配置列表。
 func (s *SettingService) GetDefaultSubscriptions(ctx context.Context) []DefaultSubscriptionSetting {
 	value, err := s.settingRepo.GetValue(ctx, SettingKeyDefaultSubscriptions)

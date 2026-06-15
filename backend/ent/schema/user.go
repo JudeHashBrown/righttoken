@@ -72,6 +72,24 @@ func (User) Fields() []ent.Field {
 		field.Time("totp_enabled_at").
 			Optional().
 			Nillable(),
+
+		// 二级分销：邀请人 ID（NULL = 自然注册）
+		field.Int64("inviter_id").
+			Optional().
+			Nillable(),
+		// 二级分销：8 位 [A-Z0-9] 自动生成的个人邀请码
+		field.String("invite_code").
+			MaxLen(16).
+			Optional().
+			Nillable().
+			Unique(),
+		// 邀请功能开关：默认 false，管理员可在后台用户管理页开启/关闭
+		field.Bool("is_referral_partner").
+			Default(false),
+		// 首充奖励领取时间：NULL = 未领取；CAS 更新保证不会双领
+		field.Time("referral_bonus_claimed_at").
+			Optional().
+			Nillable(),
 	}
 }
 
@@ -96,5 +114,6 @@ func (User) Indexes() []ent.Index {
 		// email 字段已在 Fields() 中声明 Unique()，无需重复索引
 		index.Fields("status"),
 		index.Fields("deleted_at"),
+		index.Fields("inviter_id"),
 	}
 }
