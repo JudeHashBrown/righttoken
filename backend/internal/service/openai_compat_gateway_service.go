@@ -98,7 +98,7 @@ func (s *OpenAIGatewayService) ForwardChatCompletionsPassthrough(
 	if err != nil {
 		return nil, fmt.Errorf("upstream call: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	result := &CompatForwardResult{
 		StatusCode: resp.StatusCode,

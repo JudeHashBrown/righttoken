@@ -138,7 +138,7 @@ func (r *referralCommissionRepository) SummaryByInviter(ctx context.Context, inv
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	result := map[int8]service.CommissionSummary{}
 	for rows.Next() {
@@ -188,7 +188,7 @@ func (r *referralCommissionRepository) Lv1Downlines(ctx context.Context, inviter
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	out := []service.DownlineRowLv1{}
 	for rows.Next() {
 		var row service.DownlineRowLv1
@@ -229,7 +229,7 @@ func (r *referralCommissionRepository) Lv2Summary(ctx context.Context, inviterID
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	var out service.DownlineSummaryLv2
 	if rows.Next() {
 		if err := rows.Scan(&out.DownlineCount, &out.PendingAmount, &out.SettledAmount, &out.TotalCommission); err != nil {

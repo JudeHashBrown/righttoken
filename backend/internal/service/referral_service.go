@@ -229,12 +229,12 @@ func (s *ReferralService) writeCommission(ctx context.Context, inviterID, downli
 
 // GetDashboard 用户视角：邀请码 + 两级抽佣聚合 + Lv1 明细 + Lv2 汇总。
 type ReferralDashboard struct {
-	InviteCode string                  `json:"invite_code"`
-	Lv1Rate    float64                 `json:"lv1_rate"`
-	Lv2Rate    float64                 `json:"lv2_rate"`
-	Lv1Summary CommissionSummary       `json:"lv1_summary"`
-	Lv2Summary DownlineSummaryLv2      `json:"lv2_summary"`
-	Lv1Rows    []DownlineRowLv1        `json:"lv1_rows"`
+	InviteCode string             `json:"invite_code"`
+	Lv1Rate    float64            `json:"lv1_rate"`
+	Lv2Rate    float64            `json:"lv2_rate"`
+	Lv1Summary CommissionSummary  `json:"lv1_summary"`
+	Lv2Summary DownlineSummaryLv2 `json:"lv2_summary"`
+	Lv1Rows    []DownlineRowLv1   `json:"lv1_rows"`
 }
 
 func (s *ReferralService) GetDashboard(ctx context.Context, user *User) (*ReferralDashboard, error) {

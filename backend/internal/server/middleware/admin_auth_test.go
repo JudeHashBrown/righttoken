@@ -200,3 +200,19 @@ func (s *stubUserRepo) EnableTotp(ctx context.Context, userID int64) error {
 func (s *stubUserRepo) DisableTotp(ctx context.Context, userID int64) error {
 	panic("unexpected DisableTotp call")
 }
+
+func (s *stubUserRepo) GetByInviteCode(ctx context.Context, code string) (*service.User, error) {
+	panic("unexpected GetByInviteCode call")
+}
+
+func (s *stubUserRepo) SetInviteCode(ctx context.Context, userID int64, code string) error {
+	panic("unexpected SetInviteCode call")
+}
+
+func (s *stubUserRepo) SetReferralPartner(ctx context.Context, userID int64, enabled bool) error {
+	panic("unexpected SetReferralPartner call")
+}
+
+func (s *stubUserRepo) ClaimFirstRechargeBonus(ctx context.Context, userID int64) (bool, error) {
+	panic("unexpected ClaimFirstRechargeBonus call")
+}

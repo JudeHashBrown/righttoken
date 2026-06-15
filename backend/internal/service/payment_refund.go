@@ -18,8 +18,9 @@ import (
 // --- Refund Flow ---
 
 // Plan B auto-approval policy: a user-initiated refund is auto-processed when
-//   1. the order was paid at least autoRefundCooldownAfterPay ago, AND
-//   2. the user has no other refunded order within autoRefundWindow.
+//  1. the order was paid at least autoRefundCooldownAfterPay ago, AND
+//  2. the user has no other refunded order within autoRefundWindow.
+//
 // (Full-balance check is the existing protection in RequestRefund — kept as-is.)
 const (
 	autoRefundCooldownAfterPay = 24 * time.Hour
