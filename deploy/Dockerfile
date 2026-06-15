@@ -19,8 +19,8 @@ FROM ${NODE_IMAGE} AS frontend-builder
 
 WORKDIR /app/frontend
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Install pnpm — pin to v10 (v11 默认拒绝运行 esbuild/vue-demi install scripts，会让 frozen-lockfile 失败)
+RUN corepack enable && corepack prepare pnpm@10 --activate
 
 # Install dependencies first (better caching)
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
