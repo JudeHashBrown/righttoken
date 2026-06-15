@@ -98,7 +98,7 @@ func (s *OpenAIGatewayService) ForwardChatCompletionsPassthrough(
 	if err != nil {
 		return nil, fmt.Errorf("upstream call: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	result := &CompatForwardResult{
 		StatusCode: resp.StatusCode,
@@ -414,6 +414,7 @@ func (s *OpenAIGatewayService) RecordCompatUsage(ctx context.Context, input *Com
 	}
 
 	writeUsageLogBestEffort(ctx, s.usageLogRepo, usageLog, "service.openai_compat")
+	s.scheduleReferralAccrual(ctx, usageLog, isSubscriptionBilling)
 	return nil
 }
 

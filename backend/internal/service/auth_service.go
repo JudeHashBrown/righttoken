@@ -70,6 +70,7 @@ type AuthService struct {
 	turnstileService   *TurnstileService
 	emailQueueService  *EmailQueueService
 	promoService       *PromoService
+	referralService    *ReferralService
 	defaultSubAssigner DefaultSubscriptionAssigner
 }
 
@@ -106,13 +107,18 @@ func NewAuthService(
 	}
 }
 
-// Register 用户注册，返回token和用户
-func (s *AuthService) Register(ctx context.Context, email, password string) (string, *User, error) {
-	return s.RegisterWithVerification(ctx, email, password, "", "", "")
+// SetReferralService 注入分销服务（构造后调用，避免循环依赖）。
+func (s *AuthService) SetReferralService(rs *ReferralService) {
+	s.referralService = rs
 }
 
-// RegisterWithVerification 用户注册（支持邮件验证、优惠码和邀请码），返回token和用户
-func (s *AuthService) RegisterWithVerification(ctx context.Context, email, password, verifyCode, promoCode, invitationCode string) (string, *User, error) {
+// Register 用户注册，返回token和用户
+func (s *AuthService) Register(ctx context.Context, email, password string) (string, *User, error) {
+	return s.RegisterWithVerification(ctx, email, password, "", "", "", "")
+}
+
+// RegisterWithVerification 用户注册（支持邮件验证、优惠码、准入邀请码、二级分销推荐码），返回token和用户
+func (s *AuthService) RegisterWithVerification(ctx context.Context, email, password, verifyCode, promoCode, invitationCode, referralCode string) (string, *User, error) {
 	// 检查是否开放注册（默认关闭：settingService 未配置时不允许注册）
 	if s.settingService == nil || !s.settingService.IsRegistrationEnabled(ctx) {
 		return "", nil, ErrRegDisabled
@@ -173,6 +179,28 @@ func (s *AuthService) RegisterWithVerification(ctx context.Context, email, passw
 		return "", nil, ErrEmailExists
 	}
 
+	// 邀请功能：解析推荐码 + E1 自荐拦截 + inviter 必须为 partner。
+	// 三种情况都视为「码无效」、静默不绑定（注册仍成功）：
+	//   1. 码不存在；2. inviter 已关闭邀请功能；3. E1 自荐拦截会主动报错（不静默）。
+	var inviterID *int64
+	if s.referralService != nil {
+		inviter, refErr := s.referralService.ResolveInviterByCode(ctx, referralCode)
+		if refErr != nil && !errors.Is(refErr, ErrReferralCodeNotFound) {
+			logger.LegacyPrintf("service.auth", "[Auth] Resolve referral code %q failed: %v", referralCode, refErr)
+		} else if inviter != nil {
+			if err := s.referralService.ValidateNewRegistration(inviter, email); err != nil {
+				return "", nil, err
+			}
+			if !inviter.IsReferralPartner {
+				// 邀请人已关闭邀请功能 → 视为无效码，静默不绑定
+				logger.LegacyPrintf("service.auth", "[Auth] Referral code %q belongs to inactive partner (user=%d), ignored", referralCode, inviter.ID)
+			} else {
+				id := inviter.ID
+				inviterID = &id
+			}
+		}
+	}
+
 	// 密码哈希
 	hashedPassword, err := s.HashPassword(password)
 	if err != nil {
@@ -195,6 +223,7 @@ func (s *AuthService) RegisterWithVerification(ctx context.Context, email, passw
 		Balance:      defaultBalance,
 		Concurrency:  defaultConcurrency,
 		Status:       StatusActive,
+		InviterID:    inviterID,
 	}
 
 	if err := s.userRepo.Create(ctx, user); err != nil {
@@ -206,6 +235,15 @@ func (s *AuthService) RegisterWithVerification(ctx context.Context, email, passw
 		return "", nil, ErrServiceUnavailable
 	}
 	s.assignDefaultSubscriptions(ctx, user.ID)
+
+	// 二级分销：为新用户生成邀请码（best-effort，失败不影响注册）。
+	if s.referralService != nil {
+		if code, gErr := s.referralService.GenerateInviteCode(ctx, user.ID); gErr != nil {
+			logger.LegacyPrintf("service.auth", "[Auth] Failed to generate invite code for user %d: %v", user.ID, gErr)
+		} else {
+			user.InviteCode = &code
+		}
+	}
 
 	// 标记邀请码为已使用（如果使用了邀请码）
 	if invitationRedeemCode != nil {

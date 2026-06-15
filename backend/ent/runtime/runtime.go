@@ -20,6 +20,8 @@ import (
 	"github.com/Wei-Shaw/sub2api/ent/promocodeusage"
 	"github.com/Wei-Shaw/sub2api/ent/proxy"
 	"github.com/Wei-Shaw/sub2api/ent/redeemcode"
+	"github.com/Wei-Shaw/sub2api/ent/referralcommission"
+	"github.com/Wei-Shaw/sub2api/ent/referralcommissionrule"
 	"github.com/Wei-Shaw/sub2api/ent/schema"
 	"github.com/Wei-Shaw/sub2api/ent/securitysecret"
 	"github.com/Wei-Shaw/sub2api/ent/setting"
@@ -863,6 +865,48 @@ func init() {
 	redeemcodeDescValidityDays := redeemcodeFields[9].Descriptor()
 	// redeemcode.DefaultValidityDays holds the default value on creation for the validity_days field.
 	redeemcode.DefaultValidityDays = redeemcodeDescValidityDays.Default.(int)
+	referralcommissionFields := schema.ReferralCommission{}.Fields()
+	_ = referralcommissionFields
+	// referralcommissionDescSourceRequestID is the schema descriptor for source_request_id field.
+	referralcommissionDescSourceRequestID := referralcommissionFields[3].Descriptor()
+	// referralcommission.SourceRequestIDValidator is a validator for the "source_request_id" field. It is called by the builders before save.
+	referralcommission.SourceRequestIDValidator = referralcommissionDescSourceRequestID.Validators[0].(func(string) error)
+	// referralcommissionDescBaseAmount is the schema descriptor for base_amount field.
+	referralcommissionDescBaseAmount := referralcommissionFields[4].Descriptor()
+	// referralcommission.DefaultBaseAmount holds the default value on creation for the base_amount field.
+	referralcommission.DefaultBaseAmount = referralcommissionDescBaseAmount.Default.(float64)
+	// referralcommissionDescRate is the schema descriptor for rate field.
+	referralcommissionDescRate := referralcommissionFields[5].Descriptor()
+	// referralcommission.DefaultRate holds the default value on creation for the rate field.
+	referralcommission.DefaultRate = referralcommissionDescRate.Default.(float64)
+	// referralcommissionDescCommissionAmount is the schema descriptor for commission_amount field.
+	referralcommissionDescCommissionAmount := referralcommissionFields[6].Descriptor()
+	// referralcommission.DefaultCommissionAmount holds the default value on creation for the commission_amount field.
+	referralcommission.DefaultCommissionAmount = referralcommissionDescCommissionAmount.Default.(float64)
+	// referralcommissionDescStatus is the schema descriptor for status field.
+	referralcommissionDescStatus := referralcommissionFields[7].Descriptor()
+	// referralcommission.DefaultStatus holds the default value on creation for the status field.
+	referralcommission.DefaultStatus = referralcommissionDescStatus.Default.(string)
+	// referralcommission.StatusValidator is a validator for the "status" field. It is called by the builders before save.
+	referralcommission.StatusValidator = referralcommissionDescStatus.Validators[0].(func(string) error)
+	// referralcommissionDescCreatedAt is the schema descriptor for created_at field.
+	referralcommissionDescCreatedAt := referralcommissionFields[11].Descriptor()
+	// referralcommission.DefaultCreatedAt holds the default value on creation for the created_at field.
+	referralcommission.DefaultCreatedAt = referralcommissionDescCreatedAt.Default.(func() time.Time)
+	referralcommissionruleFields := schema.ReferralCommissionRule{}.Fields()
+	_ = referralcommissionruleFields
+	// referralcommissionruleDescRate is the schema descriptor for rate field.
+	referralcommissionruleDescRate := referralcommissionruleFields[1].Descriptor()
+	// referralcommissionrule.DefaultRate holds the default value on creation for the rate field.
+	referralcommissionrule.DefaultRate = referralcommissionruleDescRate.Default.(float64)
+	// referralcommissionruleDescEffectiveFrom is the schema descriptor for effective_from field.
+	referralcommissionruleDescEffectiveFrom := referralcommissionruleFields[2].Descriptor()
+	// referralcommissionrule.DefaultEffectiveFrom holds the default value on creation for the effective_from field.
+	referralcommissionrule.DefaultEffectiveFrom = referralcommissionruleDescEffectiveFrom.Default.(func() time.Time)
+	// referralcommissionruleDescCreatedAt is the schema descriptor for created_at field.
+	referralcommissionruleDescCreatedAt := referralcommissionruleFields[5].Descriptor()
+	// referralcommissionrule.DefaultCreatedAt holds the default value on creation for the created_at field.
+	referralcommissionrule.DefaultCreatedAt = referralcommissionruleDescCreatedAt.Default.(func() time.Time)
 	securitysecretMixin := schema.SecuritySecret{}.Mixin()
 	securitysecretMixinFields0 := securitysecretMixin[0].Fields()
 	_ = securitysecretMixinFields0
@@ -1293,6 +1337,14 @@ func init() {
 	userDescTotpEnabled := userFields[9].Descriptor()
 	// user.DefaultTotpEnabled holds the default value on creation for the totp_enabled field.
 	user.DefaultTotpEnabled = userDescTotpEnabled.Default.(bool)
+	// userDescInviteCode is the schema descriptor for invite_code field.
+	userDescInviteCode := userFields[12].Descriptor()
+	// user.InviteCodeValidator is a validator for the "invite_code" field. It is called by the builders before save.
+	user.InviteCodeValidator = userDescInviteCode.Validators[0].(func(string) error)
+	// userDescIsReferralPartner is the schema descriptor for is_referral_partner field.
+	userDescIsReferralPartner := userFields[13].Descriptor()
+	// user.DefaultIsReferralPartner holds the default value on creation for the is_referral_partner field.
+	user.DefaultIsReferralPartner = userDescIsReferralPartner.Default.(bool)
 	userallowedgroupFields := schema.UserAllowedGroup{}.Fields()
 	_ = userallowedgroupFields
 	// userallowedgroupDescCreatedAt is the schema descriptor for created_at field.

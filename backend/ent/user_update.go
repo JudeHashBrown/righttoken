@@ -243,6 +243,87 @@ func (_u *UserUpdate) ClearTotpEnabledAt() *UserUpdate {
 	return _u
 }
 
+// SetInviterID sets the "inviter_id" field.
+func (_u *UserUpdate) SetInviterID(v int64) *UserUpdate {
+	_u.mutation.ResetInviterID()
+	_u.mutation.SetInviterID(v)
+	return _u
+}
+
+// SetNillableInviterID sets the "inviter_id" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableInviterID(v *int64) *UserUpdate {
+	if v != nil {
+		_u.SetInviterID(*v)
+	}
+	return _u
+}
+
+// AddInviterID adds value to the "inviter_id" field.
+func (_u *UserUpdate) AddInviterID(v int64) *UserUpdate {
+	_u.mutation.AddInviterID(v)
+	return _u
+}
+
+// ClearInviterID clears the value of the "inviter_id" field.
+func (_u *UserUpdate) ClearInviterID() *UserUpdate {
+	_u.mutation.ClearInviterID()
+	return _u
+}
+
+// SetInviteCode sets the "invite_code" field.
+func (_u *UserUpdate) SetInviteCode(v string) *UserUpdate {
+	_u.mutation.SetInviteCode(v)
+	return _u
+}
+
+// SetNillableInviteCode sets the "invite_code" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableInviteCode(v *string) *UserUpdate {
+	if v != nil {
+		_u.SetInviteCode(*v)
+	}
+	return _u
+}
+
+// ClearInviteCode clears the value of the "invite_code" field.
+func (_u *UserUpdate) ClearInviteCode() *UserUpdate {
+	_u.mutation.ClearInviteCode()
+	return _u
+}
+
+// SetIsReferralPartner sets the "is_referral_partner" field.
+func (_u *UserUpdate) SetIsReferralPartner(v bool) *UserUpdate {
+	_u.mutation.SetIsReferralPartner(v)
+	return _u
+}
+
+// SetNillableIsReferralPartner sets the "is_referral_partner" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableIsReferralPartner(v *bool) *UserUpdate {
+	if v != nil {
+		_u.SetIsReferralPartner(*v)
+	}
+	return _u
+}
+
+// SetReferralBonusClaimedAt sets the "referral_bonus_claimed_at" field.
+func (_u *UserUpdate) SetReferralBonusClaimedAt(v time.Time) *UserUpdate {
+	_u.mutation.SetReferralBonusClaimedAt(v)
+	return _u
+}
+
+// SetNillableReferralBonusClaimedAt sets the "referral_bonus_claimed_at" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableReferralBonusClaimedAt(v *time.Time) *UserUpdate {
+	if v != nil {
+		_u.SetReferralBonusClaimedAt(*v)
+	}
+	return _u
+}
+
+// ClearReferralBonusClaimedAt clears the value of the "referral_bonus_claimed_at" field.
+func (_u *UserUpdate) ClearReferralBonusClaimedAt() *UserUpdate {
+	_u.mutation.ClearReferralBonusClaimedAt()
+	return _u
+}
+
 // AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
 func (_u *UserUpdate) AddAPIKeyIDs(ids ...int64) *UserUpdate {
 	_u.mutation.AddAPIKeyIDs(ids...)
@@ -677,6 +758,11 @@ func (_u *UserUpdate) check() error {
 			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "User.username": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.InviteCode(); ok {
+		if err := user.InviteCodeValidator(v); err != nil {
+			return &ValidationError{Name: "invite_code", err: fmt.Errorf(`ent: validator failed for field "User.invite_code": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -745,6 +831,30 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.TotpEnabledAtCleared() {
 		_spec.ClearField(user.FieldTotpEnabledAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.InviterID(); ok {
+		_spec.SetField(user.FieldInviterID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedInviterID(); ok {
+		_spec.AddField(user.FieldInviterID, field.TypeInt64, value)
+	}
+	if _u.mutation.InviterIDCleared() {
+		_spec.ClearField(user.FieldInviterID, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.InviteCode(); ok {
+		_spec.SetField(user.FieldInviteCode, field.TypeString, value)
+	}
+	if _u.mutation.InviteCodeCleared() {
+		_spec.ClearField(user.FieldInviteCode, field.TypeString)
+	}
+	if value, ok := _u.mutation.IsReferralPartner(); ok {
+		_spec.SetField(user.FieldIsReferralPartner, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.ReferralBonusClaimedAt(); ok {
+		_spec.SetField(user.FieldReferralBonusClaimedAt, field.TypeTime, value)
+	}
+	if _u.mutation.ReferralBonusClaimedAtCleared() {
+		_spec.ClearField(user.FieldReferralBonusClaimedAt, field.TypeTime)
 	}
 	if _u.mutation.APIKeysCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1434,6 +1544,87 @@ func (_u *UserUpdateOne) ClearTotpEnabledAt() *UserUpdateOne {
 	return _u
 }
 
+// SetInviterID sets the "inviter_id" field.
+func (_u *UserUpdateOne) SetInviterID(v int64) *UserUpdateOne {
+	_u.mutation.ResetInviterID()
+	_u.mutation.SetInviterID(v)
+	return _u
+}
+
+// SetNillableInviterID sets the "inviter_id" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableInviterID(v *int64) *UserUpdateOne {
+	if v != nil {
+		_u.SetInviterID(*v)
+	}
+	return _u
+}
+
+// AddInviterID adds value to the "inviter_id" field.
+func (_u *UserUpdateOne) AddInviterID(v int64) *UserUpdateOne {
+	_u.mutation.AddInviterID(v)
+	return _u
+}
+
+// ClearInviterID clears the value of the "inviter_id" field.
+func (_u *UserUpdateOne) ClearInviterID() *UserUpdateOne {
+	_u.mutation.ClearInviterID()
+	return _u
+}
+
+// SetInviteCode sets the "invite_code" field.
+func (_u *UserUpdateOne) SetInviteCode(v string) *UserUpdateOne {
+	_u.mutation.SetInviteCode(v)
+	return _u
+}
+
+// SetNillableInviteCode sets the "invite_code" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableInviteCode(v *string) *UserUpdateOne {
+	if v != nil {
+		_u.SetInviteCode(*v)
+	}
+	return _u
+}
+
+// ClearInviteCode clears the value of the "invite_code" field.
+func (_u *UserUpdateOne) ClearInviteCode() *UserUpdateOne {
+	_u.mutation.ClearInviteCode()
+	return _u
+}
+
+// SetIsReferralPartner sets the "is_referral_partner" field.
+func (_u *UserUpdateOne) SetIsReferralPartner(v bool) *UserUpdateOne {
+	_u.mutation.SetIsReferralPartner(v)
+	return _u
+}
+
+// SetNillableIsReferralPartner sets the "is_referral_partner" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableIsReferralPartner(v *bool) *UserUpdateOne {
+	if v != nil {
+		_u.SetIsReferralPartner(*v)
+	}
+	return _u
+}
+
+// SetReferralBonusClaimedAt sets the "referral_bonus_claimed_at" field.
+func (_u *UserUpdateOne) SetReferralBonusClaimedAt(v time.Time) *UserUpdateOne {
+	_u.mutation.SetReferralBonusClaimedAt(v)
+	return _u
+}
+
+// SetNillableReferralBonusClaimedAt sets the "referral_bonus_claimed_at" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableReferralBonusClaimedAt(v *time.Time) *UserUpdateOne {
+	if v != nil {
+		_u.SetReferralBonusClaimedAt(*v)
+	}
+	return _u
+}
+
+// ClearReferralBonusClaimedAt clears the value of the "referral_bonus_claimed_at" field.
+func (_u *UserUpdateOne) ClearReferralBonusClaimedAt() *UserUpdateOne {
+	_u.mutation.ClearReferralBonusClaimedAt()
+	return _u
+}
+
 // AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
 func (_u *UserUpdateOne) AddAPIKeyIDs(ids ...int64) *UserUpdateOne {
 	_u.mutation.AddAPIKeyIDs(ids...)
@@ -1881,6 +2072,11 @@ func (_u *UserUpdateOne) check() error {
 			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "User.username": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.InviteCode(); ok {
+		if err := user.InviteCodeValidator(v); err != nil {
+			return &ValidationError{Name: "invite_code", err: fmt.Errorf(`ent: validator failed for field "User.invite_code": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -1966,6 +2162,30 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if _u.mutation.TotpEnabledAtCleared() {
 		_spec.ClearField(user.FieldTotpEnabledAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.InviterID(); ok {
+		_spec.SetField(user.FieldInviterID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedInviterID(); ok {
+		_spec.AddField(user.FieldInviterID, field.TypeInt64, value)
+	}
+	if _u.mutation.InviterIDCleared() {
+		_spec.ClearField(user.FieldInviterID, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.InviteCode(); ok {
+		_spec.SetField(user.FieldInviteCode, field.TypeString, value)
+	}
+	if _u.mutation.InviteCodeCleared() {
+		_spec.ClearField(user.FieldInviteCode, field.TypeString)
+	}
+	if value, ok := _u.mutation.IsReferralPartner(); ok {
+		_spec.SetField(user.FieldIsReferralPartner, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.ReferralBonusClaimedAt(); ok {
+		_spec.SetField(user.FieldReferralBonusClaimedAt, field.TypeTime, value)
+	}
+	if _u.mutation.ReferralBonusClaimedAtCleared() {
+		_spec.ClearField(user.FieldReferralBonusClaimedAt, field.TypeTime)
 	}
 	if _u.mutation.APIKeysCleared() {
 		edge := &sqlgraph.EdgeSpec{

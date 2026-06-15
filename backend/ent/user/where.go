@@ -125,6 +125,26 @@ func TotpEnabledAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldTotpEnabledAt, v))
 }
 
+// InviterID applies equality check predicate on the "inviter_id" field. It's identical to InviterIDEQ.
+func InviterID(v int64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldInviterID, v))
+}
+
+// InviteCode applies equality check predicate on the "invite_code" field. It's identical to InviteCodeEQ.
+func InviteCode(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldInviteCode, v))
+}
+
+// IsReferralPartner applies equality check predicate on the "is_referral_partner" field. It's identical to IsReferralPartnerEQ.
+func IsReferralPartner(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldIsReferralPartner, v))
+}
+
+// ReferralBonusClaimedAt applies equality check predicate on the "referral_bonus_claimed_at" field. It's identical to ReferralBonusClaimedAtEQ.
+func ReferralBonusClaimedAt(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldReferralBonusClaimedAt, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -858,6 +878,191 @@ func TotpEnabledAtIsNil() predicate.User {
 // TotpEnabledAtNotNil applies the NotNil predicate on the "totp_enabled_at" field.
 func TotpEnabledAtNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldTotpEnabledAt))
+}
+
+// InviterIDEQ applies the EQ predicate on the "inviter_id" field.
+func InviterIDEQ(v int64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldInviterID, v))
+}
+
+// InviterIDNEQ applies the NEQ predicate on the "inviter_id" field.
+func InviterIDNEQ(v int64) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldInviterID, v))
+}
+
+// InviterIDIn applies the In predicate on the "inviter_id" field.
+func InviterIDIn(vs ...int64) predicate.User {
+	return predicate.User(sql.FieldIn(FieldInviterID, vs...))
+}
+
+// InviterIDNotIn applies the NotIn predicate on the "inviter_id" field.
+func InviterIDNotIn(vs ...int64) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldInviterID, vs...))
+}
+
+// InviterIDGT applies the GT predicate on the "inviter_id" field.
+func InviterIDGT(v int64) predicate.User {
+	return predicate.User(sql.FieldGT(FieldInviterID, v))
+}
+
+// InviterIDGTE applies the GTE predicate on the "inviter_id" field.
+func InviterIDGTE(v int64) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldInviterID, v))
+}
+
+// InviterIDLT applies the LT predicate on the "inviter_id" field.
+func InviterIDLT(v int64) predicate.User {
+	return predicate.User(sql.FieldLT(FieldInviterID, v))
+}
+
+// InviterIDLTE applies the LTE predicate on the "inviter_id" field.
+func InviterIDLTE(v int64) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldInviterID, v))
+}
+
+// InviterIDIsNil applies the IsNil predicate on the "inviter_id" field.
+func InviterIDIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldInviterID))
+}
+
+// InviterIDNotNil applies the NotNil predicate on the "inviter_id" field.
+func InviterIDNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldInviterID))
+}
+
+// InviteCodeEQ applies the EQ predicate on the "invite_code" field.
+func InviteCodeEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldInviteCode, v))
+}
+
+// InviteCodeNEQ applies the NEQ predicate on the "invite_code" field.
+func InviteCodeNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldInviteCode, v))
+}
+
+// InviteCodeIn applies the In predicate on the "invite_code" field.
+func InviteCodeIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldInviteCode, vs...))
+}
+
+// InviteCodeNotIn applies the NotIn predicate on the "invite_code" field.
+func InviteCodeNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldInviteCode, vs...))
+}
+
+// InviteCodeGT applies the GT predicate on the "invite_code" field.
+func InviteCodeGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldInviteCode, v))
+}
+
+// InviteCodeGTE applies the GTE predicate on the "invite_code" field.
+func InviteCodeGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldInviteCode, v))
+}
+
+// InviteCodeLT applies the LT predicate on the "invite_code" field.
+func InviteCodeLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldInviteCode, v))
+}
+
+// InviteCodeLTE applies the LTE predicate on the "invite_code" field.
+func InviteCodeLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldInviteCode, v))
+}
+
+// InviteCodeContains applies the Contains predicate on the "invite_code" field.
+func InviteCodeContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldInviteCode, v))
+}
+
+// InviteCodeHasPrefix applies the HasPrefix predicate on the "invite_code" field.
+func InviteCodeHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldInviteCode, v))
+}
+
+// InviteCodeHasSuffix applies the HasSuffix predicate on the "invite_code" field.
+func InviteCodeHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldInviteCode, v))
+}
+
+// InviteCodeIsNil applies the IsNil predicate on the "invite_code" field.
+func InviteCodeIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldInviteCode))
+}
+
+// InviteCodeNotNil applies the NotNil predicate on the "invite_code" field.
+func InviteCodeNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldInviteCode))
+}
+
+// InviteCodeEqualFold applies the EqualFold predicate on the "invite_code" field.
+func InviteCodeEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldInviteCode, v))
+}
+
+// InviteCodeContainsFold applies the ContainsFold predicate on the "invite_code" field.
+func InviteCodeContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldInviteCode, v))
+}
+
+// IsReferralPartnerEQ applies the EQ predicate on the "is_referral_partner" field.
+func IsReferralPartnerEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldIsReferralPartner, v))
+}
+
+// IsReferralPartnerNEQ applies the NEQ predicate on the "is_referral_partner" field.
+func IsReferralPartnerNEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldIsReferralPartner, v))
+}
+
+// ReferralBonusClaimedAtEQ applies the EQ predicate on the "referral_bonus_claimed_at" field.
+func ReferralBonusClaimedAtEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldReferralBonusClaimedAt, v))
+}
+
+// ReferralBonusClaimedAtNEQ applies the NEQ predicate on the "referral_bonus_claimed_at" field.
+func ReferralBonusClaimedAtNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldReferralBonusClaimedAt, v))
+}
+
+// ReferralBonusClaimedAtIn applies the In predicate on the "referral_bonus_claimed_at" field.
+func ReferralBonusClaimedAtIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldReferralBonusClaimedAt, vs...))
+}
+
+// ReferralBonusClaimedAtNotIn applies the NotIn predicate on the "referral_bonus_claimed_at" field.
+func ReferralBonusClaimedAtNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldReferralBonusClaimedAt, vs...))
+}
+
+// ReferralBonusClaimedAtGT applies the GT predicate on the "referral_bonus_claimed_at" field.
+func ReferralBonusClaimedAtGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldReferralBonusClaimedAt, v))
+}
+
+// ReferralBonusClaimedAtGTE applies the GTE predicate on the "referral_bonus_claimed_at" field.
+func ReferralBonusClaimedAtGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldReferralBonusClaimedAt, v))
+}
+
+// ReferralBonusClaimedAtLT applies the LT predicate on the "referral_bonus_claimed_at" field.
+func ReferralBonusClaimedAtLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldReferralBonusClaimedAt, v))
+}
+
+// ReferralBonusClaimedAtLTE applies the LTE predicate on the "referral_bonus_claimed_at" field.
+func ReferralBonusClaimedAtLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldReferralBonusClaimedAt, v))
+}
+
+// ReferralBonusClaimedAtIsNil applies the IsNil predicate on the "referral_bonus_claimed_at" field.
+func ReferralBonusClaimedAtIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldReferralBonusClaimedAt))
+}
+
+// ReferralBonusClaimedAtNotNil applies the NotNil predicate on the "referral_bonus_claimed_at" field.
+func ReferralBonusClaimedAtNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldReferralBonusClaimedAt))
 }
 
 // HasAPIKeys applies the HasEdge predicate on the "api_keys" edge.

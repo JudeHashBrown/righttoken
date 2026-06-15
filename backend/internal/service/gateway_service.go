@@ -570,6 +570,12 @@ type GatewayService struct {
 	resolver              *ModelPricingResolver
 	debugGatewayBodyFile  atomic.Pointer[os.File] // non-nil when SUB2API_DEBUG_GATEWAY_BODY is set
 	tlsFPProfileService   *TLSFingerprintProfileService
+	referralService       *ReferralService
+}
+
+// SetReferralService 注入二级分销服务（构造后设置，避免循环依赖）。
+func (s *GatewayService) SetReferralService(rs *ReferralService) {
+	s.referralService = rs
 }
 
 // NewGatewayService creates a new GatewayService
@@ -7771,7 +7777,28 @@ func (s *GatewayService) recordUsageCore(ctx context.Context, input *recordUsage
 	}
 	writeUsageLogBestEffort(ctx, s.usageLogRepo, usageLog, "service.gateway")
 
+	// 二级分销抽佣：仅在订阅外（余额模式）真实计费时累计，按 ActualCost 作为基数。
+	s.scheduleReferralAccrual(ctx, usageLog, isSubscriptionBilling)
+
 	return nil
+}
+
+// scheduleReferralAccrual 异步触发二级分销抽佣。失败仅打日志，不影响主计费。
+func (s *GatewayService) scheduleReferralAccrual(ctx context.Context, usageLog *UsageLog, subscriptionBilled bool) {
+	if s.referralService == nil || usageLog == nil || subscriptionBilled {
+		return
+	}
+	if usageLog.ActualCost <= 0 || usageLog.RequestID == "" || usageLog.UserID == 0 {
+		return
+	}
+	downlineID := usageLog.UserID
+	requestID := usageLog.RequestID
+	base := usageLog.ActualCost
+	detachedCtx, cancel := detachedBillingContext(ctx)
+	go func() {
+		defer cancel()
+		s.referralService.AccrueCommission(detachedCtx, downlineID, requestID, base)
+	}()
 }
 
 // calculateRecordUsageCost 根据请求类型和选项计算费用。

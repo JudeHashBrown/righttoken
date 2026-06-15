@@ -58,7 +58,8 @@ func TestAPIContracts(t *testing.T) {
 					"allowed_groups": null,
 					"created_at": "2025-01-02T03:04:05Z",
 					"updated_at": "2025-01-02T03:04:05Z",
-					"run_mode": "standard"
+					"run_mode": "standard",
+					"is_referral_partner": false
 				}
 			}`,
 		},
@@ -892,6 +893,22 @@ func (r *stubUserRepo) EnableTotp(ctx context.Context, userID int64) error {
 
 func (r *stubUserRepo) DisableTotp(ctx context.Context, userID int64) error {
 	return errors.New("not implemented")
+}
+
+func (r *stubUserRepo) GetByInviteCode(ctx context.Context, code string) (*service.User, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (r *stubUserRepo) SetInviteCode(ctx context.Context, userID int64, code string) error {
+	return errors.New("not implemented")
+}
+
+func (r *stubUserRepo) SetReferralPartner(ctx context.Context, userID int64, enabled bool) error {
+	return errors.New("not implemented")
+}
+
+func (r *stubUserRepo) ClaimFirstRechargeBonus(ctx context.Context, userID int64) (bool, error) {
+	return false, errors.New("not implemented")
 }
 
 type stubApiKeyCache struct{}

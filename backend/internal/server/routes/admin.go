@@ -88,7 +88,26 @@ func RegisterAdminRoutes(
 
 		// 渠道管理
 		registerChannelRoutes(admin, h)
+
+		// 二级分销管理
+		registerReferralAdminRoutes(admin, h)
 	}
+}
+
+func registerReferralAdminRoutes(admin *gin.RouterGroup, h *handler.Handlers) {
+	if h.Admin.Referral == nil {
+		return
+	}
+	referral := admin.Group("/referral")
+	{
+		referral.GET("/rules", h.Admin.Referral.ListRules)
+		referral.PUT("/rules/:tier", h.Admin.Referral.UpdateRule)
+		referral.GET("/commissions", h.Admin.Referral.ListCommissions)
+		referral.POST("/commissions/mark-settled", h.Admin.Referral.MarkSettled)
+		referral.POST("/commissions/void", h.Admin.Referral.MarkVoided)
+	}
+	// 邀请功能开关挂在 /admin/users 下，更符合 REST 语义
+	admin.PATCH("/users/:id/referral-partner", h.Admin.Referral.SetUserReferralPartner)
 }
 
 func registerAdminAPIKeyRoutes(admin *gin.RouterGroup, h *handler.Handlers) {

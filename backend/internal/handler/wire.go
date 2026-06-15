@@ -35,6 +35,7 @@ func ProvideAdminHandlers(
 	scheduledTestHandler *admin.ScheduledTestHandler,
 	channelHandler *admin.ChannelHandler,
 	paymentHandler *admin.PaymentHandler,
+	referralHandler *admin.ReferralAdminHandler,
 ) *AdminHandlers {
 	return &AdminHandlers{
 		Dashboard:             dashboardHandler,
@@ -63,6 +64,7 @@ func ProvideAdminHandlers(
 		ScheduledTest:         scheduledTestHandler,
 		Channel:               channelHandler,
 		Payment:               paymentHandler,
+		Referral:              referralHandler,
 	}
 }
 
@@ -85,6 +87,7 @@ func ProvideHandlers(
 	redeemHandler *RedeemHandler,
 	subscriptionHandler *SubscriptionHandler,
 	announcementHandler *AnnouncementHandler,
+	referralHandler *ReferralHandler,
 	adminHandlers *AdminHandlers,
 	gatewayHandler *GatewayHandler,
 	openaiGatewayHandler *OpenAIGatewayHandler,
@@ -94,6 +97,7 @@ func ProvideHandlers(
 	paymentWebhookHandler *PaymentWebhookHandler,
 	_ *service.IdempotencyCoordinator,
 	_ *service.IdempotencyCleanupService,
+	_ service.ReferralWiring,
 ) *Handlers {
 	return &Handlers{
 		Auth:           authHandler,
@@ -103,6 +107,7 @@ func ProvideHandlers(
 		Redeem:         redeemHandler,
 		Subscription:   subscriptionHandler,
 		Announcement:   announcementHandler,
+		Referral:       referralHandler,
 		Admin:          adminHandlers,
 		Gateway:        gatewayHandler,
 		OpenAIGateway:  openaiGatewayHandler,
@@ -123,6 +128,7 @@ var ProviderSet = wire.NewSet(
 	NewRedeemHandler,
 	NewSubscriptionHandler,
 	NewAnnouncementHandler,
+	NewReferralHandler,
 	NewGatewayHandler,
 	NewOpenAIGatewayHandler,
 	NewTotpHandler,
@@ -157,6 +163,7 @@ var ProviderSet = wire.NewSet(
 	admin.NewScheduledTestHandler,
 	admin.NewChannelHandler,
 	admin.NewPaymentHandler,
+	admin.NewReferralAdminHandler,
 
 	// AdminHandlers and Handlers constructors
 	ProvideAdminHandlers,

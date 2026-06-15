@@ -579,6 +579,17 @@
 
               <div class="my-1 border-t border-gray-100 dark:border-dark-700"></div>
 
+              <!-- 邀请功能开关 -->
+              <button
+                @click="handleToggleReferralPartner(user); closeActionMenu()"
+                class="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-dark-700"
+              >
+                <Icon name="users" size="sm" :class="user.is_referral_partner ? 'text-emerald-500' : 'text-gray-400'" :stroke-width="2" />
+                {{ user.is_referral_partner ? t('admin.users.referralPartnerDisable') : t('admin.users.referralPartnerEnable') }}
+              </button>
+
+              <div class="my-1 border-t border-gray-100 dark:border-dark-700"></div>
+
               <!-- Delete (not for admin) -->
               <button
                 v-if="user.role !== 'admin'"
@@ -1290,6 +1301,25 @@ const handleToggleStatus = async (user: AdminUser) => {
   } catch (error: any) {
     appStore.showError(error.response?.data?.detail || t('admin.users.failedToToggle'))
     console.error('Error toggling user status:', error)
+  }
+}
+
+const handleToggleReferralPartner = async (user: AdminUser) => {
+  const next = !user.is_referral_partner
+  try {
+    await adminAPI.users.setReferralPartner(user.id, next)
+    appStore.showSuccess(
+      next ? t('admin.users.referralPartnerEnabled') : t('admin.users.referralPartnerDisabled')
+    )
+    loadUsers()
+  } catch (error: any) {
+    const code = error.response?.data?.code || error.response?.data?.reason
+    if (code === 'REFERRAL_PARTNER_HAS_PENDING') {
+      appStore.showError(t('admin.users.referralPartnerHasPending'))
+    } else {
+      appStore.showError(error.response?.data?.detail || t('admin.users.referralPartnerFailed'))
+    }
+    console.error('Error toggling referral partner:', error)
   }
 }
 

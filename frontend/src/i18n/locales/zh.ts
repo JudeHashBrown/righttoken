@@ -371,6 +371,11 @@ export default {
               title: '启动 Claude',
               desc: '重开一个新 PowerShell 窗口，输入 claude，回车。',
               hint: '看到 Claude 欢迎界面 = 成功'
+            },
+            ccSwitch: {
+              title: '可选：用 CC Switch 图形化配置（替代第 4 步）',
+              desc: '如果你已经装了 CC Switch，可以用图形界面切换，不用敲命令。\n\n添加供应商时填：\n  • 名称：RightToken\n  • Base URL：https://righttoken.ai\n  • API Key：你的 sk-rt-xxx\n  • 协议类型：「第三方 / Custom」（务必不要选 Anthropic Official）\n\n切换后必须完全退出 Claude Code 进程（关掉 PowerShell 窗口），重新打开再启动 claude。',
+              hint: '如果之前手动设过 ANTHROPIC_API_KEY，参考下方 FAQ 处理「双值警告」'
             }
           }
         },
@@ -385,7 +390,8 @@ export default {
         },
         faq: {
           timeout: '超时报错：加 `export ANTHROPIC_TIMEOUT=300000`（5 分钟容错）',
-          models: '可用模型：后台「分组」→ Claude 组里查看'
+          models: '可用模型：后台「分组」→ Claude 组里查看',
+          bothEnvVars: '启动 `claude` 提示「Both ANTHROPIC_AUTH_TOKEN and ANTHROPIC_API_KEY set」：你之前手动设过 `ANTHROPIC_API_KEY`，运行 `[Environment]::SetEnvironmentVariable(\'ANTHROPIC_API_KEY\', $null, \'User\')` 删除，关掉所有 PowerShell 窗口重开后再启动 `claude`'
         }
       },
       codex: {
@@ -839,6 +845,7 @@ export default {
     apiKeys: 'API 密钥',
     usage: '使用记录',
     redeem: '兑换',
+    referral: '我的邀请',
     profile: '个人资料',
     users: '用户管理',
     groups: '分组管理',
@@ -849,6 +856,9 @@ export default {
     redeemCodes: '兑换码',
     ops: '运维监控',
     promoCodes: '优惠码',
+    referralAdmin: '二级分销',
+    referralRules: '分销费率',
+    referralCommissions: '抽佣管理',
     settings: '系统设置',
     myAccount: '我的账户',
     lightMode: '浅色模式',
@@ -938,6 +948,9 @@ export default {
     invitationCodeInvalid: '邀请码无效或已被使用',
     invitationCodeValidating: '正在验证邀请码...',
     invitationCodeInvalidCannotRegister: '邀请码无效，请检查后重试',
+    referralCodeLabel: '邀请码',
+    referralCodePlaceholder: '填写朋友的邀请码（可选）',
+    referralCodeHint: '填写邀请码后，首次充值可额外获得 5% 余额奖励',
     oauthOrContinue: '或使用邮箱密码继续',
     linuxdo: {
       signIn: '使用 Linux.do 登录',
@@ -1944,6 +1957,12 @@ export default {
       failedToDelete: '删除用户失败',
       failedToToggle: '更新用户状态失败',
       failedToLoadApiKeys: '加载用户 API 密钥失败',
+      referralPartnerEnable: '开通邀请功能',
+      referralPartnerDisable: '关闭邀请功能',
+      referralPartnerEnabled: '已开通邀请功能',
+      referralPartnerDisabled: '已关闭邀请功能',
+      referralPartnerFailed: '邀请功能切换失败',
+      referralPartnerHasPending: '用户还有未发放的邀请奖励，请先发放后再关闭',
       deleteConfirm: "确定要删除用户 '{email}' 吗？此操作无法撤销。",
       roles: {
         admin: '管理员',
@@ -5632,6 +5651,46 @@ export default {
       loadFailed: '加载模板失败',
       saveFailed: '保存模板失败',
       deleteFailed: '删除模板失败'
+    },
+
+    // 二级分销管理
+    referral: {
+      rulesTitle: '分销费率',
+      rulesDescription: '管理一级 / 二级抽佣比例（历史可追溯）',
+      commissionsTitle: '分销抽佣',
+      commissionsDescription: '查看、结算、作废用户抽佣',
+      tier1: '一级（直接下线）费率',
+      tier2: '二级（下线的下线）费率',
+      editRate: '修改费率',
+      historyTitle: '费率历史',
+      colTier: '层级',
+      colRate: '费率',
+      colEffectiveFrom: '生效起点',
+      colEffectiveUntil: '生效终点',
+      active: '当前生效',
+      editTitle: '修改 Lv{tier} 费率',
+      rateLabel: '费率（小数，例如 0.05 表示 5%）',
+      rateHint: '范围 0 ~ 1。改动只影响新产生的抽佣，历史记录不会回溯。',
+      rateOutOfRange: '费率必须在 0 到 1 之间',
+      colCreatedAt: '时间',
+      colInviter: '邀请人',
+      colDownline: '下线',
+      colBase: '消费基数',
+      colCommission: '抽佣',
+      colStatus: '状态',
+      statusAll: '全部状态',
+      statusPending: '待结算',
+      statusSettled: '已结算',
+      statusVoided: '已作废',
+      inviterIdPlaceholder: '上线用户 ID',
+      selectedCount: '已选中 {n} 条',
+      markSettled: '标记已结算',
+      markVoided: '作废',
+      confirmSettled: '确认标记为已结算',
+      confirmVoid: '确认作废',
+      affectN: '影响 {n} 条记录',
+      noteLabel: '备注（可选）',
+      empty: '暂无抽佣记录'
     }
   },
 
@@ -6012,6 +6071,11 @@ export default {
     },
     currentBalance: '当前余额',
     rechargeAccount: '充值账户',
+    firstRechargeBonus: {
+      title: '首充奖励 +{percent}%',
+      subtitle: '使用邀请码注册的用户，首笔充值可获得 +{percent}% 额外金额（仅限一次）',
+      amountHint: '本次充值 ¥{paid}，到账约 ¥{received}（已含 +{percent}% 首充奖励）',
+    },
     activeSubscription: '当前订阅',
     noActiveSubscription: '暂无有效订阅',
     tabTopUp: '充值',
@@ -6206,4 +6270,50 @@ export default {
     },
   },
 
+  // 用户端 - 我的邀请
+  referral: {
+    pageTitle: '我的邀请',
+    pageDescription: '邀请奖励 · 朋友使用 API 时你将获得奖励返还',
+    myInviteCode: '我的邀请码',
+    copyCode: '复制邀请码',
+    copied: '已复制',
+    tierRatesLine: '直接邀请奖励 {lv1} · 间接邀请奖励 {lv2}',
+    lv1Title: '直接邀请用户',
+    lv1Subtitle: '你直接邀请注册的用户',
+    lv2Title: '间接邀请用户',
+    lv2Subtitle: '你直接邀请的用户再邀请的人',
+    lv2DownlineCount: '邀请人数',
+    pending: '待发放',
+    settled: '已发放',
+    voided: '已作废',
+    lv1DownlinesTitle: '直接邀请用户明细',
+    colDownline: '用户邮箱',
+    colJoinedAt: '注册时间',
+    colUsageTotal: '累计使用',
+    colMyCommission: '我的奖励',
+    noDownlines: '暂无邀请用户，把邀请码发给朋友吧',
+    commissionLogTitle: '奖励记录',
+    statusAll: '全部',
+    colTime: '时间',
+    colTier: '类型',
+    colBase: '使用金额',
+    colRate: '比例',
+    colCommission: '奖励',
+    colStatus: '状态',
+    noCommissions: '暂无奖励记录',
+    howItWorksTitle: '邀请奖励规则',
+    howItWorks1: '把邀请码发给朋友，朋友注册时填写即可与你建立邀请关系',
+    howItWorks2: '只有朋友真实使用 API 时才累计奖励，单纯充值不会产生奖励',
+    howItWorks3: '直接邀请 = 你邀请的用户；间接邀请 = 他们再邀请的用户',
+    howItWorks4: '奖励由平台核对后手动发放，如需提取可联系客服',
+    tierLabels: {
+      '1': '直接邀请',
+      '2': '间接邀请',
+    },
+    statusValues: {
+      pending: '待发放',
+      settled: '已发放',
+      voided: '已作废',
+    },
+  },
 }

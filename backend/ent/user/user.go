@@ -43,6 +43,14 @@ const (
 	FieldTotpEnabled = "totp_enabled"
 	// FieldTotpEnabledAt holds the string denoting the totp_enabled_at field in the database.
 	FieldTotpEnabledAt = "totp_enabled_at"
+	// FieldInviterID holds the string denoting the inviter_id field in the database.
+	FieldInviterID = "inviter_id"
+	// FieldInviteCode holds the string denoting the invite_code field in the database.
+	FieldInviteCode = "invite_code"
+	// FieldIsReferralPartner holds the string denoting the is_referral_partner field in the database.
+	FieldIsReferralPartner = "is_referral_partner"
+	// FieldReferralBonusClaimedAt holds the string denoting the referral_bonus_claimed_at field in the database.
+	FieldReferralBonusClaimedAt = "referral_bonus_claimed_at"
 	// EdgeAPIKeys holds the string denoting the api_keys edge name in mutations.
 	EdgeAPIKeys = "api_keys"
 	// EdgeRedeemCodes holds the string denoting the redeem_codes edge name in mutations.
@@ -161,6 +169,10 @@ var Columns = []string{
 	FieldTotpSecretEncrypted,
 	FieldTotpEnabled,
 	FieldTotpEnabledAt,
+	FieldInviterID,
+	FieldInviteCode,
+	FieldIsReferralPartner,
+	FieldReferralBonusClaimedAt,
 }
 
 var (
@@ -217,6 +229,10 @@ var (
 	DefaultNotes string
 	// DefaultTotpEnabled holds the default value on creation for the "totp_enabled" field.
 	DefaultTotpEnabled bool
+	// InviteCodeValidator is a validator for the "invite_code" field. It is called by the builders before save.
+	InviteCodeValidator func(string) error
+	// DefaultIsReferralPartner holds the default value on creation for the "is_referral_partner" field.
+	DefaultIsReferralPartner bool
 )
 
 // OrderOption defines the ordering options for the User queries.
@@ -295,6 +311,26 @@ func ByTotpEnabled(opts ...sql.OrderTermOption) OrderOption {
 // ByTotpEnabledAt orders the results by the totp_enabled_at field.
 func ByTotpEnabledAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTotpEnabledAt, opts...).ToFunc()
+}
+
+// ByInviterID orders the results by the inviter_id field.
+func ByInviterID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldInviterID, opts...).ToFunc()
+}
+
+// ByInviteCode orders the results by the invite_code field.
+func ByInviteCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldInviteCode, opts...).ToFunc()
+}
+
+// ByIsReferralPartner orders the results by the is_referral_partner field.
+func ByIsReferralPartner(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsReferralPartner, opts...).ToFunc()
+}
+
+// ByReferralBonusClaimedAt orders the results by the referral_bonus_claimed_at field.
+func ByReferralBonusClaimedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldReferralBonusClaimedAt, opts...).ToFunc()
 }
 
 // ByAPIKeysCount orders the results by api_keys count.

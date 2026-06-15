@@ -371,6 +371,11 @@ export default {
               title: 'Launch Claude',
               desc: 'Open a NEW PowerShell window, run "claude".',
               hint: 'You see the Claude welcome screen = success'
+            },
+            ccSwitch: {
+              title: 'Optional: configure via CC Switch (GUI alternative to Step 4)',
+              desc: 'If you already have CC Switch installed, you can switch via GUI instead of typing commands.\n\nIn "Add Provider" fill:\n  • Name: RightToken\n  • Base URL: https://righttoken.ai\n  • API Key: your sk-rt-xxx\n  • Protocol type: "Third-party / Custom" (DO NOT pick Anthropic Official)\n\nAfter switching, fully quit Claude Code (close PowerShell windows) and re-open before running claude.',
+              hint: 'If you previously set ANTHROPIC_API_KEY manually, see the FAQ below for the "both env vars" warning'
             }
           }
         },
@@ -385,7 +390,8 @@ export default {
         },
         faq: {
           timeout: 'Timeout errors: set `export ANTHROPIC_TIMEOUT=300000` (5-minute tolerance)',
-          models: 'Supported models: check the Claude group in admin > Groups'
+          models: 'Supported models: check the Claude group in admin > Groups',
+          bothEnvVars: '"Both ANTHROPIC_AUTH_TOKEN and ANTHROPIC_API_KEY set" warning on launch: you previously set ANTHROPIC_API_KEY manually. Run `[Environment]::SetEnvironmentVariable(\'ANTHROPIC_API_KEY\', $null, \'User\')` to remove it, close ALL PowerShell windows, reopen, then run `claude` again'
         }
       },
       codex: {
@@ -839,6 +845,7 @@ export default {
     apiKeys: 'API Keys',
     usage: 'Usage',
     redeem: 'Redeem',
+    referral: 'My Invites',
     profile: 'Profile',
     users: 'Users',
     groups: 'Groups',
@@ -849,6 +856,9 @@ export default {
     redeemCodes: 'Redeem Codes',
     ops: 'Ops',
     promoCodes: 'Promo Codes',
+    referralAdmin: 'Referrals',
+    referralRules: 'Referral Rules',
+    referralCommissions: 'Commissions',
     settings: 'Settings',
     myAccount: 'My Account',
     lightMode: 'Light Mode',
@@ -939,6 +949,9 @@ export default {
     invitationCodeInvalid: 'Invalid or used invitation code',
     invitationCodeValidating: 'Validating invitation code...',
     invitationCodeInvalidCannotRegister: 'Invalid invitation code. Please check and try again',
+    referralCodeLabel: 'Invite Code',
+    referralCodePlaceholder: 'Enter your friend\'s invite code (optional)',
+    referralCodeHint: 'Enter an invite code to get an extra 5% bonus on your first top-up.',
     oauthOrContinue: 'or continue with email',
     linuxdo: {
       signIn: 'Continue with Linux.do',
@@ -1918,6 +1931,12 @@ export default {
       failedToDelete: 'Failed to delete user',
       failedToToggle: 'Failed to update user status',
       failedToLoadApiKeys: 'Failed to load user API keys',
+      referralPartnerEnable: 'Enable invite feature',
+      referralPartnerDisable: 'Disable invite feature',
+      referralPartnerEnabled: 'Invite feature enabled',
+      referralPartnerDisabled: 'Invite feature disabled',
+      referralPartnerFailed: 'Failed to toggle invite feature',
+      referralPartnerHasPending: 'User has pending invite rewards — pay them out first before disabling',
       emailRequired: 'Please enter email',
       concurrencyMin: 'Concurrency must be at least 1',
       soraStorageQuota: 'Sora Storage Quota',
@@ -5469,6 +5488,46 @@ export default {
       loadFailed: 'Failed to load profiles',
       saveFailed: 'Failed to save profile',
       deleteFailed: 'Failed to delete profile'
+    },
+
+    // 2-tier referrals admin
+    referral: {
+      rulesTitle: 'Referral Rates',
+      rulesDescription: 'Manage Lv1 / Lv2 commission rates with full history',
+      commissionsTitle: 'Referral Commissions',
+      commissionsDescription: 'Review, settle, and void user commissions',
+      tier1: 'Lv1 (direct downlines) rate',
+      tier2: 'Lv2 (downlines of downlines) rate',
+      editRate: 'Edit rate',
+      historyTitle: 'Rate history',
+      colTier: 'Tier',
+      colRate: 'Rate',
+      colEffectiveFrom: 'Effective from',
+      colEffectiveUntil: 'Effective until',
+      active: 'Active',
+      editTitle: 'Edit Lv{tier} rate',
+      rateLabel: 'Rate (decimal, e.g. 0.05 for 5%)',
+      rateHint: 'Range 0 ~ 1. Only affects newly accrued commissions; historical records are not rewritten.',
+      rateOutOfRange: 'Rate must be between 0 and 1',
+      colCreatedAt: 'Time',
+      colInviter: 'Inviter',
+      colDownline: 'Downline',
+      colBase: 'Base',
+      colCommission: 'Commission',
+      colStatus: 'Status',
+      statusAll: 'All statuses',
+      statusPending: 'Pending',
+      statusSettled: 'Settled',
+      statusVoided: 'Voided',
+      inviterIdPlaceholder: 'Inviter user ID',
+      selectedCount: '{n} selected',
+      markSettled: 'Mark settled',
+      markVoided: 'Void',
+      confirmSettled: 'Confirm mark as settled',
+      confirmVoid: 'Confirm void',
+      affectN: '{n} records will be updated',
+      noteLabel: 'Note (optional)',
+      empty: 'No commission records'
     }
   },
 
@@ -5824,6 +5883,11 @@ export default {
     },
     currentBalance: 'Current Balance',
     rechargeAccount: 'Recharge Account',
+    firstRechargeBonus: {
+      title: 'First recharge bonus +{percent}%',
+      subtitle: 'Users registered via invite code receive an extra +{percent}% on their first recharge (one-time only)',
+      amountHint: 'You pay ¥{paid} and receive about ¥{received} in balance (+{percent}% first-recharge bonus applied)',
+    },
     activeSubscription: 'Active Subscription',
     noActiveSubscription: 'No active subscription',
     tabTopUp: 'Top Up',
@@ -6018,4 +6082,50 @@ export default {
     },
   },
 
+  // User-side: My Invites
+  referral: {
+    pageTitle: 'My Invites',
+    pageDescription: 'Invite rewards · earn when friends you invited use the API',
+    myInviteCode: 'My invite code',
+    copyCode: 'Copy code',
+    copied: 'Copied',
+    tierRatesLine: 'Direct invite reward {lv1} · Indirect invite reward {lv2}',
+    lv1Title: 'Direct invites',
+    lv1Subtitle: 'Users you invited directly',
+    lv2Title: 'Indirect invites',
+    lv2Subtitle: 'Users invited by people you invited',
+    lv2DownlineCount: 'Invited users',
+    pending: 'Pending payout',
+    settled: 'Paid out',
+    voided: 'Voided',
+    lv1DownlinesTitle: 'Direct invite details',
+    colDownline: 'User email',
+    colJoinedAt: 'Registered',
+    colUsageTotal: 'Total usage',
+    colMyCommission: 'My reward',
+    noDownlines: 'No invites yet — share your invite code with friends',
+    commissionLogTitle: 'Reward log',
+    statusAll: 'All',
+    colTime: 'Time',
+    colTier: 'Type',
+    colBase: 'Usage amount',
+    colRate: 'Rate',
+    colCommission: 'Reward',
+    colStatus: 'Status',
+    noCommissions: 'No reward records yet',
+    howItWorksTitle: 'Invite reward rules',
+    howItWorks1: 'Share your invite code — friends enter it at registration to link with you.',
+    howItWorks2: 'Rewards accrue only on actual API usage, not on top-ups.',
+    howItWorks3: 'Direct = users you invited; Indirect = users they invited.',
+    howItWorks4: 'Rewards are paid out manually by the platform — contact support to withdraw.',
+    tierLabels: {
+      '1': 'Direct',
+      '2': 'Indirect',
+    },
+    statusValues: {
+      pending: 'Pending payout',
+      settled: 'Paid out',
+      voided: 'Voided',
+    },
+  },
 }

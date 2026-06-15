@@ -796,6 +796,73 @@ var (
 			},
 		},
 	}
+	// ReferralCommissionsColumns holds the columns for the "referral_commissions" table.
+	ReferralCommissionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "inviter_id", Type: field.TypeInt64},
+		{Name: "downline_id", Type: field.TypeInt64},
+		{Name: "tier", Type: field.TypeInt8},
+		{Name: "source_request_id", Type: field.TypeString, Size: 64},
+		{Name: "base_amount", Type: field.TypeFloat64, Default: 0, SchemaType: map[string]string{"postgres": "decimal(20,8)"}},
+		{Name: "rate", Type: field.TypeFloat64, Default: 0, SchemaType: map[string]string{"postgres": "decimal(6,4)"}},
+		{Name: "commission_amount", Type: field.TypeFloat64, Default: 0, SchemaType: map[string]string{"postgres": "decimal(20,8)"}},
+		{Name: "status", Type: field.TypeString, Size: 16, Default: "pending"},
+		{Name: "settled_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "settled_by_admin_id", Type: field.TypeInt64, Nullable: true},
+		{Name: "settled_note", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+	}
+	// ReferralCommissionsTable holds the schema information for the "referral_commissions" table.
+	ReferralCommissionsTable = &schema.Table{
+		Name:       "referral_commissions",
+		Columns:    ReferralCommissionsColumns,
+		PrimaryKey: []*schema.Column{ReferralCommissionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "referralcommission_inviter_id_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{ReferralCommissionsColumns[1], ReferralCommissionsColumns[8], ReferralCommissionsColumns[12]},
+			},
+			{
+				Name:    "referralcommission_downline_id",
+				Unique:  false,
+				Columns: []*schema.Column{ReferralCommissionsColumns[2]},
+			},
+			{
+				Name:    "referralcommission_source_request_id_tier",
+				Unique:  true,
+				Columns: []*schema.Column{ReferralCommissionsColumns[4], ReferralCommissionsColumns[3]},
+			},
+		},
+	}
+	// ReferralCommissionRulesColumns holds the columns for the "referral_commission_rules" table.
+	ReferralCommissionRulesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "tier", Type: field.TypeInt8},
+		{Name: "rate", Type: field.TypeFloat64, Default: 0, SchemaType: map[string]string{"postgres": "decimal(6,4)"}},
+		{Name: "effective_from", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "effective_until", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz"}},
+		{Name: "created_by_admin_id", Type: field.TypeInt64, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
+	}
+	// ReferralCommissionRulesTable holds the schema information for the "referral_commission_rules" table.
+	ReferralCommissionRulesTable = &schema.Table{
+		Name:       "referral_commission_rules",
+		Columns:    ReferralCommissionRulesColumns,
+		PrimaryKey: []*schema.Column{ReferralCommissionRulesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "referralcommissionrule_tier_effective_until",
+				Unique:  false,
+				Columns: []*schema.Column{ReferralCommissionRulesColumns[1], ReferralCommissionRulesColumns[4]},
+			},
+			{
+				Name:    "referralcommissionrule_tier_effective_from",
+				Unique:  false,
+				Columns: []*schema.Column{ReferralCommissionRulesColumns[1], ReferralCommissionRulesColumns[3]},
+			},
+		},
+	}
 	// SecuritySecretsColumns holds the columns for the "security_secrets" table.
 	SecuritySecretsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
@@ -1078,6 +1145,10 @@ var (
 		{Name: "totp_secret_encrypted", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "text"}},
 		{Name: "totp_enabled", Type: field.TypeBool, Default: false},
 		{Name: "totp_enabled_at", Type: field.TypeTime, Nullable: true},
+		{Name: "inviter_id", Type: field.TypeInt64, Nullable: true},
+		{Name: "invite_code", Type: field.TypeString, Unique: true, Nullable: true, Size: 16},
+		{Name: "is_referral_partner", Type: field.TypeBool, Default: false},
+		{Name: "referral_bonus_claimed_at", Type: field.TypeTime, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -1094,6 +1165,11 @@ var (
 				Name:    "user_deleted_at",
 				Unique:  false,
 				Columns: []*schema.Column{UsersColumns[3]},
+			},
+			{
+				Name:    "user_inviter_id",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[15]},
 			},
 		},
 	}
@@ -1322,6 +1398,8 @@ var (
 		PromoCodeUsagesTable,
 		ProxiesTable,
 		RedeemCodesTable,
+		ReferralCommissionsTable,
+		ReferralCommissionRulesTable,
 		SecuritySecretsTable,
 		SettingsTable,
 		SubscriptionPlansTable,
@@ -1393,6 +1471,12 @@ func init() {
 	RedeemCodesTable.ForeignKeys[1].RefTable = UsersTable
 	RedeemCodesTable.Annotation = &entsql.Annotation{
 		Table: "redeem_codes",
+	}
+	ReferralCommissionsTable.Annotation = &entsql.Annotation{
+		Table: "referral_commissions",
+	}
+	ReferralCommissionRulesTable.Annotation = &entsql.Annotation{
+		Table: "referral_commission_rules",
 	}
 	SecuritySecretsTable.Annotation = &entsql.Annotation{
 		Table: "security_secrets",

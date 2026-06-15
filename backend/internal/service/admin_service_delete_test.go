@@ -113,6 +113,22 @@ func (s *userRepoStub) DisableTotp(ctx context.Context, userID int64) error {
 	panic("unexpected DisableTotp call")
 }
 
+func (s *userRepoStub) GetByInviteCode(ctx context.Context, code string) (*User, error) {
+	panic("unexpected GetByInviteCode call")
+}
+
+func (s *userRepoStub) SetInviteCode(ctx context.Context, userID int64, code string) error {
+	panic("unexpected SetInviteCode call")
+}
+
+func (s *userRepoStub) SetReferralPartner(ctx context.Context, userID int64, enabled bool) error {
+	panic("unexpected SetReferralPartner call")
+}
+
+func (s *userRepoStub) ClaimFirstRechargeBonus(ctx context.Context, userID int64) (bool, error) {
+	panic("unexpected ClaimFirstRechargeBonus call")
+}
+
 type groupRepoStub struct {
 	affectedUserIDs []int64
 	deleteErr       error

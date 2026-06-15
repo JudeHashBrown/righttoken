@@ -22,6 +22,7 @@
     <template #faq>
       <p>• {{ t('tutorials.models.claude.faq.timeout') }}</p>
       <p>• {{ t('tutorials.models.claude.faq.models') }}</p>
+      <p>• {{ t('tutorials.models.claude.faq.bothEnvVars') }}</p>
     </template>
   </ModelQuickstart>
 </template>
@@ -67,6 +68,11 @@ const windowsSteps: InstallStep[] = [
     code: `[System.Environment]::SetEnvironmentVariable('ANTHROPIC_BASE_URL', 'https://righttoken.ai', 'User')
 [System.Environment]::SetEnvironmentVariable('ANTHROPIC_API_KEY', 'sk-你的key', 'User')`,
     hint: tt('windows.s4.hint'),
+  },
+  {
+    title: tt('windows.ccSwitch.title'),
+    desc: tt('windows.ccSwitch.desc'),
+    hint: tt('windows.ccSwitch.hint'),
   },
   { title: tt('windows.s5.title'), desc: tt('windows.s5.desc'), code: 'claude', hint: tt('windows.s5.hint') },
 ]
