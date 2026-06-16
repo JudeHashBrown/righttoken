@@ -311,7 +311,7 @@ export default {
         cardName: 'Claude on macOS / Windows',
         cardTagline: '官方 Claude Code CLI，编程 agent 首选',
         title: '用 Claude（5 分钟）',
-        tagline: '推荐 Claude Code CLI — Anthropic 官方编程 agent',
+        tagline: '10 分钟、5 步，装好 Claude Code。\nAnthropic 出的终端 AI 助手，能读你电脑上的文件、帮你完成各种任务。',
         groupName: 'Claude',
         steps: {
           macos: {
@@ -322,22 +322,22 @@ export default {
             },
             s2: {
               title: '装 Homebrew（已装跳过）',
-              desc: '先检查：输入 brew --version 回车。看到版本号 → 跳到下一步。看到 command not found → 复制下面命令安装（中途会问密码，输入你 Mac 登录密码，输入时不显示是正常的，等 5-10 分钟）。',
+              desc: 'Homebrew 是 Mac 上的「软件商店」，下一步装 Node 要用它。\n\n先检查：输入 brew --version 回车。看到版本号 → 跳到下一步。看到 command not found → 复制下面命令安装（中途会问密码，输入你 Mac 登录密码，输入时不显示是正常的，等 5-10 分钟）。',
               hint: '装完后按终端打印的提示，再跑一遍 eval "$(/opt/homebrew/bin/brew shellenv)" 把 brew 加入 PATH，然后 brew --version 验证'
             },
             s3: {
               title: '装 Node.js（已装跳过）',
-              desc: '先检查：输入 node --version 回车。看到 v18 或以上 → 跳到下一步。看到 command not found → 复制下面命令安装。',
+              desc: 'Node.js 是运行 Claude Code 的「引擎」，就像安卓 APK 需要安卓系统。\n\n先检查：输入 node --version 回车。看到 v18 或以上 → 跳到下一步。看到 command not found → 复制下面命令安装。',
               hint: '装好后再跑一次 node --version 应该看到 v 开头的版本号'
             },
             s4: {
               title: '装 Claude Code CLI',
-              desc: '复制下面整条命令，粘贴到终端，按回车。等 1 分钟。',
+              desc: 'npm 是 Node 自带的「安装命令」，这一步把 Claude Code 下载到你电脑上。\n\n复制下面整条命令，粘贴到终端，按回车。等 1 分钟。',
               hint: '看到 "added N packages" 表示装好'
             },
             s5: {
               title: '配置 RightToken（关键一步）',
-              desc: '把下面命令里的 sk-你的key 换成你在 RightToken 后台「我的密钥」复制的 key，然后整段复制粘贴执行。',
+              desc: '这一步告诉 Claude Code：连 RightToken（不是 Anthropic 官网），并出示你的 key。\n\n把下面命令里的 sk-你的key 换成你在 RightToken 后台「我的密钥」复制的 key，然后整段复制粘贴执行。',
               hint: '没报错就好。终端提示符 % 重新出现 = 跑完了'
             },
             s6: {
@@ -354,17 +354,17 @@ export default {
             },
             s2: {
               title: '装 Node.js（已装跳过）',
-              desc: '先检查：输入 node --version 回车。看到 v18 或以上 → 跳到下一步。否则去 https://nodejs.org 下载 LTS 版本安装包，装完重开 PowerShell。',
+              desc: 'Node.js 是运行 Claude Code 的「引擎」，就像安卓 APK 需要安卓系统。\n\n先检查：输入 node --version 回车。看到 v18 或以上 → 跳到下一步。否则去 https://nodejs.org 下载 LTS 版本安装包，装完重开 PowerShell。',
               hint: '重开 PowerShell 后再跑 node --version 应该看到版本号'
             },
             s3: {
               title: '装 Claude Code CLI',
-              desc: '复制下面命令，粘贴到 PowerShell，回车。等 1 分钟。',
+              desc: 'npm 是 Node 自带的「安装命令」，这一步把 Claude Code 下载到你电脑上。\n\n复制下面命令，粘贴到 PowerShell，回车。等 1 分钟。',
               hint: '看到 "added N packages" 表示装好'
             },
             s4: {
               title: '配置 RightToken（关键一步）',
-              desc: '把下面命令里的 sk-你的key 换成你在 RightToken 后台「我的密钥」复制的 key，然后整段复制粘贴执行。',
+              desc: '这一步告诉 Claude Code：连 RightToken（不是 Anthropic 官网），并出示你的 key。\n\n把下面命令里的 sk-你的key 换成你在 RightToken 后台「我的密钥」复制的 key，然后整段复制粘贴执行。',
               hint: '设完后必须重开 PowerShell 才生效'
             },
             s5: {
@@ -382,7 +382,7 @@ export default {
         vscode: {
           option1Title: '推荐：Claude Code 官方 VS Code 扩展',
           option1Step1: '打开 VS Code → 扩展市场（Cmd/Ctrl + Shift + X）→ 搜索 "Claude Code" 安装官方扩展',
-          option1Step2: '确认前面 macOS/Windows 章节里两个环境变量已设：ANTHROPIC_BASE_URL + ANTHROPIC_API_KEY',
+          option1Step2: '确认前面 macOS/Windows 章节里两个环境变量已设：ANTHROPIC_BASE_URL + ANTHROPIC_AUTH_TOKEN',
           option1Step3: 'Cmd/Ctrl + Shift + P → 输入 "Claude Code: Start" → 启动侧面板',
           option1Step4: '在面板里直接对话，Claude 能自动读取你打开的文件和工作区上下文',
           option2Title: '最简方式：VS Code 集成终端',
@@ -391,6 +391,7 @@ export default {
         faq: {
           timeout: '超时报错：加 `export ANTHROPIC_TIMEOUT=300000`（5 分钟容错）',
           models: '可用模型：后台「分组」→ Claude 组里查看',
+          oauthResidual: '启动后报错 `Failed to connect to api.anthropic.com`（环境变量明明配对了）：通常是之前登录过 Claude Code 残留的 OAuth 凭证导致环境变量被无视。运行 `rm -f ~/.claude/.credentials.json`（Mac/Linux）或 `Remove-Item $HOME\\.claude\\.credentials.json -ErrorAction SilentlyContinue`（Windows）→ 关掉终端重开 → 再启动 `claude`',
           bothEnvVars: '启动 `claude` 提示「Both ANTHROPIC_AUTH_TOKEN and ANTHROPIC_API_KEY set」：你之前手动设过 `ANTHROPIC_API_KEY`，运行 `[Environment]::SetEnvironmentVariable(\'ANTHROPIC_API_KEY\', $null, \'User\')` 删除，关掉所有 PowerShell 窗口重开后再启动 `claude`'
         }
       },
@@ -398,7 +399,7 @@ export default {
         cardName: 'GPT on macOS / Windows',
         cardTagline: 'OpenAI 官方 Codex CLI，编程 agent 体验',
         title: '用 GPT / Codex（5 分钟）',
-        tagline: '推荐 Codex CLI — OpenAI 官方编程 agent',
+        tagline: '10 分钟、5 步，装好 Codex CLI。\nOpenAI 出的终端 AI 助手，能读你电脑上的文件、帮你完成各种任务。',
         groupName: 'OpenAI',
         steps: {
           macos: {
@@ -409,17 +410,17 @@ export default {
             },
             s2: {
               title: '装 Homebrew（已装跳过）',
-              desc: '先检查：输入 brew --version。看到版本号 → 跳过。看到 command not found → 复制下面命令安装（会问 Mac 密码，输入时不显示是正常的，等 5-10 分钟）。',
+              desc: 'Homebrew 是 Mac 上的「软件商店」，下一步装 Node 要用它。\n\n先检查：输入 brew --version。看到版本号 → 跳过。看到 command not found → 复制下面命令安装（会问 Mac 密码，输入时不显示是正常的，等 5-10 分钟）。',
               hint: '装完后按终端提示运行 eval "$(/opt/homebrew/bin/brew shellenv)" 把 brew 加入 PATH，brew --version 验证'
             },
             s3: {
               title: '装 Node.js（已装跳过）',
-              desc: '先检查：输入 node --version。看到 v18+ → 跳过。否则跑下面命令装。',
+              desc: 'Node.js 是运行 Codex CLI 的「引擎」，就像安卓 APK 需要安卓系统。\n\n先检查：输入 node --version。看到 v18+ → 跳过。否则跑下面命令装。',
               hint: 'node --version 看到 v 开头 = 装好'
             },
             s4: {
               title: '装 Codex CLI',
-              desc: '复制命令粘贴执行，等 1 分钟。',
+              desc: 'npm 是 Node 自带的「安装命令」，这一步把 Codex CLI 下载到你电脑上。\n\n复制命令粘贴执行，等 1 分钟。',
               hint: '看到 "added N packages" = 装好'
             },
             s5: {
@@ -446,12 +447,12 @@ export default {
             },
             s2: {
               title: '装 Node.js（已装跳过）',
-              desc: '先检查：输入 node --version。看到 v18+ → 跳过。否则去 https://nodejs.org 下载 LTS 版安装，装完重开 PowerShell。',
+              desc: 'Node.js 是运行 Codex CLI 的「引擎」，就像安卓 APK 需要安卓系统。\n\n先检查：输入 node --version。看到 v18+ → 跳过。否则去 https://nodejs.org 下载 LTS 版安装，装完重开 PowerShell。',
               hint: '重开后 node --version 看到版本号 = OK'
             },
             s3: {
               title: '装 Codex CLI',
-              desc: '复制命令粘贴执行，等 1 分钟。',
+              desc: 'npm 是 Node 自带的「安装命令」，这一步把 Codex CLI 下载到你电脑上。\n\n复制命令粘贴执行，等 1 分钟。',
               hint: '看到 "added N packages" = 装好'
             },
             s4: {
@@ -488,7 +489,7 @@ export default {
         cardName: 'Gemini on macOS / Windows',
         cardTagline: 'Google 官方 Gemini CLI，原生协议接入',
         title: '用 Gemini（5 分钟）',
-        tagline: '推荐 Gemini CLI — Google 官方编程 agent',
+        tagline: '10 分钟、5 步，装好 Gemini CLI。\nGoogle 出的终端 AI 助手，能读你电脑上的文件、帮你完成各种任务。',
         groupName: 'Gemini',
         steps: {
           macos: {
@@ -499,17 +500,17 @@ export default {
             },
             s2: {
               title: '装 Homebrew（已装跳过）',
-              desc: '先检查：输入 brew --version。看到版本号 → 跳过。看到 command not found → 复制下面命令安装（会问 Mac 密码，输入时不显示是正常的，等 5-10 分钟）。',
+              desc: 'Homebrew 是 Mac 上的「软件商店」，下一步装 Node 要用它。\n\n先检查：输入 brew --version。看到版本号 → 跳过。看到 command not found → 复制下面命令安装（会问 Mac 密码，输入时不显示是正常的，等 5-10 分钟）。',
               hint: '装完后按终端提示运行 eval "$(/opt/homebrew/bin/brew shellenv)"，brew --version 验证'
             },
             s3: {
               title: '装 Node.js（已装跳过）',
-              desc: '先检查：node --version。看到 v18+ → 跳过。否则跑下面命令。',
+              desc: 'Node.js 是运行 Gemini CLI 的「引擎」，就像安卓 APK 需要安卓系统。\n\n先检查：node --version。看到 v18+ → 跳过。否则跑下面命令。',
               hint: 'node --version 看到 v 开头 = OK'
             },
             s4: {
               title: '装 Gemini CLI',
-              desc: '复制下面命令粘贴执行，等 1 分钟。',
+              desc: 'npm 是 Node 自带的「安装命令」，这一步把 Gemini CLI 下载到你电脑上。\n\n复制下面命令粘贴执行，等 1 分钟。',
               hint: '看到 "added N packages" = 装好'
             },
             s5: {
@@ -531,12 +532,12 @@ export default {
             },
             s2: {
               title: '装 Node.js（已装跳过）',
-              desc: '先检查：node --version。看到 v18+ → 跳过。否则去 https://nodejs.org 下载 LTS 装完重开 PowerShell。',
+              desc: 'Node.js 是运行 Gemini CLI 的「引擎」，就像安卓 APK 需要安卓系统。\n\n先检查：node --version。看到 v18+ → 跳过。否则去 https://nodejs.org 下载 LTS 装完重开 PowerShell。',
               hint: '重开后 node --version 看到版本号 = OK'
             },
             s3: {
               title: '装 Gemini CLI',
-              desc: '复制命令粘贴执行，等 1 分钟。',
+              desc: 'npm 是 Node 自带的「安装命令」，这一步把 Gemini CLI 下载到你电脑上。\n\n复制命令粘贴执行，等 1 分钟。',
               hint: '看到 "added N packages" = 装好'
             },
             s4: {

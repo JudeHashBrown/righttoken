@@ -3,7 +3,7 @@
     <!-- Header -->
     <header class="mb-8 border-b border-gray-200/60 pb-6 dark:border-dark-700/60">
       <h1 class="mb-2 text-3xl font-bold text-gray-900 dark:text-white">{{ title }}</h1>
-      <p class="text-base text-gray-600 dark:text-dark-400">{{ tagline }}</p>
+      <p class="whitespace-pre-line text-base text-gray-600 dark:text-dark-400">{{ tagline }}</p>
     </header>
 
     <!-- Prep step -->

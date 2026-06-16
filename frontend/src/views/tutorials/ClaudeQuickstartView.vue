@@ -20,9 +20,10 @@
       <p>{{ t('tutorials.models.claude.vscode.option2Desc') }}</p>
     </template>
     <template #faq>
+      <p>• {{ t('tutorials.models.claude.faq.oauthResidual') }}</p>
+      <p>• {{ t('tutorials.models.claude.faq.bothEnvVars') }}</p>
       <p>• {{ t('tutorials.models.claude.faq.timeout') }}</p>
       <p>• {{ t('tutorials.models.claude.faq.models') }}</p>
-      <p>• {{ t('tutorials.models.claude.faq.bothEnvVars') }}</p>
     </template>
   </ModelQuickstart>
 </template>
@@ -50,7 +51,7 @@ const macosSteps: InstallStep[] = [
     desc: tt('macos.s5.desc'),
     code: `cat >> ~/.zshrc << 'EOF'
 export ANTHROPIC_BASE_URL="https://righttoken.ai"
-export ANTHROPIC_API_KEY="sk-你的key"
+export ANTHROPIC_AUTH_TOKEN="sk-你的key"
 EOF
 source ~/.zshrc`,
     hint: tt('macos.s5.hint'),
@@ -66,7 +67,7 @@ const windowsSteps: InstallStep[] = [
     title: tt('windows.s4.title'),
     desc: tt('windows.s4.desc'),
     code: `[System.Environment]::SetEnvironmentVariable('ANTHROPIC_BASE_URL', 'https://righttoken.ai', 'User')
-[System.Environment]::SetEnvironmentVariable('ANTHROPIC_API_KEY', 'sk-你的key', 'User')`,
+[System.Environment]::SetEnvironmentVariable('ANTHROPIC_AUTH_TOKEN', 'sk-你的key', 'User')`,
     hint: tt('windows.s4.hint'),
   },
   {

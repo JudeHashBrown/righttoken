@@ -311,7 +311,7 @@ export default {
         cardName: 'Claude on macOS / Windows',
         cardTagline: 'Official Claude Code CLI — the top coding agent',
         title: 'Use Claude (5 minutes)',
-        tagline: 'Recommended: Claude Code CLI — Anthropic\'s official coding agent',
+        tagline: "10 minutes, 5 steps to set up Claude Code.\nAnthropic's terminal AI assistant — it reads files on your computer and helps with all kinds of tasks.",
         groupName: 'Claude',
         steps: {
           macos: {
@@ -322,22 +322,22 @@ export default {
             },
             s2: {
               title: 'Install Homebrew (skip if installed)',
-              desc: 'First check: run "brew --version". If you see a version → skip. If "command not found" → run the command below to install (you\'ll be asked for your Mac password — typing is invisible, that\'s normal; wait 5-10 min).',
+              desc: 'Homebrew is the "app store" for Mac. The next step needs it to install Node.\n\nFirst check: run "brew --version". If you see a version → skip. If "command not found" → run the command below to install (you\'ll be asked for your Mac password — typing is invisible, that\'s normal; wait 5-10 min).',
               hint: 'After install, follow the printed instructions and run eval "$(/opt/homebrew/bin/brew shellenv)" to add brew to PATH, then verify with brew --version'
             },
             s3: {
               title: 'Install Node.js (skip if already installed)',
-              desc: 'First check: run "node --version". If you see v18 or newer → skip to next step. If "command not found" → run the command below to install.',
+              desc: 'Node.js is the "engine" that runs Claude Code — like Android needs the Android OS to run APKs.\n\nFirst check: run "node --version". If you see v18 or newer → skip to next step. If "command not found" → run the command below to install.',
               hint: 'Re-run "node --version" to verify a version number appears'
             },
             s4: {
               title: 'Install Claude Code CLI',
-              desc: 'Copy the command below, paste into Terminal, press Enter. Wait ~1 minute.',
+              desc: 'npm is the "install command" that comes with Node — this step downloads Claude Code onto your computer.\n\nCopy the command below, paste into Terminal, press Enter. Wait ~1 minute.',
               hint: '"added N packages" means it succeeded'
             },
             s5: {
               title: 'Configure RightToken (the important one)',
-              desc: 'Replace sk-your-key in the command with the actual key you copy from RightToken admin "API Keys". Then paste and run the whole block.',
+              desc: 'This step tells Claude Code: connect to RightToken (not Anthropic\'s official site), and present your key.\n\nReplace sk-your-key in the command with the actual key you copy from RightToken admin "API Keys". Then paste and run the whole block.',
               hint: 'No errors + prompt % returns = done'
             },
             s6: {
@@ -354,17 +354,17 @@ export default {
             },
             s2: {
               title: 'Install Node.js (skip if already installed)',
-              desc: 'First check: run "node --version". If you see v18+ → skip. Otherwise download the LTS installer from https://nodejs.org and re-open PowerShell after install.',
+              desc: 'Node.js is the "engine" that runs Claude Code — like Android needs the Android OS to run APKs.\n\nFirst check: run "node --version". If you see v18+ → skip. Otherwise download the LTS installer from https://nodejs.org and re-open PowerShell after install.',
               hint: 'After reopening, "node --version" should print a version'
             },
             s3: {
               title: 'Install Claude Code CLI',
-              desc: 'Copy the command below, paste into PowerShell, press Enter. Wait ~1 minute.',
+              desc: 'npm is the "install command" that comes with Node — this step downloads Claude Code onto your computer.\n\nCopy the command below, paste into PowerShell, press Enter. Wait ~1 minute.',
               hint: '"added N packages" means it succeeded'
             },
             s4: {
               title: 'Configure RightToken (the important one)',
-              desc: 'Replace sk-your-key in the command with the actual key you copy from RightToken admin "API Keys", then paste and run.',
+              desc: 'This step tells Claude Code: connect to RightToken (not Anthropic\'s official site), and present your key.\n\nReplace sk-your-key in the command with the actual key you copy from RightToken admin "API Keys", then paste and run.',
               hint: 'You MUST reopen PowerShell for env vars to take effect'
             },
             s5: {
@@ -382,7 +382,7 @@ export default {
         vscode: {
           option1Title: 'Recommended: official Claude Code VS Code extension',
           option1Step1: 'Open VS Code → Extensions (Cmd/Ctrl + Shift + X) → search "Claude Code" and install the official extension',
-          option1Step2: 'Make sure the two env vars from the macOS/Windows section are set: ANTHROPIC_BASE_URL + ANTHROPIC_API_KEY',
+          option1Step2: 'Make sure the two env vars from the macOS/Windows section are set: ANTHROPIC_BASE_URL + ANTHROPIC_AUTH_TOKEN',
           option1Step3: 'Cmd/Ctrl + Shift + P → type "Claude Code: Start" → opens the side panel',
           option1Step4: 'Chat directly in the panel — Claude can read the file you have open and the whole workspace',
           option2Title: 'Easiest: VS Code integrated terminal',
@@ -391,6 +391,7 @@ export default {
         faq: {
           timeout: 'Timeout errors: set `export ANTHROPIC_TIMEOUT=300000` (5-minute tolerance)',
           models: 'Supported models: check the Claude group in admin > Groups',
+          oauthResidual: "After launch you see `Failed to connect to api.anthropic.com` (even though the env vars are correct): usually a leftover OAuth credential from a previous Claude Code login is overriding your env vars. Run `rm -f ~/.claude/.credentials.json` (Mac/Linux) or `Remove-Item $HOME\\.claude\\.credentials.json -ErrorAction SilentlyContinue` (Windows) → close the terminal, reopen, then run `claude` again",
           bothEnvVars: '"Both ANTHROPIC_AUTH_TOKEN and ANTHROPIC_API_KEY set" warning on launch: you previously set ANTHROPIC_API_KEY manually. Run `[Environment]::SetEnvironmentVariable(\'ANTHROPIC_API_KEY\', $null, \'User\')` to remove it, close ALL PowerShell windows, reopen, then run `claude` again'
         }
       },
@@ -398,7 +399,7 @@ export default {
         cardName: 'GPT on macOS / Windows',
         cardTagline: 'OpenAI Codex CLI — official coding agent experience',
         title: 'Use GPT / Codex (5 minutes)',
-        tagline: 'Recommended: Codex CLI — OpenAI\'s official coding agent',
+        tagline: "10 minutes, 5 steps to set up Codex CLI.\nOpenAI's terminal AI assistant — it reads files on your computer and helps with all kinds of tasks.",
         steps: {
           macos: {
             s1: {
@@ -408,17 +409,17 @@ export default {
             },
             s2: {
               title: 'Install Homebrew (skip if installed)',
-              desc: 'First check: run "brew --version". Version shown → skip. "command not found" → run the command below (asks for your Mac password — typing is invisible, normal; wait 5-10 min).',
+              desc: 'Homebrew is the "app store" for Mac. The next step needs it to install Node.\n\nFirst check: run "brew --version". Version shown → skip. "command not found" → run the command below (asks for your Mac password — typing is invisible, normal; wait 5-10 min).',
               hint: 'After install, follow the printed instructions to run eval "$(/opt/homebrew/bin/brew shellenv)" to add brew to PATH; verify with brew --version'
             },
             s3: {
               title: 'Install Node.js (skip if installed)',
-              desc: 'First check: "node --version". v18+ shown → skip. Otherwise run the command below.',
+              desc: 'Node.js is the "engine" that runs Codex CLI — like Android needs the Android OS to run APKs.\n\nFirst check: "node --version". v18+ shown → skip. Otherwise run the command below.',
               hint: '"node --version" prints a v-prefixed version = OK'
             },
             s4: {
               title: 'Install Codex CLI',
-              desc: 'Copy + paste + Enter. Wait ~1 minute.',
+              desc: 'npm is the "install command" that comes with Node — this step downloads Codex CLI onto your computer.\n\nCopy + paste + Enter. Wait ~1 minute.',
               hint: '"added N packages" = installed'
             },
             s5: {
@@ -445,12 +446,12 @@ export default {
             },
             s2: {
               title: 'Install Node.js (skip if installed)',
-              desc: 'First check: "node --version". v18+ → skip. Otherwise download LTS from https://nodejs.org and reopen PowerShell after install.',
+              desc: 'Node.js is the "engine" that runs Codex CLI — like Android needs the Android OS to run APKs.\n\nFirst check: "node --version". v18+ → skip. Otherwise download LTS from https://nodejs.org and reopen PowerShell after install.',
               hint: 'After reopen, "node --version" prints a version = OK'
             },
             s3: {
               title: 'Install Codex CLI',
-              desc: 'Copy + paste + Enter. Wait ~1 minute.',
+              desc: 'npm is the "install command" that comes with Node — this step downloads Codex CLI onto your computer.\n\nCopy + paste + Enter. Wait ~1 minute.',
               hint: '"added N packages" = installed'
             },
             s4: {
@@ -488,7 +489,7 @@ export default {
         cardName: 'Gemini on macOS / Windows',
         cardTagline: 'Google\'s official Gemini CLI, native protocol',
         title: 'Use Gemini (5 minutes)',
-        tagline: 'Recommended: Gemini CLI — Google\'s official coding agent',
+        tagline: "10 minutes, 5 steps to set up Gemini CLI.\nGoogle's terminal AI assistant — it reads files on your computer and helps with all kinds of tasks.",
         groupName: 'Gemini',
         steps: {
           macos: {
@@ -499,17 +500,17 @@ export default {
             },
             s2: {
               title: 'Install Homebrew (skip if installed)',
-              desc: 'First check: "brew --version". Version shown → skip. "command not found" → run the command below (asks for Mac password — typing is invisible, normal; wait 5-10 min).',
+              desc: 'Homebrew is the "app store" for Mac. The next step needs it to install Node.\n\nFirst check: "brew --version". Version shown → skip. "command not found" → run the command below (asks for Mac password — typing is invisible, normal; wait 5-10 min).',
               hint: 'After install, run eval "$(/opt/homebrew/bin/brew shellenv)" as printed, verify with brew --version'
             },
             s3: {
               title: 'Install Node.js (skip if installed)',
-              desc: 'First check: "node --version". v18+ → skip. Otherwise run the command below.',
+              desc: 'Node.js is the "engine" that runs Gemini CLI — like Android needs the Android OS to run APKs.\n\nFirst check: "node --version". v18+ → skip. Otherwise run the command below.',
               hint: '"node --version" prints a v-prefixed version = OK'
             },
             s4: {
               title: 'Install Gemini CLI',
-              desc: 'Copy + paste + Enter. Wait ~1 minute.',
+              desc: 'npm is the "install command" that comes with Node — this step downloads Gemini CLI onto your computer.\n\nCopy + paste + Enter. Wait ~1 minute.',
               hint: '"added N packages" = installed'
             },
             s5: {
@@ -531,12 +532,12 @@ export default {
             },
             s2: {
               title: 'Install Node.js (skip if installed)',
-              desc: 'First check: "node --version". v18+ → skip. Otherwise download LTS from https://nodejs.org and reopen PowerShell after install.',
+              desc: 'Node.js is the "engine" that runs Gemini CLI — like Android needs the Android OS to run APKs.\n\nFirst check: "node --version". v18+ → skip. Otherwise download LTS from https://nodejs.org and reopen PowerShell after install.',
               hint: 'After reopen, "node --version" prints a version = OK'
             },
             s3: {
               title: 'Install Gemini CLI',
-              desc: 'Copy + paste + Enter. Wait ~1 minute.',
+              desc: 'npm is the "install command" that comes with Node — this step downloads Gemini CLI onto your computer.\n\nCopy + paste + Enter. Wait ~1 minute.',
               hint: '"added N packages" = installed'
             },
             s4: {
