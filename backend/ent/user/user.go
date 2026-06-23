@@ -51,6 +51,10 @@ const (
 	FieldIsReferralPartner = "is_referral_partner"
 	// FieldReferralBonusClaimedAt holds the string denoting the referral_bonus_claimed_at field in the database.
 	FieldReferralBonusClaimedAt = "referral_bonus_claimed_at"
+	// FieldFirstRechargeAmountUsd holds the string denoting the first_recharge_amount_usd field in the database.
+	FieldFirstRechargeAmountUsd = "first_recharge_amount_usd"
+	// FieldFirstRechargeInviterBonusPaid holds the string denoting the first_recharge_inviter_bonus_paid field in the database.
+	FieldFirstRechargeInviterBonusPaid = "first_recharge_inviter_bonus_paid"
 	// EdgeAPIKeys holds the string denoting the api_keys edge name in mutations.
 	EdgeAPIKeys = "api_keys"
 	// EdgeRedeemCodes holds the string denoting the redeem_codes edge name in mutations.
@@ -173,6 +177,8 @@ var Columns = []string{
 	FieldInviteCode,
 	FieldIsReferralPartner,
 	FieldReferralBonusClaimedAt,
+	FieldFirstRechargeAmountUsd,
+	FieldFirstRechargeInviterBonusPaid,
 }
 
 var (
@@ -233,6 +239,10 @@ var (
 	InviteCodeValidator func(string) error
 	// DefaultIsReferralPartner holds the default value on creation for the "is_referral_partner" field.
 	DefaultIsReferralPartner bool
+	// DefaultFirstRechargeAmountUsd holds the default value on creation for the "first_recharge_amount_usd" field.
+	DefaultFirstRechargeAmountUsd float64
+	// DefaultFirstRechargeInviterBonusPaid holds the default value on creation for the "first_recharge_inviter_bonus_paid" field.
+	DefaultFirstRechargeInviterBonusPaid float64
 )
 
 // OrderOption defines the ordering options for the User queries.
@@ -331,6 +341,16 @@ func ByIsReferralPartner(opts ...sql.OrderTermOption) OrderOption {
 // ByReferralBonusClaimedAt orders the results by the referral_bonus_claimed_at field.
 func ByReferralBonusClaimedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldReferralBonusClaimedAt, opts...).ToFunc()
+}
+
+// ByFirstRechargeAmountUsd orders the results by the first_recharge_amount_usd field.
+func ByFirstRechargeAmountUsd(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFirstRechargeAmountUsd, opts...).ToFunc()
+}
+
+// ByFirstRechargeInviterBonusPaid orders the results by the first_recharge_inviter_bonus_paid field.
+func ByFirstRechargeInviterBonusPaid(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFirstRechargeInviterBonusPaid, opts...).ToFunc()
 }
 
 // ByAPIKeysCount orders the results by api_keys count.

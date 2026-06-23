@@ -802,6 +802,7 @@ var (
 		{Name: "inviter_id", Type: field.TypeInt64},
 		{Name: "downline_id", Type: field.TypeInt64},
 		{Name: "tier", Type: field.TypeInt8},
+		{Name: "kind", Type: field.TypeString, Size: 20, Default: "agent_lv1"},
 		{Name: "source_request_id", Type: field.TypeString, Size: 64},
 		{Name: "base_amount", Type: field.TypeFloat64, Default: 0, SchemaType: map[string]string{"postgres": "decimal(20,8)"}},
 		{Name: "rate", Type: field.TypeFloat64, Default: 0, SchemaType: map[string]string{"postgres": "decimal(6,4)"}},
@@ -821,7 +822,7 @@ var (
 			{
 				Name:    "referralcommission_inviter_id_status_created_at",
 				Unique:  false,
-				Columns: []*schema.Column{ReferralCommissionsColumns[1], ReferralCommissionsColumns[8], ReferralCommissionsColumns[12]},
+				Columns: []*schema.Column{ReferralCommissionsColumns[1], ReferralCommissionsColumns[9], ReferralCommissionsColumns[13]},
 			},
 			{
 				Name:    "referralcommission_downline_id",
@@ -829,9 +830,14 @@ var (
 				Columns: []*schema.Column{ReferralCommissionsColumns[2]},
 			},
 			{
-				Name:    "referralcommission_source_request_id_tier",
+				Name:    "referralcommission_source_request_id_kind",
 				Unique:  true,
-				Columns: []*schema.Column{ReferralCommissionsColumns[4], ReferralCommissionsColumns[3]},
+				Columns: []*schema.Column{ReferralCommissionsColumns[5], ReferralCommissionsColumns[4]},
+			},
+			{
+				Name:    "referralcommission_kind",
+				Unique:  false,
+				Columns: []*schema.Column{ReferralCommissionsColumns[4]},
 			},
 		},
 	}
@@ -1149,6 +1155,8 @@ var (
 		{Name: "invite_code", Type: field.TypeString, Unique: true, Nullable: true, Size: 16},
 		{Name: "is_referral_partner", Type: field.TypeBool, Default: false},
 		{Name: "referral_bonus_claimed_at", Type: field.TypeTime, Nullable: true},
+		{Name: "first_recharge_amount_usd", Type: field.TypeFloat64, Default: 0, SchemaType: map[string]string{"postgres": "numeric(10,4)"}},
+		{Name: "first_recharge_inviter_bonus_paid", Type: field.TypeFloat64, Default: 0, SchemaType: map[string]string{"postgres": "numeric(10,6)"}},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

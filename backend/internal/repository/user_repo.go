@@ -167,6 +167,46 @@ func (r *userRepository) ClaimFirstRechargeBonus(ctx context.Context, userID int
 	return n == 1, nil
 }
 
+// SetFirstRechargeAmount 写入 first_recharge_amount_usd（首充原值 USD），
+// 作为普通邀请人首充返点封顶的基数（cap = amount × inviter_rate）。
+// 首充支付完成时调用一次；后续不应重写（不影响 cap）。
+func (r *userRepository) SetFirstRechargeAmount(ctx context.Context, userID int64, amount float64) error {
+	client := clientFromContext(ctx, r.client)
+	n, err := client.User.Update().
+		Where(dbuser.IDEQ(userID)).
+		SetFirstRechargeAmountUsd(amount).
+		Save(ctx)
+	if err != nil {
+		return translatePersistenceError(err, service.ErrUserNotFound, nil)
+	}
+	if n == 0 {
+		return service.ErrUserNotFound
+	}
+	return nil
+}
+
+// AdjustFirstRechargeInviterBonusPaid 原子加/减「已发首充返点累计」，返回新值。
+// 累计写入时 delta > 0；退款 void 时 delta < 0。
+// 由调用方在写入 commission 之前先检查 cap，避免超发。
+func (r *userRepository) AdjustFirstRechargeInviterBonusPaid(ctx context.Context, userID int64, delta float64) (float64, error) {
+	client := clientFromContext(ctx, r.client)
+	n, err := client.User.Update().
+		Where(dbuser.IDEQ(userID)).
+		AddFirstRechargeInviterBonusPaid(delta).
+		Save(ctx)
+	if err != nil {
+		return 0, translatePersistenceError(err, service.ErrUserNotFound, nil)
+	}
+	if n == 0 {
+		return 0, service.ErrUserNotFound
+	}
+	u, err := client.User.Get(ctx, userID)
+	if err != nil {
+		return 0, err
+	}
+	return u.FirstRechargeInviterBonusPaid, nil
+}
+
 func (r *userRepository) Update(ctx context.Context, userIn *service.User) error {
 	if userIn == nil {
 		return nil

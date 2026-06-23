@@ -31,10 +31,12 @@ type User struct {
 	TotpEnabledAt       *time.Time // TOTP 启用时间
 
 	// 邀请功能：邀请人 + 个人邀请码 + 是否开启邀请功能
-	InviterID              *int64
-	InviteCode             *string
-	IsReferralPartner      bool
-	ReferralBonusClaimedAt *time.Time // 首充奖励领取时间；NULL = 未领取
+	InviterID                     *int64
+	InviteCode                    *string
+	IsReferralPartner             bool
+	ReferralBonusClaimedAt        *time.Time // 首充奖励领取时间；NULL = 未领取
+	FirstRechargeAmountUsd        float64    // 首充原值（USD），普通邀请人首充返点 cap 的基数
+	FirstRechargeInviterBonusPaid float64    // 已发给上线的首充返点累计（USD）
 
 	APIKeys       []APIKey
 	Subscriptions []UserSubscription

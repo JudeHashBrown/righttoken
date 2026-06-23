@@ -14,6 +14,11 @@ const (
 	ReferralCommissionStatusPending = "pending"
 	ReferralCommissionStatusSettled = "settled"
 	ReferralCommissionStatusVoided  = "voided"
+
+	// 抽佣种类。一笔 usage 最多产生 first_recharge + agent_lv1 + agent_lv2 三条。
+	ReferralCommissionKindFirstRecharge = "first_recharge" // 普通邀请人首充返点（封顶 5% × 首充原值）
+	ReferralCommissionKindAgentLv1      = "agent_lv1"      // 代理一级（直接下线消费 × Lv1Rate）
+	ReferralCommissionKindAgentLv2      = "agent_lv2"      // 代理二级（二级下线消费 × Lv2Rate）
 )
 
 var (
@@ -43,6 +48,7 @@ type ReferralCommission struct {
 	InviterID        int64      `json:"inviter_id"`
 	DownlineID       int64      `json:"downline_id"`
 	Tier             int8       `json:"tier"`
+	Kind             string     `json:"kind"` // first_recharge / agent_lv1 / agent_lv2
 	SourceRequestID  string     `json:"source_request_id"`
 	BaseAmount       float64    `json:"base_amount"`
 	Rate             float64    `json:"rate"`
@@ -71,6 +77,7 @@ type CreateCommissionInput struct {
 	InviterID        int64
 	DownlineID       int64
 	Tier             int8
+	Kind             string // first_recharge / agent_lv1 / agent_lv2；缺省时 repo 兜底为 agent_lv1
 	SourceRequestID  string
 	BaseAmount       float64
 	Rate             float64
@@ -139,4 +146,9 @@ type ReferralCommissionRepository interface {
 
 	// CountPendingByInviter 返回某 inviter 名下处于 pending 的奖励条数（关闭邀请功能时守门用）。
 	CountPendingByInviter(ctx context.Context, inviterID int64) (int64, error)
+
+	// VoidPendingByDownline 在下线退款时调用，按 created_at DESC 依次 void 该下线的 pending commission，
+	// 累计 base_amount 达到 absorbAmount 即停。返回被 void 的明细，供 service 层据此回滚
+	// users.first_recharge_inviter_bonus_paid 字段。
+	VoidPendingByDownline(ctx context.Context, downlineID int64, absorbAmount float64, note string) ([]ReferralCommission, error)
 }

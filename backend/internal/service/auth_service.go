@@ -179,9 +179,10 @@ func (s *AuthService) RegisterWithVerification(ctx context.Context, email, passw
 		return "", nil, ErrEmailExists
 	}
 
-	// 邀请功能：解析推荐码 + E1 自荐拦截 + inviter 必须为 partner。
-	// 三种情况都视为「码无效」、静默不绑定（注册仍成功）：
-	//   1. 码不存在；2. inviter 已关闭邀请功能；3. E1 自荐拦截会主动报错（不静默）。
+	// 邀请功能：解析推荐码 + E1 自荐拦截。
+	// v2: 任何用户都可以邀请（普通邀请人享受首充返点；IsReferralPartner 仅影响 Lv1/Lv2 代理收益）。
+	// 两种情况视为「码无效」、静默不绑定（注册仍成功）：
+	//   1. 码不存在；2. E1 自荐拦截会主动报错（不静默）。
 	var inviterID *int64
 	if s.referralService != nil {
 		inviter, refErr := s.referralService.ResolveInviterByCode(ctx, referralCode)
@@ -191,13 +192,8 @@ func (s *AuthService) RegisterWithVerification(ctx context.Context, email, passw
 			if err := s.referralService.ValidateNewRegistration(inviter, email); err != nil {
 				return "", nil, err
 			}
-			if !inviter.IsReferralPartner {
-				// 邀请人已关闭邀请功能 → 视为无效码，静默不绑定
-				logger.LegacyPrintf("service.auth", "[Auth] Referral code %q belongs to inactive partner (user=%d), ignored", referralCode, inviter.ID)
-			} else {
-				id := inviter.ID
-				inviterID = &id
-			}
+			id := inviter.ID
+			inviterID = &id
 		}
 	}
 

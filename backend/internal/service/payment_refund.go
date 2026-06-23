@@ -271,6 +271,12 @@ func (s *PaymentService) markRefundOk(ctx context.Context, p *RefundPlan) (*Refu
 		return nil, fmt.Errorf("mark refund: %w", err)
 	}
 	s.writeAuditLog(ctx, p.OrderID, "REFUND_SUCCESS", "admin", map[string]any{"refundAmount": p.RefundAmount, "reason": p.Reason, "balanceDeducted": p.BalanceToDeduct, "force": p.Force})
+	// 二级分销：void 该下线 pending 的 commission，按 base_amount 累计吸收 refundUSD。
+	// 失败不上抛——退款主流程已成功。
+	if s.referralService != nil && p.RefundAmount > 0 {
+		refundUSD := p.RefundAmount / 7.0 // CNY → USD，与 payment_fulfillment 同口径
+		s.referralService.ReverseCommissionsForRefund(ctx, p.Order.UserID, refundUSD)
+	}
 	return &RefundResult{Success: true, BalanceDeducted: p.BalanceToDeduct, SubDaysDeducted: p.SubDaysToDeduct}, nil
 }
 

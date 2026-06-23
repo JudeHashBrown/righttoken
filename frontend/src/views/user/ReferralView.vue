@@ -1,7 +1,7 @@
 <template>
   <AppLayout>
     <div class="mx-auto max-w-5xl space-y-6">
-      <!-- 邀请码卡 -->
+      <!-- 邀请码卡：任何登录用户可见 -->
       <div class="card overflow-hidden">
         <div class="bg-gradient-to-br from-primary-500 to-primary-600 px-6 py-8">
           <div class="flex items-center justify-between flex-wrap gap-4">
@@ -10,26 +10,74 @@
               <p class="mt-2 text-4xl font-bold tracking-widest text-white">
                 {{ dashboard?.invite_code || '—' }}
               </p>
-              <p class="mt-2 text-sm text-primary-100">
-                {{ t('referral.tierRatesLine', {
-                  lv1: formatPercent(dashboard?.lv1_rate ?? 0),
-                  lv2: formatPercent(dashboard?.lv2_rate ?? 0)
-                }) }}
-              </p>
             </div>
-            <button class="btn bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm" @click="copyCode">
-              {{ copied ? t('referral.copied') : t('referral.copyCode') }}
-            </button>
+            <div class="flex flex-wrap gap-2">
+              <button
+                class="btn bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
+                @click="copyCode"
+              >
+                {{ codeCopied ? t('referral.copied') : t('referral.copyCode') }}
+              </button>
+              <button
+                class="btn bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
+                @click="copyLink"
+              >
+                {{ linkCopied ? t('referral.copied') : t('referral.copyLink') }}
+              </button>
+            </div>
           </div>
-
-          <div v-if="shareLink" class="mt-5 rounded-lg bg-white/10 p-3 text-xs font-mono text-primary-50 break-all">
+          <div
+            v-if="shareLink"
+            class="mt-5 rounded-lg bg-white/10 p-3 text-xs font-mono text-primary-50 break-all"
+          >
             {{ shareLink }}
           </div>
         </div>
       </div>
 
-      <!-- 汇总卡：Lv1 + Lv2 -->
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <!-- 收益规则说明（任何人）：普通邀请 + 代理（如果是） -->
+      <div class="grid grid-cols-1 gap-4" :class="dashboard?.is_referral_partner ? 'md:grid-cols-2' : ''">
+        <div
+          class="card border-blue-200 bg-blue-50 p-5 text-sm leading-relaxed text-blue-800 dark:border-blue-800/50 dark:bg-blue-900/20 dark:text-blue-200"
+        >
+          <p class="font-semibold mb-2">{{ t('referral.firstRechargeTitle') }}</p>
+          <ul class="list-disc pl-5 space-y-1 text-blue-700 dark:text-blue-300">
+            <li>{{ t('referral.firstRechargeBenefit1') }}</li>
+            <li>
+              {{ t('referral.firstRechargeBenefit2', {
+                rate: formatPercent(dashboard?.first_recharge_rate ?? 0.05)
+              }) }}
+            </li>
+            <li>{{ t('referral.firstRechargeBenefit3') }}</li>
+            <li>{{ t('referral.firstRechargeBenefit4') }}</li>
+          </ul>
+        </div>
+        <div
+          v-if="dashboard?.is_referral_partner"
+          class="card border-amber-200 bg-amber-50 p-5 text-sm leading-relaxed text-amber-800 dark:border-amber-800/50 dark:bg-amber-900/20 dark:text-amber-200"
+        >
+          <p class="font-semibold mb-2 flex items-center gap-2">
+            <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-[10px] text-white">★</span>
+            {{ t('referral.agentTitle') }}
+          </p>
+          <ul class="list-disc pl-5 space-y-1 text-amber-700 dark:text-amber-300">
+            <li>
+              {{ t('referral.agentBenefit1', {
+                lv1: formatPercent(dashboard?.lv1_rate ?? 0)
+              }) }}
+            </li>
+            <li>
+              {{ t('referral.agentBenefit2', {
+                lv2: formatPercent(dashboard?.lv2_rate ?? 0)
+              }) }}
+            </li>
+            <li>{{ t('referral.agentBenefit3') }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 代理统计卡：仅代理可见 -->
+      <div v-if="dashboard?.is_referral_partner" class="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div class="card p-5">
           <p class="text-sm text-gray-500 dark:text-dark-400">{{ t('referral.lv1Title') }}</p>
           <p class="mt-2 text-xs text-gray-400 dark:text-dark-500">{{ t('referral.lv1Subtitle') }}</p>
@@ -74,7 +122,7 @@
         </div>
       </div>
 
-      <!-- Lv1 明细表 -->
+      <!-- Lv1 下线明细表（任何人） -->
       <div class="card">
         <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
           <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -122,7 +170,7 @@
         </div>
       </div>
 
-      <!-- 抽佣明细分页表 -->
+      <!-- 抽佣明细分页表（任何人）-->
       <div class="card">
         <div class="border-b border-gray-100 px-6 py-4 flex items-center justify-between flex-wrap gap-3 dark:border-dark-700">
           <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -142,7 +190,7 @@
             <thead class="bg-gray-50 text-gray-500 dark:bg-dark-800 dark:text-dark-400">
               <tr>
                 <th class="px-6 py-3 text-left font-medium">{{ t('referral.colTime') }}</th>
-                <th class="px-6 py-3 text-left font-medium">{{ t('referral.colTier') }}</th>
+                <th class="px-6 py-3 text-left font-medium">{{ t('referral.colKind') }}</th>
                 <th class="px-6 py-3 text-right font-medium">{{ t('referral.colBase') }}</th>
                 <th class="px-6 py-3 text-right font-medium">{{ t('referral.colRate') }}</th>
                 <th class="px-6 py-3 text-right font-medium">{{ t('referral.colCommission') }}</th>
@@ -152,7 +200,7 @@
             <tbody class="divide-y divide-gray-100 dark:divide-dark-700">
               <tr v-for="c in commissions" :key="c.id">
                 <td class="px-6 py-3 text-xs text-gray-500 dark:text-dark-400">{{ formatDateTime(c.created_at) }}</td>
-                <td class="px-6 py-3">{{ tierLabel(c.tier) }}</td>
+                <td class="px-6 py-3">{{ kindLabel(c.kind, c.tier) }}</td>
                 <td class="px-6 py-3 text-right">{{ formatUsd(c.base_amount) }}</td>
                 <td class="px-6 py-3 text-right">{{ formatPercent(c.rate) }}</td>
                 <td class="px-6 py-3 text-right font-semibold">{{ formatUsd(c.commission_amount) }}</td>
@@ -170,17 +218,6 @@
           <button class="btn btn-secondary text-sm" :disabled="page >= totalPages" @click="loadCommissions(page + 1)">›</button>
         </div>
       </div>
-
-      <!-- 说明 -->
-      <div class="card border-primary-200 bg-primary-50 p-5 text-sm leading-relaxed text-primary-800 dark:border-primary-800/50 dark:bg-primary-900/20 dark:text-primary-200">
-        <p class="font-semibold mb-2">{{ t('referral.howItWorksTitle') }}</p>
-        <ul class="list-disc pl-5 space-y-1 text-primary-700 dark:text-primary-300">
-          <li>{{ t('referral.howItWorks1') }}</li>
-          <li>{{ t('referral.howItWorks2') }}</li>
-          <li>{{ t('referral.howItWorks3') }}</li>
-          <li>{{ t('referral.howItWorks4') }}</li>
-        </ul>
-      </div>
     </div>
   </AppLayout>
 </template>
@@ -195,7 +232,10 @@ import { formatDateTime } from '@/utils/format'
 import { useClipboard } from '@/composables/useClipboard'
 
 const { t } = useI18n()
-const { copied, copyToClipboard } = useClipboard()
+const codeClip = useClipboard()
+const linkClip = useClipboard()
+const codeCopied = codeClip.copied
+const linkCopied = linkClip.copied
 
 const dashboard = ref<ReferralDashboard | null>(null)
 const commissions = ref<ReferralCommission[]>([])
@@ -219,15 +259,22 @@ function formatPercent(v?: number) {
   return `${(Number(v || 0) * 100).toFixed(2)}%`
 }
 
-function tierLabel(tier: number) {
-  const key = `referral.tierLabels.${tier}`
-  const label = t(key)
-  return label === key ? `Lv${tier}` : label
+function kindLabel(kind: string, tier: number) {
+  // 优先按 kind 显示；老数据没 kind 时按 tier 兜底
+  if (kind === 'first_recharge') return t('referral.kindLabels.first_recharge')
+  if (kind === 'agent_lv1') return t('referral.kindLabels.agent_lv1')
+  if (kind === 'agent_lv2') return t('referral.kindLabels.agent_lv2')
+  return `Lv${tier}`
 }
 
 async function copyCode() {
   if (!dashboard.value?.invite_code) return
-  await copyToClipboard(dashboard.value.invite_code)
+  await codeClip.copyToClipboard(dashboard.value.invite_code)
+}
+
+async function copyLink() {
+  if (!shareLink.value) return
+  await linkClip.copyToClipboard(shareLink.value)
 }
 
 async function loadDashboard() {

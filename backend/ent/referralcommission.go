@@ -21,8 +21,10 @@ type ReferralCommission struct {
 	InviterID int64 `json:"inviter_id,omitempty"`
 	// 贡献本次消费的下线用户
 	DownlineID int64 `json:"downline_id,omitempty"`
-	// 分销层级：1=直接下线，2=下线的下线
+	// 分销层级：1=直接下线，2=下线的下线（first_recharge 也用 tier=1）
 	Tier int8 `json:"tier,omitempty"`
+	// 抽佣种类：first_recharge=普通邀请首充返点（封顶），agent_lv1/lv2=代理一/二级（长期）
+	Kind string `json:"kind,omitempty"`
 	// 来源 usage_log 的 RequestID（去重键）
 	SourceRequestID string `json:"source_request_id,omitempty"`
 	// 下线本次消费金额（快照）
@@ -53,7 +55,7 @@ func (*ReferralCommission) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case referralcommission.FieldID, referralcommission.FieldInviterID, referralcommission.FieldDownlineID, referralcommission.FieldTier, referralcommission.FieldSettledByAdminID:
 			values[i] = new(sql.NullInt64)
-		case referralcommission.FieldSourceRequestID, referralcommission.FieldStatus, referralcommission.FieldSettledNote:
+		case referralcommission.FieldKind, referralcommission.FieldSourceRequestID, referralcommission.FieldStatus, referralcommission.FieldSettledNote:
 			values[i] = new(sql.NullString)
 		case referralcommission.FieldSettledAt, referralcommission.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -95,6 +97,12 @@ func (_m *ReferralCommission) assignValues(columns []string, values []any) error
 				return fmt.Errorf("unexpected type %T for field tier", values[i])
 			} else if value.Valid {
 				_m.Tier = int8(value.Int64)
+			}
+		case referralcommission.FieldKind:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field kind", values[i])
+			} else if value.Valid {
+				_m.Kind = value.String
 			}
 		case referralcommission.FieldSourceRequestID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -197,6 +205,9 @@ func (_m *ReferralCommission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("tier=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Tier))
+	builder.WriteString(", ")
+	builder.WriteString("kind=")
+	builder.WriteString(_m.Kind)
 	builder.WriteString(", ")
 	builder.WriteString("source_request_id=")
 	builder.WriteString(_m.SourceRequestID)

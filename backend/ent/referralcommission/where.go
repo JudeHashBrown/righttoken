@@ -69,6 +69,11 @@ func Tier(v int8) predicate.ReferralCommission {
 	return predicate.ReferralCommission(sql.FieldEQ(FieldTier, v))
 }
 
+// Kind applies equality check predicate on the "kind" field. It's identical to KindEQ.
+func Kind(v string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldEQ(FieldKind, v))
+}
+
 // SourceRequestID applies equality check predicate on the "source_request_id" field. It's identical to SourceRequestIDEQ.
 func SourceRequestID(v string) predicate.ReferralCommission {
 	return predicate.ReferralCommission(sql.FieldEQ(FieldSourceRequestID, v))
@@ -232,6 +237,71 @@ func TierLT(v int8) predicate.ReferralCommission {
 // TierLTE applies the LTE predicate on the "tier" field.
 func TierLTE(v int8) predicate.ReferralCommission {
 	return predicate.ReferralCommission(sql.FieldLTE(FieldTier, v))
+}
+
+// KindEQ applies the EQ predicate on the "kind" field.
+func KindEQ(v string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldEQ(FieldKind, v))
+}
+
+// KindNEQ applies the NEQ predicate on the "kind" field.
+func KindNEQ(v string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldNEQ(FieldKind, v))
+}
+
+// KindIn applies the In predicate on the "kind" field.
+func KindIn(vs ...string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldIn(FieldKind, vs...))
+}
+
+// KindNotIn applies the NotIn predicate on the "kind" field.
+func KindNotIn(vs ...string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldNotIn(FieldKind, vs...))
+}
+
+// KindGT applies the GT predicate on the "kind" field.
+func KindGT(v string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldGT(FieldKind, v))
+}
+
+// KindGTE applies the GTE predicate on the "kind" field.
+func KindGTE(v string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldGTE(FieldKind, v))
+}
+
+// KindLT applies the LT predicate on the "kind" field.
+func KindLT(v string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldLT(FieldKind, v))
+}
+
+// KindLTE applies the LTE predicate on the "kind" field.
+func KindLTE(v string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldLTE(FieldKind, v))
+}
+
+// KindContains applies the Contains predicate on the "kind" field.
+func KindContains(v string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldContains(FieldKind, v))
+}
+
+// KindHasPrefix applies the HasPrefix predicate on the "kind" field.
+func KindHasPrefix(v string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldHasPrefix(FieldKind, v))
+}
+
+// KindHasSuffix applies the HasSuffix predicate on the "kind" field.
+func KindHasSuffix(v string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldHasSuffix(FieldKind, v))
+}
+
+// KindEqualFold applies the EqualFold predicate on the "kind" field.
+func KindEqualFold(v string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldEqualFold(FieldKind, v))
+}
+
+// KindContainsFold applies the ContainsFold predicate on the "kind" field.
+func KindContainsFold(v string) predicate.ReferralCommission {
+	return predicate.ReferralCommission(sql.FieldContainsFold(FieldKind, v))
 }
 
 // SourceRequestIDEQ applies the EQ predicate on the "source_request_id" field.

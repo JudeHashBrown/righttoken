@@ -33,7 +33,11 @@ func (ReferralCommission) Fields() []ent.Field {
 		field.Int64("downline_id").
 			Comment("贡献本次消费的下线用户"),
 		field.Int8("tier").
-			Comment("分销层级：1=直接下线，2=下线的下线"),
+			Comment("分销层级：1=直接下线，2=下线的下线（first_recharge 也用 tier=1）"),
+		field.String("kind").
+			MaxLen(20).
+			Default("agent_lv1").
+			Comment("抽佣种类：first_recharge=普通邀请首充返点（封顶），agent_lv1/lv2=代理一/二级（长期）"),
 		field.String("source_request_id").
 			MaxLen(64).
 			Comment("来源 usage_log 的 RequestID（去重键）"),
@@ -75,7 +79,9 @@ func (ReferralCommission) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("inviter_id", "status", "created_at"),
 		index.Fields("downline_id"),
-		// 同一笔消费在同一层级只能产生一条抽佣（幂等）
-		index.Fields("source_request_id", "tier").Unique(),
+		// 同一笔消费 + 同一抽佣种类只能产生一条（幂等）。
+		// kind 区分 first_recharge / agent_lv1 / agent_lv2，所以一笔 usage 最多产生 3 条。
+		index.Fields("source_request_id", "kind").Unique(),
+		index.Fields("kind"),
 	}
 }

@@ -129,6 +129,14 @@ func (s *userRepoStub) ClaimFirstRechargeBonus(ctx context.Context, userID int64
 	panic("unexpected ClaimFirstRechargeBonus call")
 }
 
+func (s *userRepoStub) SetFirstRechargeAmount(ctx context.Context, userID int64, amount float64) error {
+	panic("unexpected SetFirstRechargeAmount call")
+}
+
+func (s *userRepoStub) AdjustFirstRechargeInviterBonusPaid(ctx context.Context, userID int64, delta float64) (float64, error) {
+	panic("unexpected AdjustFirstRechargeInviterBonusPaid call")
+}
+
 type groupRepoStub struct {
 	affectedUserIDs []int64
 	deleteErr       error

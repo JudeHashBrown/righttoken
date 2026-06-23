@@ -324,6 +324,48 @@ func (_u *UserUpdate) ClearReferralBonusClaimedAt() *UserUpdate {
 	return _u
 }
 
+// SetFirstRechargeAmountUsd sets the "first_recharge_amount_usd" field.
+func (_u *UserUpdate) SetFirstRechargeAmountUsd(v float64) *UserUpdate {
+	_u.mutation.ResetFirstRechargeAmountUsd()
+	_u.mutation.SetFirstRechargeAmountUsd(v)
+	return _u
+}
+
+// SetNillableFirstRechargeAmountUsd sets the "first_recharge_amount_usd" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableFirstRechargeAmountUsd(v *float64) *UserUpdate {
+	if v != nil {
+		_u.SetFirstRechargeAmountUsd(*v)
+	}
+	return _u
+}
+
+// AddFirstRechargeAmountUsd adds value to the "first_recharge_amount_usd" field.
+func (_u *UserUpdate) AddFirstRechargeAmountUsd(v float64) *UserUpdate {
+	_u.mutation.AddFirstRechargeAmountUsd(v)
+	return _u
+}
+
+// SetFirstRechargeInviterBonusPaid sets the "first_recharge_inviter_bonus_paid" field.
+func (_u *UserUpdate) SetFirstRechargeInviterBonusPaid(v float64) *UserUpdate {
+	_u.mutation.ResetFirstRechargeInviterBonusPaid()
+	_u.mutation.SetFirstRechargeInviterBonusPaid(v)
+	return _u
+}
+
+// SetNillableFirstRechargeInviterBonusPaid sets the "first_recharge_inviter_bonus_paid" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableFirstRechargeInviterBonusPaid(v *float64) *UserUpdate {
+	if v != nil {
+		_u.SetFirstRechargeInviterBonusPaid(*v)
+	}
+	return _u
+}
+
+// AddFirstRechargeInviterBonusPaid adds value to the "first_recharge_inviter_bonus_paid" field.
+func (_u *UserUpdate) AddFirstRechargeInviterBonusPaid(v float64) *UserUpdate {
+	_u.mutation.AddFirstRechargeInviterBonusPaid(v)
+	return _u
+}
+
 // AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
 func (_u *UserUpdate) AddAPIKeyIDs(ids ...int64) *UserUpdate {
 	_u.mutation.AddAPIKeyIDs(ids...)
@@ -855,6 +897,18 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.ReferralBonusClaimedAtCleared() {
 		_spec.ClearField(user.FieldReferralBonusClaimedAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.FirstRechargeAmountUsd(); ok {
+		_spec.SetField(user.FieldFirstRechargeAmountUsd, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedFirstRechargeAmountUsd(); ok {
+		_spec.AddField(user.FieldFirstRechargeAmountUsd, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.FirstRechargeInviterBonusPaid(); ok {
+		_spec.SetField(user.FieldFirstRechargeInviterBonusPaid, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedFirstRechargeInviterBonusPaid(); ok {
+		_spec.AddField(user.FieldFirstRechargeInviterBonusPaid, field.TypeFloat64, value)
 	}
 	if _u.mutation.APIKeysCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1625,6 +1679,48 @@ func (_u *UserUpdateOne) ClearReferralBonusClaimedAt() *UserUpdateOne {
 	return _u
 }
 
+// SetFirstRechargeAmountUsd sets the "first_recharge_amount_usd" field.
+func (_u *UserUpdateOne) SetFirstRechargeAmountUsd(v float64) *UserUpdateOne {
+	_u.mutation.ResetFirstRechargeAmountUsd()
+	_u.mutation.SetFirstRechargeAmountUsd(v)
+	return _u
+}
+
+// SetNillableFirstRechargeAmountUsd sets the "first_recharge_amount_usd" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableFirstRechargeAmountUsd(v *float64) *UserUpdateOne {
+	if v != nil {
+		_u.SetFirstRechargeAmountUsd(*v)
+	}
+	return _u
+}
+
+// AddFirstRechargeAmountUsd adds value to the "first_recharge_amount_usd" field.
+func (_u *UserUpdateOne) AddFirstRechargeAmountUsd(v float64) *UserUpdateOne {
+	_u.mutation.AddFirstRechargeAmountUsd(v)
+	return _u
+}
+
+// SetFirstRechargeInviterBonusPaid sets the "first_recharge_inviter_bonus_paid" field.
+func (_u *UserUpdateOne) SetFirstRechargeInviterBonusPaid(v float64) *UserUpdateOne {
+	_u.mutation.ResetFirstRechargeInviterBonusPaid()
+	_u.mutation.SetFirstRechargeInviterBonusPaid(v)
+	return _u
+}
+
+// SetNillableFirstRechargeInviterBonusPaid sets the "first_recharge_inviter_bonus_paid" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableFirstRechargeInviterBonusPaid(v *float64) *UserUpdateOne {
+	if v != nil {
+		_u.SetFirstRechargeInviterBonusPaid(*v)
+	}
+	return _u
+}
+
+// AddFirstRechargeInviterBonusPaid adds value to the "first_recharge_inviter_bonus_paid" field.
+func (_u *UserUpdateOne) AddFirstRechargeInviterBonusPaid(v float64) *UserUpdateOne {
+	_u.mutation.AddFirstRechargeInviterBonusPaid(v)
+	return _u
+}
+
 // AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
 func (_u *UserUpdateOne) AddAPIKeyIDs(ids ...int64) *UserUpdateOne {
 	_u.mutation.AddAPIKeyIDs(ids...)
@@ -2186,6 +2282,18 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if _u.mutation.ReferralBonusClaimedAtCleared() {
 		_spec.ClearField(user.FieldReferralBonusClaimedAt, field.TypeTime)
+	}
+	if value, ok := _u.mutation.FirstRechargeAmountUsd(); ok {
+		_spec.SetField(user.FieldFirstRechargeAmountUsd, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedFirstRechargeAmountUsd(); ok {
+		_spec.AddField(user.FieldFirstRechargeAmountUsd, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.FirstRechargeInviterBonusPaid(); ok {
+		_spec.SetField(user.FieldFirstRechargeInviterBonusPaid, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedFirstRechargeInviterBonusPaid(); ok {
+		_spec.AddField(user.FieldFirstRechargeInviterBonusPaid, field.TypeFloat64, value)
 	}
 	if _u.mutation.APIKeysCleared() {
 		edge := &sqlgraph.EdgeSpec{

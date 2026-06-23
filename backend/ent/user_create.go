@@ -267,6 +267,34 @@ func (_c *UserCreate) SetNillableReferralBonusClaimedAt(v *time.Time) *UserCreat
 	return _c
 }
 
+// SetFirstRechargeAmountUsd sets the "first_recharge_amount_usd" field.
+func (_c *UserCreate) SetFirstRechargeAmountUsd(v float64) *UserCreate {
+	_c.mutation.SetFirstRechargeAmountUsd(v)
+	return _c
+}
+
+// SetNillableFirstRechargeAmountUsd sets the "first_recharge_amount_usd" field if the given value is not nil.
+func (_c *UserCreate) SetNillableFirstRechargeAmountUsd(v *float64) *UserCreate {
+	if v != nil {
+		_c.SetFirstRechargeAmountUsd(*v)
+	}
+	return _c
+}
+
+// SetFirstRechargeInviterBonusPaid sets the "first_recharge_inviter_bonus_paid" field.
+func (_c *UserCreate) SetFirstRechargeInviterBonusPaid(v float64) *UserCreate {
+	_c.mutation.SetFirstRechargeInviterBonusPaid(v)
+	return _c
+}
+
+// SetNillableFirstRechargeInviterBonusPaid sets the "first_recharge_inviter_bonus_paid" field if the given value is not nil.
+func (_c *UserCreate) SetNillableFirstRechargeInviterBonusPaid(v *float64) *UserCreate {
+	if v != nil {
+		_c.SetFirstRechargeInviterBonusPaid(*v)
+	}
+	return _c
+}
+
 // AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by IDs.
 func (_c *UserCreate) AddAPIKeyIDs(ids ...int64) *UserCreate {
 	_c.mutation.AddAPIKeyIDs(ids...)
@@ -500,6 +528,14 @@ func (_c *UserCreate) defaults() error {
 		v := user.DefaultIsReferralPartner
 		_c.mutation.SetIsReferralPartner(v)
 	}
+	if _, ok := _c.mutation.FirstRechargeAmountUsd(); !ok {
+		v := user.DefaultFirstRechargeAmountUsd
+		_c.mutation.SetFirstRechargeAmountUsd(v)
+	}
+	if _, ok := _c.mutation.FirstRechargeInviterBonusPaid(); !ok {
+		v := user.DefaultFirstRechargeInviterBonusPaid
+		_c.mutation.SetFirstRechargeInviterBonusPaid(v)
+	}
 	return nil
 }
 
@@ -570,6 +606,12 @@ func (_c *UserCreate) check() error {
 	}
 	if _, ok := _c.mutation.IsReferralPartner(); !ok {
 		return &ValidationError{Name: "is_referral_partner", err: errors.New(`ent: missing required field "User.is_referral_partner"`)}
+	}
+	if _, ok := _c.mutation.FirstRechargeAmountUsd(); !ok {
+		return &ValidationError{Name: "first_recharge_amount_usd", err: errors.New(`ent: missing required field "User.first_recharge_amount_usd"`)}
+	}
+	if _, ok := _c.mutation.FirstRechargeInviterBonusPaid(); !ok {
+		return &ValidationError{Name: "first_recharge_inviter_bonus_paid", err: errors.New(`ent: missing required field "User.first_recharge_inviter_bonus_paid"`)}
 	}
 	return nil
 }
@@ -669,6 +711,14 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.ReferralBonusClaimedAt(); ok {
 		_spec.SetField(user.FieldReferralBonusClaimedAt, field.TypeTime, value)
 		_node.ReferralBonusClaimedAt = &value
+	}
+	if value, ok := _c.mutation.FirstRechargeAmountUsd(); ok {
+		_spec.SetField(user.FieldFirstRechargeAmountUsd, field.TypeFloat64, value)
+		_node.FirstRechargeAmountUsd = value
+	}
+	if value, ok := _c.mutation.FirstRechargeInviterBonusPaid(); ok {
+		_spec.SetField(user.FieldFirstRechargeInviterBonusPaid, field.TypeFloat64, value)
+		_node.FirstRechargeInviterBonusPaid = value
 	}
 	if nodes := _c.mutation.APIKeysIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1144,6 +1194,42 @@ func (u *UserUpsert) ClearReferralBonusClaimedAt() *UserUpsert {
 	return u
 }
 
+// SetFirstRechargeAmountUsd sets the "first_recharge_amount_usd" field.
+func (u *UserUpsert) SetFirstRechargeAmountUsd(v float64) *UserUpsert {
+	u.Set(user.FieldFirstRechargeAmountUsd, v)
+	return u
+}
+
+// UpdateFirstRechargeAmountUsd sets the "first_recharge_amount_usd" field to the value that was provided on create.
+func (u *UserUpsert) UpdateFirstRechargeAmountUsd() *UserUpsert {
+	u.SetExcluded(user.FieldFirstRechargeAmountUsd)
+	return u
+}
+
+// AddFirstRechargeAmountUsd adds v to the "first_recharge_amount_usd" field.
+func (u *UserUpsert) AddFirstRechargeAmountUsd(v float64) *UserUpsert {
+	u.Add(user.FieldFirstRechargeAmountUsd, v)
+	return u
+}
+
+// SetFirstRechargeInviterBonusPaid sets the "first_recharge_inviter_bonus_paid" field.
+func (u *UserUpsert) SetFirstRechargeInviterBonusPaid(v float64) *UserUpsert {
+	u.Set(user.FieldFirstRechargeInviterBonusPaid, v)
+	return u
+}
+
+// UpdateFirstRechargeInviterBonusPaid sets the "first_recharge_inviter_bonus_paid" field to the value that was provided on create.
+func (u *UserUpsert) UpdateFirstRechargeInviterBonusPaid() *UserUpsert {
+	u.SetExcluded(user.FieldFirstRechargeInviterBonusPaid)
+	return u
+}
+
+// AddFirstRechargeInviterBonusPaid adds v to the "first_recharge_inviter_bonus_paid" field.
+func (u *UserUpsert) AddFirstRechargeInviterBonusPaid(v float64) *UserUpsert {
+	u.Add(user.FieldFirstRechargeInviterBonusPaid, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -1487,6 +1573,48 @@ func (u *UserUpsertOne) UpdateReferralBonusClaimedAt() *UserUpsertOne {
 func (u *UserUpsertOne) ClearReferralBonusClaimedAt() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearReferralBonusClaimedAt()
+	})
+}
+
+// SetFirstRechargeAmountUsd sets the "first_recharge_amount_usd" field.
+func (u *UserUpsertOne) SetFirstRechargeAmountUsd(v float64) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetFirstRechargeAmountUsd(v)
+	})
+}
+
+// AddFirstRechargeAmountUsd adds v to the "first_recharge_amount_usd" field.
+func (u *UserUpsertOne) AddFirstRechargeAmountUsd(v float64) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.AddFirstRechargeAmountUsd(v)
+	})
+}
+
+// UpdateFirstRechargeAmountUsd sets the "first_recharge_amount_usd" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateFirstRechargeAmountUsd() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateFirstRechargeAmountUsd()
+	})
+}
+
+// SetFirstRechargeInviterBonusPaid sets the "first_recharge_inviter_bonus_paid" field.
+func (u *UserUpsertOne) SetFirstRechargeInviterBonusPaid(v float64) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetFirstRechargeInviterBonusPaid(v)
+	})
+}
+
+// AddFirstRechargeInviterBonusPaid adds v to the "first_recharge_inviter_bonus_paid" field.
+func (u *UserUpsertOne) AddFirstRechargeInviterBonusPaid(v float64) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.AddFirstRechargeInviterBonusPaid(v)
+	})
+}
+
+// UpdateFirstRechargeInviterBonusPaid sets the "first_recharge_inviter_bonus_paid" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateFirstRechargeInviterBonusPaid() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateFirstRechargeInviterBonusPaid()
 	})
 }
 
@@ -1999,6 +2127,48 @@ func (u *UserUpsertBulk) UpdateReferralBonusClaimedAt() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearReferralBonusClaimedAt() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearReferralBonusClaimedAt()
+	})
+}
+
+// SetFirstRechargeAmountUsd sets the "first_recharge_amount_usd" field.
+func (u *UserUpsertBulk) SetFirstRechargeAmountUsd(v float64) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetFirstRechargeAmountUsd(v)
+	})
+}
+
+// AddFirstRechargeAmountUsd adds v to the "first_recharge_amount_usd" field.
+func (u *UserUpsertBulk) AddFirstRechargeAmountUsd(v float64) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.AddFirstRechargeAmountUsd(v)
+	})
+}
+
+// UpdateFirstRechargeAmountUsd sets the "first_recharge_amount_usd" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateFirstRechargeAmountUsd() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateFirstRechargeAmountUsd()
+	})
+}
+
+// SetFirstRechargeInviterBonusPaid sets the "first_recharge_inviter_bonus_paid" field.
+func (u *UserUpsertBulk) SetFirstRechargeInviterBonusPaid(v float64) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetFirstRechargeInviterBonusPaid(v)
+	})
+}
+
+// AddFirstRechargeInviterBonusPaid adds v to the "first_recharge_inviter_bonus_paid" field.
+func (u *UserUpsertBulk) AddFirstRechargeInviterBonusPaid(v float64) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.AddFirstRechargeInviterBonusPaid(v)
+	})
+}
+
+// UpdateFirstRechargeInviterBonusPaid sets the "first_recharge_inviter_bonus_paid" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateFirstRechargeInviterBonusPaid() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateFirstRechargeInviterBonusPaid()
 	})
 }
 

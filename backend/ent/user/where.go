@@ -145,6 +145,16 @@ func ReferralBonusClaimedAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldReferralBonusClaimedAt, v))
 }
 
+// FirstRechargeAmountUsd applies equality check predicate on the "first_recharge_amount_usd" field. It's identical to FirstRechargeAmountUsdEQ.
+func FirstRechargeAmountUsd(v float64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldFirstRechargeAmountUsd, v))
+}
+
+// FirstRechargeInviterBonusPaid applies equality check predicate on the "first_recharge_inviter_bonus_paid" field. It's identical to FirstRechargeInviterBonusPaidEQ.
+func FirstRechargeInviterBonusPaid(v float64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldFirstRechargeInviterBonusPaid, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -1063,6 +1073,86 @@ func ReferralBonusClaimedAtIsNil() predicate.User {
 // ReferralBonusClaimedAtNotNil applies the NotNil predicate on the "referral_bonus_claimed_at" field.
 func ReferralBonusClaimedAtNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldReferralBonusClaimedAt))
+}
+
+// FirstRechargeAmountUsdEQ applies the EQ predicate on the "first_recharge_amount_usd" field.
+func FirstRechargeAmountUsdEQ(v float64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldFirstRechargeAmountUsd, v))
+}
+
+// FirstRechargeAmountUsdNEQ applies the NEQ predicate on the "first_recharge_amount_usd" field.
+func FirstRechargeAmountUsdNEQ(v float64) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldFirstRechargeAmountUsd, v))
+}
+
+// FirstRechargeAmountUsdIn applies the In predicate on the "first_recharge_amount_usd" field.
+func FirstRechargeAmountUsdIn(vs ...float64) predicate.User {
+	return predicate.User(sql.FieldIn(FieldFirstRechargeAmountUsd, vs...))
+}
+
+// FirstRechargeAmountUsdNotIn applies the NotIn predicate on the "first_recharge_amount_usd" field.
+func FirstRechargeAmountUsdNotIn(vs ...float64) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldFirstRechargeAmountUsd, vs...))
+}
+
+// FirstRechargeAmountUsdGT applies the GT predicate on the "first_recharge_amount_usd" field.
+func FirstRechargeAmountUsdGT(v float64) predicate.User {
+	return predicate.User(sql.FieldGT(FieldFirstRechargeAmountUsd, v))
+}
+
+// FirstRechargeAmountUsdGTE applies the GTE predicate on the "first_recharge_amount_usd" field.
+func FirstRechargeAmountUsdGTE(v float64) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldFirstRechargeAmountUsd, v))
+}
+
+// FirstRechargeAmountUsdLT applies the LT predicate on the "first_recharge_amount_usd" field.
+func FirstRechargeAmountUsdLT(v float64) predicate.User {
+	return predicate.User(sql.FieldLT(FieldFirstRechargeAmountUsd, v))
+}
+
+// FirstRechargeAmountUsdLTE applies the LTE predicate on the "first_recharge_amount_usd" field.
+func FirstRechargeAmountUsdLTE(v float64) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldFirstRechargeAmountUsd, v))
+}
+
+// FirstRechargeInviterBonusPaidEQ applies the EQ predicate on the "first_recharge_inviter_bonus_paid" field.
+func FirstRechargeInviterBonusPaidEQ(v float64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldFirstRechargeInviterBonusPaid, v))
+}
+
+// FirstRechargeInviterBonusPaidNEQ applies the NEQ predicate on the "first_recharge_inviter_bonus_paid" field.
+func FirstRechargeInviterBonusPaidNEQ(v float64) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldFirstRechargeInviterBonusPaid, v))
+}
+
+// FirstRechargeInviterBonusPaidIn applies the In predicate on the "first_recharge_inviter_bonus_paid" field.
+func FirstRechargeInviterBonusPaidIn(vs ...float64) predicate.User {
+	return predicate.User(sql.FieldIn(FieldFirstRechargeInviterBonusPaid, vs...))
+}
+
+// FirstRechargeInviterBonusPaidNotIn applies the NotIn predicate on the "first_recharge_inviter_bonus_paid" field.
+func FirstRechargeInviterBonusPaidNotIn(vs ...float64) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldFirstRechargeInviterBonusPaid, vs...))
+}
+
+// FirstRechargeInviterBonusPaidGT applies the GT predicate on the "first_recharge_inviter_bonus_paid" field.
+func FirstRechargeInviterBonusPaidGT(v float64) predicate.User {
+	return predicate.User(sql.FieldGT(FieldFirstRechargeInviterBonusPaid, v))
+}
+
+// FirstRechargeInviterBonusPaidGTE applies the GTE predicate on the "first_recharge_inviter_bonus_paid" field.
+func FirstRechargeInviterBonusPaidGTE(v float64) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldFirstRechargeInviterBonusPaid, v))
+}
+
+// FirstRechargeInviterBonusPaidLT applies the LT predicate on the "first_recharge_inviter_bonus_paid" field.
+func FirstRechargeInviterBonusPaidLT(v float64) predicate.User {
+	return predicate.User(sql.FieldLT(FieldFirstRechargeInviterBonusPaid, v))
+}
+
+// FirstRechargeInviterBonusPaidLTE applies the LTE predicate on the "first_recharge_inviter_bonus_paid" field.
+func FirstRechargeInviterBonusPaidLTE(v float64) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldFirstRechargeInviterBonusPaid, v))
 }
 
 // HasAPIKeys applies the HasEdge predicate on the "api_keys" edge.

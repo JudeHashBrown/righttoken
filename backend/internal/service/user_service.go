@@ -57,6 +57,11 @@ type UserRepository interface {
 	SetReferralPartner(ctx context.Context, userID int64, enabled bool) error
 	// 首充奖励领取（CAS）：仅当用户有 inviter_id 且未领取过时才会成功，返回 true。
 	ClaimFirstRechargeBonus(ctx context.Context, userID int64) (bool, error)
+	// SetFirstRechargeAmount 写入用户首充原值（USD），首充成功时调用，封顶 cap 的基数。
+	SetFirstRechargeAmount(ctx context.Context, userID int64, amount float64) error
+	// AdjustFirstRechargeInviterBonusPaid 原子加/减用户「已发首充返点累计」，返回新值。
+	// 写入时 delta > 0；退款 void 时 delta < 0。
+	AdjustFirstRechargeInviterBonusPaid(ctx context.Context, userID int64, delta float64) (float64, error)
 
 	// TOTP 双因素认证
 	UpdateTotpSecret(ctx context.Context, userID int64, encryptedSecret *string) error

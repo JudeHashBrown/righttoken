@@ -911,6 +911,14 @@ func (r *stubUserRepo) ClaimFirstRechargeBonus(ctx context.Context, userID int64
 	return false, errors.New("not implemented")
 }
 
+func (r *stubUserRepo) SetFirstRechargeAmount(ctx context.Context, userID int64, amount float64) error {
+	return errors.New("not implemented")
+}
+
+func (r *stubUserRepo) AdjustFirstRechargeInviterBonusPaid(ctx context.Context, userID int64, delta float64) (float64, error) {
+	return 0, errors.New("not implemented")
+}
+
 type stubApiKeyCache struct{}
 
 func (stubApiKeyCache) GetCreateAttemptCount(ctx context.Context, userID int64) (int, error) {

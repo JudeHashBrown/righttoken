@@ -25,10 +25,15 @@ func NewReferralCommissionRepository(client *dbent.Client, sqlDB *sql.DB) servic
 
 func (r *referralCommissionRepository) CreateIfAbsent(ctx context.Context, in *service.CreateCommissionInput) (*service.ReferralCommission, bool, error) {
 	client := clientFromContext(ctx, r.client)
+	kind := strings.TrimSpace(in.Kind)
+	if kind == "" {
+		kind = service.ReferralCommissionKindAgentLv1
+	}
 	created, err := client.ReferralCommission.Create().
 		SetInviterID(in.InviterID).
 		SetDownlineID(in.DownlineID).
 		SetTier(in.Tier).
+		SetKind(kind).
 		SetSourceRequestID(in.SourceRequestID).
 		SetBaseAmount(in.BaseAmount).
 		SetRate(in.Rate).
@@ -260,6 +265,62 @@ func (r *referralCommissionRepository) MarkVoided(ctx context.Context, ids []int
 	return r.markStatus(ctx, ids, service.ReferralCommissionStatusVoided, adminID, note)
 }
 
+// VoidPendingByDownline 按时间倒序遍历该 downline 的 pending commission，
+// 累计 base_amount 达到 absorbAmount 即停。被 void 的明细返回给上层，用于回滚
+// users.first_recharge_inviter_bonus_paid 字段。
+func (r *referralCommissionRepository) VoidPendingByDownline(ctx context.Context, downlineID int64, absorbAmount float64, note string) ([]service.ReferralCommission, error) {
+	if downlineID == 0 || absorbAmount <= 0 {
+		return nil, nil
+	}
+	client := clientFromContext(ctx, r.client)
+	pendings, err := client.ReferralCommission.Query().
+		Where(
+			referralcommission.DownlineIDEQ(downlineID),
+			referralcommission.StatusEQ(service.ReferralCommissionStatusPending),
+		).
+		Order(dbent.Desc(referralcommission.FieldCreatedAt), dbent.Desc(referralcommission.FieldID)).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	now := time.Now()
+	voided := make([]service.ReferralCommission, 0, len(pendings))
+	var consumedBase float64
+	for _, p := range pendings {
+		if consumedBase >= absorbAmount {
+			break
+		}
+		builder := client.ReferralCommission.UpdateOneID(p.ID).
+			Where(referralcommission.StatusEQ(service.ReferralCommissionStatusPending)).
+			SetStatus(service.ReferralCommissionStatusVoided).
+			SetSettledAt(now)
+		if note != "" {
+			builder = builder.SetSettledNote(note)
+		}
+		updated, uerr := builder.Save(ctx)
+		if uerr != nil {
+			// 并发更新导致状态不再是 pending：跳过这条
+			if isOptimisticLockOrNotFound(uerr) {
+				continue
+			}
+			return voided, uerr
+		}
+		voided = append(voided, *commissionEntityToService(updated))
+		consumedBase += p.BaseAmount
+	}
+	return voided, nil
+}
+
+// isOptimisticLockOrNotFound 判断 ent UpdateOneID 失败是否因为目标行已不满足 Where（被并发修改）。
+func isOptimisticLockOrNotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+	msg := strings.ToLower(err.Error())
+	return strings.Contains(msg, "not found") || strings.Contains(msg, "no rows")
+}
+
 func (r *referralCommissionRepository) markStatus(ctx context.Context, ids []int64, status string, adminID int64, note string) (int, error) {
 	if len(ids) == 0 {
 		return 0, nil
@@ -293,6 +354,7 @@ func commissionEntityToService(m *dbent.ReferralCommission) *service.ReferralCom
 		InviterID:        m.InviterID,
 		DownlineID:       m.DownlineID,
 		Tier:             m.Tier,
+		Kind:             m.Kind,
 		SourceRequestID:  m.SourceRequestID,
 		BaseAmount:       m.BaseAmount,
 		Rate:             m.Rate,

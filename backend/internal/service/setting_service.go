@@ -886,6 +886,22 @@ func (s *SettingService) GetReferralFirstRechargeBonusRate(ctx context.Context) 
 	return v
 }
 
+// GetReferralFirstRechargeInviterRate 获取普通邀请人首充返点比例（默认 0.05 = 5%）。
+// 用于计算 inviter 的首充返点封顶：cap = downline.first_recharge_amount_usd × rate。
+// 返回 <= 0 表示该维度关闭。
+func (s *SettingService) GetReferralFirstRechargeInviterRate(ctx context.Context) float64 {
+	const defaultRate = 0.05
+	value, err := s.settingRepo.GetValue(ctx, SettingKeyReferralFirstRechargeInviterRate)
+	if err != nil {
+		return defaultRate
+	}
+	v, err := strconv.ParseFloat(value, 64)
+	if err != nil || v < 0 || v > 1.0 {
+		return defaultRate
+	}
+	return v
+}
+
 // GetDefaultSubscriptions 获取新用户默认订阅配置列表。
 func (s *SettingService) GetDefaultSubscriptions(ctx context.Context) []DefaultSubscriptionSetting {
 	value, err := s.settingRepo.GetValue(ctx, SettingKeyDefaultSubscriptions)

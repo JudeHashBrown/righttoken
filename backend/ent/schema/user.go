@@ -90,6 +90,14 @@ func (User) Fields() []ent.Field {
 		field.Time("referral_bonus_claimed_at").
 			Optional().
 			Nillable(),
+		// 首充原值（USD）：B 第一次充值的原币种值，普通邀请人首充返点 cap 的基数（× 5%）
+		field.Float("first_recharge_amount_usd").
+			SchemaType(map[string]string{dialect.Postgres: "numeric(10,4)"}).
+			Default(0),
+		// 已发给上线的首充返点累计（USD）：每次 AccrueCommission 累加，对照 cap 决定是否还累
+		field.Float("first_recharge_inviter_bonus_paid").
+			SchemaType(map[string]string{dialect.Postgres: "numeric(10,6)"}).
+			Default(0),
 	}
 }
 

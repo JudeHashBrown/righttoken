@@ -30,7 +30,7 @@
                 <th class="px-4 py-3 text-left font-medium">{{ t('admin.referral.colCreatedAt') }}</th>
                 <th class="px-4 py-3 text-left font-medium">{{ t('admin.referral.colInviter') }}</th>
                 <th class="px-4 py-3 text-left font-medium">{{ t('admin.referral.colDownline') }}</th>
-                <th class="px-4 py-3 text-left font-medium">{{ t('admin.referral.colTier') }}</th>
+                <th class="px-4 py-3 text-left font-medium">{{ t('admin.referral.colKind') }}</th>
                 <th class="px-4 py-3 text-right font-medium">{{ t('admin.referral.colBase') }}</th>
                 <th class="px-4 py-3 text-right font-medium">{{ t('admin.referral.colRate') }}</th>
                 <th class="px-4 py-3 text-right font-medium">{{ t('admin.referral.colCommission') }}</th>
@@ -49,7 +49,7 @@
                   <div class="text-gray-700 dark:text-dark-300">{{ c.downline_email || '—' }}</div>
                   <div class="text-xs text-gray-400">ID {{ c.downline_id }}</div>
                 </td>
-                <td class="px-4 py-3">Lv{{ c.tier }}</td>
+                <td class="px-4 py-3">{{ kindLabel(c.kind, c.tier) }}</td>
                 <td class="px-4 py-3 text-right">${{ c.base_amount.toFixed(4) }}</td>
                 <td class="px-4 py-3 text-right">{{ (c.rate * 100).toFixed(2) }}%</td>
                 <td class="px-4 py-3 text-right font-semibold">${{ c.commission_amount.toFixed(4) }}</td>
@@ -115,6 +115,13 @@ const allSelected = computed(
     commissions.value.length > 0 &&
     commissions.value.filter((c) => c.status === 'pending').every((c) => selected.value.includes(c.id))
 )
+
+function kindLabel(kind: string, tier: number) {
+  if (kind === 'first_recharge') return t('admin.referral.kindLabels.first_recharge')
+  if (kind === 'agent_lv1') return t('admin.referral.kindLabels.agent_lv1')
+  if (kind === 'agent_lv2') return t('admin.referral.kindLabels.agent_lv2')
+  return `Lv${tier}`
+}
 
 function toggleAll() {
   const pendingIds = commissions.value.filter((c) => c.status === 'pending').map((c) => c.id)

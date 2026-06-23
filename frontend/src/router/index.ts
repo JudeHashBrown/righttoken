@@ -234,7 +234,6 @@ const routes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true,
       requiresAdmin: false,
-      requiresReferralPartner: true,
       title: 'My Invites',
       titleKey: 'referral.pageTitle',
       descriptionKey: 'referral.pageDescription'
@@ -685,12 +684,6 @@ router.beforeEach((to, _from, next) => {
   // Check admin requirement
   if (requiresAdmin && !authStore.isAdmin) {
     // User is authenticated but not admin, redirect to user dashboard
-    next('/dashboard')
-    return
-  }
-
-  // Check referral partner requirement
-  if (to.meta.requiresReferralPartner && !authStore.user?.is_referral_partner) {
     next('/dashboard')
     return
   }

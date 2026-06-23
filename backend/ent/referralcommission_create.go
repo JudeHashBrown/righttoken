@@ -40,6 +40,20 @@ func (_c *ReferralCommissionCreate) SetTier(v int8) *ReferralCommissionCreate {
 	return _c
 }
 
+// SetKind sets the "kind" field.
+func (_c *ReferralCommissionCreate) SetKind(v string) *ReferralCommissionCreate {
+	_c.mutation.SetKind(v)
+	return _c
+}
+
+// SetNillableKind sets the "kind" field if the given value is not nil.
+func (_c *ReferralCommissionCreate) SetNillableKind(v *string) *ReferralCommissionCreate {
+	if v != nil {
+		_c.SetKind(*v)
+	}
+	return _c
+}
+
 // SetSourceRequestID sets the "source_request_id" field.
 func (_c *ReferralCommissionCreate) SetSourceRequestID(v string) *ReferralCommissionCreate {
 	_c.mutation.SetSourceRequestID(v)
@@ -193,6 +207,10 @@ func (_c *ReferralCommissionCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *ReferralCommissionCreate) defaults() {
+	if _, ok := _c.mutation.Kind(); !ok {
+		v := referralcommission.DefaultKind
+		_c.mutation.SetKind(v)
+	}
 	if _, ok := _c.mutation.BaseAmount(); !ok {
 		v := referralcommission.DefaultBaseAmount
 		_c.mutation.SetBaseAmount(v)
@@ -225,6 +243,14 @@ func (_c *ReferralCommissionCreate) check() error {
 	}
 	if _, ok := _c.mutation.Tier(); !ok {
 		return &ValidationError{Name: "tier", err: errors.New(`ent: missing required field "ReferralCommission.tier"`)}
+	}
+	if _, ok := _c.mutation.Kind(); !ok {
+		return &ValidationError{Name: "kind", err: errors.New(`ent: missing required field "ReferralCommission.kind"`)}
+	}
+	if v, ok := _c.mutation.Kind(); ok {
+		if err := referralcommission.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf(`ent: validator failed for field "ReferralCommission.kind": %w`, err)}
+		}
 	}
 	if _, ok := _c.mutation.SourceRequestID(); !ok {
 		return &ValidationError{Name: "source_request_id", err: errors.New(`ent: missing required field "ReferralCommission.source_request_id"`)}
@@ -292,6 +318,10 @@ func (_c *ReferralCommissionCreate) createSpec() (*ReferralCommission, *sqlgraph
 	if value, ok := _c.mutation.Tier(); ok {
 		_spec.SetField(referralcommission.FieldTier, field.TypeInt8, value)
 		_node.Tier = value
+	}
+	if value, ok := _c.mutation.Kind(); ok {
+		_spec.SetField(referralcommission.FieldKind, field.TypeString, value)
+		_node.Kind = value
 	}
 	if value, ok := _c.mutation.SourceRequestID(); ok {
 		_spec.SetField(referralcommission.FieldSourceRequestID, field.TypeString, value)
@@ -432,6 +462,18 @@ func (u *ReferralCommissionUpsert) UpdateTier() *ReferralCommissionUpsert {
 // AddTier adds v to the "tier" field.
 func (u *ReferralCommissionUpsert) AddTier(v int8) *ReferralCommissionUpsert {
 	u.Add(referralcommission.FieldTier, v)
+	return u
+}
+
+// SetKind sets the "kind" field.
+func (u *ReferralCommissionUpsert) SetKind(v string) *ReferralCommissionUpsert {
+	u.Set(referralcommission.FieldKind, v)
+	return u
+}
+
+// UpdateKind sets the "kind" field to the value that was provided on create.
+func (u *ReferralCommissionUpsert) UpdateKind() *ReferralCommissionUpsert {
+	u.SetExcluded(referralcommission.FieldKind)
 	return u
 }
 
@@ -678,6 +720,20 @@ func (u *ReferralCommissionUpsertOne) AddTier(v int8) *ReferralCommissionUpsertO
 func (u *ReferralCommissionUpsertOne) UpdateTier() *ReferralCommissionUpsertOne {
 	return u.Update(func(s *ReferralCommissionUpsert) {
 		s.UpdateTier()
+	})
+}
+
+// SetKind sets the "kind" field.
+func (u *ReferralCommissionUpsertOne) SetKind(v string) *ReferralCommissionUpsertOne {
+	return u.Update(func(s *ReferralCommissionUpsert) {
+		s.SetKind(v)
+	})
+}
+
+// UpdateKind sets the "kind" field to the value that was provided on create.
+func (u *ReferralCommissionUpsertOne) UpdateKind() *ReferralCommissionUpsertOne {
+	return u.Update(func(s *ReferralCommissionUpsert) {
+		s.UpdateKind()
 	})
 }
 
@@ -1113,6 +1169,20 @@ func (u *ReferralCommissionUpsertBulk) AddTier(v int8) *ReferralCommissionUpsert
 func (u *ReferralCommissionUpsertBulk) UpdateTier() *ReferralCommissionUpsertBulk {
 	return u.Update(func(s *ReferralCommissionUpsert) {
 		s.UpdateTier()
+	})
+}
+
+// SetKind sets the "kind" field.
+func (u *ReferralCommissionUpsertBulk) SetKind(v string) *ReferralCommissionUpsertBulk {
+	return u.Update(func(s *ReferralCommissionUpsert) {
+		s.SetKind(v)
+	})
+}
+
+// UpdateKind sets the "kind" field to the value that was provided on create.
+func (u *ReferralCommissionUpsertBulk) UpdateKind() *ReferralCommissionUpsertBulk {
+	return u.Update(func(s *ReferralCommissionUpsert) {
+		s.UpdateKind()
 	})
 }
 

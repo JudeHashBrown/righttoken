@@ -91,6 +91,20 @@ func (_u *ReferralCommissionUpdate) AddTier(v int8) *ReferralCommissionUpdate {
 	return _u
 }
 
+// SetKind sets the "kind" field.
+func (_u *ReferralCommissionUpdate) SetKind(v string) *ReferralCommissionUpdate {
+	_u.mutation.SetKind(v)
+	return _u
+}
+
+// SetNillableKind sets the "kind" field if the given value is not nil.
+func (_u *ReferralCommissionUpdate) SetNillableKind(v *string) *ReferralCommissionUpdate {
+	if v != nil {
+		_u.SetKind(*v)
+	}
+	return _u
+}
+
 // SetSourceRequestID sets the "source_request_id" field.
 func (_u *ReferralCommissionUpdate) SetSourceRequestID(v string) *ReferralCommissionUpdate {
 	_u.mutation.SetSourceRequestID(v)
@@ -283,6 +297,11 @@ func (_u *ReferralCommissionUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *ReferralCommissionUpdate) check() error {
+	if v, ok := _u.mutation.Kind(); ok {
+		if err := referralcommission.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf(`ent: validator failed for field "ReferralCommission.kind": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.SourceRequestID(); ok {
 		if err := referralcommission.SourceRequestIDValidator(v); err != nil {
 			return &ValidationError{Name: "source_request_id", err: fmt.Errorf(`ent: validator failed for field "ReferralCommission.source_request_id": %w`, err)}
@@ -325,6 +344,9 @@ func (_u *ReferralCommissionUpdate) sqlSave(ctx context.Context) (_node int, err
 	}
 	if value, ok := _u.mutation.AddedTier(); ok {
 		_spec.AddField(referralcommission.FieldTier, field.TypeInt8, value)
+	}
+	if value, ok := _u.mutation.Kind(); ok {
+		_spec.SetField(referralcommission.FieldKind, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.SourceRequestID(); ok {
 		_spec.SetField(referralcommission.FieldSourceRequestID, field.TypeString, value)
@@ -451,6 +473,20 @@ func (_u *ReferralCommissionUpdateOne) SetNillableTier(v *int8) *ReferralCommiss
 // AddTier adds value to the "tier" field.
 func (_u *ReferralCommissionUpdateOne) AddTier(v int8) *ReferralCommissionUpdateOne {
 	_u.mutation.AddTier(v)
+	return _u
+}
+
+// SetKind sets the "kind" field.
+func (_u *ReferralCommissionUpdateOne) SetKind(v string) *ReferralCommissionUpdateOne {
+	_u.mutation.SetKind(v)
+	return _u
+}
+
+// SetNillableKind sets the "kind" field if the given value is not nil.
+func (_u *ReferralCommissionUpdateOne) SetNillableKind(v *string) *ReferralCommissionUpdateOne {
+	if v != nil {
+		_u.SetKind(*v)
+	}
 	return _u
 }
 
@@ -659,6 +695,11 @@ func (_u *ReferralCommissionUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *ReferralCommissionUpdateOne) check() error {
+	if v, ok := _u.mutation.Kind(); ok {
+		if err := referralcommission.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf(`ent: validator failed for field "ReferralCommission.kind": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.SourceRequestID(); ok {
 		if err := referralcommission.SourceRequestIDValidator(v); err != nil {
 			return &ValidationError{Name: "source_request_id", err: fmt.Errorf(`ent: validator failed for field "ReferralCommission.source_request_id": %w`, err)}
@@ -718,6 +759,9 @@ func (_u *ReferralCommissionUpdateOne) sqlSave(ctx context.Context) (_node *Refe
 	}
 	if value, ok := _u.mutation.AddedTier(); ok {
 		_spec.AddField(referralcommission.FieldTier, field.TypeInt8, value)
+	}
+	if value, ok := _u.mutation.Kind(); ok {
+		_spec.SetField(referralcommission.FieldKind, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.SourceRequestID(); ok {
 		_spec.SetField(referralcommission.FieldSourceRequestID, field.TypeString, value)

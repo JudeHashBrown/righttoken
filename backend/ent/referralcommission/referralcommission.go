@@ -19,6 +19,8 @@ const (
 	FieldDownlineID = "downline_id"
 	// FieldTier holds the string denoting the tier field in the database.
 	FieldTier = "tier"
+	// FieldKind holds the string denoting the kind field in the database.
+	FieldKind = "kind"
 	// FieldSourceRequestID holds the string denoting the source_request_id field in the database.
 	FieldSourceRequestID = "source_request_id"
 	// FieldBaseAmount holds the string denoting the base_amount field in the database.
@@ -47,6 +49,7 @@ var Columns = []string{
 	FieldInviterID,
 	FieldDownlineID,
 	FieldTier,
+	FieldKind,
 	FieldSourceRequestID,
 	FieldBaseAmount,
 	FieldRate,
@@ -69,6 +72,10 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultKind holds the default value on creation for the "kind" field.
+	DefaultKind string
+	// KindValidator is a validator for the "kind" field. It is called by the builders before save.
+	KindValidator func(string) error
 	// SourceRequestIDValidator is a validator for the "source_request_id" field. It is called by the builders before save.
 	SourceRequestIDValidator func(string) error
 	// DefaultBaseAmount holds the default value on creation for the "base_amount" field.
@@ -106,6 +113,11 @@ func ByDownlineID(opts ...sql.OrderTermOption) OrderOption {
 // ByTier orders the results by the tier field.
 func ByTier(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTier, opts...).ToFunc()
+}
+
+// ByKind orders the results by the kind field.
+func ByKind(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldKind, opts...).ToFunc()
 }
 
 // BySourceRequestID orders the results by the source_request_id field.

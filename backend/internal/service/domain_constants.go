@@ -157,6 +157,8 @@ const (
 
 	// 邀请功能：首充奖励倍率，1.05 = +5%，1.00 或更小表示关闭
 	SettingKeyReferralFirstRechargeBonusRate = "referral_first_recharge_bonus_rate"
+	// 邀请功能：普通邀请人首充返点比例，0.05 = 5%。封顶 = downline 首充原值 × 该比例。
+	SettingKeyReferralFirstRechargeInviterRate = "referral_first_recharge_inviter_rate"
 
 	// 管理员 API Key
 	SettingKeyAdminAPIKey = "admin_api_key" // 全局管理员 API Key（用于外部系统集成）

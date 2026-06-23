@@ -53,6 +53,10 @@ type User struct {
 	IsReferralPartner bool `json:"is_referral_partner,omitempty"`
 	// ReferralBonusClaimedAt holds the value of the "referral_bonus_claimed_at" field.
 	ReferralBonusClaimedAt *time.Time `json:"referral_bonus_claimed_at,omitempty"`
+	// FirstRechargeAmountUsd holds the value of the "first_recharge_amount_usd" field.
+	FirstRechargeAmountUsd float64 `json:"first_recharge_amount_usd,omitempty"`
+	// FirstRechargeInviterBonusPaid holds the value of the "first_recharge_inviter_bonus_paid" field.
+	FirstRechargeInviterBonusPaid float64 `json:"first_recharge_inviter_bonus_paid,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -194,7 +198,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldTotpEnabled, user.FieldIsReferralPartner:
 			values[i] = new(sql.NullBool)
-		case user.FieldBalance:
+		case user.FieldBalance, user.FieldFirstRechargeAmountUsd, user.FieldFirstRechargeInviterBonusPaid:
 			values[i] = new(sql.NullFloat64)
 		case user.FieldID, user.FieldConcurrency, user.FieldInviterID:
 			values[i] = new(sql.NullInt64)
@@ -336,6 +340,18 @@ func (_m *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.ReferralBonusClaimedAt = new(time.Time)
 				*_m.ReferralBonusClaimedAt = value.Time
+			}
+		case user.FieldFirstRechargeAmountUsd:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field first_recharge_amount_usd", values[i])
+			} else if value.Valid {
+				_m.FirstRechargeAmountUsd = value.Float64
+			}
+		case user.FieldFirstRechargeInviterBonusPaid:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field first_recharge_inviter_bonus_paid", values[i])
+			} else if value.Valid {
+				_m.FirstRechargeInviterBonusPaid = value.Float64
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -493,6 +509,12 @@ func (_m *User) String() string {
 		builder.WriteString("referral_bonus_claimed_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
+	builder.WriteString(", ")
+	builder.WriteString("first_recharge_amount_usd=")
+	builder.WriteString(fmt.Sprintf("%v", _m.FirstRechargeAmountUsd))
+	builder.WriteString(", ")
+	builder.WriteString("first_recharge_inviter_bonus_paid=")
+	builder.WriteString(fmt.Sprintf("%v", _m.FirstRechargeInviterBonusPaid))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -58,6 +58,10 @@ func (m *mockUserRepo) SetReferralPartner(context.Context, int64, bool) error  {
 func (m *mockUserRepo) ClaimFirstRechargeBonus(context.Context, int64) (bool, error) {
 	return false, nil
 }
+func (m *mockUserRepo) SetFirstRechargeAmount(context.Context, int64, float64) error { return nil }
+func (m *mockUserRepo) AdjustFirstRechargeInviterBonusPaid(context.Context, int64, float64) (float64, error) {
+	return 0, nil
+}
 
 // --- mock: APIKeyAuthCacheInvalidator ---
 

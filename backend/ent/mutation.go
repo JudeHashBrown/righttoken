@@ -20249,6 +20249,7 @@ type ReferralCommissionMutation struct {
 	adddownline_id         *int64
 	tier                   *int8
 	addtier                *int8
+	kind                   *string
 	source_request_id      *string
 	base_amount            *float64
 	addbase_amount         *float64
@@ -20532,6 +20533,42 @@ func (m *ReferralCommissionMutation) AddedTier() (r int8, exists bool) {
 func (m *ReferralCommissionMutation) ResetTier() {
 	m.tier = nil
 	m.addtier = nil
+}
+
+// SetKind sets the "kind" field.
+func (m *ReferralCommissionMutation) SetKind(s string) {
+	m.kind = &s
+}
+
+// Kind returns the value of the "kind" field in the mutation.
+func (m *ReferralCommissionMutation) Kind() (r string, exists bool) {
+	v := m.kind
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldKind returns the old "kind" field's value of the ReferralCommission entity.
+// If the ReferralCommission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReferralCommissionMutation) OldKind(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldKind is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldKind requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldKind: %w", err)
+	}
+	return oldValue.Kind, nil
+}
+
+// ResetKind resets all changes to the "kind" field.
+func (m *ReferralCommissionMutation) ResetKind() {
+	m.kind = nil
 }
 
 // SetSourceRequestID sets the "source_request_id" field.
@@ -21012,7 +21049,7 @@ func (m *ReferralCommissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ReferralCommissionMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.inviter_id != nil {
 		fields = append(fields, referralcommission.FieldInviterID)
 	}
@@ -21021,6 +21058,9 @@ func (m *ReferralCommissionMutation) Fields() []string {
 	}
 	if m.tier != nil {
 		fields = append(fields, referralcommission.FieldTier)
+	}
+	if m.kind != nil {
+		fields = append(fields, referralcommission.FieldKind)
 	}
 	if m.source_request_id != nil {
 		fields = append(fields, referralcommission.FieldSourceRequestID)
@@ -21063,6 +21103,8 @@ func (m *ReferralCommissionMutation) Field(name string) (ent.Value, bool) {
 		return m.DownlineID()
 	case referralcommission.FieldTier:
 		return m.Tier()
+	case referralcommission.FieldKind:
+		return m.Kind()
 	case referralcommission.FieldSourceRequestID:
 		return m.SourceRequestID()
 	case referralcommission.FieldBaseAmount:
@@ -21096,6 +21138,8 @@ func (m *ReferralCommissionMutation) OldField(ctx context.Context, name string) 
 		return m.OldDownlineID(ctx)
 	case referralcommission.FieldTier:
 		return m.OldTier(ctx)
+	case referralcommission.FieldKind:
+		return m.OldKind(ctx)
 	case referralcommission.FieldSourceRequestID:
 		return m.OldSourceRequestID(ctx)
 	case referralcommission.FieldBaseAmount:
@@ -21143,6 +21187,13 @@ func (m *ReferralCommissionMutation) SetField(name string, value ent.Value) erro
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTier(v)
+		return nil
+	case referralcommission.FieldKind:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetKind(v)
 		return nil
 	case referralcommission.FieldSourceRequestID:
 		v, ok := value.(string)
@@ -21372,6 +21423,9 @@ func (m *ReferralCommissionMutation) ResetField(name string) error {
 		return nil
 	case referralcommission.FieldTier:
 		m.ResetTier()
+		return nil
+	case referralcommission.FieldKind:
+		m.ResetKind()
 		return nil
 	case referralcommission.FieldSourceRequestID:
 		m.ResetSourceRequestID()
@@ -30150,64 +30204,68 @@ func (m *UsageLogMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op                            Op
-	typ                           string
-	id                            *int64
-	created_at                    *time.Time
-	updated_at                    *time.Time
-	deleted_at                    *time.Time
-	email                         *string
-	password_hash                 *string
-	role                          *string
-	balance                       *float64
-	addbalance                    *float64
-	concurrency                   *int
-	addconcurrency                *int
-	status                        *string
-	username                      *string
-	notes                         *string
-	totp_secret_encrypted         *string
-	totp_enabled                  *bool
-	totp_enabled_at               *time.Time
-	inviter_id                    *int64
-	addinviter_id                 *int64
-	invite_code                   *string
-	is_referral_partner           *bool
-	referral_bonus_claimed_at     *time.Time
-	clearedFields                 map[string]struct{}
-	api_keys                      map[int64]struct{}
-	removedapi_keys               map[int64]struct{}
-	clearedapi_keys               bool
-	redeem_codes                  map[int64]struct{}
-	removedredeem_codes           map[int64]struct{}
-	clearedredeem_codes           bool
-	subscriptions                 map[int64]struct{}
-	removedsubscriptions          map[int64]struct{}
-	clearedsubscriptions          bool
-	assigned_subscriptions        map[int64]struct{}
-	removedassigned_subscriptions map[int64]struct{}
-	clearedassigned_subscriptions bool
-	announcement_reads            map[int64]struct{}
-	removedannouncement_reads     map[int64]struct{}
-	clearedannouncement_reads     bool
-	allowed_groups                map[int64]struct{}
-	removedallowed_groups         map[int64]struct{}
-	clearedallowed_groups         bool
-	usage_logs                    map[int64]struct{}
-	removedusage_logs             map[int64]struct{}
-	clearedusage_logs             bool
-	attribute_values              map[int64]struct{}
-	removedattribute_values       map[int64]struct{}
-	clearedattribute_values       bool
-	promo_code_usages             map[int64]struct{}
-	removedpromo_code_usages      map[int64]struct{}
-	clearedpromo_code_usages      bool
-	payment_orders                map[int64]struct{}
-	removedpayment_orders         map[int64]struct{}
-	clearedpayment_orders         bool
-	done                          bool
-	oldValue                      func(context.Context) (*User, error)
-	predicates                    []predicate.User
+	op                                   Op
+	typ                                  string
+	id                                   *int64
+	created_at                           *time.Time
+	updated_at                           *time.Time
+	deleted_at                           *time.Time
+	email                                *string
+	password_hash                        *string
+	role                                 *string
+	balance                              *float64
+	addbalance                           *float64
+	concurrency                          *int
+	addconcurrency                       *int
+	status                               *string
+	username                             *string
+	notes                                *string
+	totp_secret_encrypted                *string
+	totp_enabled                         *bool
+	totp_enabled_at                      *time.Time
+	inviter_id                           *int64
+	addinviter_id                        *int64
+	invite_code                          *string
+	is_referral_partner                  *bool
+	referral_bonus_claimed_at            *time.Time
+	first_recharge_amount_usd            *float64
+	addfirst_recharge_amount_usd         *float64
+	first_recharge_inviter_bonus_paid    *float64
+	addfirst_recharge_inviter_bonus_paid *float64
+	clearedFields                        map[string]struct{}
+	api_keys                             map[int64]struct{}
+	removedapi_keys                      map[int64]struct{}
+	clearedapi_keys                      bool
+	redeem_codes                         map[int64]struct{}
+	removedredeem_codes                  map[int64]struct{}
+	clearedredeem_codes                  bool
+	subscriptions                        map[int64]struct{}
+	removedsubscriptions                 map[int64]struct{}
+	clearedsubscriptions                 bool
+	assigned_subscriptions               map[int64]struct{}
+	removedassigned_subscriptions        map[int64]struct{}
+	clearedassigned_subscriptions        bool
+	announcement_reads                   map[int64]struct{}
+	removedannouncement_reads            map[int64]struct{}
+	clearedannouncement_reads            bool
+	allowed_groups                       map[int64]struct{}
+	removedallowed_groups                map[int64]struct{}
+	clearedallowed_groups                bool
+	usage_logs                           map[int64]struct{}
+	removedusage_logs                    map[int64]struct{}
+	clearedusage_logs                    bool
+	attribute_values                     map[int64]struct{}
+	removedattribute_values              map[int64]struct{}
+	clearedattribute_values              bool
+	promo_code_usages                    map[int64]struct{}
+	removedpromo_code_usages             map[int64]struct{}
+	clearedpromo_code_usages             bool
+	payment_orders                       map[int64]struct{}
+	removedpayment_orders                map[int64]struct{}
+	clearedpayment_orders                bool
+	done                                 bool
+	oldValue                             func(context.Context) (*User, error)
+	predicates                           []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -31095,6 +31153,118 @@ func (m *UserMutation) ResetReferralBonusClaimedAt() {
 	delete(m.clearedFields, user.FieldReferralBonusClaimedAt)
 }
 
+// SetFirstRechargeAmountUsd sets the "first_recharge_amount_usd" field.
+func (m *UserMutation) SetFirstRechargeAmountUsd(f float64) {
+	m.first_recharge_amount_usd = &f
+	m.addfirst_recharge_amount_usd = nil
+}
+
+// FirstRechargeAmountUsd returns the value of the "first_recharge_amount_usd" field in the mutation.
+func (m *UserMutation) FirstRechargeAmountUsd() (r float64, exists bool) {
+	v := m.first_recharge_amount_usd
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFirstRechargeAmountUsd returns the old "first_recharge_amount_usd" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldFirstRechargeAmountUsd(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFirstRechargeAmountUsd is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFirstRechargeAmountUsd requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFirstRechargeAmountUsd: %w", err)
+	}
+	return oldValue.FirstRechargeAmountUsd, nil
+}
+
+// AddFirstRechargeAmountUsd adds f to the "first_recharge_amount_usd" field.
+func (m *UserMutation) AddFirstRechargeAmountUsd(f float64) {
+	if m.addfirst_recharge_amount_usd != nil {
+		*m.addfirst_recharge_amount_usd += f
+	} else {
+		m.addfirst_recharge_amount_usd = &f
+	}
+}
+
+// AddedFirstRechargeAmountUsd returns the value that was added to the "first_recharge_amount_usd" field in this mutation.
+func (m *UserMutation) AddedFirstRechargeAmountUsd() (r float64, exists bool) {
+	v := m.addfirst_recharge_amount_usd
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetFirstRechargeAmountUsd resets all changes to the "first_recharge_amount_usd" field.
+func (m *UserMutation) ResetFirstRechargeAmountUsd() {
+	m.first_recharge_amount_usd = nil
+	m.addfirst_recharge_amount_usd = nil
+}
+
+// SetFirstRechargeInviterBonusPaid sets the "first_recharge_inviter_bonus_paid" field.
+func (m *UserMutation) SetFirstRechargeInviterBonusPaid(f float64) {
+	m.first_recharge_inviter_bonus_paid = &f
+	m.addfirst_recharge_inviter_bonus_paid = nil
+}
+
+// FirstRechargeInviterBonusPaid returns the value of the "first_recharge_inviter_bonus_paid" field in the mutation.
+func (m *UserMutation) FirstRechargeInviterBonusPaid() (r float64, exists bool) {
+	v := m.first_recharge_inviter_bonus_paid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFirstRechargeInviterBonusPaid returns the old "first_recharge_inviter_bonus_paid" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldFirstRechargeInviterBonusPaid(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFirstRechargeInviterBonusPaid is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFirstRechargeInviterBonusPaid requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFirstRechargeInviterBonusPaid: %w", err)
+	}
+	return oldValue.FirstRechargeInviterBonusPaid, nil
+}
+
+// AddFirstRechargeInviterBonusPaid adds f to the "first_recharge_inviter_bonus_paid" field.
+func (m *UserMutation) AddFirstRechargeInviterBonusPaid(f float64) {
+	if m.addfirst_recharge_inviter_bonus_paid != nil {
+		*m.addfirst_recharge_inviter_bonus_paid += f
+	} else {
+		m.addfirst_recharge_inviter_bonus_paid = &f
+	}
+}
+
+// AddedFirstRechargeInviterBonusPaid returns the value that was added to the "first_recharge_inviter_bonus_paid" field in this mutation.
+func (m *UserMutation) AddedFirstRechargeInviterBonusPaid() (r float64, exists bool) {
+	v := m.addfirst_recharge_inviter_bonus_paid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetFirstRechargeInviterBonusPaid resets all changes to the "first_recharge_inviter_bonus_paid" field.
+func (m *UserMutation) ResetFirstRechargeInviterBonusPaid() {
+	m.first_recharge_inviter_bonus_paid = nil
+	m.addfirst_recharge_inviter_bonus_paid = nil
+}
+
 // AddAPIKeyIDs adds the "api_keys" edge to the APIKey entity by ids.
 func (m *UserMutation) AddAPIKeyIDs(ids ...int64) {
 	if m.api_keys == nil {
@@ -31669,7 +31839,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 20)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -31724,6 +31894,12 @@ func (m *UserMutation) Fields() []string {
 	if m.referral_bonus_claimed_at != nil {
 		fields = append(fields, user.FieldReferralBonusClaimedAt)
 	}
+	if m.first_recharge_amount_usd != nil {
+		fields = append(fields, user.FieldFirstRechargeAmountUsd)
+	}
+	if m.first_recharge_inviter_bonus_paid != nil {
+		fields = append(fields, user.FieldFirstRechargeInviterBonusPaid)
+	}
 	return fields
 }
 
@@ -31768,6 +31944,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.IsReferralPartner()
 	case user.FieldReferralBonusClaimedAt:
 		return m.ReferralBonusClaimedAt()
+	case user.FieldFirstRechargeAmountUsd:
+		return m.FirstRechargeAmountUsd()
+	case user.FieldFirstRechargeInviterBonusPaid:
+		return m.FirstRechargeInviterBonusPaid()
 	}
 	return nil, false
 }
@@ -31813,6 +31993,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldIsReferralPartner(ctx)
 	case user.FieldReferralBonusClaimedAt:
 		return m.OldReferralBonusClaimedAt(ctx)
+	case user.FieldFirstRechargeAmountUsd:
+		return m.OldFirstRechargeAmountUsd(ctx)
+	case user.FieldFirstRechargeInviterBonusPaid:
+		return m.OldFirstRechargeInviterBonusPaid(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -31948,6 +32132,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetReferralBonusClaimedAt(v)
 		return nil
+	case user.FieldFirstRechargeAmountUsd:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFirstRechargeAmountUsd(v)
+		return nil
+	case user.FieldFirstRechargeInviterBonusPaid:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFirstRechargeInviterBonusPaid(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -31965,6 +32163,12 @@ func (m *UserMutation) AddedFields() []string {
 	if m.addinviter_id != nil {
 		fields = append(fields, user.FieldInviterID)
 	}
+	if m.addfirst_recharge_amount_usd != nil {
+		fields = append(fields, user.FieldFirstRechargeAmountUsd)
+	}
+	if m.addfirst_recharge_inviter_bonus_paid != nil {
+		fields = append(fields, user.FieldFirstRechargeInviterBonusPaid)
+	}
 	return fields
 }
 
@@ -31979,6 +32183,10 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedConcurrency()
 	case user.FieldInviterID:
 		return m.AddedInviterID()
+	case user.FieldFirstRechargeAmountUsd:
+		return m.AddedFirstRechargeAmountUsd()
+	case user.FieldFirstRechargeInviterBonusPaid:
+		return m.AddedFirstRechargeInviterBonusPaid()
 	}
 	return nil, false
 }
@@ -32008,6 +32216,20 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddInviterID(v)
+		return nil
+	case user.FieldFirstRechargeAmountUsd:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFirstRechargeAmountUsd(v)
+		return nil
+	case user.FieldFirstRechargeInviterBonusPaid:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFirstRechargeInviterBonusPaid(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User numeric field %s", name)
@@ -32128,6 +32350,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldReferralBonusClaimedAt:
 		m.ResetReferralBonusClaimedAt()
+		return nil
+	case user.FieldFirstRechargeAmountUsd:
+		m.ResetFirstRechargeAmountUsd()
+		return nil
+	case user.FieldFirstRechargeInviterBonusPaid:
+		m.ResetFirstRechargeInviterBonusPaid()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

@@ -154,12 +154,12 @@ func (s *ReferralService) InvalidateRuleCache() {
 	s.mu.Unlock()
 }
 
-// AccrueCommission 在 usage_log 落盘后异步调用：
-//  1. 查 downline.inviter_id（Lv1）
-//  2. Lv1 写一条；再查 inviter.inviter_id（Lv2），写第二条
+// AccrueCommission 在 usage_log 落盘后异步调用，按 3 维独立判断：
+//  1. 首充返点（first_recharge）：任何邀请人都拿；封顶 = downline.first_recharge_amount_usd × inviter_rate。
+//  2. 代理一级（agent_lv1）：仅 Lv1 inviter 是代理时拿；按 commission_rules tier=1 实时累计，无封顶。
+//  3. 代理二级（agent_lv2）：跨过非代理 Lv1，只要 Lv2 祖先是代理就拿；按 commission_rules tier=2 累计。
 //
 // 任何错误都只记录日志、不上抛——主计费流程不受影响。
-// 每一层都会单独检查 inviter.IsReferralPartner，未开启邀请功能的用户不会累计奖励。
 func (s *ReferralService) AccrueCommission(ctx context.Context, downlineUserID int64, requestID string, baseAmountUSD float64) {
 	if requestID == "" || baseAmountUSD <= 0 {
 		return
@@ -175,17 +175,22 @@ func (s *ReferralService) AccrueCommission(ctx context.Context, downlineUserID i
 		return
 	}
 
-	// Lv1：downline.inviter
+	// Lv1：downline.inviter（直接邀请人）
 	lv1ID := *downline.InviterID
 	lv1User, err := s.userRepo.GetByID(ctx, lv1ID)
 	if err != nil || lv1User == nil {
 		return
 	}
+
+	// 维度1：首充返点 — 直接邀请人无条件拿（封顶 cap 由 downline 首充原值控制）
+	s.writeFirstRechargeCommission(ctx, lv1ID, downline, requestID, baseAmountUSD)
+
+	// 维度2：代理一级 — 仅 Lv1 是代理时拿
 	if lv1User.IsReferralPartner {
-		s.writeCommission(ctx, lv1ID, downlineUserID, ReferralTierLv1, requestID, baseAmountUSD)
+		s.writeAgentCommission(ctx, lv1ID, downlineUserID, ReferralTierLv1, ReferralCommissionKindAgentLv1, requestID, baseAmountUSD)
 	}
 
-	// Lv2：lv1.inviter（无论 Lv1 是否开通邀请功能，都要继续追溯到 Lv2 的 inviter）
+	// 维度3：代理二级 — 跨过非代理 Lv1，只要 Lv2 是代理就拿
 	if lv1User.InviterID == nil {
 		return
 	}
@@ -199,11 +204,63 @@ func (s *ReferralService) AccrueCommission(ctx context.Context, downlineUserID i
 		return
 	}
 	if lv2User.IsReferralPartner {
-		s.writeCommission(ctx, lv2ID, downlineUserID, ReferralTierLv2, requestID, baseAmountUSD)
+		s.writeAgentCommission(ctx, lv2ID, downlineUserID, ReferralTierLv2, ReferralCommissionKindAgentLv2, requestID, baseAmountUSD)
 	}
 }
 
-func (s *ReferralService) writeCommission(ctx context.Context, inviterID, downlineID int64, tier int8, requestID string, base float64) {
+// writeFirstRechargeCommission 写普通邀请人首充返点（kind=first_recharge）。
+// 封顶 cap = downline.first_recharge_amount_usd × inviter_rate；已发累计 >= cap 时静默跳过。
+// cap 用 downline.first_recharge_inviter_bonus_paid 字段缓存，原子加保证不超发。
+func (s *ReferralService) writeFirstRechargeCommission(ctx context.Context, inviterID int64, downline *User, requestID string, base float64) {
+	if downline == nil || downline.FirstRechargeAmountUsd <= 0 {
+		// downline 还没首充（或迁移前数据），跳过
+		return
+	}
+	if s.settingService == nil {
+		return
+	}
+	rate := s.settingService.GetReferralFirstRechargeInviterRate(ctx)
+	if rate <= 0 {
+		return
+	}
+	bonusCap := downline.FirstRechargeAmountUsd * rate
+	if downline.FirstRechargeInviterBonusPaid >= bonusCap {
+		return
+	}
+	amount := base * rate
+	remaining := bonusCap - downline.FirstRechargeInviterBonusPaid
+	if amount > remaining {
+		amount = remaining
+	}
+	if amount <= 0 {
+		return
+	}
+	commission, created, err := s.commissionRepo.CreateIfAbsent(ctx, &CreateCommissionInput{
+		InviterID:        inviterID,
+		DownlineID:       downline.ID,
+		Tier:             ReferralTierLv1,
+		Kind:             ReferralCommissionKindFirstRecharge,
+		SourceRequestID:  requestID,
+		BaseAmount:       base,
+		Rate:             rate,
+		CommissionAmount: amount,
+	})
+	if err != nil {
+		logger.LegacyPrintf("service.referral", "write first_recharge commission req=%s inviter=%d failed: %v", requestID, inviterID, err)
+		return
+	}
+	if !created || commission == nil {
+		// 幂等：同一 request_id 已写过，不重复加 cap
+		return
+	}
+	// 同步 user.first_recharge_inviter_bonus_paid 字段（不在事务里，最终一致）
+	if _, err := s.userRepo.AdjustFirstRechargeInviterBonusPaid(ctx, downline.ID, amount); err != nil {
+		logger.LegacyPrintf("service.referral", "adjust first_recharge cap failed downline=%d delta=%.6f: %v", downline.ID, amount, err)
+	}
+}
+
+// writeAgentCommission 写代理返点（agent_lv1 / agent_lv2）；rate 从 commission_rules 实时取。
+func (s *ReferralService) writeAgentCommission(ctx context.Context, inviterID, downlineID int64, tier int8, kind, requestID string, base float64) {
 	rule, err := s.activeRate(ctx, tier)
 	if err != nil || rule == nil {
 		logger.LegacyPrintf("service.referral", "no active rule for tier=%d req=%s: %v", tier, requestID, err)
@@ -217,30 +274,72 @@ func (s *ReferralService) writeCommission(ctx context.Context, inviterID, downli
 		InviterID:        inviterID,
 		DownlineID:       downlineID,
 		Tier:             tier,
+		Kind:             kind,
 		SourceRequestID:  requestID,
 		BaseAmount:       base,
 		Rate:             rule.Rate,
 		CommissionAmount: amount,
 	})
 	if err != nil {
-		logger.LegacyPrintf("service.referral", "write commission tier=%d req=%s inviter=%d failed: %v", tier, requestID, inviterID, err)
+		logger.LegacyPrintf("service.referral", "write agent commission tier=%d req=%s inviter=%d failed: %v", tier, requestID, inviterID, err)
 	}
 }
 
-// GetDashboard 用户视角：邀请码 + 两级抽佣聚合 + Lv1 明细 + Lv2 汇总。
+// ReverseCommissionsForRefund 在订单退款成功后调用：按 created_at DESC void 该 downline 的 pending commission，
+// 累计 base_amount 达到 refundUSD 即停。被 void 的 first_recharge commission 会同步还原
+// downline.first_recharge_inviter_bonus_paid 字段，保证 cap 后续还能继续累。
+// 已 settled 的 commission（已经付给代理）不会动 — 由 admin 在结算前确保无大额退款。
+//
+// 任何错误都只记录日志、不上抛——退款主流程不受影响。
+func (s *ReferralService) ReverseCommissionsForRefund(ctx context.Context, downlineID int64, refundUSD float64) {
+	if downlineID == 0 || refundUSD <= 0 {
+		return
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			logger.LegacyPrintf("service.referral", "panic in ReverseCommissionsForRefund(downline=%d refund=%.4f): %v", downlineID, refundUSD, r)
+		}
+	}()
+
+	voided, err := s.commissionRepo.VoidPendingByDownline(ctx, downlineID, refundUSD, "refund reversal")
+	if err != nil {
+		logger.LegacyPrintf("service.referral", "VoidPendingByDownline downline=%d refund=%.4f failed: %v", downlineID, refundUSD, err)
+		return
+	}
+	if len(voided) == 0 {
+		return
+	}
+
+	// 回滚 first_recharge cap：把被 void 的首充返点累计减回去。
+	var capRollback float64
+	for _, c := range voided {
+		if c.Kind == ReferralCommissionKindFirstRecharge {
+			capRollback += c.CommissionAmount
+		}
+	}
+	if capRollback > 0 {
+		if _, err := s.userRepo.AdjustFirstRechargeInviterBonusPaid(ctx, downlineID, -capRollback); err != nil {
+			logger.LegacyPrintf("service.referral", "rollback first_recharge cap failed downline=%d delta=-%.6f: %v", downlineID, capRollback, err)
+		}
+	}
+	logger.LegacyPrintf("service.referral", "reverse commissions downline=%d refund=%.4f voided=%d cap_rollback=%.6f", downlineID, refundUSD, len(voided), capRollback)
+}
+
+// GetDashboard 用户视角：邀请码 + 三维度费率 + 抽佣聚合 + Lv1 明细 + Lv2 汇总。
+// 对所有登录用户开放（普通邀请人也能看自己的首充返点）；IsReferralPartner=false 时
+// 代理相关字段虽然返回但金额一般为 0，前端据 IsReferralPartner 决定是否展示代理区块。
 type ReferralDashboard struct {
-	InviteCode string             `json:"invite_code"`
-	Lv1Rate    float64            `json:"lv1_rate"`
-	Lv2Rate    float64            `json:"lv2_rate"`
-	Lv1Summary CommissionSummary  `json:"lv1_summary"`
-	Lv2Summary DownlineSummaryLv2 `json:"lv2_summary"`
-	Lv1Rows    []DownlineRowLv1   `json:"lv1_rows"`
+	InviteCode        string             `json:"invite_code"`
+	IsReferralPartner bool               `json:"is_referral_partner"`
+	FirstRechargeRate float64            `json:"first_recharge_rate"` // 0.05 = 5%
+	Lv1Rate           float64            `json:"lv1_rate"`
+	Lv2Rate           float64            `json:"lv2_rate"`
+	Lv1Summary        CommissionSummary  `json:"lv1_summary"`
+	Lv2Summary        DownlineSummaryLv2 `json:"lv2_summary"`
+	Lv1Rows           []DownlineRowLv1   `json:"lv1_rows"`
 }
 
 func (s *ReferralService) GetDashboard(ctx context.Context, user *User) (*ReferralDashboard, error) {
-	if !user.IsReferralPartner {
-		return nil, ErrReferralFeatureDisabled
-	}
 	code, err := s.EnsureInviteCode(ctx, user)
 	if err != nil {
 		return nil, err
@@ -248,6 +347,10 @@ func (s *ReferralService) GetDashboard(ctx context.Context, user *User) (*Referr
 
 	lv1Rate, _ := s.activeRate(ctx, ReferralTierLv1)
 	lv2Rate, _ := s.activeRate(ctx, ReferralTierLv2)
+	var firstRechargeRate float64
+	if s.settingService != nil {
+		firstRechargeRate = s.settingService.GetReferralFirstRechargeInviterRate(ctx)
+	}
 
 	summaries, err := s.commissionRepo.SummaryByInviter(ctx, user.ID)
 	if err != nil {
@@ -263,10 +366,12 @@ func (s *ReferralService) GetDashboard(ctx context.Context, user *User) (*Referr
 	}
 
 	out := &ReferralDashboard{
-		InviteCode: code,
-		Lv1Rows:    lv1Rows,
-		Lv1Summary: summaries[ReferralTierLv1],
-		Lv2Summary: *lv2Summary,
+		InviteCode:        code,
+		IsReferralPartner: user.IsReferralPartner,
+		FirstRechargeRate: firstRechargeRate,
+		Lv1Rows:           lv1Rows,
+		Lv1Summary:        summaries[ReferralTierLv1],
+		Lv2Summary:        *lv2Summary,
 	}
 	if lv1Rate != nil {
 		out.Lv1Rate = lv1Rate.Rate
@@ -277,15 +382,9 @@ func (s *ReferralService) GetDashboard(ctx context.Context, user *User) (*Referr
 	return out, nil
 }
 
-// ListMyCommissions 用户视角：分页查自己的抽佣明细。
+// ListMyCommissions 用户视角：分页查自己的抽佣明细（含 first_recharge / agent_lv1 / agent_lv2）。
+// 对所有登录用户开放，普通邀请人也能看到自己的首充返点明细。
 func (s *ReferralService) ListMyCommissions(ctx context.Context, userID int64, status string, offset, limit int) ([]ReferralCommission, int64, error) {
-	user, err := s.userRepo.GetByID(ctx, userID)
-	if err != nil {
-		return nil, 0, err
-	}
-	if !user.IsReferralPartner {
-		return nil, 0, ErrReferralFeatureDisabled
-	}
 	return s.commissionRepo.List(ctx, ListCommissionFilters{
 		InviterID:               &userID,
 		Status:                  status,
@@ -410,6 +509,10 @@ func (s *ReferralService) GetFirstRechargeEligibility(ctx context.Context, userI
 // ClaimFirstRechargeBonus 由支付完成回调调用：CAS 标记 + 计算奖励 USD 金额。
 // 不符合条件或已领过返回 0，否则返回额外 USD 金额（baseUSD × (rate - 1)）。
 // 任何错误都返回 0 + 记录日志，不中断主支付流程。
+//
+// 同时把首充原值写入 user.first_recharge_amount_usd，作为普通邀请人首充返点
+// 封顶 cap = baseUSD × inviter_rate 的基数（即使 bonusRate <= 1.0 即奖励关闭，
+// 只要被邀请人存在，仍需写 cap 让 inviter 拿首充返点）。
 func (s *ReferralService) ClaimFirstRechargeBonus(ctx context.Context, userID int64, baseUSD float64) float64 {
 	if baseUSD <= 0 {
 		return 0
@@ -422,15 +525,13 @@ func (s *ReferralService) ClaimFirstRechargeBonus(ctx context.Context, userID in
 	if s.settingService == nil {
 		return 0
 	}
-	rate := s.settingService.GetReferralFirstRechargeBonusRate(ctx)
-	if rate <= 1.0 {
-		return 0
-	}
 	// 预检：先 read（不强求精确，CAS 是真正的守门）
 	user, err := s.userRepo.GetByID(ctx, userID)
 	if err != nil || user == nil || user.InviterID == nil || user.ReferralBonusClaimedAt != nil {
 		return 0
 	}
+
+	bonusRate := s.settingService.GetReferralFirstRechargeBonusRate(ctx)
 	claimed, err := s.userRepo.ClaimFirstRechargeBonus(ctx, userID)
 	if err != nil {
 		logger.LegacyPrintf("service.referral", "ClaimFirstRechargeBonus CAS failed user=%d: %v", userID, err)
@@ -439,7 +540,16 @@ func (s *ReferralService) ClaimFirstRechargeBonus(ctx context.Context, userID in
 	if !claimed {
 		return 0
 	}
-	bonusUSD := baseUSD * (rate - 1.0)
-	logger.LegacyPrintf("service.referral", "first recharge bonus claimed: user=%d baseUSD=%.4f rate=%.2f bonusUSD=%.4f", userID, baseUSD, rate, bonusUSD)
+	// 首充原值写入，作为普通邀请人首充返点封顶 cap 的基数。
+	// 写入失败仅记录日志，不影响奖励发放（cap 默认 0 = 不发首充返点，不会超发）。
+	if err := s.userRepo.SetFirstRechargeAmount(ctx, userID, baseUSD); err != nil {
+		logger.LegacyPrintf("service.referral", "set first_recharge_amount_usd failed user=%d base=%.4f: %v", userID, baseUSD, err)
+	}
+
+	if bonusRate <= 1.0 {
+		return 0
+	}
+	bonusUSD := baseUSD * (bonusRate - 1.0)
+	logger.LegacyPrintf("service.referral", "first recharge bonus claimed: user=%d baseUSD=%.4f rate=%.2f bonusUSD=%.4f", userID, baseUSD, bonusRate, bonusUSD)
 	return bonusUSD
 }

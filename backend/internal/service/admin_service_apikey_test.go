@@ -85,6 +85,12 @@ func (s *userRepoStubForGroupUpdate) SetReferralPartner(context.Context, int64, 
 func (s *userRepoStubForGroupUpdate) ClaimFirstRechargeBonus(context.Context, int64) (bool, error) {
 	panic("unexpected")
 }
+func (s *userRepoStubForGroupUpdate) SetFirstRechargeAmount(context.Context, int64, float64) error {
+	panic("unexpected")
+}
+func (s *userRepoStubForGroupUpdate) AdjustFirstRechargeInviterBonusPaid(context.Context, int64, float64) (float64, error) {
+	panic("unexpected")
+}
 
 // apiKeyRepoStubForGroupUpdate implements APIKeyRepository for AdminUpdateAPIKeyGroupID tests.
 type apiKeyRepoStubForGroupUpdate struct {

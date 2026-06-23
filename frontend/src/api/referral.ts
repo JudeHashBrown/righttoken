@@ -32,6 +32,8 @@ export interface ReferralDownlineSummaryLv2 {
 
 export interface ReferralDashboard {
   invite_code: string
+  is_referral_partner: boolean
+  first_recharge_rate: number // 0.05 = 5%，普通邀请人首充返点比例
   lv1_rate: number
   lv2_rate: number
   lv1_summary: ReferralCommissionSummary
@@ -44,6 +46,7 @@ export interface ReferralCommission {
   inviter_id: number
   downline_id: number
   tier: number
+  kind: 'first_recharge' | 'agent_lv1' | 'agent_lv2'
   source_request_id: string
   base_amount: number
   rate: number

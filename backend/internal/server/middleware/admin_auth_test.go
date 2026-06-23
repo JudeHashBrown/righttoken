@@ -216,3 +216,11 @@ func (s *stubUserRepo) SetReferralPartner(ctx context.Context, userID int64, ena
 func (s *stubUserRepo) ClaimFirstRechargeBonus(ctx context.Context, userID int64) (bool, error) {
 	panic("unexpected ClaimFirstRechargeBonus call")
 }
+
+func (s *stubUserRepo) SetFirstRechargeAmount(ctx context.Context, userID int64, amount float64) error {
+	panic("unexpected SetFirstRechargeAmount call")
+}
+
+func (s *stubUserRepo) AdjustFirstRechargeInviterBonusPaid(ctx context.Context, userID int64, delta float64) (float64, error) {
+	panic("unexpected AdjustFirstRechargeInviterBonusPaid call")
+}
