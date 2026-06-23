@@ -6293,6 +6293,7 @@ export default {
     firstRechargeBenefit4: '退款时按比例回退尚未发放的奖励；已发放的不受影响',
     // 进阶奖励介绍（仅 is_referral_partner 可见）
     agentTitle: '你享有进阶奖励权益',
+    agentSubtitle: '仅合作伙伴可见 · 普通邀请人不享有此项',
     agentBenefit1: '你邀请的朋友每次使用，你按 {lv1} 持续获得奖励（无封顶）',
     agentBenefit2: '朋友再邀请的人每次使用，你按 {lv2} 持续获得奖励',
     agentBenefit3: '进阶奖励由管理员开通；停用前已累计的奖励须先结算',

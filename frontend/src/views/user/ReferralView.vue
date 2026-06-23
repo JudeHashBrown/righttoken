@@ -56,9 +56,12 @@
           v-if="dashboard?.is_referral_partner"
           class="card border-amber-200 bg-amber-50 p-5 text-sm leading-relaxed text-amber-800 dark:border-amber-800/50 dark:bg-amber-900/20 dark:text-amber-200"
         >
-          <p class="font-semibold mb-2 flex items-center gap-2">
+          <p class="font-semibold mb-1 flex items-center gap-2">
             <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-[10px] text-white">★</span>
             {{ t('referral.agentTitle') }}
+          </p>
+          <p class="mb-3 text-xs italic text-purple-700 dark:text-purple-300">
+            {{ t('referral.agentSubtitle') }}
           </p>
           <ul class="list-disc pl-5 space-y-1 text-amber-700 dark:text-amber-300">
             <li>

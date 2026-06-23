@@ -6105,6 +6105,7 @@ export default {
     firstRechargeBenefit4: 'Refunds proportionally void unpaid accrued rewards; already-paid rewards are unaffected.',
     // Enhanced rewards (only when is_referral_partner)
     agentTitle: 'You have enhanced rewards enabled',
+    agentSubtitle: 'Visible to partners only · standard inviters do not have this benefit',
     agentBenefit1: 'Each time friends you invited use the API, you earn {lv1} continuously (no cap).',
     agentBenefit2: 'Each time their invitees use the API, you earn {lv2} continuously.',
     agentBenefit3: 'Enhanced rewards are granted by admin; all accrued rewards must be settled before disabling.',
