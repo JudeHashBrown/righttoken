@@ -310,72 +310,87 @@ export default {
       claude: {
         cardName: 'Claude on macOS / Windows',
         cardTagline: '官方 Claude Code CLI，编程 agent 首选',
-        title: '用 Claude（5 分钟）',
-        tagline: '10 分钟、5 步，装好 Claude Code。\nAnthropic 出的终端 AI 助手，能读你电脑上的文件、帮你完成各种任务。',
+        title: '用 Claude（约 5 分钟）',
+        tagline: '约 5 分钟装好 Claude Code。\nAnthropic 出的终端 AI 助手，能读你电脑上的文件、帮你完成各种任务。',
         groupName: 'Claude',
         steps: {
           macos: {
             s1: {
               title: '打开「终端」',
-              desc: '按 ⌘ + 空格（Spotlight 搜索）→ 输入 "终端" 或 "Terminal" → 回车',
-              hint: '看到一个带 % 提示符的窗口 = 成功'
+              desc: 'Mac 用户在系统自带的「终端」中完成安装。\n\n操作步骤：\n1. 按键盘 ⌘ + 空格 打开 Spotlight\n2. 输入「终端」或「Terminal」\n3. 回车打开（无需 sudo）\n\n成功打开后，你会看到一个带 % 提示符的命令窗口。',
+              hint: '看到带 % 提示符的窗口 = 成功',
+              screenshot: '终端窗口截图'
             },
             s2: {
-              title: '装 Homebrew（已装跳过）',
-              desc: 'Homebrew 是 Mac 上的「软件商店」，下一步装 Node 要用它。\n\n先检查：输入 brew --version 回车。看到版本号 → 跳到下一步。看到 command not found → 复制下面命令安装（中途会问密码，输入你 Mac 登录密码，输入时不显示是正常的，等 5-10 分钟）。',
-              hint: '装完后按终端打印的提示，再跑一遍 eval "$(/opt/homebrew/bin/brew shellenv)" 把 brew 加入 PATH，然后 brew --version 验证'
+              title: '检查 Homebrew',
+              desc: 'Homebrew 是 Mac 上的包管理器，下一步装 Node 要用它。大部分开发环境已经装好了。\n\n在终端输入下面命令，按 Enter 检查。\n\n如果看到版本号（例如 Homebrew 4.x.x）→ 已安装，直接跳到下一步。\n\n如果提示 zsh: command not found: brew → 复制下面「未安装时」的命令安装。中途会问 Mac 登录密码（输入时不显示是正常的），整个过程需要 5-10 分钟。装完按终端提示运行 eval "$(/opt/homebrew/bin/brew shellenv)" 把 brew 加入 PATH。',
+              code: 'brew --version',
+              installCodeLabel: '未安装时执行：',
+              hint: 'brew --version 显示版本号 = 装好',
+              screenshot: 'Homebrew 检查 / 安装完成截图'
             },
             s3: {
-              title: '装 Node.js（已装跳过）',
-              desc: 'Node.js 是运行 Claude Code 的「引擎」，就像安卓 APK 需要安卓系统。\n\n先检查：输入 node --version 回车。看到 v18 或以上 → 跳到下一步。看到 command not found → 复制下面命令安装。',
-              hint: '装好后再跑一次 node --version 应该看到 v 开头的版本号'
+              title: '检查 Node.js',
+              desc: 'Node.js 是运行 Claude Code 的「引擎」，就像安卓 APK 需要安卓系统才能跑。大部分开发环境已经装好了。\n\n在终端输入下面命令，按 Enter 执行。\n\n如果看到版本号（v18 或以上即可，例如 v22.15.0）→ 已安装，直接跳到下一步。\n\n如果提示 zsh: command not found: node → 复制下面「未安装时」的命令，用上一步装好的 Homebrew 一键装。装完再跑一次 node --version 验证。',
+              code: 'node --version',
+              installCodeLabel: '未安装时执行：',
+              hint: '显示 v 开头的版本号 = 装好',
+              screenshot: 'Node.js 版本号 / 安装完成截图'
             },
             s4: {
-              title: '装 Claude Code CLI',
-              desc: 'npm 是 Node 自带的「安装命令」，这一步把 Claude Code 下载到你电脑上。\n\n复制下面整条命令，粘贴到终端，按回车。等 1 分钟。',
-              hint: '看到 "added N packages" 表示装好'
+              title: '安装 Claude Code CLI',
+              desc: '装好 Node.js 就会自带 npm（Node Package Manager）。可以把 npm 理解成「JavaScript 工具的应用商店」——就像手机的 App Store。\n\n确认 Node.js 已安装后，在终端输入下面命令，按 Enter 开始安装。通常需要等待 30 秒 ~ 2 分钟。\n\n如果提示 EACCES: permission denied，前面加 sudo 重跑一次即可（sudo npm install -g @anthropic-ai/claude-code）。',
+              code: 'npm install -g @anthropic-ai/claude-code',
+              hint: '看到 "added N packages" 表示装好',
+              screenshot: 'npm 安装成功截图'
             },
             s5: {
-              title: '配置 RightToken（关键一步）',
-              desc: '这一步告诉 Claude Code：连 RightToken（不是 Anthropic 官网），并出示你的 key。\n\n把下面命令里的 sk-你的key 换成你在 RightToken 后台「我的密钥」复制的 key，然后整段复制粘贴执行。',
-              hint: '没报错就好。终端提示符 % 重新出现 = 跑完了'
+              title: '配置 RightToken（关键步骤）',
+              desc: '默认情况下 Claude Code 会连接 Anthropic 官方，这一步把它切换为连接 RightToken。\n\n把下面命令里的 sk-你的Key 替换为准备步骤创建的真实 Key（例如 sk-rt-xxxxxxxxxxxxxxxx），然后整段复制粘贴到终端执行。\n\n注意：请先在记事本里改好 Key 再整段粘贴，否则可能粘过去就直接跑了。只替换 Key，其他内容保持不变。',
+              hint: '没有报错即表示配置成功',
+              screenshot: '.zshrc 写入 / source 完成截图'
             },
             s6: {
               title: '启动 Claude',
-              desc: '输入 claude，回车。',
-              hint: '看到 Claude 欢迎界面，发个 "你好" 测试是否能回复'
+              desc: '关闭当前终端，重新打开一个新窗口，输入 claude 按 Enter。\n\n- 若出现 Security guide（安全提示），选择 yes 并回车\n- 看到 Claude 欢迎界面，即代表配置全部完成\n\n现在就可以开始使用 Claude Code 了。',
+              code: 'claude',
+              hint: '看到 Claude 欢迎界面 = 成功',
+              screenshot: 'Claude 欢迎界面截图'
             }
           },
           windows: {
             s1: {
               title: '打开「PowerShell」',
-              desc: '按 Win 键 → 输入 "PowerShell" → 回车（用普通 PowerShell 即可，不需要管理员）',
-              hint: '看到一个蓝色或深色窗口 = 成功'
+              desc: 'Windows 用户在 PowerShell 中完成安装。\n\n操作步骤：\n1. 按键盘 Win 键\n2. 输入「PowerShell」\n3. 点击打开（无需管理员权限）\n\n成功打开后，你会看到一个蓝色或黑色的命令窗口。',
+              hint: '看到蓝色或黑色的命令窗口 = 成功',
+              screenshot: 'PowerShell 窗口截图'
             },
             s2: {
-              title: '装 Node.js（已装跳过）',
-              desc: 'Node.js 是运行 Claude Code 的「引擎」，就像安卓 APK 需要安卓系统。\n\n先检查：输入 node --version 回车。看到 v18 或以上 → 跳到下一步。否则去 https://nodejs.org 下载 LTS 版本安装包，装完重开 PowerShell。',
-              hint: '重开 PowerShell 后再跑 node --version 应该看到版本号'
+              title: '检查 Node.js',
+              desc: 'Node.js 是运行 Claude Code 的「引擎」，就像安卓 APK 需要安卓系统才能跑。大部分开发环境已经装好了。\n\n在 PowerShell 中输入下面命令，按 Enter 执行。\n\n如果看到版本号（v18 或以上即可，例如 v22.15.0）→ 已安装，直接跳到下一步。\n\n如果提示 \'node\' 不是内部或外部命令 → 前往官网 https://nodejs.org 下载并安装 LTS（长期支持版）。装完关闭 PowerShell 重新打开，再执行一次 node --version 验证。',
+              code: 'node --version',
+              hint: '显示 v 开头的版本号 = 装好',
+              screenshot: 'Node.js 官网 LTS 下载页截图'
             },
             s3: {
-              title: '装 Claude Code CLI',
-              desc: 'npm 是 Node 自带的「安装命令」，这一步把 Claude Code 下载到你电脑上。\n\n复制下面命令，粘贴到 PowerShell，回车。等 1 分钟。',
-              hint: '看到 "added N packages" 表示装好'
+              title: '安装 Claude Code CLI',
+              desc: '装好 Node.js 就会自带 npm（Node Package Manager）。可以把 npm 理解成「JavaScript 工具的应用商店」——就像手机的 App Store。\n\n确认 Node.js 已安装后，在 PowerShell 输入下面命令，按 Enter 开始安装。通常需要等待 30 秒 ~ 2 分钟。',
+              code: 'npm install -g @anthropic-ai/claude-code',
+              hint: '看到 "added N packages" 表示装好',
+              screenshot: 'npm 安装成功截图'
             },
             s4: {
-              title: '配置 RightToken（关键一步）',
-              desc: '这一步告诉 Claude Code：连 RightToken（不是 Anthropic 官网），并出示你的 key。\n\n把下面命令里的 sk-你的key 换成你在 RightToken 后台「我的密钥」复制的 key，然后整段复制粘贴执行。',
-              hint: '设完后必须重开 PowerShell 才生效'
+              title: '配置 RightToken（关键步骤）',
+              desc: '默认情况下 Claude Code 会连接 Anthropic 官方，这一步把它切换为连接 RightToken。\n\n把下面命令里的 sk-你的Key 替换为准备步骤创建的真实 Key（例如 sk-rt-xxxxxxxxxxxxxxxx），然后把两条一起复制粘贴到 PowerShell 执行。\n\n注意：请先在记事本里改好 Key 再整段粘贴，否则可能粘过去就直接跑了。只替换 Key，其他内容保持不变。',
+              hint: '没有报错即表示配置成功',
+              screenshot: 'PowerShell 执行完成截图'
             },
             s5: {
               title: '启动 Claude',
-              desc: '重开一个新 PowerShell 窗口，输入 claude，回车。',
-              hint: '看到 Claude 欢迎界面 = 成功'
-            },
-            ccSwitch: {
-              title: '可选：用 CC Switch 图形化配置（替代第 4 步）',
-              desc: '如果你已经装了 CC Switch，可以用图形界面切换，不用敲命令。\n\n添加供应商时填：\n  • 名称：RightToken\n  • Base URL：https://righttoken.ai\n  • API Key：你的 sk-rt-xxx\n  • 协议类型：「第三方 / Custom」（务必不要选 Anthropic Official）\n\n切换后必须完全退出 Claude Code 进程（关掉 PowerShell 窗口），重新打开再启动 claude。',
-              hint: '如果之前手动设过 ANTHROPIC_API_KEY，参考下方 FAQ 处理「双值警告」'
+              desc: '关闭当前 PowerShell，重新打开一个新窗口，输入 claude 按 Enter。\n\n- 若出现 Security guide（安全提示），选择 yes 并回车\n- 看到 Claude 欢迎界面，即代表配置全部完成\n\n现在就可以开始使用 Claude Code 了。',
+              code: 'claude',
+              hint: '看到 Claude 欢迎界面 = 成功',
+              screenshot: 'Claude 欢迎界面截图'
             }
           }
         },
@@ -389,86 +404,109 @@ export default {
           option2Desc: '按 Ctrl + ` 打开 VS Code 终端，直接运行 claude 即可，跟普通 macOS/Windows 章节一致。'
         },
         faq: {
-          timeout: '超时报错：加 `export ANTHROPIC_TIMEOUT=300000`（5 分钟容错）',
+          timeout: '超时报错：加大超时容量到 5 分钟。Windows 跑 `[System.Environment]::SetEnvironmentVariable(\'ANTHROPIC_TIMEOUT\',\'300000\',\'User\')`；macOS 在 `~/.zshrc` 追加 `export ANTHROPIC_TIMEOUT=300000` 后 `source ~/.zshrc`。设完后必须关掉所有终端窗口重开，新窗口才会读到这个新值。',
           models: '可用模型：后台「分组」→ Claude 组里查看',
           oauthResidual: '启动后报错 `Failed to connect to api.anthropic.com`（环境变量明明配对了）：通常是之前登录过 Claude Code 残留的 OAuth 凭证导致环境变量被无视。运行 `rm -f ~/.claude/.credentials.json`（Mac/Linux）或 `Remove-Item $HOME\\.claude\\.credentials.json -ErrorAction SilentlyContinue`（Windows）→ 关掉终端重开 → 再启动 `claude`',
-          bothEnvVars: '启动 `claude` 提示「Both ANTHROPIC_AUTH_TOKEN and ANTHROPIC_API_KEY set」：你之前手动设过 `ANTHROPIC_API_KEY`，运行 `[Environment]::SetEnvironmentVariable(\'ANTHROPIC_API_KEY\', $null, \'User\')` 删除，关掉所有 PowerShell 窗口重开后再启动 `claude`'
+          bothEnvVars: '启动 `claude` 提示「Both ANTHROPIC_AUTH_TOKEN and ANTHROPIC_API_KEY set」：你之前手动设过 `ANTHROPIC_API_KEY`。Windows 运行 `[Environment]::SetEnvironmentVariable(\'ANTHROPIC_API_KEY\', $null, \'User\')` 删除；macOS 编辑 `~/.zshrc` 删掉 `export ANTHROPIC_API_KEY=...` 那行后运行 `unset ANTHROPIC_API_KEY && source ~/.zshrc`。改完关掉所有终端窗口重开后再启动 `claude`',
+          changeKey: '如何更换 API Key（升级套餐 / 旧 Key 泄露 / 多账号切换）：只跑一遍替换命令不够，必须走 3 步。① 写入新 Key：Windows 重新跑 `[System.Environment]::SetEnvironmentVariable(\'ANTHROPIC_AUTH_TOKEN\',\'sk-新Key\',\'User\')`；macOS 编辑 `~/.zshrc` 把旧的 `export ANTHROPIC_AUTH_TOKEN=` 那行改成新 Key，保存后 `source ~/.zshrc`。② 彻底关闭所有 Claude 与终端进程：Windows 打开任务管理器（Ctrl+Shift+Esc）结束 pwsh.exe / powershell.exe / node.exe；macOS 跑 `pkill -9 -f claude`。「关闭窗口」不等于「关闭进程」，后台残留的进程内存里还是旧 Key。③ 打开全新终端验证：Windows 跑 `echo $env:ANTHROPIC_AUTH_TOKEN`，macOS 跑 `echo $ANTHROPIC_AUTH_TOKEN`，应显示新 Key；如仍是旧 Key，说明第 ② 步没关干净。确认无误后再 `claude` 启动。'
         }
       },
       codex: {
         cardName: 'GPT on macOS / Windows',
         cardTagline: 'OpenAI 官方 Codex CLI，编程 agent 体验',
-        title: '用 GPT / Codex（5 分钟）',
-        tagline: '10 分钟、5 步，装好 Codex CLI。\nOpenAI 出的终端 AI 助手，能读你电脑上的文件、帮你完成各种任务。',
+        title: '用 GPT / Codex（约 5 分钟）',
+        tagline: '约 5 分钟装好 Codex CLI。\nOpenAI 出的终端 AI 助手，能读你电脑上的文件、帮你完成各种任务。',
         groupName: 'OpenAI',
         steps: {
           macos: {
             s1: {
               title: '打开「终端」',
-              desc: '按 ⌘ + 空格（Spotlight）→ 输入 "终端" 或 "Terminal" → 回车',
-              hint: '看到带 % 提示符的窗口 = 成功'
+              desc: 'Mac 用户在系统自带的「终端」中完成安装。\n\n操作步骤：\n1. 按键盘 ⌘ + 空格 打开 Spotlight\n2. 输入「终端」或「Terminal」\n3. 回车打开（无需 sudo）\n\n成功打开后，你会看到一个带 % 提示符的命令窗口。',
+              hint: '看到带 % 提示符的窗口 = 成功',
+              screenshot: '终端窗口截图'
             },
             s2: {
-              title: '装 Homebrew（已装跳过）',
-              desc: 'Homebrew 是 Mac 上的「软件商店」，下一步装 Node 要用它。\n\n先检查：输入 brew --version。看到版本号 → 跳过。看到 command not found → 复制下面命令安装（会问 Mac 密码，输入时不显示是正常的，等 5-10 分钟）。',
-              hint: '装完后按终端提示运行 eval "$(/opt/homebrew/bin/brew shellenv)" 把 brew 加入 PATH，brew --version 验证'
+              title: '检查 Homebrew',
+              desc: 'Homebrew 是 Mac 上的包管理器，下一步装 Node 要用它。大部分开发环境已经装好了。\n\n在终端输入下面命令，按 Enter 检查。\n\n如果看到版本号（例如 Homebrew 4.x.x）→ 已安装，直接跳到下一步。\n\n如果提示 zsh: command not found: brew → 复制下面「未安装时」的命令安装。中途会问 Mac 登录密码（输入时不显示是正常的），整个过程需要 5-10 分钟。装完按终端提示运行 eval "$(/opt/homebrew/bin/brew shellenv)" 把 brew 加入 PATH。',
+              code: 'brew --version',
+              installCodeLabel: '未安装时执行：',
+              hint: 'brew --version 显示版本号 = 装好',
+              screenshot: 'Homebrew 检查 / 安装完成截图'
             },
             s3: {
-              title: '装 Node.js（已装跳过）',
-              desc: 'Node.js 是运行 Codex CLI 的「引擎」，就像安卓 APK 需要安卓系统。\n\n先检查：输入 node --version。看到 v18+ → 跳过。否则跑下面命令装。',
-              hint: 'node --version 看到 v 开头 = 装好'
+              title: '检查 Node.js',
+              desc: 'Node.js 是运行 Codex CLI 的「引擎」，就像安卓 APK 需要安卓系统才能跑。大部分开发环境已经装好了。\n\n在终端输入下面命令，按 Enter 执行。\n\n如果看到版本号（v18 或以上即可，例如 v22.15.0）→ 已安装，直接跳到下一步。\n\n如果提示 zsh: command not found: node → 复制下面「未安装时」的命令，用上一步装好的 Homebrew 一键装。装完再跑一次 node --version 验证。',
+              code: 'node --version',
+              installCodeLabel: '未安装时执行：',
+              hint: '显示 v 开头的版本号 = 装好',
+              screenshot: 'Node.js 版本号 / 安装完成截图'
             },
             s4: {
-              title: '装 Codex CLI',
-              desc: 'npm 是 Node 自带的「安装命令」，这一步把 Codex CLI 下载到你电脑上。\n\n复制命令粘贴执行，等 1 分钟。',
-              hint: '看到 "added N packages" = 装好'
+              title: '安装 Codex CLI',
+              desc: '装好 Node.js 就会自带 npm（Node Package Manager）。可以把 npm 理解成「JavaScript 工具的应用商店」——就像手机的 App Store。\n\n确认 Node.js 已安装后，在终端输入下面命令，按 Enter 开始安装。通常需要等待 30 秒 ~ 2 分钟。\n\n如果提示 EACCES: permission denied，前面加 sudo 重跑一次即可（sudo npm install -g @openai/codex）。',
+              code: 'npm install -g @openai/codex',
+              hint: '看到 "added N packages" 表示装好',
+              screenshot: 'npm 安装成功截图'
             },
             s5: {
-              title: '智能合并 Codex 配置（关键一步）',
-              desc: '把下面整段复制粘贴到终端执行。自动备份原有 config.toml 到 .bak，把 RightToken provider 配置插到正确位置（root key 在顶、provider 在尾），跑多次也安全（幂等）。',
-              hint: '看到提示符 % 重新出现 = 跑完了。grep RightToken ~/.codex/config.toml 应该有几行输出'
+              title: '配置 RightToken Provider（关键步骤）',
+              desc: 'Codex 用 ~/.codex/config.toml 声明模型来源，这一步把 RightToken 作为 provider 插入配置。\n\n把下面整段复制粘贴到终端执行。脚本会自动备份原有 config.toml 到 .bak，把 RightToken 相关配置插到正确位置，跑多次也安全（幂等）。\n\n如果你没有旧配置，可以放心执行；如果有其他 provider 已配好，脚本会保留它们，只更新 RightToken 部分。',
+              hint: '跑完提示符 % 重新出现 + grep RightToken ~/.codex/config.toml 有输出 = 成功',
+              screenshot: 'config.toml 写入完成截图'
             },
             s6: {
-              title: '写 API Key 文件（关键一步）',
-              desc: '把下面的 sk-你的key 换成 RightToken 后台「我的密钥」复制的真实 key，然后整段粘贴执行。这会创建 ~/.codex/auth.json，Codex 启动时自动读它。',
-              hint: 'cat ~/.codex/auth.json 应看到你的 key（sk-... 开头）'
+              title: '写入 API Key（关键步骤）',
+              desc: '这一步创建 ~/.codex/auth.json 存 API Key，Codex 启动时会自动读它。\n\n把下面命令里的 sk-你的Key 替换为准备步骤创建的真实 Key（例如 sk-rt-xxxxxxxxxxxxxxxx），然后整段复制粘贴到终端执行。\n\n注意：请先在记事本里改好 Key 再整段粘贴，否则可能粘过去就直接跑了。只替换 Key，其他内容保持不变。',
+              hint: 'cat ~/.codex/auth.json 显示你的 sk- 开头 Key = 成功',
+              screenshot: 'auth.json 写入完成截图'
             },
             s7: {
               title: '启动 Codex',
-              desc: '输入 codex，回车。',
-              hint: '看到 Codex 欢迎界面，发个 "你好" 测试'
+              desc: '直接在终端输入 codex 按 Enter，无需重开窗口（auth.json 不依赖环境变量，立即生效）。\n\n看到 Codex 欢迎界面，即代表配置全部完成。\n\n现在就可以开始使用 Codex CLI 了。',
+              code: 'codex',
+              hint: '看到 Codex 欢迎界面 = 成功',
+              screenshot: 'Codex 欢迎界面截图'
             }
           },
           windows: {
             s1: {
               title: '打开「PowerShell」',
-              desc: '按 Win 键 → 输入 "PowerShell" → 回车（普通 PowerShell 即可，不用管理员）',
-              hint: '看到蓝色/深色窗口 = 成功'
+              desc: 'Windows 用户在 PowerShell 中完成安装。\n\n操作步骤：\n1. 按键盘 Win 键\n2. 输入「PowerShell」\n3. 点击打开（无需管理员权限）\n\n成功打开后，你会看到一个蓝色或黑色的命令窗口。',
+              hint: '看到蓝色或黑色的命令窗口 = 成功',
+              screenshot: 'PowerShell 窗口截图'
             },
             s2: {
-              title: '装 Node.js（已装跳过）',
-              desc: 'Node.js 是运行 Codex CLI 的「引擎」，就像安卓 APK 需要安卓系统。\n\n先检查：输入 node --version。看到 v18+ → 跳过。否则去 https://nodejs.org 下载 LTS 版安装，装完重开 PowerShell。',
-              hint: '重开后 node --version 看到版本号 = OK'
+              title: '检查 Node.js',
+              desc: 'Node.js 是运行 Codex CLI 的「引擎」，就像安卓 APK 需要安卓系统才能跑。大部分开发环境已经装好了。\n\n在 PowerShell 中输入下面命令，按 Enter 执行。\n\n如果看到版本号（v18 或以上即可，例如 v22.15.0）→ 已安装，直接跳到下一步。\n\n如果提示 \'node\' 不是内部或外部命令 → 前往官网 https://nodejs.org 下载并安装 LTS（长期支持版）。装完关闭 PowerShell 重新打开，再执行一次 node --version 验证。',
+              code: 'node --version',
+              hint: '显示 v 开头的版本号 = 装好',
+              screenshot: 'Node.js 官网 LTS 下载页截图'
             },
             s3: {
-              title: '装 Codex CLI',
-              desc: 'npm 是 Node 自带的「安装命令」，这一步把 Codex CLI 下载到你电脑上。\n\n复制命令粘贴执行，等 1 分钟。',
-              hint: '看到 "added N packages" = 装好'
+              title: '安装 Codex CLI',
+              desc: '装好 Node.js 就会自带 npm（Node Package Manager）。可以把 npm 理解成「JavaScript 工具的应用商店」——就像手机的 App Store。\n\n确认 Node.js 已安装后，在 PowerShell 输入下面命令，按 Enter 开始安装。通常需要等待 30 秒 ~ 2 分钟。',
+              code: 'npm install -g @openai/codex',
+              hint: '看到 "added N packages" 表示装好',
+              screenshot: 'npm 安装成功截图'
             },
             s4: {
-              title: '智能合并 Codex 配置（关键一步）',
-              desc: '把下面整段（PowerShell 脚本）复制粘贴执行。会自动备份原 config.toml，把 RightToken provider 配置插到正确位置，多跑也安全。',
-              hint: 'cat $HOME\\.codex\\config.toml 应该看到 model_provider = "RightToken" 在文件顶部'
+              title: '配置 RightToken Provider（关键步骤）',
+              desc: 'Codex 用 %USERPROFILE%\\.codex\\config.toml 声明模型来源，这一步写入 RightToken provider 配置。\n\n把下面这一行整段复制粘贴到 PowerShell 执行即可。会先自动备份原 config.toml 到 config.toml.bak（如果已存在），然后写入新配置。整段是单行命令，粘贴不会卡在 >>。\n\n如果之前 config.toml 里配了其他 provider 想保留，从 .bak 文件手动合并即可。',
+              hint: 'Get-Content $HOME\\.codex\\config.toml 顶部有 model_provider = "RightToken" = 成功',
+              screenshot: 'config.toml 写入完成截图'
             },
             s5: {
-              title: '写 API Key 文件（关键一步）',
-              desc: '把下面的 sk-你的key 换成 RightToken 后台「我的密钥」复制的真实 key，然后整段粘贴执行。这会创建 %userprofile%\\.codex\\auth.json，Codex 启动时自动读它。',
-              hint: 'cat $HOME\\.codex\\auth.json 应看到你的 key（sk-... 开头）'
+              title: '写入 API Key（关键步骤）',
+              desc: '这一步创建 %USERPROFILE%\\.codex\\auth.json 存 API Key，Codex 启动时会自动读它。\n\n先在记事本里把 sk-你的Key 改成准备步骤创建的真实 Key，然后把下面这一行整段复制粘贴到 PowerShell 执行即可。用 .NET WriteAllText 单行写入，避免 UTF-8 BOM 导致 Codex 读不了配置文件。\n\n注意：请先改好 Key 再粘贴，只替换 Key，其他内容保持不变。',
+              hint: 'Get-Content $HOME\\.codex\\auth.json 显示你的 sk- 开头 Key = 成功',
+              screenshot: 'auth.json 写入完成截图'
             },
             s6: {
               title: '启动 Codex',
-              desc: '输入 codex，回车（不需要重开 PowerShell —— auth.json 不依赖环境变量）。',
-              hint: '看到 Codex 欢迎界面 = 成功'
+              desc: '直接在 PowerShell 输入 codex 按 Enter，无需重开窗口（auth.json 不依赖环境变量，立即生效）。\n\n看到 Codex 欢迎界面，即代表配置全部完成。\n\n现在就可以开始使用 Codex CLI 了。',
+              code: 'codex',
+              hint: '看到 Codex 欢迎界面 = 成功',
+              screenshot: 'Codex 欢迎界面截图'
             }
           }
         },
@@ -488,67 +526,87 @@ export default {
       gemini: {
         cardName: 'Gemini on macOS / Windows',
         cardTagline: 'Google 官方 Gemini CLI，原生协议接入',
-        title: '用 Gemini（5 分钟）',
-        tagline: '10 分钟、5 步，装好 Gemini CLI。\nGoogle 出的终端 AI 助手，能读你电脑上的文件、帮你完成各种任务。',
+        title: '用 Gemini（约 5 分钟）',
+        tagline: '约 5 分钟装好 Gemini CLI。\nGoogle 出的终端 AI 助手，能读你电脑上的文件、帮你完成各种任务。',
         groupName: 'Gemini',
         steps: {
           macos: {
             s1: {
               title: '打开「终端」',
-              desc: '按 ⌘ + 空格（Spotlight）→ 输入 "终端" 或 "Terminal" → 回车',
-              hint: '看到带 % 提示符的窗口 = 成功'
+              desc: 'Mac 用户在系统自带的「终端」中完成安装。\n\n操作步骤：\n1. 按键盘 ⌘ + 空格 打开 Spotlight\n2. 输入「终端」或「Terminal」\n3. 回车打开（无需 sudo）\n\n成功打开后，你会看到一个带 % 提示符的命令窗口。',
+              hint: '看到带 % 提示符的窗口 = 成功',
+              screenshot: '终端窗口截图'
             },
             s2: {
-              title: '装 Homebrew（已装跳过）',
-              desc: 'Homebrew 是 Mac 上的「软件商店」，下一步装 Node 要用它。\n\n先检查：输入 brew --version。看到版本号 → 跳过。看到 command not found → 复制下面命令安装（会问 Mac 密码，输入时不显示是正常的，等 5-10 分钟）。',
-              hint: '装完后按终端提示运行 eval "$(/opt/homebrew/bin/brew shellenv)"，brew --version 验证'
+              title: '检查 Homebrew',
+              desc: 'Homebrew 是 Mac 上的包管理器，下一步装 Node 要用它。大部分开发环境已经装好了。\n\n在终端输入下面命令，按 Enter 检查。\n\n如果看到版本号（例如 Homebrew 4.x.x）→ 已安装，直接跳到下一步。\n\n如果提示 zsh: command not found: brew → 复制下面「未安装时」的命令安装。中途会问 Mac 登录密码（输入时不显示是正常的），整个过程需要 5-10 分钟。装完按终端提示运行 eval "$(/opt/homebrew/bin/brew shellenv)" 把 brew 加入 PATH。',
+              code: 'brew --version',
+              installCodeLabel: '未安装时执行：',
+              hint: 'brew --version 显示版本号 = 装好',
+              screenshot: 'Homebrew 检查 / 安装完成截图'
             },
             s3: {
-              title: '装 Node.js（已装跳过）',
-              desc: 'Node.js 是运行 Gemini CLI 的「引擎」，就像安卓 APK 需要安卓系统。\n\n先检查：node --version。看到 v18+ → 跳过。否则跑下面命令。',
-              hint: 'node --version 看到 v 开头 = OK'
+              title: '检查 Node.js',
+              desc: 'Node.js 是运行 Gemini CLI 的「引擎」，就像安卓 APK 需要安卓系统才能跑。大部分开发环境已经装好了。\n\n在终端输入下面命令，按 Enter 执行。\n\n如果看到版本号（v18 或以上即可，例如 v22.15.0）→ 已安装，直接跳到下一步。\n\n如果提示 zsh: command not found: node → 复制下面「未安装时」的命令，用上一步装好的 Homebrew 一键装。装完再跑一次 node --version 验证。',
+              code: 'node --version',
+              installCodeLabel: '未安装时执行：',
+              hint: '显示 v 开头的版本号 = 装好',
+              screenshot: 'Node.js 版本号 / 安装完成截图'
             },
             s4: {
-              title: '装 Gemini CLI',
-              desc: 'npm 是 Node 自带的「安装命令」，这一步把 Gemini CLI 下载到你电脑上。\n\n复制下面命令粘贴执行，等 1 分钟。',
-              hint: '看到 "added N packages" = 装好'
+              title: '安装 Gemini CLI',
+              desc: '装好 Node.js 就会自带 npm（Node Package Manager）。可以把 npm 理解成「JavaScript 工具的应用商店」——就像手机的 App Store。\n\n确认 Node.js 已安装后，在终端输入下面命令，按 Enter 开始安装。通常需要等待 30 秒 ~ 2 分钟。\n\n如果提示 EACCES: permission denied，前面加 sudo 重跑一次即可（sudo npm install -g @google/gemini-cli）。',
+              code: 'npm install -g @google/gemini-cli',
+              hint: '看到 "added N packages" 表示装好',
+              screenshot: 'npm 安装成功截图'
             },
             s5: {
-              title: '设环境变量（关键一步）',
-              desc: '把下面的 sk-你的key 换成 RightToken 后台「我的密钥」复制的真实 key，整段粘贴执行。',
-              hint: '没报错 + 提示符 % 重新出现 = 跑完了'
+              title: '配置 RightToken（关键步骤）',
+              desc: '默认情况下 Gemini CLI 会连接 Google 官方，这一步把它切换为连接 RightToken。\n\n把下面命令里的 sk-你的Key 替换为准备步骤创建的真实 Key（例如 sk-rt-xxxxxxxxxxxxxxxx），然后整段复制粘贴到终端执行。\n\n注意：请先在记事本里改好 Key 再整段粘贴，否则可能粘过去就直接跑了。只替换 Key，其他内容保持不变。',
+              hint: '没有报错即表示配置成功',
+              screenshot: '.zshrc 写入 / source 完成截图'
             },
             s6: {
               title: '启动 Gemini',
-              desc: '输入 gemini，回车。',
-              hint: '看到 Gemini 欢迎界面，发个 "你好" 测试'
+              desc: '关闭当前终端，重新打开一个新窗口，输入 gemini 按 Enter。\n\n看到 Gemini 欢迎界面，即代表配置全部完成。\n\n现在就可以开始使用 Gemini CLI 了。',
+              code: 'gemini',
+              hint: '看到 Gemini 欢迎界面 = 成功',
+              screenshot: 'Gemini 欢迎界面截图'
             }
           },
           windows: {
             s1: {
               title: '打开「PowerShell」',
-              desc: '按 Win 键 → 输入 "PowerShell" → 回车（普通即可，不用管理员）',
-              hint: '看到蓝色/深色窗口 = 成功'
+              desc: 'Windows 用户在 PowerShell 中完成安装。\n\n操作步骤：\n1. 按键盘 Win 键\n2. 输入「PowerShell」\n3. 点击打开（无需管理员权限）\n\n成功打开后，你会看到一个蓝色或黑色的命令窗口。',
+              hint: '看到蓝色或黑色的命令窗口 = 成功',
+              screenshot: 'PowerShell 窗口截图'
             },
             s2: {
-              title: '装 Node.js（已装跳过）',
-              desc: 'Node.js 是运行 Gemini CLI 的「引擎」，就像安卓 APK 需要安卓系统。\n\n先检查：node --version。看到 v18+ → 跳过。否则去 https://nodejs.org 下载 LTS 装完重开 PowerShell。',
-              hint: '重开后 node --version 看到版本号 = OK'
+              title: '检查 Node.js',
+              desc: 'Node.js 是运行 Gemini CLI 的「引擎」，就像安卓 APK 需要安卓系统才能跑。大部分开发环境已经装好了。\n\n在 PowerShell 中输入下面命令，按 Enter 执行。\n\n如果看到版本号（v18 或以上即可，例如 v22.15.0）→ 已安装，直接跳到下一步。\n\n如果提示 \'node\' 不是内部或外部命令 → 前往官网 https://nodejs.org 下载并安装 LTS（长期支持版）。装完关闭 PowerShell 重新打开，再执行一次 node --version 验证。',
+              code: 'node --version',
+              hint: '显示 v 开头的版本号 = 装好',
+              screenshot: 'Node.js 官网 LTS 下载页截图'
             },
             s3: {
-              title: '装 Gemini CLI',
-              desc: 'npm 是 Node 自带的「安装命令」，这一步把 Gemini CLI 下载到你电脑上。\n\n复制命令粘贴执行，等 1 分钟。',
-              hint: '看到 "added N packages" = 装好'
+              title: '安装 Gemini CLI',
+              desc: '装好 Node.js 就会自带 npm（Node Package Manager）。可以把 npm 理解成「JavaScript 工具的应用商店」——就像手机的 App Store。\n\n确认 Node.js 已安装后，在 PowerShell 输入下面命令，按 Enter 开始安装。通常需要等待 30 秒 ~ 2 分钟。',
+              code: 'npm install -g @google/gemini-cli',
+              hint: '看到 "added N packages" 表示装好',
+              screenshot: 'npm 安装成功截图'
             },
             s4: {
-              title: '设环境变量（关键一步）',
-              desc: '把下面的 sk-你的key 换成 RightToken 后台「我的密钥」复制的真实 key，整段粘贴执行。',
-              hint: '设完后必须重开 PowerShell 才生效'
+              title: '配置 RightToken（关键步骤）',
+              desc: '默认情况下 Gemini CLI 会连接 Google 官方，这一步把它切换为连接 RightToken。\n\n把下面命令里的 sk-你的Key 替换为准备步骤创建的真实 Key（例如 sk-rt-xxxxxxxxxxxxxxxx），然后把三条一起复制粘贴到 PowerShell 执行。\n\n注意：请先在记事本里改好 Key 再整段粘贴，否则可能粘过去就直接跑了。只替换 Key，其他内容保持不变。',
+              hint: '没有报错即表示配置成功',
+              screenshot: 'PowerShell 执行完成截图'
             },
             s5: {
               title: '启动 Gemini',
-              desc: '重开一个新 PowerShell 窗口，输入 gemini。',
-              hint: '看到 Gemini 欢迎界面 = 成功'
+              desc: '关闭当前 PowerShell，重新打开一个新窗口，输入 gemini 按 Enter。\n\n看到 Gemini 欢迎界面，即代表配置全部完成。\n\n现在就可以开始使用 Gemini CLI 了。',
+              code: 'gemini',
+              hint: '看到 Gemini 欢迎界面 = 成功',
+              screenshot: 'Gemini 欢迎界面截图'
             }
           }
         },

@@ -57,6 +57,19 @@
             </h3>
             <p v-if="step.desc" class="mb-2 whitespace-pre-line text-sm leading-relaxed text-gray-600 dark:text-dark-300">{{ step.desc }}</p>
             <CodeBlock v-if="step.code" :code="step.code" />
+            <template v-if="step.installCode">
+              <p v-if="step.installCodeLabel" class="mt-3 mb-1 text-xs font-medium text-gray-500 dark:text-dark-400">{{ step.installCodeLabel }}</p>
+              <CodeBlock :code="step.installCode" />
+            </template>
+            <img
+              v-if="step.screenshotUrl"
+              :src="step.screenshotUrl"
+              :alt="step.screenshot || ''"
+              class="mt-3 w-full rounded-lg border border-gray-200 dark:border-dark-700"
+            />
+            <div v-else-if="step.screenshot" class="mt-3 flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 py-8 text-xs text-gray-400 dark:border-dark-600 dark:bg-dark-900/40 dark:text-dark-500">
+              <span class="mr-2">📷</span>配图：{{ step.screenshot }}
+            </div>
             <p v-if="step.hint" class="mt-2 text-xs italic leading-relaxed text-gray-500 dark:text-dark-400">✓ {{ step.hint }}</p>
           </div>
         </div>
@@ -113,7 +126,11 @@ export interface InstallStep {
   title: string
   desc?: string
   code?: string
+  installCode?: string
+  installCodeLabel?: string
   hint?: string
+  screenshot?: string
+  screenshotUrl?: string
 }
 
 const props = defineProps<{

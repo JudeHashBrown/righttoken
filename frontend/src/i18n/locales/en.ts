@@ -310,72 +310,87 @@ export default {
       claude: {
         cardName: 'Claude on macOS / Windows',
         cardTagline: 'Official Claude Code CLI — the top coding agent',
-        title: 'Use Claude (5 minutes)',
-        tagline: "10 minutes, 5 steps to set up Claude Code.\nAnthropic's terminal AI assistant — it reads files on your computer and helps with all kinds of tasks.",
+        title: 'Use Claude (~5 minutes)',
+        tagline: "About 5 minutes to set up Claude Code.\nAnthropic's terminal AI assistant — it reads files on your computer and helps with all kinds of tasks.",
         groupName: 'Claude',
         steps: {
           macos: {
             s1: {
               title: 'Open Terminal',
-              desc: 'Press ⌘ + Space (Spotlight) → type "Terminal" → Enter',
-              hint: 'A window with a % prompt appears = success'
+              desc: 'Mac users complete the setup in the built-in Terminal app.\n\nSteps:\n1. Press ⌘ + Space to open Spotlight\n2. Type "Terminal"\n3. Press Enter (no sudo needed)\n\nAfter opening, you\'ll see a command window with a % prompt.',
+              hint: 'A window with a % prompt = success',
+              screenshot: 'Terminal window screenshot'
             },
             s2: {
-              title: 'Install Homebrew (skip if installed)',
-              desc: 'Homebrew is the "app store" for Mac. The next step needs it to install Node.\n\nFirst check: run "brew --version". If you see a version → skip. If "command not found" → run the command below to install (you\'ll be asked for your Mac password — typing is invisible, that\'s normal; wait 5-10 min).',
-              hint: 'After install, follow the printed instructions and run eval "$(/opt/homebrew/bin/brew shellenv)" to add brew to PATH, then verify with brew --version'
+              title: 'Check Homebrew',
+              desc: 'Homebrew is the package manager for macOS — the next step needs it to install Node. Most developer machines already have it.\n\nRun the command below in Terminal to check.\n\nIf you see a version (e.g. "Homebrew 4.x.x") → already installed, skip to the next step.\n\nIf you see "zsh: command not found: brew" → run the "if not installed" command below. It will ask for your Mac password (typing is invisible, that\'s normal). The whole process takes 5-10 minutes. After install, follow the printed instructions and run eval "$(/opt/homebrew/bin/brew shellenv)" to add brew to PATH.',
+              code: 'brew --version',
+              installCodeLabel: 'If not installed, run:',
+              hint: 'brew --version prints a version = installed',
+              screenshot: 'Homebrew check / install complete screenshot'
             },
             s3: {
-              title: 'Install Node.js (skip if already installed)',
-              desc: 'Node.js is the "engine" that runs Claude Code — like Android needs the Android OS to run APKs.\n\nFirst check: run "node --version". If you see v18 or newer → skip to next step. If "command not found" → run the command below to install.',
-              hint: 'Re-run "node --version" to verify a version number appears'
+              title: 'Check Node.js',
+              desc: 'Node.js is the "engine" that runs Claude Code — like Android needs the Android OS to run APKs. Most developer machines already have it.\n\nRun the command below in Terminal.\n\nIf you see a version (v18 or newer, e.g. "v22.15.0") → already installed, skip to the next step.\n\nIf you see "zsh: command not found: node" → run the "if not installed" command to install via Homebrew (from the previous step). After install, rerun "node --version" to verify.',
+              code: 'node --version',
+              installCodeLabel: 'If not installed, run:',
+              hint: 'A v-prefixed version shows = installed',
+              screenshot: 'Node.js version / install complete screenshot'
             },
             s4: {
               title: 'Install Claude Code CLI',
-              desc: 'npm is the "install command" that comes with Node — this step downloads Claude Code onto your computer.\n\nCopy the command below, paste into Terminal, press Enter. Wait ~1 minute.',
-              hint: '"added N packages" means it succeeded'
+              desc: 'Node.js comes with npm (Node Package Manager). Think of npm as the "app store for JavaScript tools" — like the App Store on your phone.\n\nOnce Node.js is confirmed, run the command below in Terminal and press Enter. Usually takes 30 seconds ~ 2 minutes.\n\nIf you see "EACCES: permission denied", just prefix with sudo and rerun (sudo npm install -g @anthropic-ai/claude-code).',
+              code: 'npm install -g @anthropic-ai/claude-code',
+              hint: '"added N packages" means it succeeded',
+              screenshot: 'npm install success screenshot'
             },
             s5: {
-              title: 'Configure RightToken (the important one)',
-              desc: 'This step tells Claude Code: connect to RightToken (not Anthropic\'s official site), and present your key.\n\nReplace sk-your-key in the command with the actual key you copy from RightToken admin "API Keys". Then paste and run the whole block.',
-              hint: 'No errors + prompt % returns = done'
+              title: 'Configure RightToken (the important step)',
+              desc: 'By default, Claude Code connects to Anthropic\'s official server. This step switches it to RightToken.\n\nFind sk-your-Key in the command below and replace it with the real Key you created in the prep step (e.g. sk-rt-xxxxxxxxxxxxxxxx), then paste and run the entire block in Terminal.\n\nNote: edit the Key in a notes app FIRST, then paste — otherwise the command may execute the moment you paste it. Only replace the Key; keep everything else as is.',
+              hint: 'No errors = configured successfully',
+              screenshot: '.zshrc write / source complete screenshot'
             },
             s6: {
               title: 'Launch Claude',
-              desc: 'Run "claude" and press Enter.',
-              hint: 'You see the Claude welcome screen — try saying "hi" to test'
+              desc: 'Close the current Terminal window, open a new one, run "claude" and press Enter.\n\n- If a Security guide prompt appears, choose "yes" and press Enter\n- Seeing the Claude welcome screen means everything is set up\n\nYou can now start using Claude Code.',
+              code: 'claude',
+              hint: 'Claude welcome screen shown = success',
+              screenshot: 'Claude welcome screen screenshot'
             }
           },
           windows: {
             s1: {
               title: 'Open PowerShell',
-              desc: 'Press Win → type "PowerShell" → Enter (regular PowerShell is fine, no admin needed)',
-              hint: 'A blue or dark window opens = success'
+              desc: 'Windows users complete the setup in PowerShell.\n\nSteps:\n1. Press the Win key\n2. Type "PowerShell"\n3. Click to open (no admin rights needed)\n\nAfter opening, you\'ll see a blue or black command window.',
+              hint: 'A blue or black command window = success',
+              screenshot: 'PowerShell window screenshot'
             },
             s2: {
-              title: 'Install Node.js (skip if already installed)',
-              desc: 'Node.js is the "engine" that runs Claude Code — like Android needs the Android OS to run APKs.\n\nFirst check: run "node --version". If you see v18+ → skip. Otherwise download the LTS installer from https://nodejs.org and re-open PowerShell after install.',
-              hint: 'After reopening, "node --version" should print a version'
+              title: 'Check Node.js',
+              desc: 'Node.js is the "engine" that runs Claude Code — like Android needs the Android OS to run APKs. Most developer machines already have it.\n\nType the command below in PowerShell and press Enter.\n\nIf you see a version (v18 or newer, e.g. "v22.15.0") → already installed, skip to the next step.\n\nIf you see "\'node\' is not recognized as an internal or external command" → head to https://nodejs.org and download the LTS installer. After installing, close PowerShell and reopen it, then run "node --version" again to verify.',
+              code: 'node --version',
+              hint: 'A v-prefixed version shows = installed',
+              screenshot: 'Node.js LTS download page screenshot'
             },
             s3: {
               title: 'Install Claude Code CLI',
-              desc: 'npm is the "install command" that comes with Node — this step downloads Claude Code onto your computer.\n\nCopy the command below, paste into PowerShell, press Enter. Wait ~1 minute.',
-              hint: '"added N packages" means it succeeded'
+              desc: 'Node.js comes with npm (Node Package Manager). Think of npm as the "app store for JavaScript tools" — like the App Store on your phone.\n\nOnce Node.js is confirmed, run the command below in PowerShell and press Enter. Usually takes 30 seconds ~ 2 minutes.',
+              code: 'npm install -g @anthropic-ai/claude-code',
+              hint: '"added N packages" means it succeeded',
+              screenshot: 'npm install success screenshot'
             },
             s4: {
-              title: 'Configure RightToken (the important one)',
-              desc: 'This step tells Claude Code: connect to RightToken (not Anthropic\'s official site), and present your key.\n\nReplace sk-your-key in the command with the actual key you copy from RightToken admin "API Keys", then paste and run.',
-              hint: 'You MUST reopen PowerShell for env vars to take effect'
+              title: 'Configure RightToken (the important step)',
+              desc: 'By default, Claude Code connects to Anthropic\'s official server. This step switches it to RightToken.\n\nFind sk-your-Key in the two commands below and replace it with the real Key you created in the prep step (e.g. sk-rt-xxxxxxxxxxxxxxxx), then paste BOTH lines into PowerShell together.\n\nNote: edit the Key in Notepad FIRST, then paste — otherwise the command may execute the moment you paste it. Only replace the Key; keep everything else as is.',
+              hint: 'No errors = configured successfully',
+              screenshot: 'PowerShell execution complete screenshot'
             },
             s5: {
               title: 'Launch Claude',
-              desc: 'Open a NEW PowerShell window, run "claude".',
-              hint: 'You see the Claude welcome screen = success'
-            },
-            ccSwitch: {
-              title: 'Optional: configure via CC Switch (GUI alternative to Step 4)',
-              desc: 'If you already have CC Switch installed, you can switch via GUI instead of typing commands.\n\nIn "Add Provider" fill:\n  • Name: RightToken\n  • Base URL: https://righttoken.ai\n  • API Key: your sk-rt-xxx\n  • Protocol type: "Third-party / Custom" (DO NOT pick Anthropic Official)\n\nAfter switching, fully quit Claude Code (close PowerShell windows) and re-open before running claude.',
-              hint: 'If you previously set ANTHROPIC_API_KEY manually, see the FAQ below for the "both env vars" warning'
+              desc: 'Close the current PowerShell, open a NEW window, run "claude" and press Enter.\n\n- If a Security guide prompt appears, choose "yes" and press Enter\n- Seeing the Claude welcome screen means everything is set up\n\nYou can now start using Claude Code.',
+              code: 'claude',
+              hint: 'Claude welcome screen shown = success',
+              screenshot: 'Claude welcome screen screenshot'
             }
           }
         },
@@ -389,85 +404,108 @@ export default {
           option2Desc: 'Press Ctrl + ` to open the VS Code terminal, then just run `claude` — same as the macOS/Windows steps.'
         },
         faq: {
-          timeout: 'Timeout errors: set `export ANTHROPIC_TIMEOUT=300000` (5-minute tolerance)',
+          timeout: 'Timeout errors: bump the tolerance to 5 minutes. Windows: `[System.Environment]::SetEnvironmentVariable(\'ANTHROPIC_TIMEOUT\',\'300000\',\'User\')`. macOS: append `export ANTHROPIC_TIMEOUT=300000` to `~/.zshrc`, then `source ~/.zshrc`. After setting it you must close all terminal windows and open a fresh one — only new windows pick up the new value.',
           models: 'Supported models: check the Claude group in admin > Groups',
           oauthResidual: "After launch you see `Failed to connect to api.anthropic.com` (even though the env vars are correct): usually a leftover OAuth credential from a previous Claude Code login is overriding your env vars. Run `rm -f ~/.claude/.credentials.json` (Mac/Linux) or `Remove-Item $HOME\\.claude\\.credentials.json -ErrorAction SilentlyContinue` (Windows) → close the terminal, reopen, then run `claude` again",
-          bothEnvVars: '"Both ANTHROPIC_AUTH_TOKEN and ANTHROPIC_API_KEY set" warning on launch: you previously set ANTHROPIC_API_KEY manually. Run `[Environment]::SetEnvironmentVariable(\'ANTHROPIC_API_KEY\', $null, \'User\')` to remove it, close ALL PowerShell windows, reopen, then run `claude` again'
+          bothEnvVars: '"Both ANTHROPIC_AUTH_TOKEN and ANTHROPIC_API_KEY set" warning on launch: you previously set ANTHROPIC_API_KEY manually. Windows: run `[Environment]::SetEnvironmentVariable(\'ANTHROPIC_API_KEY\', $null, \'User\')` to remove it. macOS: edit `~/.zshrc` to delete the `export ANTHROPIC_API_KEY=...` line, then run `unset ANTHROPIC_API_KEY && source ~/.zshrc`. Close ALL terminal windows, reopen, then run `claude` again',
+          changeKey: 'How to rotate your API Key (upgraded plan / leaked old key / multi-account switching): running the replace command once is NOT enough — you must do all 3 steps. ① Write the new key: on Windows re-run `[System.Environment]::SetEnvironmentVariable(\'ANTHROPIC_AUTH_TOKEN\',\'sk-newKey\',\'User\')`; on macOS edit `~/.zshrc`, change the old `export ANTHROPIC_AUTH_TOKEN=` line to the new key, save, then `source ~/.zshrc`. ② Fully quit every Claude and terminal process: Windows Task Manager (Ctrl+Shift+Esc) → end pwsh.exe / powershell.exe / node.exe; macOS `pkill -9 -f claude`. "Close window" is not the same as "kill process" — a background process still holds the OLD key in memory. ③ Open a BRAND NEW terminal and verify: Windows `echo $env:ANTHROPIC_AUTH_TOKEN`, macOS `echo $ANTHROPIC_AUTH_TOKEN` — should print the new key. If it still shows the old one, step ② was not thorough enough. Once verified, launch `claude`.'
         }
       },
       codex: {
         cardName: 'GPT on macOS / Windows',
         cardTagline: 'OpenAI Codex CLI — official coding agent experience',
-        title: 'Use GPT / Codex (5 minutes)',
-        tagline: "10 minutes, 5 steps to set up Codex CLI.\nOpenAI's terminal AI assistant — it reads files on your computer and helps with all kinds of tasks.",
+        title: 'Use GPT / Codex (~5 minutes)',
+        tagline: "About 5 minutes to set up Codex CLI.\nOpenAI's terminal AI assistant — it reads files on your computer and helps with all kinds of tasks.",
         steps: {
           macos: {
             s1: {
               title: 'Open Terminal',
-              desc: 'Press ⌘ + Space (Spotlight) → type "Terminal" → Enter',
-              hint: 'A window with a % prompt appears = success'
+              desc: 'Mac users complete the setup in the built-in Terminal app.\n\nSteps:\n1. Press ⌘ + Space to open Spotlight\n2. Type "Terminal"\n3. Press Enter (no sudo needed)\n\nAfter opening, you\'ll see a command window with a % prompt.',
+              hint: 'A window with a % prompt = success',
+              screenshot: 'Terminal window screenshot'
             },
             s2: {
-              title: 'Install Homebrew (skip if installed)',
-              desc: 'Homebrew is the "app store" for Mac. The next step needs it to install Node.\n\nFirst check: run "brew --version". Version shown → skip. "command not found" → run the command below (asks for your Mac password — typing is invisible, normal; wait 5-10 min).',
-              hint: 'After install, follow the printed instructions to run eval "$(/opt/homebrew/bin/brew shellenv)" to add brew to PATH; verify with brew --version'
+              title: 'Check Homebrew',
+              desc: 'Homebrew is the package manager for macOS — the next step needs it to install Node. Most developer machines already have it.\n\nRun the command below in Terminal to check.\n\nIf you see a version (e.g. "Homebrew 4.x.x") → already installed, skip to the next step.\n\nIf you see "zsh: command not found: brew" → run the "if not installed" command below. It will ask for your Mac password (typing is invisible, that\'s normal). The whole process takes 5-10 minutes. After install, follow the printed instructions and run eval "$(/opt/homebrew/bin/brew shellenv)" to add brew to PATH.',
+              code: 'brew --version',
+              installCodeLabel: 'If not installed, run:',
+              hint: 'brew --version prints a version = installed',
+              screenshot: 'Homebrew check / install complete screenshot'
             },
             s3: {
-              title: 'Install Node.js (skip if installed)',
-              desc: 'Node.js is the "engine" that runs Codex CLI — like Android needs the Android OS to run APKs.\n\nFirst check: "node --version". v18+ shown → skip. Otherwise run the command below.',
-              hint: '"node --version" prints a v-prefixed version = OK'
+              title: 'Check Node.js',
+              desc: 'Node.js is the "engine" that runs Codex CLI — like Android needs the Android OS to run APKs. Most developer machines already have it.\n\nRun the command below in Terminal.\n\nIf you see a version (v18 or newer, e.g. "v22.15.0") → already installed, skip to the next step.\n\nIf you see "zsh: command not found: node" → run the "if not installed" command to install via Homebrew (from the previous step). After install, rerun "node --version" to verify.',
+              code: 'node --version',
+              installCodeLabel: 'If not installed, run:',
+              hint: 'A v-prefixed version shows = installed',
+              screenshot: 'Node.js version / install complete screenshot'
             },
             s4: {
               title: 'Install Codex CLI',
-              desc: 'npm is the "install command" that comes with Node — this step downloads Codex CLI onto your computer.\n\nCopy + paste + Enter. Wait ~1 minute.',
-              hint: '"added N packages" = installed'
+              desc: 'Node.js comes with npm (Node Package Manager). Think of npm as the "app store for JavaScript tools" — like the App Store on your phone.\n\nOnce Node.js is confirmed, run the command below in Terminal and press Enter. Usually takes 30 seconds ~ 2 minutes.\n\nIf you see "EACCES: permission denied", just prefix with sudo and rerun (sudo npm install -g @openai/codex).',
+              code: 'npm install -g @openai/codex',
+              hint: '"added N packages" means it succeeded',
+              screenshot: 'npm install success screenshot'
             },
             s5: {
-              title: 'Smart-merge Codex config (the important one)',
-              desc: 'Paste the whole block. Auto-backs up your existing config.toml to .bak, inserts the RightToken provider at the right places (root keys at top, [model_providers.RightToken] at end). Idempotent — safe to re-run.',
-              hint: 'Prompt % returns = done. "grep RightToken ~/.codex/config.toml" should print a few lines'
+              title: 'Configure the RightToken provider (the important step)',
+              desc: 'Codex declares its model source in ~/.codex/config.toml. This step registers RightToken as a provider.\n\nPaste the whole block into Terminal. The script auto-backs up your existing config.toml to .bak and inserts the RightToken configuration at the right places. Idempotent — safe to re-run.\n\nNo prior config? Runs cleanly. Other providers already configured? The script preserves them and only touches the RightToken section.',
+              hint: 'Prompt % returns + "grep RightToken ~/.codex/config.toml" prints output = success',
+              screenshot: 'config.toml write complete screenshot'
             },
             s6: {
-              title: 'Write the API key file (the important one)',
-              desc: 'Replace sk-your-key with the actual key copied from RightToken admin "API Keys", then paste and run. This creates ~/.codex/auth.json which Codex reads automatically.',
-              hint: '"cat ~/.codex/auth.json" should show your key (starts with sk-...)'
+              title: 'Write the API Key (the important step)',
+              desc: 'This step creates ~/.codex/auth.json where Codex reads the API Key from at launch.\n\nEdit sk-your-Key in the command below to the real Key you created in the prep step (e.g. sk-rt-xxxxxxxxxxxxxxxx), then paste and run the entire block in Terminal.\n\nNote: edit the Key in a notes app FIRST, then paste — otherwise the command may execute the moment you paste it. Only replace the Key; keep everything else as is.',
+              hint: '"cat ~/.codex/auth.json" shows your sk-... Key = success',
+              screenshot: 'auth.json write complete screenshot'
             },
             s7: {
               title: 'Launch Codex',
-              desc: 'Run "codex" and press Enter.',
-              hint: 'You see the Codex welcome screen — try "hi" to test'
+              desc: 'Just run "codex" in Terminal — no reopen needed (auth.json does not depend on env vars, takes effect immediately).\n\nSeeing the Codex welcome screen means everything is set up.\n\nYou can now start using Codex CLI.',
+              code: 'codex',
+              hint: 'Codex welcome screen shown = success',
+              screenshot: 'Codex welcome screen screenshot'
             }
           },
           windows: {
             s1: {
               title: 'Open PowerShell',
-              desc: 'Win → type "PowerShell" → Enter (regular PowerShell is fine, no admin needed)',
-              hint: 'A blue or dark window opens = success'
+              desc: 'Windows users complete the setup in PowerShell.\n\nSteps:\n1. Press the Win key\n2. Type "PowerShell"\n3. Click to open (no admin rights needed)\n\nAfter opening, you\'ll see a blue or black command window.',
+              hint: 'A blue or black command window = success',
+              screenshot: 'PowerShell window screenshot'
             },
             s2: {
-              title: 'Install Node.js (skip if installed)',
-              desc: 'Node.js is the "engine" that runs Codex CLI — like Android needs the Android OS to run APKs.\n\nFirst check: "node --version". v18+ → skip. Otherwise download LTS from https://nodejs.org and reopen PowerShell after install.',
-              hint: 'After reopen, "node --version" prints a version = OK'
+              title: 'Check Node.js',
+              desc: 'Node.js is the "engine" that runs Codex CLI — like Android needs the Android OS to run APKs. Most developer machines already have it.\n\nType the command below in PowerShell and press Enter.\n\nIf you see a version (v18 or newer, e.g. "v22.15.0") → already installed, skip to the next step.\n\nIf you see "\'node\' is not recognized as an internal or external command" → head to https://nodejs.org and download the LTS installer. After installing, close PowerShell and reopen it, then run "node --version" again to verify.',
+              code: 'node --version',
+              hint: 'A v-prefixed version shows = installed',
+              screenshot: 'Node.js LTS download page screenshot'
             },
             s3: {
               title: 'Install Codex CLI',
-              desc: 'npm is the "install command" that comes with Node — this step downloads Codex CLI onto your computer.\n\nCopy + paste + Enter. Wait ~1 minute.',
-              hint: '"added N packages" = installed'
+              desc: 'Node.js comes with npm (Node Package Manager). Think of npm as the "app store for JavaScript tools" — like the App Store on your phone.\n\nOnce Node.js is confirmed, run the command below in PowerShell and press Enter. Usually takes 30 seconds ~ 2 minutes.',
+              code: 'npm install -g @openai/codex',
+              hint: '"added N packages" means it succeeded',
+              screenshot: 'npm install success screenshot'
             },
             s4: {
-              title: 'Smart-merge Codex config (the important one)',
-              desc: 'Paste the PowerShell script. Backs up existing config.toml, inserts the RightToken provider correctly. Safe to re-run.',
-              hint: '"cat $HOME\\.codex\\config.toml" should show model_provider = "RightToken" at the top'
+              title: 'Configure the RightToken provider (the important step)',
+              desc: 'Codex declares its model source in %USERPROFILE%\\.codex\\config.toml. This step writes the RightToken provider config.\n\nPaste this one-line command into PowerShell. It backs up the existing config.toml to config.toml.bak (if present), then writes the new config. Being a single line, the paste will not stall at >>.\n\nIf you had other providers in config.toml, restore them from the .bak file manually.',
+              hint: '"Get-Content $HOME\\.codex\\config.toml" shows model_provider = "RightToken" at the top = success',
+              screenshot: 'config.toml write complete screenshot'
             },
             s5: {
-              title: 'Write the API key file (the important one)',
-              desc: 'Replace sk-your-key with the actual key copied from RightToken admin "API Keys", then paste and run. This creates %userprofile%\\.codex\\auth.json which Codex reads automatically.',
-              hint: '"cat $HOME\\.codex\\auth.json" should show your key (starts with sk-...)'
+              title: 'Write the API Key (the important step)',
+              desc: 'This step creates %USERPROFILE%\\.codex\\auth.json where Codex reads the API Key from at launch.\n\nEdit sk-your-Key in Notepad first to the real Key from the prep step, then paste this one-line command into PowerShell. Uses .NET WriteAllText with a single statement to avoid UTF-8 BOM that would prevent Codex from reading the config file.\n\nNote: edit the Key FIRST, then paste. Only replace the Key; keep everything else as is.',
+              hint: '"Get-Content $HOME\\.codex\\auth.json" shows your sk-... Key = success',
+              screenshot: 'auth.json write complete screenshot'
             },
             s6: {
               title: 'Launch Codex',
-              desc: 'Just run "codex" (no need to reopen PowerShell — auth.json does not need env vars).',
-              hint: 'You see the Codex welcome screen = success'
+              desc: 'Just run "codex" in PowerShell — no reopen needed (auth.json does not depend on env vars, takes effect immediately).\n\nSeeing the Codex welcome screen means everything is set up.\n\nYou can now start using Codex CLI.',
+              code: 'codex',
+              hint: 'Codex welcome screen shown = success',
+              screenshot: 'Codex welcome screen screenshot'
             }
           }
         },
@@ -488,67 +526,87 @@ export default {
       gemini: {
         cardName: 'Gemini on macOS / Windows',
         cardTagline: 'Google\'s official Gemini CLI, native protocol',
-        title: 'Use Gemini (5 minutes)',
-        tagline: "10 minutes, 5 steps to set up Gemini CLI.\nGoogle's terminal AI assistant — it reads files on your computer and helps with all kinds of tasks.",
+        title: 'Use Gemini (~5 minutes)',
+        tagline: "About 5 minutes to set up Gemini CLI.\nGoogle's terminal AI assistant — it reads files on your computer and helps with all kinds of tasks.",
         groupName: 'Gemini',
         steps: {
           macos: {
             s1: {
               title: 'Open Terminal',
-              desc: 'Press ⌘ + Space (Spotlight) → type "Terminal" → Enter',
-              hint: 'A window with a % prompt appears = success'
+              desc: 'Mac users complete the setup in the built-in Terminal app.\n\nSteps:\n1. Press ⌘ + Space to open Spotlight\n2. Type "Terminal"\n3. Press Enter (no sudo needed)\n\nAfter opening, you\'ll see a command window with a % prompt.',
+              hint: 'A window with a % prompt = success',
+              screenshot: 'Terminal window screenshot'
             },
             s2: {
-              title: 'Install Homebrew (skip if installed)',
-              desc: 'Homebrew is the "app store" for Mac. The next step needs it to install Node.\n\nFirst check: "brew --version". Version shown → skip. "command not found" → run the command below (asks for Mac password — typing is invisible, normal; wait 5-10 min).',
-              hint: 'After install, run eval "$(/opt/homebrew/bin/brew shellenv)" as printed, verify with brew --version'
+              title: 'Check Homebrew',
+              desc: 'Homebrew is the package manager for macOS — the next step needs it to install Node. Most developer machines already have it.\n\nRun the command below in Terminal to check.\n\nIf you see a version (e.g. "Homebrew 4.x.x") → already installed, skip to the next step.\n\nIf you see "zsh: command not found: brew" → run the "if not installed" command below. It will ask for your Mac password (typing is invisible, that\'s normal). The whole process takes 5-10 minutes. After install, follow the printed instructions and run eval "$(/opt/homebrew/bin/brew shellenv)" to add brew to PATH.',
+              code: 'brew --version',
+              installCodeLabel: 'If not installed, run:',
+              hint: 'brew --version prints a version = installed',
+              screenshot: 'Homebrew check / install complete screenshot'
             },
             s3: {
-              title: 'Install Node.js (skip if installed)',
-              desc: 'Node.js is the "engine" that runs Gemini CLI — like Android needs the Android OS to run APKs.\n\nFirst check: "node --version". v18+ → skip. Otherwise run the command below.',
-              hint: '"node --version" prints a v-prefixed version = OK'
+              title: 'Check Node.js',
+              desc: 'Node.js is the "engine" that runs Gemini CLI — like Android needs the Android OS to run APKs. Most developer machines already have it.\n\nRun the command below in Terminal.\n\nIf you see a version (v18 or newer, e.g. "v22.15.0") → already installed, skip to the next step.\n\nIf you see "zsh: command not found: node" → run the "if not installed" command to install via Homebrew (from the previous step). After install, rerun "node --version" to verify.',
+              code: 'node --version',
+              installCodeLabel: 'If not installed, run:',
+              hint: 'A v-prefixed version shows = installed',
+              screenshot: 'Node.js version / install complete screenshot'
             },
             s4: {
               title: 'Install Gemini CLI',
-              desc: 'npm is the "install command" that comes with Node — this step downloads Gemini CLI onto your computer.\n\nCopy + paste + Enter. Wait ~1 minute.',
-              hint: '"added N packages" = installed'
+              desc: 'Node.js comes with npm (Node Package Manager). Think of npm as the "app store for JavaScript tools" — like the App Store on your phone.\n\nOnce Node.js is confirmed, run the command below in Terminal and press Enter. Usually takes 30 seconds ~ 2 minutes.\n\nIf you see "EACCES: permission denied", just prefix with sudo and rerun (sudo npm install -g @google/gemini-cli).',
+              code: 'npm install -g @google/gemini-cli',
+              hint: '"added N packages" means it succeeded',
+              screenshot: 'npm install success screenshot'
             },
             s5: {
-              title: 'Set the env vars (the important one)',
-              desc: 'Replace sk-your-key with the actual key copied from RightToken admin "API Keys", then paste and run.',
-              hint: 'No errors + prompt % returns = done'
+              title: 'Configure RightToken (the important step)',
+              desc: 'By default, Gemini CLI connects to Google\'s official server. This step switches it to RightToken.\n\nFind sk-your-Key in the command below and replace it with the real Key you created in the prep step (e.g. sk-rt-xxxxxxxxxxxxxxxx), then paste and run the entire block in Terminal.\n\nNote: edit the Key in a notes app FIRST, then paste — otherwise the command may execute the moment you paste it. Only replace the Key; keep everything else as is.',
+              hint: 'No errors = configured successfully',
+              screenshot: '.zshrc write / source complete screenshot'
             },
             s6: {
               title: 'Launch Gemini',
-              desc: 'Run "gemini" and press Enter.',
-              hint: 'You see the Gemini welcome screen — try "hi" to test'
+              desc: 'Close the current Terminal window, open a new one, run "gemini" and press Enter.\n\nSeeing the Gemini welcome screen means everything is set up.\n\nYou can now start using Gemini CLI.',
+              code: 'gemini',
+              hint: 'Gemini welcome screen shown = success',
+              screenshot: 'Gemini welcome screen screenshot'
             }
           },
           windows: {
             s1: {
               title: 'Open PowerShell',
-              desc: 'Win → type "PowerShell" → Enter (regular PowerShell is fine, no admin needed)',
-              hint: 'A blue or dark window opens = success'
+              desc: 'Windows users complete the setup in PowerShell.\n\nSteps:\n1. Press the Win key\n2. Type "PowerShell"\n3. Click to open (no admin rights needed)\n\nAfter opening, you\'ll see a blue or black command window.',
+              hint: 'A blue or black command window = success',
+              screenshot: 'PowerShell window screenshot'
             },
             s2: {
-              title: 'Install Node.js (skip if installed)',
-              desc: 'Node.js is the "engine" that runs Gemini CLI — like Android needs the Android OS to run APKs.\n\nFirst check: "node --version". v18+ → skip. Otherwise download LTS from https://nodejs.org and reopen PowerShell after install.',
-              hint: 'After reopen, "node --version" prints a version = OK'
+              title: 'Check Node.js',
+              desc: 'Node.js is the "engine" that runs Gemini CLI — like Android needs the Android OS to run APKs. Most developer machines already have it.\n\nType the command below in PowerShell and press Enter.\n\nIf you see a version (v18 or newer, e.g. "v22.15.0") → already installed, skip to the next step.\n\nIf you see "\'node\' is not recognized as an internal or external command" → head to https://nodejs.org and download the LTS installer. After installing, close PowerShell and reopen it, then run "node --version" again to verify.',
+              code: 'node --version',
+              hint: 'A v-prefixed version shows = installed',
+              screenshot: 'Node.js LTS download page screenshot'
             },
             s3: {
               title: 'Install Gemini CLI',
-              desc: 'npm is the "install command" that comes with Node — this step downloads Gemini CLI onto your computer.\n\nCopy + paste + Enter. Wait ~1 minute.',
-              hint: '"added N packages" = installed'
+              desc: 'Node.js comes with npm (Node Package Manager). Think of npm as the "app store for JavaScript tools" — like the App Store on your phone.\n\nOnce Node.js is confirmed, run the command below in PowerShell and press Enter. Usually takes 30 seconds ~ 2 minutes.',
+              code: 'npm install -g @google/gemini-cli',
+              hint: '"added N packages" means it succeeded',
+              screenshot: 'npm install success screenshot'
             },
             s4: {
-              title: 'Set env vars (the important one)',
-              desc: 'Replace sk-your-key with the actual key copied from RightToken admin "API Keys", then paste and run.',
-              hint: 'You MUST reopen PowerShell for env vars to take effect'
+              title: 'Configure RightToken (the important step)',
+              desc: 'By default, Gemini CLI connects to Google\'s official server. This step switches it to RightToken.\n\nFind sk-your-Key in the three commands below and replace it with the real Key you created in the prep step (e.g. sk-rt-xxxxxxxxxxxxxxxx), then paste ALL three lines into PowerShell together.\n\nNote: edit the Key in Notepad FIRST, then paste — otherwise the command may execute the moment you paste it. Only replace the Key; keep everything else as is.',
+              hint: 'No errors = configured successfully',
+              screenshot: 'PowerShell execution complete screenshot'
             },
             s5: {
               title: 'Launch Gemini',
-              desc: 'Open a NEW PowerShell window, run "gemini".',
-              hint: 'You see the Gemini welcome screen = success'
+              desc: 'Close the current PowerShell, open a NEW window, run "gemini" and press Enter.\n\nSeeing the Gemini welcome screen means everything is set up.\n\nYou can now start using Gemini CLI.',
+              code: 'gemini',
+              hint: 'Gemini welcome screen shown = success',
+              screenshot: 'Gemini welcome screen screenshot'
             }
           }
         },
