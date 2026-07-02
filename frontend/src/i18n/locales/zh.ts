@@ -339,7 +339,7 @@ export default {
             },
             s4: {
               title: '安装 Claude Code CLI',
-              desc: '装好 Node.js 就会自带 npm（Node Package Manager）。可以把 npm 理解成「JavaScript 工具的应用商店」——就像手机的 App Store。\n\n确认 Node.js 已安装后，在终端输入下面命令，按 Enter 开始安装。通常需要等待 30 秒 ~ 2 分钟。\n\n如果提示 EACCES: permission denied，前面加 sudo 重跑一次即可（sudo npm install -g @anthropic-ai/claude-code）。',
+              desc: '装好 Node.js 就会自带 npm（Node Package Manager）。可以把 npm 理解成「JavaScript 工具的应用商店」——就像手机的 App Store。\n\n确认 Node.js 已安装后，在终端输入下面命令，按 Enter 开始安装。通常需要等待 30 秒 ~ 2 分钟。\n\n如果提示 EACCES: permission denied，在上面命令最前面加 sudo 重跑一次即可。',
               code: 'npm install -g @anthropic-ai/claude-code',
               hint: '看到 "added N packages" 表示装好',
               screenshot: 'npm 安装成功截图'
@@ -443,7 +443,7 @@ export default {
             },
             s4: {
               title: '安装 Codex CLI',
-              desc: '装好 Node.js 就会自带 npm（Node Package Manager）。可以把 npm 理解成「JavaScript 工具的应用商店」——就像手机的 App Store。\n\n确认 Node.js 已安装后，在终端输入下面命令，按 Enter 开始安装。通常需要等待 30 秒 ~ 2 分钟。\n\n如果提示 EACCES: permission denied，前面加 sudo 重跑一次即可（sudo npm install -g @openai/codex）。',
+              desc: '装好 Node.js 就会自带 npm（Node Package Manager）。可以把 npm 理解成「JavaScript 工具的应用商店」——就像手机的 App Store。\n\n确认 Node.js 已安装后，在终端输入下面命令，按 Enter 开始安装。通常需要等待 30 秒 ~ 2 分钟。\n\n如果提示 EACCES: permission denied，在上面命令最前面加 sudo 重跑一次即可。',
               code: 'npm install -g @openai/codex',
               hint: '看到 "added N packages" 表示装好',
               screenshot: 'npm 安装成功截图'
@@ -555,7 +555,7 @@ export default {
             },
             s4: {
               title: '安装 Gemini CLI',
-              desc: '装好 Node.js 就会自带 npm（Node Package Manager）。可以把 npm 理解成「JavaScript 工具的应用商店」——就像手机的 App Store。\n\n确认 Node.js 已安装后，在终端输入下面命令，按 Enter 开始安装。通常需要等待 30 秒 ~ 2 分钟。\n\n如果提示 EACCES: permission denied，前面加 sudo 重跑一次即可（sudo npm install -g @google/gemini-cli）。',
+              desc: '装好 Node.js 就会自带 npm（Node Package Manager）。可以把 npm 理解成「JavaScript 工具的应用商店」——就像手机的 App Store。\n\n确认 Node.js 已安装后，在终端输入下面命令，按 Enter 开始安装。通常需要等待 30 秒 ~ 2 分钟。\n\n如果提示 EACCES: permission denied，在上面命令最前面加 sudo 重跑一次即可。',
               code: 'npm install -g @google/gemini-cli',
               hint: '看到 "added N packages" 表示装好',
               screenshot: 'npm 安装成功截图'

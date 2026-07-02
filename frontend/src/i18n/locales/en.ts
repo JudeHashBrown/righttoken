@@ -339,7 +339,7 @@ export default {
             },
             s4: {
               title: 'Install Claude Code CLI',
-              desc: 'Node.js comes with npm (Node Package Manager). Think of npm as the "app store for JavaScript tools" — like the App Store on your phone.\n\nOnce Node.js is confirmed, run the command below in Terminal and press Enter. Usually takes 30 seconds ~ 2 minutes.\n\nIf you see "EACCES: permission denied", just prefix with sudo and rerun (sudo npm install -g @anthropic-ai/claude-code).',
+              desc: 'Node.js comes with npm (Node Package Manager). Think of npm as the "app store for JavaScript tools" — like the App Store on your phone.\n\nOnce Node.js is confirmed, run the command below in Terminal and press Enter. Usually takes 30 seconds ~ 2 minutes.\n\nIf you see "EACCES: permission denied", rerun the command above with sudo prefixed.',
               code: 'npm install -g @anthropic-ai/claude-code',
               hint: '"added N packages" means it succeeded',
               screenshot: 'npm install success screenshot'
@@ -442,7 +442,7 @@ export default {
             },
             s4: {
               title: 'Install Codex CLI',
-              desc: 'Node.js comes with npm (Node Package Manager). Think of npm as the "app store for JavaScript tools" — like the App Store on your phone.\n\nOnce Node.js is confirmed, run the command below in Terminal and press Enter. Usually takes 30 seconds ~ 2 minutes.\n\nIf you see "EACCES: permission denied", just prefix with sudo and rerun (sudo npm install -g @openai/codex).',
+              desc: 'Node.js comes with npm (Node Package Manager). Think of npm as the "app store for JavaScript tools" — like the App Store on your phone.\n\nOnce Node.js is confirmed, run the command below in Terminal and press Enter. Usually takes 30 seconds ~ 2 minutes.\n\nIf you see "EACCES: permission denied", rerun the command above with sudo prefixed.',
               code: 'npm install -g @openai/codex',
               hint: '"added N packages" means it succeeded',
               screenshot: 'npm install success screenshot'
@@ -555,7 +555,7 @@ export default {
             },
             s4: {
               title: 'Install Gemini CLI',
-              desc: 'Node.js comes with npm (Node Package Manager). Think of npm as the "app store for JavaScript tools" — like the App Store on your phone.\n\nOnce Node.js is confirmed, run the command below in Terminal and press Enter. Usually takes 30 seconds ~ 2 minutes.\n\nIf you see "EACCES: permission denied", just prefix with sudo and rerun (sudo npm install -g @google/gemini-cli).',
+              desc: 'Node.js comes with npm (Node Package Manager). Think of npm as the "app store for JavaScript tools" — like the App Store on your phone.\n\nOnce Node.js is confirmed, run the command below in Terminal and press Enter. Usually takes 30 seconds ~ 2 minutes.\n\nIf you see "EACCES: permission denied", rerun the command above with sudo prefixed.',
               code: 'npm install -g @google/gemini-cli',
               hint: '"added N packages" means it succeeded',
               screenshot: 'npm install success screenshot'
