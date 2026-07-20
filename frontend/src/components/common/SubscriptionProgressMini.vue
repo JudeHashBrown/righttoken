@@ -251,10 +251,12 @@ function getProgressWidth(used: number | undefined, limit: number | null | undef
   return `${percentage}%`
 }
 
+// FX rate locked at 7.0 (matches backend payment_fulfillment.go: USD = CNY / 7.0)
+const FX_USD_TO_CNY = 7.0
 function formatUsage(used: number | undefined, limit: number | null | undefined): string {
-  const usedValue = (used || 0).toFixed(2)
-  const limitValue = limit?.toFixed(2) || '∞'
-  return `$${usedValue}/$${limitValue}`
+  const usedCNY = Math.round((used || 0) * FX_USD_TO_CNY)
+  const limitCNY = limit != null ? Math.round(limit * FX_USD_TO_CNY) : null
+  return limitCNY == null ? `¥${usedCNY}/∞` : `¥${usedCNY}/¥${limitCNY}`
 }
 
 function formatDaysRemaining(expiresAt: string): string {

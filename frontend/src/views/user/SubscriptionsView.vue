@@ -101,8 +101,8 @@
                   {{ t('userSubscriptions.daily') }}
                 </span>
                 <span class="text-sm text-gray-500 dark:text-dark-400">
-                  ${{ (subscription.daily_usage_usd || 0).toFixed(2) }} / ${{
-                    subscription.group.daily_limit_usd.toFixed(2)
+                  ¥{{ toCNY(subscription.daily_usage_usd || 0) }} / ¥{{
+                    toCNY(subscription.group.daily_limit_usd)
                   }}
                 </span>
               </div>
@@ -142,8 +142,8 @@
                   {{ t('userSubscriptions.weekly') }}
                 </span>
                 <span class="text-sm text-gray-500 dark:text-dark-400">
-                  ${{ (subscription.weekly_usage_usd || 0).toFixed(2) }} / ${{
-                    subscription.group.weekly_limit_usd.toFixed(2)
+                  ¥{{ toCNY(subscription.weekly_usage_usd || 0) }} / ¥{{
+                    toCNY(subscription.group.weekly_limit_usd)
                   }}
                 </span>
               </div>
@@ -183,8 +183,8 @@
                   {{ t('userSubscriptions.monthly') }}
                 </span>
                 <span class="text-sm text-gray-500 dark:text-dark-400">
-                  ${{ (subscription.monthly_usage_usd || 0).toFixed(2) }} / ${{
-                    subscription.group.monthly_limit_usd.toFixed(2)
+                  ¥{{ toCNY(subscription.monthly_usage_usd || 0) }} / ¥{{
+                    toCNY(subscription.group.monthly_limit_usd)
                   }}
                 </span>
               </div>
@@ -270,6 +270,14 @@ function platformAccentDotClass(p: string): string {
 const { t } = useI18n()
 const router = useRouter()
 const appStore = useAppStore()
+
+// FX rate locked at 7.0 (matches backend payment_fulfillment.go: USD = CNY / 7.0)
+const FX_USD_TO_CNY = 7.0
+function toCNY(usd: number | null | undefined): string {
+  if (usd == null || isNaN(Number(usd))) return ''
+  return String(Math.round(Number(usd) * FX_USD_TO_CNY))
+}
+
 
 const subscriptions = ref<UserSubscription[]>([])
 const loading = ref(true)

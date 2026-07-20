@@ -733,9 +733,11 @@ const modelStats = computed<any[]>(() => resultData.value?.model_stats || [])
 
 // ==================== Utility Functions ====================
 
+// Display in CNY: multiply USD value by fixed 7.0 rate (matches backend payment_fulfillment.go)
+const FX_USD_TO_CNY = 7.0
 function usd(value: number | null | undefined): string {
   if (value == null || value < 0) return '-'
-  return '$' + Number(value).toFixed(2)
+  return '¥' + (Number(value) * FX_USD_TO_CNY).toFixed(2)
 }
 
 function fmtNum(val: number | null | undefined): string {

@@ -55,11 +55,11 @@
                 {{ t('usage.totalCost') }}
               </p>
               <p class="text-xl font-bold text-green-600 dark:text-green-400">
-                ${{ (usageStats?.total_actual_cost || 0).toFixed(4) }}
+                {{ toCNY(usageStats?.total_actual_cost || 0, 4) }}
               </p>
               <p class="text-xs text-gray-500 dark:text-gray-400">
                 {{ t('usage.actualCost') }} /
-                <span class="line-through">${{ (usageStats?.total_cost || 0).toFixed(4) }}</span>
+                <span class="line-through">{{ toCNY(usageStats?.total_cost || 0, 4) }}</span>
                 {{ t('usage.standardCost') }}
               </p>
             </div>
@@ -280,7 +280,7 @@
           <template #cell-cost="{ row }">
             <div class="flex items-center gap-1.5 text-sm">
               <span class="font-medium text-green-600 dark:text-green-400">
-                ${{ row.actual_cost.toFixed(6) }}
+                {{ toCNY(row.actual_cost, 6) }}
               </span>
               <!-- Cost Detail Tooltip -->
               <div
@@ -441,11 +441,11 @@
             <div class="text-xs font-semibold text-gray-300 mb-1">{{ t('usage.costDetails') }}</div>
             <div v-if="tooltipData && tooltipData.input_cost > 0" class="flex items-center justify-between gap-4">
               <span class="text-gray-400">{{ t('admin.usage.inputCost') }}</span>
-              <span class="font-medium text-white">${{ tooltipData.input_cost.toFixed(6) }}</span>
+              <span class="font-medium text-white">{{ toCNY(tooltipData.input_cost, 6) }}</span>
             </div>
             <div v-if="tooltipData && tooltipData.output_cost > 0" class="flex items-center justify-between gap-4">
               <span class="text-gray-400">{{ t('admin.usage.outputCost') }}</span>
-              <span class="font-medium text-white">${{ tooltipData.output_cost.toFixed(6) }}</span>
+              <span class="font-medium text-white">{{ toCNY(tooltipData.output_cost, 6) }}</span>
             </div>
             <div v-if="tooltipData && tooltipData.input_tokens > 0" class="flex items-center justify-between gap-4">
               <span class="text-gray-400">{{ t('usage.inputTokenPrice') }}</span>
@@ -472,7 +472,7 @@
           <div class="flex items-center justify-between gap-6 border-t border-gray-700 pt-1.5">
             <span class="text-gray-400">{{ t('usage.billed') }}</span>
             <span class="font-semibold text-green-400"
-              >${{ tooltipData?.actual_cost.toFixed(6) }}</span
+              >{{ toCNY(tooltipData?.actual_cost, 6) }}</span
             >
           </div>
         </div>
@@ -508,6 +508,13 @@ import { getUsageServiceTierLabel } from '@/utils/usageServiceTier'
 import { resolveUsageRequestType } from '@/utils/usageRequestType'
 
 const { t } = useI18n()
+
+// FX rate locked at 7.0 (matches backend payment_fulfillment.go: USD = CNY / 7.0)
+const FX_USD_TO_CNY = 7.0
+function toCNY(usd: number | null | undefined, digits = 2): string {
+  if (usd == null || isNaN(Number(usd))) return '¥0.00'
+  return '¥' + (Number(usd) * FX_USD_TO_CNY).toFixed(digits)
+}
 const appStore = useAppStore()
 
 let abortController: AbortController | null = null
