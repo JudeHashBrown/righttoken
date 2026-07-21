@@ -25,6 +25,7 @@ const (
 	rateLimitModeFixed         = "fixed"
 	checkPaidResultAlreadyPaid = "already_paid"
 	checkPaidResultCancelled   = "cancelled"
+	checkPaidResultCheckFailed = "check_failed"
 )
 
 func (s *PaymentService) checkCancelRateLimit(ctx context.Context, userID int64, cfg *PaymentConfig) error {
@@ -116,8 +117,12 @@ func (s *PaymentService) AdminCancelOrder(ctx context.Context, orderID int64) (s
 
 func (s *PaymentService) cancelCore(ctx context.Context, o *dbent.PaymentOrder, fs, op, ad string) (string, error) {
 	if o.PaymentTradeNo != "" || o.PaymentType != "" {
-		if s.checkPaid(ctx, o) == checkPaidResultAlreadyPaid {
+		result := s.checkPaid(ctx, o, true)
+		if result == checkPaidResultAlreadyPaid {
 			return checkPaidResultAlreadyPaid, nil
+		}
+		if result == checkPaidResultCheckFailed {
+			return "", fmt.Errorf("upstream payment status check or cancellation failed")
 		}
 	}
 	c, err := s.entClient.PaymentOrder.Update().Where(paymentorder.IDEQ(o.ID), paymentorder.StatusEQ(OrderStatusPending)).SetStatus(fs).Save(ctx)
@@ -134,10 +139,17 @@ func (s *PaymentService) cancelCore(ctx context.Context, o *dbent.PaymentOrder, 
 	return checkPaidResultCancelled, nil
 }
 
-func (s *PaymentService) checkPaid(ctx context.Context, o *dbent.PaymentOrder) string {
+// checkPaid queries upstream status. When cancelIfPending is true and the
+// upstream reports not-paid, it also cancels the upstream trade (used by the
+// cancel/expire path). Verify (read-only) callers MUST pass false — an async
+// payment method (WeChat Pay / Alipay via Stripe) can sit in `processing`
+// while the user is completing the transaction, and cancelling there voids
+// the trade even though the customer's account has already been debited.
+func (s *PaymentService) checkPaid(ctx context.Context, o *dbent.PaymentOrder, cancelIfPending bool) string {
 	prov, err := s.getOrderProvider(ctx, o)
 	if err != nil {
-		return ""
+		slog.Warn("get order provider failed", "orderID", o.ID, "error", err)
+		return checkPaidResultCheckFailed
 	}
 	// Use OutTradeNo as fallback when PaymentTradeNo is empty
 	// (e.g. EasyPay popup mode where trade_no arrives only via notify callback)
@@ -148,7 +160,7 @@ func (s *PaymentService) checkPaid(ctx context.Context, o *dbent.PaymentOrder) s
 	resp, err := prov.QueryOrder(ctx, tradeNo)
 	if err != nil {
 		slog.Warn("query upstream failed", "orderID", o.ID, "error", err)
-		return ""
+		return checkPaidResultCheckFailed
 	}
 	if resp.Status == payment.ProviderStatusPaid {
 		if err := s.HandlePaymentNotification(ctx, &payment.PaymentNotification{TradeNo: o.PaymentTradeNo, OrderID: o.OutTradeNo, Amount: resp.Amount, Status: payment.ProviderStatusSuccess}, prov.ProviderKey()); err != nil {
@@ -157,8 +169,13 @@ func (s *PaymentService) checkPaid(ctx context.Context, o *dbent.PaymentOrder) s
 		}
 		return checkPaidResultAlreadyPaid
 	}
-	if cp, ok := prov.(payment.CancelableProvider); ok {
-		_ = cp.CancelPayment(ctx, tradeNo)
+	if cancelIfPending && resp.Status == payment.ProviderStatusPending {
+		if cp, ok := prov.(payment.CancelableProvider); ok {
+			if err := cp.CancelPayment(ctx, tradeNo); err != nil {
+				slog.Warn("cancel upstream payment failed", "orderID", o.ID, "tradeNo", tradeNo, "error", err)
+				return checkPaidResultCheckFailed
+			}
+		}
 	}
 	return ""
 }
@@ -178,7 +195,7 @@ func (s *PaymentService) VerifyOrderByOutTradeNo(ctx context.Context, outTradeNo
 	}
 	// Only verify orders that are still pending or recently expired
 	if o.Status == OrderStatusPending || o.Status == OrderStatusExpired {
-		result := s.checkPaid(ctx, o)
+		result := s.checkPaid(ctx, o, false)
 		if result == checkPaidResultAlreadyPaid {
 			// Reload order to get updated status
 			o, err = s.entClient.PaymentOrder.Get(ctx, o.ID)
@@ -200,7 +217,7 @@ func (s *PaymentService) VerifyOrderPublic(ctx context.Context, outTradeNo strin
 		return nil, infraerrors.NotFound("NOT_FOUND", "order not found")
 	}
 	if o.Status == OrderStatusPending || o.Status == OrderStatusExpired {
-		result := s.checkPaid(ctx, o)
+		result := s.checkPaid(ctx, o, false)
 		if result == checkPaidResultAlreadyPaid {
 			o, err = s.entClient.PaymentOrder.Get(ctx, o.ID)
 			if err != nil {
@@ -221,7 +238,11 @@ func (s *PaymentService) ExpireTimedOutOrders(ctx context.Context) (int, error) 
 	for _, o := range orders {
 		// Check upstream payment status before expiring — the user may have
 		// paid just before timeout and the webhook hasn't arrived yet.
-		outcome, _ := s.cancelCore(ctx, o, OrderStatusExpired, "system", "order expired")
+		outcome, cancelErr := s.cancelCore(ctx, o, OrderStatusExpired, "system", "order expired")
+		if cancelErr != nil {
+			slog.Warn("defer order expiry because upstream state is uncertain", "orderID", o.ID, "error", cancelErr)
+			continue
+		}
 		if outcome == checkPaidResultAlreadyPaid {
 			slog.Info("order was paid during expiry", "orderID", o.ID)
 			continue

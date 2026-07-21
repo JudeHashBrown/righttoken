@@ -4,10 +4,22 @@ package service
 
 import (
 	"errors"
+	"slices"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestPaymentSuccessRecoverableStatuses(t *testing.T) {
+	t.Parallel()
+
+	statuses := paymentSuccessRecoverableStatuses()
+	assert.True(t, slices.Contains(statuses, OrderStatusPending))
+	assert.True(t, slices.Contains(statuses, OrderStatusCancelled))
+	assert.True(t, slices.Contains(statuses, OrderStatusExpired), "verified late payments must recover expired orders")
+	assert.False(t, slices.Contains(statuses, OrderStatusCompleted))
+	assert.False(t, slices.Contains(statuses, OrderStatusRefunded))
+}
 
 // ---------------------------------------------------------------------------
 // resolveRedeemAction — pure idempotency decision logic

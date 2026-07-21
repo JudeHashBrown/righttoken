@@ -59,17 +59,9 @@ func (s *PaymentService) confirmPayment(ctx context.Context, oid int64, tradeNo 
 func (s *PaymentService) toPaid(ctx context.Context, o *dbent.PaymentOrder, tradeNo string, paid float64, pk string) error {
 	previousStatus := o.Status
 	now := time.Now()
-	grace := now.Add(-paymentGraceMinutes * time.Minute)
 	c, err := s.entClient.PaymentOrder.Update().Where(
 		paymentorder.IDEQ(o.ID),
-		paymentorder.Or(
-			paymentorder.StatusEQ(OrderStatusPending),
-			paymentorder.StatusEQ(OrderStatusCancelled),
-			paymentorder.And(
-				paymentorder.StatusEQ(OrderStatusExpired),
-				paymentorder.UpdatedAtGTE(grace),
-			),
-		),
+		paymentorder.StatusIn(paymentSuccessRecoverableStatuses()...),
 	).SetStatus(OrderStatusPaid).SetPayAmount(paid).SetPaymentTradeNo(tradeNo).SetPaidAt(now).ClearFailedAt().ClearFailedReason().Save(ctx)
 	if err != nil {
 		return fmt.Errorf("update to PAID: %w", err)
@@ -108,20 +100,28 @@ func (s *PaymentService) alreadyProcessed(ctx context.Context, o *dbent.PaymentO
 	case OrderStatusPaid, OrderStatusRecharging:
 		return fmt.Errorf("order %d is being processed", o.ID)
 	case OrderStatusExpired:
-		slog.Warn("webhook payment success for expired order beyond grace period",
+		// An authenticated payment-success notification must never be
+		// acknowledged while the corresponding order is still unfulfilled.
+		// Returning an error makes the provider retry instead of silently
+		// losing a successful payment.
+		slog.Error("payment success left order expired",
 			"orderID", o.ID,
 			"status", cur.Status,
 			"updatedAt", cur.UpdatedAt,
 		)
-		s.writeAuditLog(ctx, o.ID, "PAYMENT_AFTER_EXPIRY", "system", map[string]any{
+		s.writeAuditLog(ctx, o.ID, "PAYMENT_RECOVERY_FAILED", "system", map[string]any{
 			"status":    cur.Status,
 			"updatedAt": cur.UpdatedAt,
-			"reason":    "payment arrived after expiry grace period",
+			"reason":    "verified payment success could not recover expired order",
 		})
-		return nil
+		return fmt.Errorf("verified payment succeeded but order %d remains expired", o.ID)
 	default:
 		return nil
 	}
+}
+
+func paymentSuccessRecoverableStatuses() []string {
+	return []string{OrderStatusPending, OrderStatusCancelled, OrderStatusExpired}
 }
 
 func (s *PaymentService) executeFulfillment(ctx context.Context, oid int64) error {
