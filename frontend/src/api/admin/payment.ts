@@ -86,6 +86,14 @@ export const adminPaymentAPI = {
     return apiClient.get<BasePaginationResponse<PaymentOrder>>('/admin/payment/orders', { params })
   },
 
+  /** Export unique emails for cancelled, expired, and failed payment orders. */
+  exportIncompleteEmails(params?: { payment_type?: string; keyword?: string; order_type?: string }) {
+    return apiClient.get<Blob>('/admin/payment/orders/export-incomplete-emails', {
+      params,
+      responseType: 'blob'
+    })
+  },
+
   /** Get a specific order by ID */
   getOrder(id: number) {
     return apiClient.get<PaymentOrder>(`/admin/payment/orders/${id}`)

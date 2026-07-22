@@ -24,6 +24,12 @@
           <span class="flex flex-col items-start leading-none">
             <span class="text-base font-semibold">{{ t(`payment.methods.${method.type}`) }}</span>
             <span
+              v-if="methodHint(method.type)"
+              class="mt-1 text-[10px] tracking-wide text-gray-500 dark:text-dark-400"
+            >
+              {{ methodHint(method.type) }}
+            </span>
+            <span
               v-if="method.fee_rate > 0"
               class="text-[10px] tracking-wide text-gray-500 dark:text-dark-400"
             >
@@ -80,6 +86,10 @@ function methodIcon(type: string): string {
   if (type.includes('alipay')) return METHOD_ICONS.alipay
   if (type.includes('wxpay')) return METHOD_ICONS.wxpay
   return METHOD_ICONS[type] || alipayIcon
+}
+
+function methodHint(type: string): string {
+  return type === 'stripe' ? t('payment.methodHints.stripe') : ''
 }
 
 function methodSelectedClass(type: string): string {

@@ -1966,6 +1966,7 @@ export default {
       copyPassword: '复制密码',
       creating: '创建中...',
       updating: '更新中...',
+      exportEmails: '导出用户邮箱',
       columns: {
         user: '用户',
         email: '邮箱',
@@ -6074,11 +6075,14 @@ export default {
       easypay: '易支付',
       alipay: '支付宝',
       wxpay: '微信支付',
-      stripe: 'Stripe',
+      stripe: '微信支付 / 银行卡',
       card: '银行卡',
       link: 'Link',
       alipay_direct: '支付宝（直连）',
       wxpay_direct: '微信支付（直连）',
+    },
+    methodHints: {
+      stripe: '由 Stripe 安全处理',
     },
     status: {
       pending: '待支付',
@@ -6224,6 +6228,7 @@ export default {
       weeks: '周',
       months: '月',
       searchOrders: '搜索订单...',
+      exportIncompleteEmails: '导出未完成支付用户',
       allStatuses: '全部状态',
       allPaymentTypes: '全部支付方式',
       allOrderTypes: '全部订单类型',

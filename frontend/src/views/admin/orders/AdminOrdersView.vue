@@ -11,6 +11,10 @@
           <Select v-model="orderFilters.payment_type" :options="paymentTypeFilterOptions" class="w-40" @change="loadOrders" />
           <Select v-model="orderFilters.order_type" :options="orderTypeFilterOptions" class="w-36" @change="loadOrders" />
           <div class="flex flex-1 flex-wrap items-center justify-end gap-2">
+            <button @click="exportIncompleteEmails" :disabled="exporting" class="btn btn-secondary">
+              <Icon name="download" size="sm" />
+              {{ t('payment.admin.exportIncompleteEmails') }}
+            </button>
             <button @click="loadOrders" :disabled="ordersLoading" class="btn btn-secondary" :title="t('common.refresh')">
               <Icon name="refresh" size="md" :class="ordersLoading ? 'animate-spin' : ''" />
             </button>
@@ -148,9 +152,33 @@ const selectedOrder = ref<PaymentOrder | null>(null)
 const showDetailDialog = ref(false)
 const showRefundDialog = ref(false)
 const refundSubmitting = ref(false)
+const exporting = ref(false)
 const orderAuditLogs = ref<AuditLog[]>([])
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
+async function exportIncompleteEmails() {
+  exporting.value = true
+  try {
+    const response = await adminPaymentAPI.exportIncompleteEmails({
+      keyword: orderSearch.value || undefined,
+      payment_type: orderFilters.payment_type || undefined,
+      order_type: orderFilters.order_type || undefined,
+    })
+    const url = URL.createObjectURL(response.data)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `righttoken-incomplete-payments-${new Date().toISOString().slice(0, 10)}.csv`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  } catch (err: unknown) {
+    appStore.showError(extractApiErrorMessage(err, t('common.error')))
+  } finally {
+    exporting.value = false
+  }
+}
 function debounceLoadOrders() {
   if (debounceTimer) clearTimeout(debounceTimer)
   debounceTimer = setTimeout(() => loadOrders(), 300)

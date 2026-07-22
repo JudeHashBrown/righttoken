@@ -1940,6 +1940,7 @@ export default {
       copyPassword: 'Copy password',
       creating: 'Creating...',
       updating: 'Updating...',
+      exportEmails: 'Export User Emails',
       columns: {
         user: 'User',
         email: 'Email',
@@ -5886,11 +5887,14 @@ export default {
       easypay: 'EasyPay',
       alipay: 'Alipay',
       wxpay: 'WeChat Pay',
-      stripe: 'Stripe',
+      stripe: 'WeChat Pay / Cards',
       card: 'Card',
       link: 'Link',
       alipay_direct: 'Alipay (Direct)',
       wxpay_direct: 'WeChat Pay (Direct)',
+    },
+    methodHints: {
+      stripe: 'Securely processed by Stripe',
     },
     status: {
       pending: 'Pending',
@@ -6036,6 +6040,7 @@ export default {
       weeks: 'weeks',
       months: 'months',
       searchOrders: 'Search orders...',
+      exportIncompleteEmails: 'Export Incomplete Payments',
       allStatuses: 'All Statuses',
       allPaymentTypes: 'All Payment Types',
       allOrderTypes: 'All Order Types',

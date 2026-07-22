@@ -59,6 +59,14 @@ export async function list(
   return data
 }
 
+/** Export all users as a CSV file. */
+export async function exportEmails(): Promise<Blob> {
+  const { data } = await apiClient.get<Blob>('/admin/users/export-emails', {
+    responseType: 'blob'
+  })
+  return data
+}
+
 /**
  * Get user by ID
  * @param id - User ID
@@ -264,6 +272,7 @@ export async function replaceGroup(
 
 export const usersAPI = {
   list,
+  exportEmails,
   getById,
   create,
   update,

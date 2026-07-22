@@ -1423,11 +1423,14 @@ export default {
       easypay: 'EasyPay',
       alipay: 'Alipay',
       wxpay: 'WeChat Pay',
-      stripe: 'Stripe',
+      stripe: 'WeChat Pay / карты',
       card: 'Банковская карта',
       link: 'Link',
       alipay_direct: 'Alipay (прямой)',
       wxpay_direct: 'WeChat Pay (прямой)'
+    },
+    methodHints: {
+      stripe: 'Безопасная обработка через Stripe'
     },
     status: {
       pending: 'Ожидает оплаты',

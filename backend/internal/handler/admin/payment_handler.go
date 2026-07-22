@@ -1,13 +1,98 @@
 package admin
 
 import (
+	"encoding/csv"
+	"sort"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/Wei-Shaw/sub2api/internal/pkg/response"
 	"github.com/Wei-Shaw/sub2api/internal/service"
 
 	"github.com/gin-gonic/gin"
 )
+
+type incompletePaymentEmailRow struct {
+	UserID         int64
+	Email          string
+	CancelledCount int
+	ExpiredCount   int
+	FailedCount    int
+	LastOrderAt    time.Time
+	LastAmount     float64
+	LastPayAmount  float64
+	LastPayType    string
+}
+
+// ExportIncompleteEmails exports unique users with cancelled, expired, or failed orders.
+// GET /api/v1/admin/payment/orders/export-incomplete-emails
+func (h *PaymentHandler) ExportIncompleteEmails(c *gin.Context) {
+	const pageSize = 100
+	rows := make(map[string]*incompletePaymentEmailRow)
+	statuses := []string{service.OrderStatusCancelled, service.OrderStatusExpired, service.OrderStatusFailed}
+
+	for _, status := range statuses {
+		for page := 1; ; page++ {
+			orders, total, err := h.paymentService.AdminListOrders(c.Request.Context(), 0, service.OrderListParams{
+				Page: page, PageSize: pageSize, Status: status,
+				OrderType: c.Query("order_type"), PaymentType: c.Query("payment_type"), Keyword: c.Query("keyword"),
+			})
+			if err != nil {
+				response.ErrorFrom(c, err)
+				return
+			}
+			for _, order := range orders {
+				email := strings.ToLower(strings.TrimSpace(order.UserEmail))
+				if email == "" {
+					continue
+				}
+				row := rows[email]
+				if row == nil {
+					row = &incompletePaymentEmailRow{UserID: order.UserID, Email: order.UserEmail}
+					rows[email] = row
+				}
+				switch order.Status {
+				case service.OrderStatusCancelled:
+					row.CancelledCount++
+				case service.OrderStatusExpired:
+					row.ExpiredCount++
+				case service.OrderStatusFailed:
+					row.FailedCount++
+				}
+				if order.CreatedAt.After(row.LastOrderAt) {
+					row.LastOrderAt = order.CreatedAt
+					row.LastAmount = order.Amount
+					row.LastPayAmount = order.PayAmount
+					row.LastPayType = order.PaymentType
+				}
+			}
+			if page*pageSize >= total || len(orders) == 0 {
+				break
+			}
+		}
+	}
+
+	c.Header("Content-Type", "text/csv; charset=utf-8")
+	c.Header("Content-Disposition", `attachment; filename="righttoken-incomplete-payments.csv"`)
+	_, _ = c.Writer.Write([]byte{0xEF, 0xBB, 0xBF})
+	writer := csv.NewWriter(c.Writer)
+	_ = writer.Write([]string{"user_id", "email", "cancelled_count", "expired_count", "failed_count", "last_order_at", "last_amount", "last_pay_amount", "last_payment_type"})
+	emails := make([]string, 0, len(rows))
+	for email := range rows {
+		emails = append(emails, email)
+	}
+	sort.Strings(emails)
+	for _, email := range emails {
+		row := rows[email]
+		_ = writer.Write([]string{
+			strconv.FormatInt(row.UserID, 10), row.Email, strconv.Itoa(row.CancelledCount), strconv.Itoa(row.ExpiredCount), strconv.Itoa(row.FailedCount),
+			row.LastOrderAt.Format("2006-01-02 15:04:05"), strconv.FormatFloat(row.LastAmount, 'f', 2, 64),
+			strconv.FormatFloat(row.LastPayAmount, 'f', 2, 64), row.LastPayType,
+		})
+	}
+	writer.Flush()
+}
 
 // PaymentHandler handles admin payment management.
 type PaymentHandler struct {

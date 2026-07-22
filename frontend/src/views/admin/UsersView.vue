@@ -125,6 +125,15 @@
               >
                 <Icon name="refresh" size="md" :class="loading ? 'animate-spin' : ''" />
               </button>
+              <button
+                @click="exportUserEmails"
+                :disabled="exportingEmails"
+                class="btn btn-secondary px-2 md:px-3"
+                :title="t('admin.users.exportEmails')"
+              >
+                <Icon name="download" size="sm" class="md:mr-1.5" />
+                <span class="hidden md:inline">{{ t('admin.users.exportEmails') }}</span>
+              </button>
               <!-- Filter Settings Dropdown -->
               <div class="relative" ref="filterDropdownRef">
                 <button
@@ -649,6 +658,30 @@ import UserBalanceHistoryModal from '@/components/admin/user/UserBalanceHistoryM
 import GroupReplaceModal from '@/components/admin/user/GroupReplaceModal.vue'
 
 const appStore = useAppStore()
+const exportingEmails = ref(false)
+
+const downloadBlob = (blob: Blob, filename: string) => {
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(url)
+}
+
+const exportUserEmails = async () => {
+  exportingEmails.value = true
+  try {
+    const blob = await adminAPI.users.exportEmails()
+    downloadBlob(blob, `righttoken-users-${new Date().toISOString().slice(0, 10)}.csv`)
+  } catch (error: any) {
+    appStore.showError(error?.message || t('common.error'))
+  } finally {
+    exportingEmails.value = false
+  }
+}
 
 // Generate dynamic attribute columns from enabled definitions
 const attributeColumns = computed<Column[]>(() =>

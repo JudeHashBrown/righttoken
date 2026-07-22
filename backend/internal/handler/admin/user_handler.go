@@ -1,7 +1,9 @@
 package admin
 
 import (
+	"bytes"
 	"context"
+	"encoding/csv"
 	"strconv"
 	"strings"
 
@@ -11,6 +13,43 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+// ExportEmails exports all user email addresses as a UTF-8 CSV file.
+// GET /api/v1/admin/users/export-emails
+func (h *UserHandler) ExportEmails(c *gin.Context) {
+	const pageSize = 500
+	var output bytes.Buffer
+	_, _ = output.Write([]byte{0xEF, 0xBB, 0xBF})
+	writer := csv.NewWriter(&output)
+	_ = writer.Write([]string{"user_id", "email", "username", "status", "role", "balance", "registered_at"})
+
+	for page := 1; ; page++ {
+		users, total, err := h.adminService.ListUsers(
+			c.Request.Context(), page, pageSize, service.UserListFilters{}, "id", "asc",
+		)
+		if err != nil {
+			response.ErrorFrom(c, err)
+			return
+		}
+		for _, user := range users {
+			_ = writer.Write([]string{
+				strconv.FormatInt(user.ID, 10), user.Email, user.Username, user.Status, user.Role,
+				strconv.FormatFloat(user.Balance, 'f', 2, 64), user.CreatedAt.Format("2006-01-02 15:04:05"),
+			})
+		}
+		if page*pageSize >= int(total) || len(users) == 0 {
+			break
+		}
+	}
+	writer.Flush()
+	if err := writer.Error(); err != nil {
+		response.ErrorFrom(c, err)
+		return
+	}
+	c.Header("Content-Type", "text/csv; charset=utf-8")
+	c.Header("Content-Disposition", `attachment; filename="righttoken-users.csv"`)
+	_, _ = c.Writer.Write(output.Bytes())
+}
 
 // UserWithConcurrency wraps AdminUser with current concurrency info
 type UserWithConcurrency struct {
