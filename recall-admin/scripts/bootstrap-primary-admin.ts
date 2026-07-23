@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { bootstrapPrimaryAdmin } from "@/modules/auth/bootstrap-primary-admin";
+import { runBootstrapPrimaryAdminCommand } from "@/modules/auth/bootstrap-primary-admin-command";
 
 function requireValue(name: string): string {
   const value = process.env[name]?.trim();
@@ -11,7 +11,7 @@ function requireValue(name: string): string {
 }
 
 async function main(): Promise<void> {
-  const result = await bootstrapPrimaryAdmin({
+  const result = await runBootstrapPrimaryAdminCommand({
     email: requireValue("BOOTSTRAP_PRIMARY_ADMIN_EMAIL"),
     password: requireValue("BOOTSTRAP_PRIMARY_ADMIN_PASSWORD"),
     displayName:
