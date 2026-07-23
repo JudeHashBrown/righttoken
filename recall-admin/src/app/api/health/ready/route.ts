@@ -1,29 +1,8 @@
-import { NextResponse } from "next/server";
-import { checkReadiness } from "@/modules/health/readiness";
-
-type DependencyProbe = () => Promise<unknown>;
+import { createReadyHandler } from "@/modules/health/ready-handler";
 
 async function probeDatabase(): Promise<unknown> {
   const { prisma } = await import("@/lib/db/prisma");
   return prisma.$queryRawUnsafe("SELECT 1");
-}
-
-export function createReadyHandler(probe: DependencyProbe) {
-  return async function readyHandler(): Promise<NextResponse> {
-    const result = await checkReadiness(probe);
-    return NextResponse.json(
-      {
-        status: result.ready ? "ready" : "unavailable",
-        checkedAt: new Date().toISOString()
-      },
-      {
-        status: result.ready ? 200 : 503,
-        headers: {
-          "Cache-Control": "no-store"
-        }
-      }
-    );
-  };
 }
 
 export const GET = createReadyHandler(probeDatabase);

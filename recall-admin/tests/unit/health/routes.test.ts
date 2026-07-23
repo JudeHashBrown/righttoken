@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { GET as getLiveness } from "@/app/api/health/live/route";
-import { createReadyHandler } from "@/app/api/health/ready/route";
+import { createReadyHandler } from "@/modules/health/ready-handler";
 
 describe("health routes", () => {
   it("returns a non-cacheable liveness response", async () => {
