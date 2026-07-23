@@ -623,7 +623,7 @@ export default {
           },
           config: {
             title: 'Настройка модели',
-            desc: 'В конфигурации провайдера модели Hermes укажите base_url как https://righttoken.ai/v1 и вставьте ваш sk-... ключ RightToken.',
+            desc: 'В конфигурации провайдера модели Hermes укажите base_url как https://api.righttoken.ai/v1 и вставьте ваш sk-... ключ RightToken.',
             linkLabel: 'Документация по конфигурации',
             linkUrl: 'https://hermes-agent.nousresearch.com/docs/user-guide/configuration'
           }
@@ -641,7 +641,7 @@ export default {
           },
           config: {
             title: 'Настройка модели',
-            desc: 'В настройках модели укажите base_url как https://righttoken.ai/v1 и вставьте ваш sk-... ключ RightToken.',
+            desc: 'В настройках модели укажите base_url как https://api.righttoken.ai/v1 и вставьте ваш sk-... ключ RightToken.',
             linkLabel: 'Документация по настройке',
             linkUrl: 'https://www.codebuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Model'
           }
@@ -659,7 +659,7 @@ export default {
           },
           openai: {
             title: 'Настройте OpenAI для использования RightToken',
-            desc: 'В конфигурации провайдера OpenAI укажите base_url как https://righttoken.ai/v1 и вставьте ваш sk-... ключ RightToken.',
+            desc: 'В конфигурации провайдера OpenAI укажите base_url как https://api.righttoken.ai/v1 и вставьте ваш sk-... ключ RightToken.',
             linkLabel: 'Документация провайдера OpenAI',
             linkUrl: 'https://docs.openclaw.ai/zh-CN/providers/openai'
           }

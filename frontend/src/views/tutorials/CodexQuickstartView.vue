@@ -55,7 +55,7 @@ cp ~/.codex/config.toml ~/.codex/config.toml.bak
   echo ''
   echo '[model_providers.RightToken]'
   echo 'name = "RightToken"'
-  echo 'base_url = "https://righttoken.ai/v1"'
+  echo 'base_url = "https://api.righttoken.ai/v1"'
   echo 'wire_api = "responses"'
   echo 'requires_openai_auth = true'
 } > ~/.codex/config.toml`
@@ -127,7 +127,7 @@ chmod 600 ~/.codex/auth.json`,
   },
 ]
 
-const windowsMergeConfig = `$d="$HOME\\.codex"; New-Item -ItemType Directory -Force -Path $d | Out-Null; if (Test-Path "$d\\config.toml") { Copy-Item "$d\\config.toml" "$d\\config.toml.bak" -Force }; [System.IO.File]::WriteAllText("$d\\config.toml", "model_provider = \`"RightToken\`"\`r\`nmodel = \`"gpt-5.5\`"\`r\`n\`r\`n[model_providers.RightToken]\`r\`nname = \`"RightToken\`"\`r\`nbase_url = \`"https://righttoken.ai/v1\`"\`r\`nwire_api = \`"responses\`"\`r\`nrequires_openai_auth = true\`r\`n", (New-Object System.Text.UTF8Encoding $false)); Get-Content "$d\\config.toml"`
+const windowsMergeConfig = `$d="$HOME\\.codex"; New-Item -ItemType Directory -Force -Path $d | Out-Null; if (Test-Path "$d\\config.toml") { Copy-Item "$d\\config.toml" "$d\\config.toml.bak" -Force }; [System.IO.File]::WriteAllText("$d\\config.toml", "model_provider = \`"RightToken\`"\`r\`nmodel = \`"gpt-5.5\`"\`r\`n\`r\`n[model_providers.RightToken]\`r\`nname = \`"RightToken\`"\`r\`nbase_url = \`"https://api.righttoken.ai/v1\`"\`r\`nwire_api = \`"responses\`"\`r\`nrequires_openai_auth = true\`r\`n", (New-Object System.Text.UTF8Encoding $false)); Get-Content "$d\\config.toml"`
 
 const windowsSteps: InstallStep[] = [
   {

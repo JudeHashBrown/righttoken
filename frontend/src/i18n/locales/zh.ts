@@ -634,7 +634,7 @@ export default {
           },
           config: {
             title: '模型配置',
-            desc: '在 Hermes 配置中，将 model provider 的 base_url 设为 https://righttoken.ai/v1，API key 填入你的 RightToken sk-... key。',
+            desc: '在 Hermes 配置中，将 model provider 的 base_url 设为 https://api.righttoken.ai/v1，API key 填入你的 RightToken sk-... key。',
             linkLabel: '查看模型配置文档',
             linkUrl: 'https://hermes-agent.nousresearch.com/docs/user-guide/configuration'
           }
@@ -652,7 +652,7 @@ export default {
           },
           config: {
             title: '模型配置',
-            desc: '在模型配置中，将 base_url 设为 https://righttoken.ai/v1，API key 填入你的 RightToken sk-... key。',
+            desc: '在模型配置中，将 base_url 设为 https://api.righttoken.ai/v1，API key 填入你的 RightToken sk-... key。',
             linkLabel: '查看模型配置文档',
             linkUrl: 'https://www.codebuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Model'
           }
@@ -670,7 +670,7 @@ export default {
           },
           openai: {
             title: '配置 OpenAI 接入 RightToken',
-            desc: '在 OpenAI provider 配置中，将 base_url 设为 https://righttoken.ai/v1，API key 填入你的 RightToken sk-... key。',
+            desc: '在 OpenAI provider 配置中，将 base_url 设为 https://api.righttoken.ai/v1，API key 填入你的 RightToken sk-... key。',
             linkLabel: '查看 OpenAI Provider 文档',
             linkUrl: 'https://docs.openclaw.ai/zh-CN/providers/openai'
           }

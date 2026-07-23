@@ -533,12 +533,9 @@ function generateOpenAIFiles(baseUrl: string, apiKey: string): FileConfig[] {
   const configContent = `model_provider = "RightToken"
 model = "gpt-5.5"
 review_model = "gpt-5.5"
-model_reasoning_effort = "xhigh"
-disable_response_storage = true
+model_reasoning_effort = "medium"
 network_access = "enabled"
 windows_wsl_setup_acknowledged = true
-model_context_window = 1000000
-model_auto_compact_token_limit = 900000
 
 [model_providers.RightToken]
 name = "RightToken"
@@ -572,12 +569,9 @@ function generateOpenAIWsFiles(baseUrl: string, apiKey: string): FileConfig[] {
   const configContent = `model_provider = "RightToken"
 model = "gpt-5.5"
 review_model = "gpt-5.5"
-model_reasoning_effort = "xhigh"
-disable_response_storage = true
+model_reasoning_effort = "medium"
 network_access = "enabled"
 windows_wsl_setup_acknowledged = true
-model_context_window = 1000000
-model_auto_compact_token_limit = 900000
 
 [model_providers.RightToken]
 name = "RightToken"
