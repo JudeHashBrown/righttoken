@@ -50,7 +50,8 @@ righttoken/
 ### 4.1 recall-web
 
 - 运行 Next.js standalone 产物。
-- 只在 Docker 内部监听 `3000`。
+- 容器内监听 `3000`，宿主机只绑定回环地址
+  `127.0.0.1:${RECALL_SERVER_PORT:-3000}`，不直接暴露公网。
 - 提供管理页面、API、健康检查和就绪检查。
 - 依赖 `recall-db` 完成数据库迁移后启动。
 - 不保存本地持久化文件。
@@ -86,12 +87,17 @@ RightToken 现有服务继续使用 `sub2api-network`。召回覆盖文件加入
 
 `recall-db` 只加入 `recall-network`。RightToken 主服务不能直接读写召回表；召回服务也不获取 RightToken 主数据库写权限。
 
-Caddy 新增独立站点：
+RightToken 当前由宿主机上的 Caddy 提供 HTTPS。Caddy 新增独立站点，
+通过宿主机回环地址访问召回 Web：
 
 ```caddy
 recall.righttoken.ai {
     encode zstd gzip
-    reverse_proxy recall-web:3000
+    reverse_proxy 127.0.0.1:3000 {
+        health_uri /api/health/ready
+        health_interval 30s
+        health_timeout 5s
+    }
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains"
         X-Content-Type-Options "nosniff"
@@ -124,7 +130,8 @@ recall.righttoken.ai {
 | `RECALL_APP_ENCRYPTION_KEY` | 邮箱等凭据加密 | 开发专用值 | Base64 编码的 32 字节密钥 |
 | `RECALL_APP_URL` | 外部访问地址 | `http://127.0.0.1:3000` | `https://recall.righttoken.ai` |
 | `RECALL_AUTH_MODE` | 身份模式 | `standalone` | 首发为 `standalone` |
-| `RECALL_INTERNAL_API_SECRET` | 主站事件接口鉴权 | 开发专用值 | 至少 32 字节随机值并定期轮换 |
+| `RECALL_INTERNAL_API_SECRET_CURRENT` | 主站事件接口当前密钥 | 开发专用值 | 至少 32 字节随机值并定期轮换 |
+| `RECALL_INTERNAL_API_SECRET_PREVIOUS` | 轮换窗口内的上一密钥 | 留空 | 仅轮换期间设置，完成后清空 |
 
 应用内部继续读取现有变量名 `DATABASE_URL`、`JOB_DATABASE_URL`、`SESSION_COOKIE_SECRET`、`APP_ENCRYPTION_KEY` 和 `APP_URL`。Compose 负责从 `RECALL_*` 部署变量映射为应用变量，避免与 RightToken 主服务变量冲突。
 
@@ -168,7 +175,7 @@ RightToken 后端通过 Docker 内部地址向召回服务发送已定义事件�
 
 ```text
 POST http://recall-web:3000/api/internal/righttoken/events
-Authorization: Bearer <RECALL_INTERNAL_API_SECRET>
+Authorization: Bearer <RECALL_INTERNAL_API_SECRET_CURRENT>
 ```
 
 事件继续使用现有 `event_id` 幂等键。接口只接受内部网络请求、固定 Bearer 密钥和受支持的事件类型。日志不记录完整邮箱、IP、令牌或请求正文。
