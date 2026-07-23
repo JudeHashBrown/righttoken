@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 438 438" role="img" aria-labelledby="title desc">
+  <title id="title">RightToken logo</title>
+  <desc id="desc">A geometric letter R in warm bronze tones</desc>
+  <path
+    fill="#BE874D"
+    d="M114 108h147c35 0 62 29 62 65v25c0 35-27 64-62 64h-64v-51h35c14 0 25-11 25-25s-11-25-25-25h-59v166h-59V108Z"
+  />
+  <path fill="#99652F" d="M210 262h65l50 68h-68l-47-68Z" />
+</svg>

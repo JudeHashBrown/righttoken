@@ -37,6 +37,55 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/terms',
+    name: 'TermsOfService',
+    component: () => import('@/views/legal/PublicPolicyView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Terms of Service',
+      policy: 'terms'
+    }
+  },
+  {
+    path: '/privacy',
+    name: 'PrivacyPolicy',
+    component: () => import('@/views/legal/PublicPolicyView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Privacy Policy',
+      policy: 'privacy'
+    }
+  },
+  {
+    path: '/refund-policy',
+    name: 'RefundPolicy',
+    component: () => import('@/views/legal/PublicPolicyView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Refund Policy',
+      policy: 'refund'
+    }
+  },
+  {
+    path: '/acceptable-use',
+    name: 'AcceptableUsePolicy',
+    component: () => import('@/views/legal/PublicPolicyView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Acceptable Use Policy',
+      policy: 'acceptableUse'
+    }
+  },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: () => import('@/views/legal/ContactView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Contact'
+    }
+  },
+  {
     path: '/tutorials',
     component: () => import('@/views/tutorials/TutorialsLayout.vue'),
     meta: {

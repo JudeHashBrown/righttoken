@@ -947,7 +947,37 @@
         <p class="text-sm text-gray-500 dark:text-dark-400">
           &copy; {{ currentYear }} RightToken. {{ t('home.footer.allRightsReserved') }}
         </p>
-        <div class="flex items-center gap-4">
+        <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+          <router-link
+            to="/terms"
+            class="text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
+          >
+            Terms
+          </router-link>
+          <router-link
+            to="/privacy"
+            class="text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
+          >
+            Privacy
+          </router-link>
+          <router-link
+            to="/refund-policy"
+            class="text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
+          >
+            Refunds
+          </router-link>
+          <router-link
+            to="/acceptable-use"
+            class="text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
+          >
+            Acceptable Use
+          </router-link>
+          <router-link
+            to="/contact"
+            class="text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
+          >
+            Contact
+          </router-link>
           <a
             v-if="docUrl"
             :href="docUrl"

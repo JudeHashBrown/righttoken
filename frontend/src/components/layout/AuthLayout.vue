@@ -58,6 +58,15 @@
       <div class="mt-8 text-center text-xs text-gray-400 dark:text-dark-500">
         &copy; {{ currentYear }} {{ siteName }}. All rights reserved.
       </div>
+
+      <!-- Public legal policies -->
+      <nav class="mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1 text-[11px] text-gray-400 dark:text-dark-500">
+        <router-link to="/terms" class="hover:text-primary-600 dark:hover:text-primary-400">Terms</router-link>
+        <router-link to="/privacy" class="hover:text-primary-600 dark:hover:text-primary-400">Privacy</router-link>
+        <router-link to="/refund-policy" class="hover:text-primary-600 dark:hover:text-primary-400">Refunds</router-link>
+        <router-link to="/acceptable-use" class="hover:text-primary-600 dark:hover:text-primary-400">Acceptable Use</router-link>
+        <router-link to="/contact" class="hover:text-primary-600 dark:hover:text-primary-400">Contact</router-link>
+      </nav>
     </div>
   </div>
 </template>
