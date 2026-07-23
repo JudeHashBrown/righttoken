@@ -1,8 +1,8 @@
 import "dotenv/config";
 
-import argon2 from "argon2";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
+import { bootstrapPrimaryAdmin } from "../src/modules/auth/bootstrap-primary-admin";
 
 function requireSeedValue(name: string): string {
   const value = process.env[name]?.trim();
@@ -23,47 +23,6 @@ const primaryAdminPassword = requireSeedValue(
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString })
 });
-
-async function seedPrimaryAdministrator(): Promise<void> {
-  const existingPrimaryAdmins = await prisma.member.findMany({
-    where: { role: "PRIMARY_ADMIN" },
-    select: { id: true, email: true }
-  });
-
-  if (existingPrimaryAdmins.length > 1) {
-    throw new Error("database contains more than one primary admin");
-  }
-
-  const existingPrimary = existingPrimaryAdmins[0];
-  if (
-    existingPrimary &&
-    existingPrimary.email.toLowerCase() !== primaryAdminEmail
-  ) {
-    throw new Error(
-      "a different primary admin already exists; refusing to create another"
-    );
-  }
-
-  const passwordHash = await argon2.hash(primaryAdminPassword, {
-    type: argon2.argon2id
-  });
-
-  await prisma.member.upsert({
-    where: { email: primaryAdminEmail },
-    create: {
-      email: primaryAdminEmail,
-      displayName: "主管理员",
-      passwordHash,
-      role: "PRIMARY_ADMIN"
-    },
-    update: {
-      displayName: "主管理员",
-      passwordHash,
-      role: "PRIMARY_ADMIN",
-      active: true
-    }
-  });
-}
 
 async function seedSyntheticUsers(): Promise<void> {
   const segments = ["A", "B", "C", "D", "E", "F", "G"] as const;
@@ -261,7 +220,11 @@ async function seedSyntheticTasks(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  await seedPrimaryAdministrator();
+  await bootstrapPrimaryAdmin({
+    email: primaryAdminEmail,
+    password: primaryAdminPassword,
+    displayName: "主管理员"
+  });
   await seedSyntheticUsers();
   await seedSyntheticTasks();
 }
