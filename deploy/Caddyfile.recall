@@ -1,0 +1,31 @@
+recall.righttoken.ai {
+    request_body {
+        max_size 10MB
+    }
+
+    reverse_proxy 127.0.0.1:3000 {
+        health_uri /api/health/ready
+        health_interval 30s
+        health_timeout 5s
+    }
+
+    encode zstd gzip
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        X-Frame-Options "SAMEORIGIN"
+        -Server
+    }
+
+    log {
+        output file /var/log/caddy/righttoken-recall.log {
+            roll_size 50mb
+            roll_keep 10
+            roll_keep_for 720h
+        }
+        format json
+        level INFO
+    }
+}
