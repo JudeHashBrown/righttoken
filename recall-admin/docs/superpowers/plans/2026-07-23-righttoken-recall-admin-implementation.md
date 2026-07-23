@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 构建可部署到 `recall.righttoken.com` 的真实运营后台，自动管理用户事件、A–G 分组、运营任务、地区分配、提醒与人工审核邮件，并为未来 RightToken 正式数据接入保留稳定接口。
+**Goal:** 构建可部署到 `recall.righttoken.ai` 的真实运营后台，自动管理用户事件、A–G 分组、运营任务、地区分配、提醒与人工审核邮件，并为未来 RightToken 正式数据接入保留稳定接口。
 
 **Architecture:** 使用 Next.js 16 App Router 构建模块化单体 Web 应用，业务规则位于 `src/modules/*`，页面与路由只调用模块服务。PostgreSQL 16 保存业务数据和 pg-boss 任务队列；同一镜像分别以 Web 与 Worker 进程运行。所有外部系统通过 RightToken、SMTP/IMAP、企业微信群机器人适配器接入。
 
@@ -168,7 +168,7 @@ describe("parseServerEnv", () => {
         JOB_DATABASE_URL: "postgresql://app:app@db:5432/righttoken_recall",
         SESSION_COOKIE_SECRET: "short",
         APP_ENCRYPTION_KEY: "short",
-        APP_URL: "https://recall.righttoken.com"
+        APP_URL: "https://recall.righttoken.ai"
       })
     ).toThrow();
   });
@@ -179,9 +179,9 @@ describe("parseServerEnv", () => {
       JOB_DATABASE_URL: "postgresql://app:app@db:5432/righttoken_recall",
       SESSION_COOKIE_SECRET: "s".repeat(32),
       APP_ENCRYPTION_KEY: Buffer.alloc(32).toString("base64"),
-      APP_URL: "https://recall.righttoken.com"
+      APP_URL: "https://recall.righttoken.ai"
     });
-    expect(env.APP_URL).toBe("https://recall.righttoken.com");
+    expect(env.APP_URL).toBe("https://recall.righttoken.ai");
   });
 });
 ```
@@ -1720,7 +1720,7 @@ The WeCom markdown body:
 用户：RT-1908（上海，F 组）
 原因：连续调用失败
 时限：剩余 7 分钟
-[打开任务](https://recall.righttoken.com/tasks/{taskId})
+[打开任务](https://recall.righttoken.ai/tasks/{taskId})
 ```
 
 - [ ] **Step 6: Implement retry and dead-letter behavior**
@@ -2697,7 +2697,7 @@ Add:
 
 - [ ] **Step 5: Write deployment and operations docs**
 
-`docs/deployment.md` includes DNS, TLS/reverse proxy, environment secrets, migration, first primary-admin seed, integration configuration, health check, rollback, and `recall.righttoken.com`.
+`docs/deployment.md` includes DNS, TLS/reverse proxy, environment secrets, migration, first primary-admin seed, integration configuration, health check, rollback, and `recall.righttoken.ai`.
 
 `docs/operations-runbook.md` includes failed email, failed WeCom, worker backlog, reconciliation failure, compromised member, primary transfer, export audit, backup, and restore procedures.
 
@@ -2825,7 +2825,7 @@ Capture screenshots into `docs/acceptance/` using synthetic data only.
 Update `使用说明.txt` to:
 
 - mark the HTML as legacy/read-only;
-- direct staff to `https://recall.righttoken.com`;
+- direct staff to `https://recall.righttoken.ai`;
 - explain login, task processing, mail review, reply handling, and support escalation;
 - remove instructions that suggest localStorage or manual CSV synchronization is the production workflow.
 
@@ -2845,7 +2845,7 @@ Before deploying:
 3. Restore the most recent backup into an isolated database and compare entity counts.
 4. Configure real SMTP/IMAP and WeCom credentials through the encrypted settings UI.
 5. Keep the RightToken production adapter disabled; use simulator/CSV until production mapping is reviewed.
-6. Deploy Web and Worker containers behind HTTPS at `recall.righttoken.com`.
+6. Deploy Web and Worker containers behind HTTPS at `recall.righttoken.ai`.
 7. Create the real primary admin through the protected seed/bootstrap process, enable 2FA, and remove bootstrap credentials.
 8. Send test notifications and a test email only to internal company accounts.
 9. Record the deployment version, migration, backup, and smoke-test results in the audit/runbook.

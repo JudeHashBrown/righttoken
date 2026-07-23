@@ -3,7 +3,7 @@
 > 状态：已完成书面确认，可进入实施
 > 日期：2026-07-23  
 > 首版规模：总用户少于 1 万，每日新增少于 500  
-> 部署目标：RightToken 现有服务器，独立子域名 `recall.righttoken.com`
+> 部署目标：RightToken 现有服务器，独立子域名 `recall.righttoken.ai`
 
 ## 1. 目标
 
@@ -59,7 +59,7 @@
 | 权限 | 唯一主管理员 + 多管理员 + 多运营人员 |
 | CSV 导出 | 仅主管理员 |
 | 首页 | 运营驾驶舱 |
-| 部署 | RightToken 服务器，`recall.righttoken.com` |
+| 部署 | RightToken 服务器，`recall.righttoken.ai` |
 
 ## 4. 系统架构
 
@@ -513,7 +513,7 @@ CSV 导出只允许主管理员执行，并同时满足：
 - Web 应用容器。
 - 后台任务容器。
 - PostgreSQL 容器或现有受管 PostgreSQL。
-- 现有反向代理将 `recall.righttoken.com` 转发到 Web 应用。
+- 现有反向代理将 `recall.righttoken.ai` 转发到 Web 应用。
 
 所有密钥通过服务器环境配置或密钥管理机制注入。代码仓库、镜像和前端资源不得包含真实用户数据或生产凭据。
 

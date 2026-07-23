@@ -1,0 +1,100 @@
+name: Recall Admin CI
+
+on:
+  push:
+    paths:
+      - "recall-admin/**"
+      - "deploy/docker-compose.recall.yml"
+      - "deploy/recall.env.example"
+      - "deploy/Caddyfile.recall"
+      - "deploy/backup-recall.sh"
+      - ".github/workflows/recall-admin-ci.yml"
+  pull_request:
+    paths:
+      - "recall-admin/**"
+      - "deploy/docker-compose.recall.yml"
+      - "deploy/recall.env.example"
+      - "deploy/Caddyfile.recall"
+      - "deploy/backup-recall.sh"
+      - ".github/workflows/recall-admin-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: recall-admin
+    services:
+      postgres:
+        image: postgres:16-bookworm
+        env:
+          POSTGRES_DB: righttoken_recall
+          POSTGRES_USER: righttoken
+          POSTGRES_PASSWORD: righttoken
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U righttoken -d righttoken_recall"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://righttoken:righttoken@127.0.0.1:5432/righttoken_recall
+      JOB_DATABASE_URL: postgresql://righttoken:righttoken@127.0.0.1:5432/righttoken_recall
+      SESSION_COOKIE_SECRET: ci-session-cookie-secret-at-least-32
+      APP_ENCRYPTION_KEY: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      APP_URL: http://127.0.0.1:3000
+      AUTH_MODE: standalone
+      INTERNAL_API_SECRET_CURRENT: ci-internal-api-secret-at-least-32
+      INTERNAL_API_SECRET_PREVIOUS: ""
+      RECONCILE_ENABLED: "false"
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.18.0
+          cache: npm
+          cache-dependency-path: recall-admin/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Apply database migrations
+        run: npm run db:deploy
+      - name: Unit tests
+        run: npm test
+      - name: Integration and contract tests
+        run: npm run test:integration
+      - name: Type check
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Build Web
+        run: npm run build
+      - name: Build Worker
+        run: npm run worker:build
+      - name: Build primary-admin bootstrap
+        run: npm run bootstrap:build
+
+  container:
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build production image
+        working-directory: recall-admin
+        run: docker build -t righttoken-recall-admin:ci .
+      - name: Validate local Compose
+        working-directory: recall-admin
+        run: docker compose --env-file .env.example config --quiet
+      - name: Validate production Compose
+        working-directory: deploy
+        run: >-
+          docker compose
+          --env-file .env.example
+          --env-file recall.env.example
+          -f docker-compose.yml
+          -f docker-compose.recall.yml
+          config --quiet
