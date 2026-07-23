@@ -11,7 +11,12 @@ import {
 describe("persistent login rate limiting", () => {
   const startedAt = new Date();
   const email = `rate-${randomUUID()}@example.test`;
-  const ipAddress = `198.51.100.${Math.floor(Math.random() * 100) + 1}`;
+  const ipSuffix = randomUUID()
+    .replaceAll("-", "")
+    .slice(0, 24)
+    .match(/.{4}/g)!
+    .join(":");
+  const ipAddress = `2001:db8:${ipSuffix}`;
 
   beforeAll(async () => {
     await prisma.loginAttempt.deleteMany({
