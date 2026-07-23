@@ -1,0 +1,314 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MemberRole {
+  PRIMARY_ADMIN
+  ADMIN
+  OPERATOR
+}
+
+enum SegmentCode {
+  A
+  B
+  C
+  D
+  E
+  F
+  G
+}
+
+enum TaskPriority {
+  URGENT
+  IMPORTANT
+  NORMAL
+}
+
+enum TaskStatus {
+  UNASSIGNED
+  TODO
+  IN_PROGRESS
+  WAITING_USER
+  COMPLETED
+  PAUSED
+  CANCELLED
+}
+
+enum TaskOrigin {
+  AUTOMATION
+  MANUAL
+  EMAIL_REPLY
+}
+
+model Member {
+  id              String     @id @default(cuid())
+  email           String     @unique
+  displayName     String
+  passwordHash    String
+  role            MemberRole
+  active          Boolean    @default(true)
+  twoFactorSecret String?
+  twoFactorOn     Boolean    @default(false)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  sessions      Session[]
+  assignedTasks RecallTask[]   @relation("TaskAssignee")
+  ownedUsers    UserProfile[]  @relation("UserOwner")
+  notes         UserNote[]
+  auditLogs     AuditLog[]     @relation("AuditActor")
+  recoveryCodes RecoveryCode[]
+}
+
+model Session {
+  id                     String    @id @default(cuid())
+  memberId               String
+  tokenHash              String    @unique
+  expiresAt              DateTime
+  reauthenticatedAt      DateTime?
+  secondFactorRequired   Boolean   @default(false)
+  secondFactorVerifiedAt DateTime?
+  createdAt              DateTime  @default(now())
+  lastSeenAt             DateTime  @default(now())
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId, expiresAt])
+}
+
+model UserProfile {
+  id                  String      @id @default(cuid())
+  externalUserId      String      @unique
+  email               String
+  emailNormalized     String
+  displayName         String?
+  registeredAt        DateTime
+  registrationIpEnc   String?
+  registrationIpHash  String?
+  countryCode         String?
+  region              String?
+  language            String?
+  timezone            String?
+  source              String?
+  checkoutStartedAt   DateTime?
+  checkoutChangedAt   DateTime?
+  paymentStatus       String      @default("NONE")
+  firstPaidAt         DateTime?
+  totalPaidMinor      Int         @default(0)
+  firstCallAt         DateTime?
+  lastCallAt          DateTime?
+  successfulCallCount Int         @default(0)
+  balanceMinor        Int         @default(0)
+  balanceChangedAt    DateTime?
+  anomalyActive       Boolean     @default(false)
+  anomalyChangedAt    DateTime?
+  currentSegment      SegmentCode
+  segmentRuleVersion  Int         @default(1)
+  ownerId             String?
+  reasonLabel         String?
+  unsubscribedAt      DateTime?
+  pausedAt            DateTime?
+  profileChangedAt    DateTime?
+  lastExternalEventAt DateTime?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  owner            Member?           @relation("UserOwner", fields: [ownerId], references: [id])
+  events           UserEvent[]
+  segmentHistory   SegmentHistory[]
+  segmentOverrides SegmentOverride[]
+  tasks            RecallTask[]
+  notes            UserNote[]
+
+  @@index([currentSegment, updatedAt])
+  @@index([countryCode, region])
+  @@index([emailNormalized])
+}
+
+model UserEvent {
+  id         String   @id @default(cuid())
+  eventId    String   @unique
+  userId     String
+  eventType  String
+  occurredAt DateTime
+  receivedAt DateTime @default(now())
+  payload    Json
+  applied    Boolean  @default(false)
+  errorCode  String?
+
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, occurredAt])
+}
+
+model SegmentHistory {
+  id          String       @id @default(cuid())
+  userId      String
+  fromSegment SegmentCode?
+  toSegment   SegmentCode
+  ruleVersion Int
+  reason      String
+  changedAt   DateTime     @default(now())
+
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, changedAt])
+}
+
+model SegmentOverride {
+  id          String      @id @default(cuid())
+  userId      String
+  segment     SegmentCode
+  reason      String
+  createdById String
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  createdAt   DateTime    @default(now())
+
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model UserNote {
+  id        String   @id @default(cuid())
+  userId    String
+  authorId  String
+  body      String
+  createdAt DateTime @default(now())
+
+  user   UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  author Member      @relation(fields: [authorId], references: [id])
+
+  @@index([userId, createdAt])
+}
+
+model AutomationRuleVersion {
+  id          String   @id @default(cuid())
+  kind        String
+  version     Int
+  config      Json
+  active      Boolean  @default(false)
+  createdById String
+  createdAt   DateTime @default(now())
+
+  @@unique([kind, version])
+  @@index([kind, active])
+}
+
+model AssignmentRule {
+  id                 String    @id @default(cuid())
+  name               String
+  enabled            Boolean   @default(true)
+  priority           Int
+  conditions         Json
+  assigneeId         String?
+  fallbackAssigneeId String?
+  poolKey            String?
+  workloadLimit      Int?
+  effectiveFrom      DateTime?
+  effectiveTo        DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@unique([priority])
+  @@index([enabled, priority])
+}
+
+model RecallTask {
+  id               String       @id @default(cuid())
+  userId           String
+  origin           TaskOrigin
+  triggerKey       String
+  ruleVersion      Int
+  title            String
+  reason           String
+  priority         TaskPriority
+  status           TaskStatus   @default(UNASSIGNED)
+  assigneeId       String?
+  assignmentReason String?
+  dueAt            DateTime
+  startedAt        DateTime?
+  completedAt      DateTime?
+  cancelledAt      DateTime?
+  cancelReason     String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  user       UserProfile    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignee   Member?        @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  activities TaskActivity[]
+
+  @@unique([userId, triggerKey, ruleVersion])
+  @@index([status, priority, dueAt])
+  @@index([assigneeId, status])
+}
+
+model TaskActivity {
+  id        String   @id @default(cuid())
+  taskId    String
+  actorId   String?
+  action    String
+  detail    Json?
+  createdAt DateTime @default(now())
+
+  task RecallTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json
+  ipHash     String?
+  createdAt  DateTime @default(now())
+
+  actor Member? @relation("AuditActor", fields: [actorId], references: [id])
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
+}
+
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  emailHash String
+  ipHash    String
+  succeeded Boolean
+  createdAt DateTime @default(now())
+
+  @@index([emailHash, ipHash, createdAt])
+}
+
+model Invitation {
+  id          String     @id @default(cuid())
+  email       String
+  role        MemberRole
+  tokenHash   String     @unique
+  invitedById String
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  createdAt   DateTime   @default(now())
+
+  @@index([email, expiresAt])
+}
+
+model RecoveryCode {
+  id        String    @id @default(cuid())
+  memberId  String
+  codeHash  String
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId, usedAt])
+}
