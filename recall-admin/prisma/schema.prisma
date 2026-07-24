@@ -237,7 +237,7 @@ model AutomationRuleVersion {
   createdById String
   createdAt   DateTime @default(now())
 
-  recalculationRun SegmentRecalculationRun?
+  recalculationRuns SegmentRecalculationRun[]
 
   @@unique([kind, version])
   @@index([kind, active])
@@ -245,7 +245,7 @@ model AutomationRuleVersion {
 
 model SegmentRecalculationRun {
   id                  String              @id @default(cuid())
-  ruleVersionId       String              @unique
+  ruleVersionId       String
   ruleVersionNumber   Int
   requestedById       String
   idempotencyKey      String              @unique
@@ -270,6 +270,7 @@ model SegmentRecalculationRun {
   requestedBy Member @relation("SegmentRecalculationRequester", fields: [requestedById], references: [id], onDelete: Restrict)
 
   @@index([status, createdAt])
+  @@index([ruleVersionId, createdAt])
 }
 
 model AssignmentRule {

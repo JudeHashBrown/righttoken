@@ -396,11 +396,11 @@ export type SegmentRecalculationRunOrderByWithRelationInput = {
 
 export type SegmentRecalculationRunWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  ruleVersionId?: string
   idempotencyKey?: string
   AND?: Prisma.SegmentRecalculationRunWhereInput | Prisma.SegmentRecalculationRunWhereInput[]
   OR?: Prisma.SegmentRecalculationRunWhereInput[]
   NOT?: Prisma.SegmentRecalculationRunWhereInput | Prisma.SegmentRecalculationRunWhereInput[]
+  ruleVersionId?: Prisma.StringFilter<"SegmentRecalculationRun"> | string
   ruleVersionNumber?: Prisma.IntFilter<"SegmentRecalculationRun"> | number
   requestedById?: Prisma.StringFilter<"SegmentRecalculationRun"> | string
   status?: Prisma.EnumRecalculationStatusFilter<"SegmentRecalculationRun"> | $Enums.RecalculationStatus
@@ -421,7 +421,7 @@ export type SegmentRecalculationRunWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"SegmentRecalculationRun"> | Date | string
   ruleVersion?: Prisma.XOR<Prisma.AutomationRuleVersionScalarRelationFilter, Prisma.AutomationRuleVersionWhereInput>
   requestedBy?: Prisma.XOR<Prisma.MemberScalarRelationFilter, Prisma.MemberWhereInput>
-}, "id" | "ruleVersionId" | "idempotencyKey">
+}, "id" | "idempotencyKey">
 
 export type SegmentRecalculationRunOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -499,7 +499,7 @@ export type SegmentRecalculationRunCreateInput = {
   completedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  ruleVersion: Prisma.AutomationRuleVersionCreateNestedOneWithoutRecalculationRunInput
+  ruleVersion: Prisma.AutomationRuleVersionCreateNestedOneWithoutRecalculationRunsInput
   requestedBy: Prisma.MemberCreateNestedOneWithoutSegmentRecalculationRunsInput
 }
 
@@ -547,7 +547,7 @@ export type SegmentRecalculationRunUpdateInput = {
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ruleVersion?: Prisma.AutomationRuleVersionUpdateOneRequiredWithoutRecalculationRunNestedInput
+  ruleVersion?: Prisma.AutomationRuleVersionUpdateOneRequiredWithoutRecalculationRunsNestedInput
   requestedBy?: Prisma.MemberUpdateOneRequiredWithoutSegmentRecalculationRunsNestedInput
 }
 
@@ -653,11 +653,6 @@ export type SegmentRecalculationRunListRelationFilter = {
 
 export type SegmentRecalculationRunOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
-}
-
-export type SegmentRecalculationRunNullableScalarRelationFilter = {
-  is?: Prisma.SegmentRecalculationRunWhereInput | null
-  isNot?: Prisma.SegmentRecalculationRunWhereInput | null
 }
 
 export type SegmentRecalculationRunCountOrderByAggregateInput = {
@@ -792,36 +787,46 @@ export type SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedIn
   deleteMany?: Prisma.SegmentRecalculationRunScalarWhereInput | Prisma.SegmentRecalculationRunScalarWhereInput[]
 }
 
-export type SegmentRecalculationRunCreateNestedOneWithoutRuleVersionInput = {
-  create?: Prisma.XOR<Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput>
-  connectOrCreate?: Prisma.SegmentRecalculationRunCreateOrConnectWithoutRuleVersionInput
-  connect?: Prisma.SegmentRecalculationRunWhereUniqueInput
+export type SegmentRecalculationRunCreateNestedManyWithoutRuleVersionInput = {
+  create?: Prisma.XOR<Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput> | Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput[] | Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput[]
+  connectOrCreate?: Prisma.SegmentRecalculationRunCreateOrConnectWithoutRuleVersionInput | Prisma.SegmentRecalculationRunCreateOrConnectWithoutRuleVersionInput[]
+  createMany?: Prisma.SegmentRecalculationRunCreateManyRuleVersionInputEnvelope
+  connect?: Prisma.SegmentRecalculationRunWhereUniqueInput | Prisma.SegmentRecalculationRunWhereUniqueInput[]
 }
 
-export type SegmentRecalculationRunUncheckedCreateNestedOneWithoutRuleVersionInput = {
-  create?: Prisma.XOR<Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput>
-  connectOrCreate?: Prisma.SegmentRecalculationRunCreateOrConnectWithoutRuleVersionInput
-  connect?: Prisma.SegmentRecalculationRunWhereUniqueInput
+export type SegmentRecalculationRunUncheckedCreateNestedManyWithoutRuleVersionInput = {
+  create?: Prisma.XOR<Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput> | Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput[] | Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput[]
+  connectOrCreate?: Prisma.SegmentRecalculationRunCreateOrConnectWithoutRuleVersionInput | Prisma.SegmentRecalculationRunCreateOrConnectWithoutRuleVersionInput[]
+  createMany?: Prisma.SegmentRecalculationRunCreateManyRuleVersionInputEnvelope
+  connect?: Prisma.SegmentRecalculationRunWhereUniqueInput | Prisma.SegmentRecalculationRunWhereUniqueInput[]
 }
 
-export type SegmentRecalculationRunUpdateOneWithoutRuleVersionNestedInput = {
-  create?: Prisma.XOR<Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput>
-  connectOrCreate?: Prisma.SegmentRecalculationRunCreateOrConnectWithoutRuleVersionInput
-  upsert?: Prisma.SegmentRecalculationRunUpsertWithoutRuleVersionInput
-  disconnect?: Prisma.SegmentRecalculationRunWhereInput | boolean
-  delete?: Prisma.SegmentRecalculationRunWhereInput | boolean
-  connect?: Prisma.SegmentRecalculationRunWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.SegmentRecalculationRunUpdateToOneWithWhereWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUpdateWithoutRuleVersionInput>, Prisma.SegmentRecalculationRunUncheckedUpdateWithoutRuleVersionInput>
+export type SegmentRecalculationRunUpdateManyWithoutRuleVersionNestedInput = {
+  create?: Prisma.XOR<Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput> | Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput[] | Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput[]
+  connectOrCreate?: Prisma.SegmentRecalculationRunCreateOrConnectWithoutRuleVersionInput | Prisma.SegmentRecalculationRunCreateOrConnectWithoutRuleVersionInput[]
+  upsert?: Prisma.SegmentRecalculationRunUpsertWithWhereUniqueWithoutRuleVersionInput | Prisma.SegmentRecalculationRunUpsertWithWhereUniqueWithoutRuleVersionInput[]
+  createMany?: Prisma.SegmentRecalculationRunCreateManyRuleVersionInputEnvelope
+  set?: Prisma.SegmentRecalculationRunWhereUniqueInput | Prisma.SegmentRecalculationRunWhereUniqueInput[]
+  disconnect?: Prisma.SegmentRecalculationRunWhereUniqueInput | Prisma.SegmentRecalculationRunWhereUniqueInput[]
+  delete?: Prisma.SegmentRecalculationRunWhereUniqueInput | Prisma.SegmentRecalculationRunWhereUniqueInput[]
+  connect?: Prisma.SegmentRecalculationRunWhereUniqueInput | Prisma.SegmentRecalculationRunWhereUniqueInput[]
+  update?: Prisma.SegmentRecalculationRunUpdateWithWhereUniqueWithoutRuleVersionInput | Prisma.SegmentRecalculationRunUpdateWithWhereUniqueWithoutRuleVersionInput[]
+  updateMany?: Prisma.SegmentRecalculationRunUpdateManyWithWhereWithoutRuleVersionInput | Prisma.SegmentRecalculationRunUpdateManyWithWhereWithoutRuleVersionInput[]
+  deleteMany?: Prisma.SegmentRecalculationRunScalarWhereInput | Prisma.SegmentRecalculationRunScalarWhereInput[]
 }
 
-export type SegmentRecalculationRunUncheckedUpdateOneWithoutRuleVersionNestedInput = {
-  create?: Prisma.XOR<Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput>
-  connectOrCreate?: Prisma.SegmentRecalculationRunCreateOrConnectWithoutRuleVersionInput
-  upsert?: Prisma.SegmentRecalculationRunUpsertWithoutRuleVersionInput
-  disconnect?: Prisma.SegmentRecalculationRunWhereInput | boolean
-  delete?: Prisma.SegmentRecalculationRunWhereInput | boolean
-  connect?: Prisma.SegmentRecalculationRunWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.SegmentRecalculationRunUpdateToOneWithWhereWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUpdateWithoutRuleVersionInput>, Prisma.SegmentRecalculationRunUncheckedUpdateWithoutRuleVersionInput>
+export type SegmentRecalculationRunUncheckedUpdateManyWithoutRuleVersionNestedInput = {
+  create?: Prisma.XOR<Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput> | Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput[] | Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput[]
+  connectOrCreate?: Prisma.SegmentRecalculationRunCreateOrConnectWithoutRuleVersionInput | Prisma.SegmentRecalculationRunCreateOrConnectWithoutRuleVersionInput[]
+  upsert?: Prisma.SegmentRecalculationRunUpsertWithWhereUniqueWithoutRuleVersionInput | Prisma.SegmentRecalculationRunUpsertWithWhereUniqueWithoutRuleVersionInput[]
+  createMany?: Prisma.SegmentRecalculationRunCreateManyRuleVersionInputEnvelope
+  set?: Prisma.SegmentRecalculationRunWhereUniqueInput | Prisma.SegmentRecalculationRunWhereUniqueInput[]
+  disconnect?: Prisma.SegmentRecalculationRunWhereUniqueInput | Prisma.SegmentRecalculationRunWhereUniqueInput[]
+  delete?: Prisma.SegmentRecalculationRunWhereUniqueInput | Prisma.SegmentRecalculationRunWhereUniqueInput[]
+  connect?: Prisma.SegmentRecalculationRunWhereUniqueInput | Prisma.SegmentRecalculationRunWhereUniqueInput[]
+  update?: Prisma.SegmentRecalculationRunUpdateWithWhereUniqueWithoutRuleVersionInput | Prisma.SegmentRecalculationRunUpdateWithWhereUniqueWithoutRuleVersionInput[]
+  updateMany?: Prisma.SegmentRecalculationRunUpdateManyWithWhereWithoutRuleVersionInput | Prisma.SegmentRecalculationRunUpdateManyWithWhereWithoutRuleVersionInput[]
+  deleteMany?: Prisma.SegmentRecalculationRunScalarWhereInput | Prisma.SegmentRecalculationRunScalarWhereInput[]
 }
 
 export type EnumRecalculationStatusFieldUpdateOperationsInput = {
@@ -848,7 +853,7 @@ export type SegmentRecalculationRunCreateWithoutRequestedByInput = {
   completedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  ruleVersion: Prisma.AutomationRuleVersionCreateNestedOneWithoutRecalculationRunInput
+  ruleVersion: Prisma.AutomationRuleVersionCreateNestedOneWithoutRecalculationRunsInput
 }
 
 export type SegmentRecalculationRunUncheckedCreateWithoutRequestedByInput = {
@@ -978,15 +983,140 @@ export type SegmentRecalculationRunCreateOrConnectWithoutRuleVersionInput = {
   create: Prisma.XOR<Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput>
 }
 
-export type SegmentRecalculationRunUpsertWithoutRuleVersionInput = {
-  update: Prisma.XOR<Prisma.SegmentRecalculationRunUpdateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedUpdateWithoutRuleVersionInput>
-  create: Prisma.XOR<Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput>
-  where?: Prisma.SegmentRecalculationRunWhereInput
+export type SegmentRecalculationRunCreateManyRuleVersionInputEnvelope = {
+  data: Prisma.SegmentRecalculationRunCreateManyRuleVersionInput | Prisma.SegmentRecalculationRunCreateManyRuleVersionInput[]
+  skipDuplicates?: boolean
 }
 
-export type SegmentRecalculationRunUpdateToOneWithWhereWithoutRuleVersionInput = {
-  where?: Prisma.SegmentRecalculationRunWhereInput
+export type SegmentRecalculationRunUpsertWithWhereUniqueWithoutRuleVersionInput = {
+  where: Prisma.SegmentRecalculationRunWhereUniqueInput
+  update: Prisma.XOR<Prisma.SegmentRecalculationRunUpdateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedUpdateWithoutRuleVersionInput>
+  create: Prisma.XOR<Prisma.SegmentRecalculationRunCreateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput>
+}
+
+export type SegmentRecalculationRunUpdateWithWhereUniqueWithoutRuleVersionInput = {
+  where: Prisma.SegmentRecalculationRunWhereUniqueInput
   data: Prisma.XOR<Prisma.SegmentRecalculationRunUpdateWithoutRuleVersionInput, Prisma.SegmentRecalculationRunUncheckedUpdateWithoutRuleVersionInput>
+}
+
+export type SegmentRecalculationRunUpdateManyWithWhereWithoutRuleVersionInput = {
+  where: Prisma.SegmentRecalculationRunScalarWhereInput
+  data: Prisma.XOR<Prisma.SegmentRecalculationRunUpdateManyMutationInput, Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRuleVersionInput>
+}
+
+export type SegmentRecalculationRunCreateManyRequestedByInput = {
+  id?: string
+  ruleVersionId: string
+  ruleVersionNumber: number
+  idempotencyKey: string
+  status?: $Enums.RecalculationStatus
+  totalUsers?: number
+  processedUsers?: number
+  succeededUsers?: number
+  failedUsers?: number
+  segmentChanges?: number
+  cancelledTasks?: number
+  createdTasks?: number
+  lastProcessedUserId?: string | null
+  upperBoundUserId?: string | null
+  previewSummary: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SegmentRecalculationRunUpdateWithoutRequestedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ruleVersionNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRecalculationStatusFieldUpdateOperationsInput | $Enums.RecalculationStatus
+  totalUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  processedUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  succeededUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  failedUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  segmentChanges?: Prisma.IntFieldUpdateOperationsInput | number
+  cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
+  createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
+  lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ruleVersion?: Prisma.AutomationRuleVersionUpdateOneRequiredWithoutRecalculationRunsNestedInput
+}
+
+export type SegmentRecalculationRunUncheckedUpdateWithoutRequestedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ruleVersionId?: Prisma.StringFieldUpdateOperationsInput | string
+  ruleVersionNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRecalculationStatusFieldUpdateOperationsInput | $Enums.RecalculationStatus
+  totalUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  processedUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  succeededUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  failedUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  segmentChanges?: Prisma.IntFieldUpdateOperationsInput | number
+  cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
+  createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
+  lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ruleVersionId?: Prisma.StringFieldUpdateOperationsInput | string
+  ruleVersionNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRecalculationStatusFieldUpdateOperationsInput | $Enums.RecalculationStatus
+  totalUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  processedUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  succeededUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  failedUsers?: Prisma.IntFieldUpdateOperationsInput | number
+  segmentChanges?: Prisma.IntFieldUpdateOperationsInput | number
+  cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
+  createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
+  lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SegmentRecalculationRunCreateManyRuleVersionInput = {
+  id?: string
+  ruleVersionNumber: number
+  requestedById: string
+  idempotencyKey: string
+  status?: $Enums.RecalculationStatus
+  totalUsers?: number
+  processedUsers?: number
+  succeededUsers?: number
+  failedUsers?: number
+  segmentChanges?: number
+  cancelledTasks?: number
+  createdTasks?: number
+  lastProcessedUserId?: string | null
+  upperBoundUserId?: string | null
+  previewSummary: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type SegmentRecalculationRunUpdateWithoutRuleVersionInput = {
@@ -1035,79 +1165,10 @@ export type SegmentRecalculationRunUncheckedUpdateWithoutRuleVersionInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type SegmentRecalculationRunCreateManyRequestedByInput = {
-  id?: string
-  ruleVersionId: string
-  ruleVersionNumber: number
-  idempotencyKey: string
-  status?: $Enums.RecalculationStatus
-  totalUsers?: number
-  processedUsers?: number
-  succeededUsers?: number
-  failedUsers?: number
-  segmentChanges?: number
-  cancelledTasks?: number
-  createdTasks?: number
-  lastProcessedUserId?: string | null
-  upperBoundUserId?: string | null
-  previewSummary: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  startedAt?: Date | string | null
-  completedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type SegmentRecalculationRunUpdateWithoutRequestedByInput = {
+export type SegmentRecalculationRunUncheckedUpdateManyWithoutRuleVersionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   ruleVersionNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumRecalculationStatusFieldUpdateOperationsInput | $Enums.RecalculationStatus
-  totalUsers?: Prisma.IntFieldUpdateOperationsInput | number
-  processedUsers?: Prisma.IntFieldUpdateOperationsInput | number
-  succeededUsers?: Prisma.IntFieldUpdateOperationsInput | number
-  failedUsers?: Prisma.IntFieldUpdateOperationsInput | number
-  segmentChanges?: Prisma.IntFieldUpdateOperationsInput | number
-  cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
-  createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
-  lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ruleVersion?: Prisma.AutomationRuleVersionUpdateOneRequiredWithoutRecalculationRunNestedInput
-}
-
-export type SegmentRecalculationRunUncheckedUpdateWithoutRequestedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  ruleVersionId?: Prisma.StringFieldUpdateOperationsInput | string
-  ruleVersionNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumRecalculationStatusFieldUpdateOperationsInput | $Enums.RecalculationStatus
-  totalUsers?: Prisma.IntFieldUpdateOperationsInput | number
-  processedUsers?: Prisma.IntFieldUpdateOperationsInput | number
-  succeededUsers?: Prisma.IntFieldUpdateOperationsInput | number
-  failedUsers?: Prisma.IntFieldUpdateOperationsInput | number
-  segmentChanges?: Prisma.IntFieldUpdateOperationsInput | number
-  cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
-  createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
-  lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  ruleVersionId?: Prisma.StringFieldUpdateOperationsInput | string
-  ruleVersionNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  requestedById?: Prisma.StringFieldUpdateOperationsInput | string
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumRecalculationStatusFieldUpdateOperationsInput | $Enums.RecalculationStatus
   totalUsers?: Prisma.IntFieldUpdateOperationsInput | number

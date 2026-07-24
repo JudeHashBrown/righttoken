@@ -228,7 +228,7 @@ export type AutomationRuleVersionWhereInput = {
   active?: Prisma.BoolFilter<"AutomationRuleVersion"> | boolean
   createdById?: Prisma.StringFilter<"AutomationRuleVersion"> | string
   createdAt?: Prisma.DateTimeFilter<"AutomationRuleVersion"> | Date | string
-  recalculationRun?: Prisma.XOR<Prisma.SegmentRecalculationRunNullableScalarRelationFilter, Prisma.SegmentRecalculationRunWhereInput> | null
+  recalculationRuns?: Prisma.SegmentRecalculationRunListRelationFilter
 }
 
 export type AutomationRuleVersionOrderByWithRelationInput = {
@@ -239,7 +239,7 @@ export type AutomationRuleVersionOrderByWithRelationInput = {
   active?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  recalculationRun?: Prisma.SegmentRecalculationRunOrderByWithRelationInput
+  recalculationRuns?: Prisma.SegmentRecalculationRunOrderByRelationAggregateInput
 }
 
 export type AutomationRuleVersionWhereUniqueInput = Prisma.AtLeast<{
@@ -254,7 +254,7 @@ export type AutomationRuleVersionWhereUniqueInput = Prisma.AtLeast<{
   active?: Prisma.BoolFilter<"AutomationRuleVersion"> | boolean
   createdById?: Prisma.StringFilter<"AutomationRuleVersion"> | string
   createdAt?: Prisma.DateTimeFilter<"AutomationRuleVersion"> | Date | string
-  recalculationRun?: Prisma.XOR<Prisma.SegmentRecalculationRunNullableScalarRelationFilter, Prisma.SegmentRecalculationRunWhereInput> | null
+  recalculationRuns?: Prisma.SegmentRecalculationRunListRelationFilter
 }, "id" | "kind_version">
 
 export type AutomationRuleVersionOrderByWithAggregationInput = {
@@ -293,7 +293,7 @@ export type AutomationRuleVersionCreateInput = {
   active?: boolean
   createdById: string
   createdAt?: Date | string
-  recalculationRun?: Prisma.SegmentRecalculationRunCreateNestedOneWithoutRuleVersionInput
+  recalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRuleVersionInput
 }
 
 export type AutomationRuleVersionUncheckedCreateInput = {
@@ -304,7 +304,7 @@ export type AutomationRuleVersionUncheckedCreateInput = {
   active?: boolean
   createdById: string
   createdAt?: Date | string
-  recalculationRun?: Prisma.SegmentRecalculationRunUncheckedCreateNestedOneWithoutRuleVersionInput
+  recalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRuleVersionInput
 }
 
 export type AutomationRuleVersionUpdateInput = {
@@ -315,7 +315,7 @@ export type AutomationRuleVersionUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  recalculationRun?: Prisma.SegmentRecalculationRunUpdateOneWithoutRuleVersionNestedInput
+  recalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRuleVersionNestedInput
 }
 
 export type AutomationRuleVersionUncheckedUpdateInput = {
@@ -326,7 +326,7 @@ export type AutomationRuleVersionUncheckedUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  recalculationRun?: Prisma.SegmentRecalculationRunUncheckedUpdateOneWithoutRuleVersionNestedInput
+  recalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRuleVersionNestedInput
 }
 
 export type AutomationRuleVersionCreateManyInput = {
@@ -405,21 +405,21 @@ export type AutomationRuleVersionScalarRelationFilter = {
   isNot?: Prisma.AutomationRuleVersionWhereInput
 }
 
-export type AutomationRuleVersionCreateNestedOneWithoutRecalculationRunInput = {
-  create?: Prisma.XOR<Prisma.AutomationRuleVersionCreateWithoutRecalculationRunInput, Prisma.AutomationRuleVersionUncheckedCreateWithoutRecalculationRunInput>
-  connectOrCreate?: Prisma.AutomationRuleVersionCreateOrConnectWithoutRecalculationRunInput
+export type AutomationRuleVersionCreateNestedOneWithoutRecalculationRunsInput = {
+  create?: Prisma.XOR<Prisma.AutomationRuleVersionCreateWithoutRecalculationRunsInput, Prisma.AutomationRuleVersionUncheckedCreateWithoutRecalculationRunsInput>
+  connectOrCreate?: Prisma.AutomationRuleVersionCreateOrConnectWithoutRecalculationRunsInput
   connect?: Prisma.AutomationRuleVersionWhereUniqueInput
 }
 
-export type AutomationRuleVersionUpdateOneRequiredWithoutRecalculationRunNestedInput = {
-  create?: Prisma.XOR<Prisma.AutomationRuleVersionCreateWithoutRecalculationRunInput, Prisma.AutomationRuleVersionUncheckedCreateWithoutRecalculationRunInput>
-  connectOrCreate?: Prisma.AutomationRuleVersionCreateOrConnectWithoutRecalculationRunInput
-  upsert?: Prisma.AutomationRuleVersionUpsertWithoutRecalculationRunInput
+export type AutomationRuleVersionUpdateOneRequiredWithoutRecalculationRunsNestedInput = {
+  create?: Prisma.XOR<Prisma.AutomationRuleVersionCreateWithoutRecalculationRunsInput, Prisma.AutomationRuleVersionUncheckedCreateWithoutRecalculationRunsInput>
+  connectOrCreate?: Prisma.AutomationRuleVersionCreateOrConnectWithoutRecalculationRunsInput
+  upsert?: Prisma.AutomationRuleVersionUpsertWithoutRecalculationRunsInput
   connect?: Prisma.AutomationRuleVersionWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AutomationRuleVersionUpdateToOneWithWhereWithoutRecalculationRunInput, Prisma.AutomationRuleVersionUpdateWithoutRecalculationRunInput>, Prisma.AutomationRuleVersionUncheckedUpdateWithoutRecalculationRunInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AutomationRuleVersionUpdateToOneWithWhereWithoutRecalculationRunsInput, Prisma.AutomationRuleVersionUpdateWithoutRecalculationRunsInput>, Prisma.AutomationRuleVersionUncheckedUpdateWithoutRecalculationRunsInput>
 }
 
-export type AutomationRuleVersionCreateWithoutRecalculationRunInput = {
+export type AutomationRuleVersionCreateWithoutRecalculationRunsInput = {
   id?: string
   kind: string
   version: number
@@ -429,7 +429,7 @@ export type AutomationRuleVersionCreateWithoutRecalculationRunInput = {
   createdAt?: Date | string
 }
 
-export type AutomationRuleVersionUncheckedCreateWithoutRecalculationRunInput = {
+export type AutomationRuleVersionUncheckedCreateWithoutRecalculationRunsInput = {
   id?: string
   kind: string
   version: number
@@ -439,23 +439,23 @@ export type AutomationRuleVersionUncheckedCreateWithoutRecalculationRunInput = {
   createdAt?: Date | string
 }
 
-export type AutomationRuleVersionCreateOrConnectWithoutRecalculationRunInput = {
+export type AutomationRuleVersionCreateOrConnectWithoutRecalculationRunsInput = {
   where: Prisma.AutomationRuleVersionWhereUniqueInput
-  create: Prisma.XOR<Prisma.AutomationRuleVersionCreateWithoutRecalculationRunInput, Prisma.AutomationRuleVersionUncheckedCreateWithoutRecalculationRunInput>
+  create: Prisma.XOR<Prisma.AutomationRuleVersionCreateWithoutRecalculationRunsInput, Prisma.AutomationRuleVersionUncheckedCreateWithoutRecalculationRunsInput>
 }
 
-export type AutomationRuleVersionUpsertWithoutRecalculationRunInput = {
-  update: Prisma.XOR<Prisma.AutomationRuleVersionUpdateWithoutRecalculationRunInput, Prisma.AutomationRuleVersionUncheckedUpdateWithoutRecalculationRunInput>
-  create: Prisma.XOR<Prisma.AutomationRuleVersionCreateWithoutRecalculationRunInput, Prisma.AutomationRuleVersionUncheckedCreateWithoutRecalculationRunInput>
+export type AutomationRuleVersionUpsertWithoutRecalculationRunsInput = {
+  update: Prisma.XOR<Prisma.AutomationRuleVersionUpdateWithoutRecalculationRunsInput, Prisma.AutomationRuleVersionUncheckedUpdateWithoutRecalculationRunsInput>
+  create: Prisma.XOR<Prisma.AutomationRuleVersionCreateWithoutRecalculationRunsInput, Prisma.AutomationRuleVersionUncheckedCreateWithoutRecalculationRunsInput>
   where?: Prisma.AutomationRuleVersionWhereInput
 }
 
-export type AutomationRuleVersionUpdateToOneWithWhereWithoutRecalculationRunInput = {
+export type AutomationRuleVersionUpdateToOneWithWhereWithoutRecalculationRunsInput = {
   where?: Prisma.AutomationRuleVersionWhereInput
-  data: Prisma.XOR<Prisma.AutomationRuleVersionUpdateWithoutRecalculationRunInput, Prisma.AutomationRuleVersionUncheckedUpdateWithoutRecalculationRunInput>
+  data: Prisma.XOR<Prisma.AutomationRuleVersionUpdateWithoutRecalculationRunsInput, Prisma.AutomationRuleVersionUncheckedUpdateWithoutRecalculationRunsInput>
 }
 
-export type AutomationRuleVersionUpdateWithoutRecalculationRunInput = {
+export type AutomationRuleVersionUpdateWithoutRecalculationRunsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kind?: Prisma.StringFieldUpdateOperationsInput | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
@@ -465,7 +465,7 @@ export type AutomationRuleVersionUpdateWithoutRecalculationRunInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type AutomationRuleVersionUncheckedUpdateWithoutRecalculationRunInput = {
+export type AutomationRuleVersionUncheckedUpdateWithoutRecalculationRunsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kind?: Prisma.StringFieldUpdateOperationsInput | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
@@ -475,6 +475,35 @@ export type AutomationRuleVersionUncheckedUpdateWithoutRecalculationRunInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type AutomationRuleVersionCountOutputType
+ */
+
+export type AutomationRuleVersionCountOutputType = {
+  recalculationRuns: number
+}
+
+export type AutomationRuleVersionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  recalculationRuns?: boolean | AutomationRuleVersionCountOutputTypeCountRecalculationRunsArgs
+}
+
+/**
+ * AutomationRuleVersionCountOutputType without action
+ */
+export type AutomationRuleVersionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AutomationRuleVersionCountOutputType
+   */
+  select?: Prisma.AutomationRuleVersionCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * AutomationRuleVersionCountOutputType without action
+ */
+export type AutomationRuleVersionCountOutputTypeCountRecalculationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SegmentRecalculationRunWhereInput
+}
 
 
 export type AutomationRuleVersionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -485,7 +514,8 @@ export type AutomationRuleVersionSelect<ExtArgs extends runtime.Types.Extensions
   active?: boolean
   createdById?: boolean
   createdAt?: boolean
-  recalculationRun?: boolean | Prisma.AutomationRuleVersion$recalculationRunArgs<ExtArgs>
+  recalculationRuns?: boolean | Prisma.AutomationRuleVersion$recalculationRunsArgs<ExtArgs>
+  _count?: boolean | Prisma.AutomationRuleVersionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["automationRuleVersion"]>
 
 export type AutomationRuleVersionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -520,7 +550,8 @@ export type AutomationRuleVersionSelectScalar = {
 
 export type AutomationRuleVersionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kind" | "version" | "config" | "active" | "createdById" | "createdAt", ExtArgs["result"]["automationRuleVersion"]>
 export type AutomationRuleVersionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  recalculationRun?: boolean | Prisma.AutomationRuleVersion$recalculationRunArgs<ExtArgs>
+  recalculationRuns?: boolean | Prisma.AutomationRuleVersion$recalculationRunsArgs<ExtArgs>
+  _count?: boolean | Prisma.AutomationRuleVersionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AutomationRuleVersionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 export type AutomationRuleVersionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -528,7 +559,7 @@ export type AutomationRuleVersionIncludeUpdateManyAndReturn<ExtArgs extends runt
 export type $AutomationRuleVersionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AutomationRuleVersion"
   objects: {
-    recalculationRun: Prisma.$SegmentRecalculationRunPayload<ExtArgs> | null
+    recalculationRuns: Prisma.$SegmentRecalculationRunPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -932,7 +963,7 @@ readonly fields: AutomationRuleVersionFieldRefs;
  */
 export interface Prisma__AutomationRuleVersionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  recalculationRun<T extends Prisma.AutomationRuleVersion$recalculationRunArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AutomationRuleVersion$recalculationRunArgs<ExtArgs>>): Prisma.Prisma__SegmentRecalculationRunClient<runtime.Types.Result.GetResult<Prisma.$SegmentRecalculationRunPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  recalculationRuns<T extends Prisma.AutomationRuleVersion$recalculationRunsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AutomationRuleVersion$recalculationRunsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SegmentRecalculationRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1362,9 +1393,9 @@ export type AutomationRuleVersionDeleteManyArgs<ExtArgs extends runtime.Types.Ex
 }
 
 /**
- * AutomationRuleVersion.recalculationRun
+ * AutomationRuleVersion.recalculationRuns
  */
-export type AutomationRuleVersion$recalculationRunArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type AutomationRuleVersion$recalculationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the SegmentRecalculationRun
    */
@@ -1378,6 +1409,11 @@ export type AutomationRuleVersion$recalculationRunArgs<ExtArgs extends runtime.T
    */
   include?: Prisma.SegmentRecalculationRunInclude<ExtArgs> | null
   where?: Prisma.SegmentRecalculationRunWhereInput
+  orderBy?: Prisma.SegmentRecalculationRunOrderByWithRelationInput | Prisma.SegmentRecalculationRunOrderByWithRelationInput[]
+  cursor?: Prisma.SegmentRecalculationRunWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SegmentRecalculationRunScalarFieldEnum | Prisma.SegmentRecalculationRunScalarFieldEnum[]
 }
 
 /**
