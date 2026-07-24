@@ -18,10 +18,16 @@ async function runtimeAdapter(
 
 export async function handleMailSync(
   now = new Date(),
-  adapterFactory: AdapterFactory = runtimeAdapter
+  adapterFactory: AdapterFactory = runtimeAdapter,
+  options: { mailboxIds?: string[] } = {}
 ) {
   const mailboxes = await prisma.mailbox.findMany({
-    where: { enabled: true },
+    where: {
+      enabled: true,
+      ...(options.mailboxIds
+        ? { id: { in: options.mailboxIds } }
+        : {})
+    },
     select: { id: true }
   });
   const summary = {

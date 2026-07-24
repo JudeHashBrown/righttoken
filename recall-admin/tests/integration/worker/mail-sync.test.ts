@@ -15,7 +15,7 @@ describe("mail sync worker", () => {
     await prisma.$disconnect();
   });
 
-  it("syncs every enabled mailbox without exposing credentials", async () => {
+  it("syncs only the selected enabled mailbox without exposing credentials", async () => {
     const mailbox = await prisma.mailbox.create({
       data: {
         name: "Worker 测试邮箱",
@@ -34,7 +34,8 @@ describe("mail sync worker", () => {
     await expect(
       handleMailSync(
         new Date("2026-07-24T09:00:00.000Z"),
-        async () => adapter
+        async () => adapter,
+        { mailboxIds: [mailbox.id] }
       )
     ).resolves.toEqual({
       mailboxes: 1,
