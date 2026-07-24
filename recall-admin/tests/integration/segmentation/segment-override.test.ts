@@ -116,7 +116,7 @@ describe("audited manual segment overrides", () => {
     ).rejects.toThrow(ForbiddenError);
   });
 
-  it("keeps anomaly segment F above a manual override", async () => {
+  it("rejects a manual override while anomaly segment F is active", async () => {
     await prisma.userProfile.update({
       where: { id: userId },
       data: {
@@ -125,15 +125,20 @@ describe("audited manual segment overrides", () => {
         currentSegment: "F"
       }
     });
+    const overrideCount = await prisma.segmentOverride.count({
+      where: { userId }
+    });
 
-    await createSegmentOverride(
-      adminId,
-      userId,
-      "G",
-      "等待异常恢复",
-      new Date(now.getTime() + DAY_MS),
-      now
-    );
+    await expect(
+      createSegmentOverride(
+        adminId,
+        userId,
+        "G",
+        "等待异常恢复",
+        new Date(now.getTime() + DAY_MS),
+        now
+      )
+    ).rejects.toThrow(/active service anomalies/);
 
     expect(
       (
@@ -142,6 +147,9 @@ describe("audited manual segment overrides", () => {
         })
       ).currentSegment
     ).toBe("F");
+    expect(
+      await prisma.segmentOverride.count({ where: { userId } })
+    ).toBe(overrideCount);
   });
 
   it("revokes an override, resegments the user, and records an audit", async () => {

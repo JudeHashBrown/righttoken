@@ -64,6 +64,11 @@ export async function createSegmentOverride(
       const user = await tx.userProfile.findUniqueOrThrow({
         where: { id: userId }
       });
+      if (user.anomalyActive) {
+        throw new Error(
+          "active service anomalies cannot be overridden"
+        );
+      }
 
       await tx.segmentOverride.updateMany({
         where: {
@@ -108,7 +113,8 @@ export async function createSegmentOverride(
 export async function revokeSegmentOverride(
   actorId: string,
   overrideId: string,
-  now = new Date()
+  now = new Date(),
+  expectedUserId?: string
 ): Promise<void> {
   await prisma.$transaction(
     async (tx) => {
@@ -116,6 +122,12 @@ export async function revokeSegmentOverride(
       const override = await tx.segmentOverride.findUniqueOrThrow({
         where: { id: overrideId }
       });
+      if (
+        expectedUserId &&
+        override.userId !== expectedUserId
+      ) {
+        throw new Error("segment override does not belong to user");
+      }
       await tx.$queryRaw(
         Prisma.sql`
           SELECT "id"

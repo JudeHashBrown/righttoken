@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Bell, LogOut, Menu } from "lucide-react";
 import styles from "./app-header.module.css";
 
@@ -11,6 +14,13 @@ export function AppHeader({
   memberName,
   urgentCount
 }: AppHeaderProps): React.JSX.Element {
+  const pathname = usePathname();
+  const workspaceLabel = pathname.startsWith("/tasks")
+    ? "任务中心"
+    : pathname.startsWith("/users")
+      ? "用户中心"
+      : "运营驾驶舱";
+
   return (
     <header className={styles.header}>
       <div className={styles.mobileBrand}>
@@ -21,7 +31,7 @@ export function AppHeader({
       <p className={styles.context}>
         用户运营中心
         <span aria-hidden="true">/</span>
-        <strong>运营驾驶舱</strong>
+        <strong>{workspaceLabel}</strong>
       </p>
 
       <div className={styles.actions}>
