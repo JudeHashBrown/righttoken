@@ -1,6 +1,9 @@
-# syntax=docker/dockerfile:1.7
+FROM node:24.18-bookworm-slim AS base
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends ca-certificates openssl \
+    && rm -rf /var/lib/apt/lists/*
 
-FROM node:24.18-bookworm-slim AS deps
+FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -12,13 +15,13 @@ RUN npm run build \
     && npm run worker:build \
     && npm run bootstrap:build
 
-FROM node:24.18-bookworm-slim AS prod-deps
+FROM base AS prod-deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev \
     && npm cache clean --force
 
-FROM node:24.18-bookworm-slim AS runner
+FROM base AS runner
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000

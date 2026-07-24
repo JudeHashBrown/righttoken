@@ -12,6 +12,7 @@ describe("recall production container files", () => {
     expect(dockerfile).toContain(
       "FROM node:24.18-bookworm-slim"
     );
+    expect(dockerfile).toContain("openssl");
     expect(dockerfile).toContain("USER nextjs");
     expect(dockerfile).toContain("/api/health/ready");
   });
