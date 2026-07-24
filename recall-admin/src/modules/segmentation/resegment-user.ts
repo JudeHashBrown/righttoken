@@ -1,7 +1,7 @@
 import type { UserProfile } from "@/generated/prisma/client";
 import type { TransactionClient } from "@/lib/db/transaction";
 import { classifyUser } from "@/modules/segmentation/classify-user";
-import { loadActiveSegmentRule } from "@/modules/segmentation/rule-config";
+import { loadActiveSegmentRuleSet } from "@/modules/segmentation/rule-config";
 import { closeObsoleteAutomationTasks } from "@/modules/tasks/close-obsolete-tasks";
 
 export type SegmentChange = {
@@ -26,7 +26,7 @@ export async function resegmentUser(
   now = new Date()
 ): Promise<SegmentChange> {
   const { config, version: ruleVersion } =
-    await loadActiveSegmentRule(tx);
+    await loadActiveSegmentRuleSet(tx);
   const automaticDecision = classifyUser(user, now, config);
 
   let decision = automaticDecision;

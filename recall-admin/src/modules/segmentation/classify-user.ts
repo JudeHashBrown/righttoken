@@ -3,12 +3,20 @@ import type {
   SegmentDecision,
   SegmentFacts
 } from "@/modules/segmentation/types";
+import { evaluateRuleSet } from "@/modules/segmentation/evaluate-rule-set";
+import { legacySegmentConfigToRuleSet } from "@/modules/segmentation/rule-config";
+import type { SegmentRuleSet } from "@/modules/segmentation/rule-definition";
+import { buildSegmentFacts } from "@/modules/segmentation/segment-facts";
 
 export function classifyUser(
   facts: SegmentFacts,
   now: Date,
-  config: SegmentConfig
+  config: SegmentConfig | SegmentRuleSet
 ): SegmentDecision {
+  if ("schemaVersion" in config) {
+    return evaluateRuleSet(buildSegmentFacts(facts, now), config);
+  }
+
   if (facts.anomalyActive) {
     return { segment: "F", reason: "active service anomaly" };
   }
@@ -47,4 +55,15 @@ export function classifyUser(
   }
 
   return { segment: "G", reason: "healthy active user" };
+}
+
+export function classifyUserWithLegacyRules(
+  facts: SegmentFacts,
+  now: Date,
+  config: SegmentConfig
+): SegmentDecision {
+  return evaluateRuleSet(
+    buildSegmentFacts(facts, now),
+    legacySegmentConfigToRuleSet(config)
+  );
 }
