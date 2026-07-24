@@ -11,6 +11,10 @@ import {
   defaultSegmentConfig,
   segmentConfigSchema
 } from "@/modules/segmentation/rule-config";
+import {
+  defaultNotificationPolicy,
+  notificationPolicySchema
+} from "@/modules/notifications/policy-config";
 
 const openStatuses: TaskStatus[] = [
   "UNASSIGNED",
@@ -185,18 +189,34 @@ export async function getAssignmentWorkspaceOverview() {
 }
 
 export async function getNotificationWorkspaceOverview() {
-  const grouped = await prisma.recallTask.groupBy({
-    by: ["priority"],
-    where: { status: { in: openStatuses } },
-    _count: { _all: true }
-  });
+  const [grouped, activeRule] = await Promise.all([
+    prisma.recallTask.groupBy({
+      by: ["priority"],
+      where: { status: { in: openStatuses } },
+      _count: { _all: true }
+    }),
+    prisma.automationRuleVersion.findFirst({
+      where: { kind: "notifications", active: true },
+      orderBy: { version: "desc" }
+    })
+  ]);
   const counts = new Map(
     grouped.map((row) => [row.priority, row._count._all])
   );
-  return priorities.map((priority) => ({
-    priority,
-    openTasks: counts.get(priority) ?? 0
-  }));
+  const parsed = activeRule
+    ? notificationPolicySchema.safeParse(activeRule.config)
+    : null;
+  return {
+    version: activeRule?.version ?? 1,
+    config:
+      parsed?.success === true
+        ? parsed.data
+        : defaultNotificationPolicy,
+    counts: priorities.map((priority) => ({
+      priority,
+      openTasks: counts.get(priority) ?? 0
+    }))
+  };
 }
 
 export async function getMemberWorkspaceOverview() {

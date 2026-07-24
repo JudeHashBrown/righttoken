@@ -1,4 +1,5 @@
 import styles from "@/components/workspaces/workspace.module.css";
+import { SegmentRuleEditor } from "@/components/automation/segment-rule-editor";
 import { requireAdministrator } from "@/modules/admin/page-access";
 import { getSegmentWorkspaceOverview } from "@/modules/admin/workspace-queries";
 
@@ -46,6 +47,8 @@ export default async function SegmentRulesPage(): Promise<React.JSX.Element> {
           <small>服务异常期间禁止人工覆盖</small>
         </div>
       </div>
+
+      <SegmentRuleEditor initialConfig={overview.config} />
 
       <div className={styles.twoColumn}>
         <section className={styles.panel}>

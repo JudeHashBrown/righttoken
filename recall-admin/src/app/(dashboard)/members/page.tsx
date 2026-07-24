@@ -1,4 +1,5 @@
 import styles from "@/components/workspaces/workspace.module.css";
+import { MemberInviteForm } from "@/components/members/member-invite-form";
 import { requireAdministrator } from "@/modules/admin/page-access";
 import { getMemberWorkspaceOverview } from "@/modules/admin/workspace-queries";
 
@@ -52,6 +53,11 @@ export default async function MembersPage(): Promise<React.JSX.Element> {
           <small>管理员正式环境必须启用</small>
         </div>
       </div>
+
+      <MemberInviteForm
+        viewerRole={viewer.role}
+        twoFactorOn={viewer.twoFactorOn}
+      />
 
       <section className={styles.panel}>
         <div className={styles.panelHeader}>

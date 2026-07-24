@@ -74,6 +74,26 @@ test("every administrator navigation item opens a real page", async ({
     await expect(
       page.getByRole("heading", { name: route.heading, exact: true })
     ).toBeVisible();
+    if (route.path === "/automation/segments") {
+      await expect(
+        page.getByRole("button", { name: "发布分组规则" })
+      ).toBeVisible();
+    }
+    if (route.path === "/automation/assignment") {
+      await expect(
+        page.getByRole("button", { name: "预览分配" })
+      ).toBeVisible();
+    }
+    if (route.path === "/automation/notifications") {
+      await expect(
+        page.getByRole("button", { name: "发布通知策略" })
+      ).toBeVisible();
+    }
+    if (route.path === "/members") {
+      await expect(
+        page.getByRole("button", { name: "创建邀请" })
+      ).toBeVisible();
+    }
     if (route.path === "/reports") {
       await page.screenshot({
         fullPage: true,
@@ -92,4 +112,19 @@ test("every administrator navigation item opens a real page", async ({
     fullPage: true,
     path: testInfo.outputPath("settings-mobile.png")
   });
+});
+
+test("an invited member can open the account activation page", async ({
+  page
+}) => {
+  const response = await page.goto(
+    "/members/invitations/accept?token=opaque-invitation-token-123456"
+  );
+  expect(response?.status()).toBeLessThan(400);
+  await expect(
+    page.getByRole("heading", { name: "开通成员账号" })
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "完成账号开通" })
+  ).toBeVisible();
 });

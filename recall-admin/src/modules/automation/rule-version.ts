@@ -3,16 +3,21 @@ import { prisma } from "@/lib/db/prisma";
 import { assertMemberPermission, ForbiddenError } from "@/modules/auth/guards";
 import { segmentConfigSchema } from "@/modules/segmentation/rule-config";
 
+type RuleConfigParser = {
+  parse(value: unknown): Prisma.InputJsonValue;
+};
+
 export async function publishAutomationRuleVersion(
   actorId: string,
   kind: string,
-  config: unknown
+  config: unknown,
+  parser: RuleConfigParser = segmentConfigSchema
 ) {
   const normalizedKind = kind.trim();
   if (!normalizedKind) {
     throw new Error("rule kind is required");
   }
-  const parsedConfig = segmentConfigSchema.parse(config);
+  const parsedConfig = parser.parse(config);
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {

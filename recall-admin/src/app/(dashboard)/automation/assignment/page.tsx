@@ -1,22 +1,50 @@
 import styles from "@/components/workspaces/workspace.module.css";
+import {
+  AssignmentRuleEditor,
+  type EditableAssignmentRule
+} from "@/components/automation/assignment-rule-editor";
 import { requireAdministrator } from "@/modules/admin/page-access";
 import { getAssignmentWorkspaceOverview } from "@/modules/admin/workspace-queries";
 
-function conditions(value: unknown): string {
-  if (!value || typeof value !== "object") return "全部用户";
-  const entries = Object.entries(value as Record<string, unknown>);
-  return entries.length
-    ? entries
-        .map(([key, item]) =>
-          `${key}: ${Array.isArray(item) ? item.join("/") : String(item)}`
-        )
-        .join("；")
-    : "全部用户";
+function stringList(
+  conditions: unknown,
+  key: "countryCodes" | "sources"
+): string {
+  if (!conditions || typeof conditions !== "object") return "";
+  const value = (conditions as Record<string, unknown>)[key];
+  return Array.isArray(value) ? value.join(", ") : "";
+}
+
+function segmentList(conditions: unknown) {
+  if (!conditions || typeof conditions !== "object") return [];
+  const value = (conditions as Record<string, unknown>).segments;
+  return Array.isArray(value)
+    ? value.filter(
+        (item): item is "A" | "B" | "C" | "D" | "E" | "F" | "G" =>
+          typeof item === "string" &&
+          ["A", "B", "C", "D", "E", "F", "G"].includes(item)
+      )
+    : [];
 }
 
 export default async function AssignmentRulesPage(): Promise<React.JSX.Element> {
   await requireAdministrator("/automation/assignment");
   const overview = await getAssignmentWorkspaceOverview();
+  const editableRules: EditableAssignmentRule[] = overview.rules.map(
+    (rule) => ({
+      id: rule.id,
+      name: rule.name,
+      enabled: rule.enabled,
+      priority: rule.priority,
+      countryCodes: stringList(rule.conditions, "countryCodes"),
+      sources: stringList(rule.conditions, "sources"),
+      segments: segmentList(rule.conditions),
+      assigneeId: rule.assigneeId ?? "",
+      fallbackAssigneeId: rule.fallbackAssigneeId ?? "",
+      poolKey: rule.poolKey ?? "",
+      workloadLimit: rule.workloadLimit?.toString() ?? ""
+    })
+  );
 
   return (
     <main className={styles.page}>
@@ -55,55 +83,19 @@ export default async function AssignmentRulesPage(): Promise<React.JSX.Element> 
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
-            <h2>当前规则顺序</h2>
-            <p>无规则命中时自动进入默认公共任务池</p>
+            <h2>编辑规则顺序</h2>
+            <p>先预览最近用户，再一次性发布整个规则集</p>
           </div>
         </div>
-        {overview.rules.length ? (
-          <div className={styles.tableScroll}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>顺序</th>
-                  <th>规则</th>
-                  <th>条件</th>
-                  <th>主要负责人</th>
-                  <th>后备负责人</th>
-                  <th>负载上限</th>
-                  <th>状态</th>
-                </tr>
-              </thead>
-              <tbody>
-                {overview.rules.map((rule) => (
-                  <tr key={rule.id}>
-                    <td>{rule.priority}</td>
-                    <td>{rule.name}</td>
-                    <td>{conditions(rule.conditions)}</td>
-                    <td>{rule.assigneeName}</td>
-                    <td>{rule.fallbackName}</td>
-                    <td>{rule.workloadLimit ?? "不限"}</td>
-                    <td>
-                      <span
-                        className={
-                          rule.enabled
-                            ? styles.statusGood
-                            : styles.statusWaiting
-                        }
-                      >
-                        {rule.enabled ? "启用" : "停用"}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className={styles.empty}>
-            <strong>尚未发布分配规则</strong>
-            <p>当前所有新任务进入公共任务池，可由运营人员主动领取。</p>
-          </div>
-        )}
+        <AssignmentRuleEditor
+          initialRules={editableRules}
+          members={overview.members.map((member) => ({
+            id: member.id,
+            displayName: member.displayName,
+            role: member.role,
+            openTasks: member._count.assignedTasks
+          }))}
+        />
       </section>
     </main>
   );

@@ -30,6 +30,16 @@ describe("browser navigation proxy", () => {
     expect(response.headers.get("x-middleware-next")).toBe("1");
   });
 
+  it("allows an invited member to open the acceptance page", () => {
+    const response = proxy(
+      new NextRequest(
+        "https://recall.righttoken.com/members/invitations/accept?token=opaque"
+      )
+    );
+
+    expect(response.headers.get("x-middleware-next")).toBe("1");
+  });
+
   it("keeps an administrator in the required second-factor flow", () => {
     const response = proxy(
       new NextRequest("https://recall.righttoken.com/dashboard", {

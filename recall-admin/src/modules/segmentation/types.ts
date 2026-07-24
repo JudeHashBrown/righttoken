@@ -15,6 +15,10 @@ export type SegmentFacts = {
 export type SegmentConfig = {
   emptyBalanceMinor: number;
   inactiveMs: number;
+  registrationUnpaidMs?: number;
+  checkoutUnpaidMs?: number;
+  paidWithoutCallMs?: number;
+  emptyBalanceReminderMs?: number;
 };
 
 export type SegmentDecision = {

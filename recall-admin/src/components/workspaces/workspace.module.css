@@ -643,6 +643,125 @@
   font-size: 12px;
 }
 
+.editor {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+}
+
+.editorToolbar,
+.ruleCardHeader,
+.previewResult {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ruleList {
+  display: grid;
+  gap: 12px;
+}
+
+.ruleCard {
+  min-width: 0;
+  border: 1px solid #e4e7ef;
+  border-radius: 10px;
+  background: #fafbfe;
+  padding: 14px;
+}
+
+.ruleCardHeader {
+  margin-bottom: 14px;
+  color: #303950;
+  font-size: 12px;
+}
+
+.editorGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.segmentPicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 14px 0 0;
+  border: 0;
+  padding: 0;
+}
+
+.segmentPicker legend {
+  width: 100%;
+  margin-bottom: 6px;
+  color: #737d93;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.segmentPicker label,
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #566078;
+  font-size: 11px;
+}
+
+.toggle {
+  margin-top: 14px;
+}
+
+.previewResult {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  border-radius: 9px;
+  background: #eef0ff;
+  color: #515cc1;
+  padding: 11px 12px;
+  font-size: 11px;
+}
+
+.invitationResult {
+  display: grid;
+  gap: 7px;
+  border: 1px solid #cfe9df;
+  border-radius: 9px;
+  background: #f1fbf7;
+  padding: 12px;
+}
+
+.invitationResult strong {
+  color: #147552;
+  font-size: 12px;
+}
+
+.invitationResult p {
+  margin: 0;
+  color: #567268;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.notificationGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.notificationGrid fieldset {
+  display: grid;
+  gap: 12px;
+}
+
+.notificationGrid legend {
+  padding: 0 5px;
+  color: #303950;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 @media (max-width: 1120px) {
   .detailGrid {
     grid-template-columns: 1fr;
@@ -650,6 +769,14 @@
 
   .cardGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .editorGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .notificationGrid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -686,6 +813,15 @@
   .definitionItem,
   .definitionItem:nth-child(3n) {
     border-right: 0;
+  }
+
+  .editorGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .editorToolbar {
+    align-items: stretch;
+    flex-direction: column;
   }
 }
 

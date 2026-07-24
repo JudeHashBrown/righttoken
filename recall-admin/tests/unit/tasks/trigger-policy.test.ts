@@ -55,6 +55,40 @@ describe("next temporal segment boundary", () => {
     });
   });
 
+  it("uses the active rule version for configurable observation windows", () => {
+    const customConfig = {
+      ...defaultSegmentConfig,
+      registrationUnpaidMs: 4 * 60 * 60 * 1000,
+      checkoutUnpaidMs: 45 * 60 * 1000,
+      paidWithoutCallMs: 12 * 60 * 60 * 1000,
+      emptyBalanceReminderMs: 5 * 24 * 60 * 60 * 1000
+    };
+
+    expect(
+      getNextTemporalBoundary(baseFacts, now, customConfig)?.runAt
+    ).toEqual(new Date("2026-07-23T14:00:00.000Z"));
+    expect(
+      getNextTemporalBoundary(
+        {
+          ...baseFacts,
+          checkoutStartedAt: new Date("2026-07-23T11:45:00.000Z")
+        },
+        now,
+        customConfig
+      )?.runAt
+    ).toEqual(new Date("2026-07-23T12:30:00.000Z"));
+    expect(
+      getNextTemporalBoundary(
+        {
+          ...baseFacts,
+          firstPaidAt: new Date("2026-07-23T11:00:00.000Z")
+        },
+        now,
+        customConfig
+      )?.runAt
+    ).toEqual(new Date("2026-07-23T23:00:00.000Z"));
+  });
+
   it("uses the approved B, C, and E observation windows", () => {
     expect(
       getNextTemporalBoundary(

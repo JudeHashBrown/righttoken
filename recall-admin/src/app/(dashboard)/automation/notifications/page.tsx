@@ -1,31 +1,26 @@
 import styles from "@/components/workspaces/workspace.module.css";
+import { NotificationPolicyEditor } from "@/components/automation/notification-policy-editor";
 import { requireAdministrator } from "@/modules/admin/page-access";
 import { getNotificationWorkspaceOverview } from "@/modules/admin/workspace-queries";
 
 const policies = {
   URGENT: {
     label: "紧急",
-    channels: "后台、企微群、邮件",
-    first: "立即",
-    escalation: "15 分钟重提醒；30 分钟升级主管理员"
+    key: "urgent"
   },
   IMPORTANT: {
     label: "重要",
-    channels: "后台、企微群",
-    first: "立即",
-    escalation: "按任务 SLA 升级管理员"
+    key: "important"
   },
   NORMAL: {
     label: "普通",
-    channels: "后台、每日企微汇总",
-    first: "后台立即",
-    escalation: "1 个工作日后升级管理员"
+    key: "normal"
   }
 } as const;
 
 export default async function NotificationRulesPage(): Promise<React.JSX.Element> {
   await requireAdministrator("/automation/notifications");
-  const counts = await getNotificationWorkspaceOverview();
+  const overview = await getNotificationWorkspaceOverview();
 
   return (
     <main className={styles.page}>
@@ -41,19 +36,32 @@ export default async function NotificationRulesPage(): Promise<React.JSX.Element
       </p>
 
       <div className={styles.cardGrid}>
-        {counts.map((row) => (
-          <div className={styles.statCard} key={row.priority}>
-            <span>{policies[row.priority].label}待处理</span>
-            <strong>{row.openTasks}</strong>
-            <small>{policies[row.priority].channels}</small>
-          </div>
-        ))}
+        {overview.counts.map((row) => {
+          const policy = policies[row.priority];
+          const config = overview.config[policy.key];
+          const channels = [
+            "后台",
+            config.wecom ? "企微" : null,
+            config.email ? "邮件" : null
+          ]
+            .filter(Boolean)
+            .join("、");
+          return (
+            <div className={styles.statCard} key={row.priority}>
+              <span>{policy.label}待处理</span>
+              <strong>{row.openTasks}</strong>
+              <small>{channels}</small>
+            </div>
+          );
+        })}
         <div className={styles.statCard}>
           <span>每日汇总时间</span>
-          <strong>10:00</strong>
+          <strong>{overview.config.dailyDigestTime}</strong>
           <small>Asia/Shanghai</small>
         </div>
       </div>
+
+      <NotificationPolicyEditor initialConfig={overview.config} />
 
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
@@ -73,14 +81,32 @@ export default async function NotificationRulesPage(): Promise<React.JSX.Element
               </tr>
             </thead>
             <tbody>
-              {Object.entries(policies).map(([priority, policy]) => (
-                <tr key={priority}>
-                  <td>{policy.label}</td>
-                  <td>{policy.channels}</td>
-                  <td>{policy.first}</td>
-                  <td>{policy.escalation}</td>
-                </tr>
-              ))}
+              {Object.entries(policies).map(([priority, policy]) => {
+                const config = overview.config[policy.key];
+                const channels = [
+                  "后台",
+                  config.wecom ? "企微" : null,
+                  config.email ? "邮件" : null
+                ]
+                  .filter(Boolean)
+                  .join("、");
+                const escalation = [
+                  config.repeatMinutes
+                    ? `${config.repeatMinutes} 分钟后重提醒`
+                    : "不重复提醒",
+                  config.escalateMinutes
+                    ? `${config.escalateMinutes} 分钟后升级管理员`
+                    : "不自动升级"
+                ].join("；");
+                return (
+                  <tr key={priority}>
+                    <td>{policy.label}</td>
+                    <td>{channels}</td>
+                    <td>后台立即</td>
+                    <td>{escalation}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

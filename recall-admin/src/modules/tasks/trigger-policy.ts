@@ -94,7 +94,10 @@ export function getNextTemporalBoundary(
   switch (segment) {
     case "A":
       return {
-        runAt: at(facts.registeredAt, 2 * HOUR_MS),
+        runAt: at(
+          facts.registeredAt,
+          config.registrationUnpaidMs ?? 2 * HOUR_MS
+        ),
         expectedSegment: "A",
         expectedFactTimestamp: facts.registeredAt.toISOString(),
         reasonKey: "registration_unpaid"
@@ -104,7 +107,10 @@ export function getNextTemporalBoundary(
         return null;
       }
       return {
-        runAt: at(facts.checkoutStartedAt, 30 * MINUTE_MS),
+        runAt: at(
+          facts.checkoutStartedAt,
+          config.checkoutUnpaidMs ?? 30 * MINUTE_MS
+        ),
         expectedSegment: "B",
         expectedFactTimestamp: facts.checkoutStartedAt.toISOString(),
         reasonKey: "checkout_unpaid"
@@ -114,7 +120,10 @@ export function getNextTemporalBoundary(
         return null;
       }
       return {
-        runAt: at(facts.firstPaidAt, DAY_MS),
+        runAt: at(
+          facts.firstPaidAt,
+          config.paidWithoutCallMs ?? DAY_MS
+        ),
         expectedSegment: "C",
         expectedFactTimestamp: facts.firstPaidAt.toISOString(),
         reasonKey: "paid_without_call"
@@ -130,7 +139,10 @@ export function getNextTemporalBoundary(
       };
     case "E":
       return {
-        runAt: at(facts.balanceChangedAt ?? now, 3 * DAY_MS),
+        runAt: at(
+          facts.balanceChangedAt ?? now,
+          config.emptyBalanceReminderMs ?? 3 * DAY_MS
+        ),
         expectedSegment: "E",
         expectedFactTimestamp: (
           facts.balanceChangedAt ?? now

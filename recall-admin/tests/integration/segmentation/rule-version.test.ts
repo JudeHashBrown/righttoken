@@ -5,9 +5,14 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { prisma } from "@/lib/db/prisma";
 import { ForbiddenError } from "@/modules/auth/guards";
 import { publishAutomationRuleVersion } from "@/modules/automation/rule-version";
+import {
+  defaultNotificationPolicy,
+  notificationPolicySchema
+} from "@/modules/notifications/policy-config";
 
 describe("versioned segmentation rules", () => {
   const ruleKind = `segmentation-${randomUUID()}`;
+  const notificationRuleKind = `notifications-${randomUUID()}`;
   let adminId: string;
   let operatorId: string;
 
@@ -39,7 +44,7 @@ describe("versioned segmentation rules", () => {
       where: { entityType: "AutomationRuleVersion", actorId: adminId }
     });
     await prisma.automationRuleVersion.deleteMany({
-      where: { kind: ruleKind }
+      where: { kind: { in: [ruleKind, notificationRuleKind] } }
     });
     await prisma.member.deleteMany({
       where: { id: { in: [adminId, operatorId].filter(Boolean) } }
@@ -143,5 +148,23 @@ describe("versioned segmentation rules", () => {
         inactiveMs: 0
       })
     ).rejects.toThrow();
+  });
+
+  it("supports a validated notification policy version", async () => {
+    const published = await publishAutomationRuleVersion(
+      adminId,
+      notificationRuleKind,
+      defaultNotificationPolicy,
+      notificationPolicySchema
+    );
+
+    expect(published).toMatchObject({
+      kind: notificationRuleKind,
+      version: 1,
+      active: true
+    });
+    expect(published.config).toMatchObject({
+      dailyDigestTime: "10:00"
+    });
   });
 });

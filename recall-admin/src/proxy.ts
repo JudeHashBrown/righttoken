@@ -5,6 +5,12 @@ import {
 } from "@/modules/auth/session";
 
 export function proxy(request: NextRequest): NextResponse {
+  if (
+    request.nextUrl.pathname === "/members/invitations/accept"
+  ) {
+    return NextResponse.next();
+  }
+
   if (!request.cookies.has(SESSION_COOKIE_NAME)) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set(
