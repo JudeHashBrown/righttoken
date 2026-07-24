@@ -2219,10 +2219,12 @@ Create users/tasks assigned to two operators. Assert:
 - operator sees only assigned users plus public tasks;
 - admin sees all users;
 - filters by A–G, country, region, owner, status, priority, source, and date are combined with AND;
-- raw full IP is never returned to operator queries.
+- user lists return the complete email but never return a registration IP;
+- User 360 returns the decrypted full registration IP to an operator only when that operator is authorized to access the user.
 
 ```ts
 expect(operatorRows.every((row) => row.registrationIp === undefined)).toBe(true);
+expect(operatorRows[0]?.email).toBe("owned-user@example.test");
 expect(operatorRows.map((row) => row.externalUserId)).toEqual(["demo-owned"]);
 ```
 
@@ -2233,13 +2235,13 @@ Use stable sort keys:
 - users: `updatedAt desc, id desc`;
 - tasks: `priority asc, dueAt asc, id asc`.
 
-Limit pages to 100. Search normalized external ID, masked email, display name, country, and region. Never fetch encrypted integration data or full mail bodies in list queries.
+Limit pages to 100. Search normalized external ID, complete email, display name, country, and region. Never fetch registration IP, encrypted integration data, or full mail bodies in list queries.
 
 - [ ] **Step 3: Build the user list and User 360 page**
 
 User list columns:
 
-- group, external ID, masked email/name, country/region, payment, call activity, balance, owner, next open task, last event.
+- group, external ID, complete email/name, country/region, payment, call activity, balance, owner, next open task, last event.
 
 User 360 sections:
 
@@ -2249,7 +2251,7 @@ User 360 sections:
 - external and operational event timeline;
 - open/closed tasks;
 - mail threads and suppression state;
-- admin-only audited sensitive-detail reveal.
+- full registration IP for every role already authorized to access this user; the list page never receives the IP.
 
 It also allows reason-label selection and user-level operational notes. Administrators can create/revoke a temporary segment override with reason and expiry; the UI must explain that active F anomalies cannot be overridden.
 
@@ -2276,7 +2278,7 @@ Transfer requires a target active operator/admin and a non-empty reason.
 
 - Notes require `tasks:work`, store the author, and appear in the user timeline.
 - Segment overrides require `rules:publish`, expire within 30 days, and call Task 5 services.
-- Sensitive reveal requires `users:reveal-sensitive`, recent reauthentication, and an audit record; operators always receive 403.
+- User 360 contact details follow the same row-level user scope as the page itself. Complete IP is returned only from the detail query and is never included in list responses.
 
 - [ ] **Step 7: Add an end-to-end operator workflow**
 
