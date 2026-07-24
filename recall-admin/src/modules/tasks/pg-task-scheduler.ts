@@ -11,11 +11,14 @@ export class PgTaskScheduler implements TaskScheduler {
   async scheduleSegmentCheck(
     input: SegmentCheckSchedule
   ): Promise<void> {
+    const singletonKey =
+      "ruleVersion" in input
+        ? `${input.userId}:${input.ruleVersion}:${input.boundaryKey}`
+        : `${input.userId}:${input.reasonKey}:` +
+          input.expectedFactTimestamp;
     await this.boss.upsert(JOBS.SEGMENT_CHECK, input, {
       startAfter: input.runAt,
-      singletonKey:
-        `${input.userId}:${input.reasonKey}:` +
-        input.expectedFactTimestamp
+      singletonKey
     });
   }
 }

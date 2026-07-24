@@ -2,17 +2,42 @@ import { z } from "zod";
 import type { UserProfile } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { assignTask } from "@/modules/assignment/assign-task";
+import { getNextRuleBoundary } from "@/modules/segmentation/next-rule-boundary";
 import { resegmentUser } from "@/modules/segmentation/resegment-user";
+import { loadActiveSegmentRuleSet } from "@/modules/segmentation/rule-config";
 import { createTriggeredTask } from "@/modules/tasks/create-triggered-task";
-import { getTriggerPolicy } from "@/modules/tasks/trigger-policy";
+import {
+  noopTaskScheduler,
+  type TaskScheduler
+} from "@/modules/tasks/scheduler";
+import {
+  getTaskPolicy,
+  getTriggerPolicy
+} from "@/modules/tasks/trigger-policy";
 
-const segmentCheckSchema = z.object({
+const legacySegmentCheckSchema = z.object({
   userId: z.string().min(1),
   expectedSegment: z.enum(["A", "B", "C", "D", "E", "F", "G"]),
   expectedFactTimestamp: z.string().datetime({ offset: true }),
   runAt: z.coerce.date(),
   reasonKey: z.string().min(1).max(120)
 });
+
+const structuredSegmentCheckSchema = z.object({
+  userId: z.string().min(1),
+  ruleVersion: z.number().int().positive(),
+  runAt: z.coerce.date(),
+  boundaryKey: z.string().min(1).max(500),
+  purpose: z.enum(["TASK", "RULE"]),
+  expectedSegment: z
+    .enum(["A", "B", "C", "D", "E", "F", "G"])
+    .optional()
+});
+
+const segmentCheckSchema = z.union([
+  structuredSegmentCheckSchema,
+  legacySegmentCheckSchema
+]);
 
 export type SegmentCheckInput = z.input<typeof segmentCheckSchema>;
 
@@ -41,11 +66,94 @@ function currentFactTimestamp(
 
 export async function handleSegmentCheck(
   rawInput: SegmentCheckInput,
-  now = new Date()
+  now = new Date(),
+  scheduler: TaskScheduler = noopTaskScheduler
 ) {
   const input = segmentCheckSchema.parse(rawInput);
   if (input.runAt > now) {
     return { skipped: "not_due" as const };
+  }
+  if ("ruleVersion" in input) {
+    const outcome = await prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`
+        SELECT "id"
+        FROM "UserProfile"
+        WHERE "id" = ${input.userId}
+        FOR UPDATE
+      `;
+      const user = await tx.userProfile.findUniqueOrThrow({
+        where: { id: input.userId }
+      });
+      const active = await loadActiveSegmentRuleSet(tx);
+      if (active.version !== input.ruleVersion) {
+        return { skipped: "rule_version_changed" as const };
+      }
+      const segmentChange = await resegmentUser(
+        tx,
+        user,
+        `scheduled rule boundary ${input.boundaryKey}`,
+        now
+      );
+      return {
+        user,
+        config: active.config,
+        segment: segmentChange.currentSegment,
+        ruleVersion: active.version
+      };
+    });
+    if ("skipped" in outcome) {
+      return outcome;
+    }
+
+    let taskId: string | null = null;
+    if (
+      input.purpose === "TASK" &&
+      (!input.expectedSegment ||
+        input.expectedSegment === outcome.segment)
+    ) {
+      const policy = getTaskPolicy(
+        outcome.config,
+        outcome.segment
+      );
+      if (policy.enabled) {
+        const task = await createTriggeredTask({
+          userId: input.userId,
+          segment: outcome.segment,
+          policyKey: input.boundaryKey,
+          windowStart: input.runAt,
+          ruleVersion: outcome.ruleVersion,
+          reason: `规则边界命中：${input.boundaryKey}`,
+          policy,
+          now
+        });
+        if (
+          task.status === "UNASSIGNED" ||
+          task.status === "TODO"
+        ) {
+          await assignTask(task.id, now);
+        }
+        taskId = task.id;
+      }
+    }
+
+    const nextBoundary = getNextRuleBoundary(
+      outcome.user,
+      outcome.config,
+      outcome.ruleVersion,
+      now,
+      { includeTask: input.purpose !== "TASK" }
+    );
+    if (nextBoundary) {
+      await scheduler.scheduleSegmentCheck({
+        ...nextBoundary,
+        userId: input.userId
+      });
+    }
+    return {
+      checked: true as const,
+      segment: outcome.segment,
+      taskId
+    };
   }
 
   const outcome = await prisma.$transaction(async (tx) => {

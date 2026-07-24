@@ -25,6 +25,7 @@ export type SegmentEvaluationFacts = {
 };
 
 export type SegmentFactSource = {
+  id?: string;
   registeredAt: Date;
   source?: string | null;
   countryCode?: string | null;

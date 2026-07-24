@@ -8,14 +8,14 @@ import {
   type RightTokenAdapter,
   type RightTokenUserSnapshot
 } from "@/modules/integrations/righttoken/adapter";
+import { getNextRuleBoundary } from "@/modules/segmentation/next-rule-boundary";
 import { resegmentUser } from "@/modules/segmentation/resegment-user";
-import { loadActiveSegmentRule } from "@/modules/segmentation/rule-config";
+import { loadActiveSegmentRuleSet } from "@/modules/segmentation/rule-config";
 import {
   noopTaskScheduler,
   type SegmentCheckSchedule,
   type TaskScheduler
 } from "@/modules/tasks/scheduler";
-import { getNextTemporalBoundary } from "@/modules/tasks/trigger-policy";
 
 export type ReconciliationResult = {
   scanned: number;
@@ -153,10 +153,13 @@ async function reconcilePage(
     if (segmentChange.changed) {
       outcome.segmentChanges += 1;
     }
-    const { config } = await loadActiveSegmentRule(tx);
-    const boundary = getNextTemporalBoundary(user, now, config);
+    const { config, version } = await loadActiveSegmentRuleSet(tx);
+    const boundary = getNextRuleBoundary(user, config, version, now);
     if (boundary) {
-      outcome.schedules.push({ userId: user.id, ...boundary });
+      outcome.schedules.push({
+        ...boundary,
+        userId: user.id
+      });
     }
   }
   return outcome;

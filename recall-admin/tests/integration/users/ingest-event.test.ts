@@ -85,10 +85,11 @@ describe("idempotent user event ingestion", () => {
     expect(scheduled).toEqual([
       {
         userId: expect.any(String),
+        ruleVersion: expect.any(Number),
+        boundaryKey: "task:A:2026-07-23T08:00:00.000Z",
+        purpose: "TASK",
         expectedSegment: "A",
-        expectedFactTimestamp: "2026-07-23T08:00:00.000Z",
-        runAt: new Date("2026-07-23T10:00:00.000Z"),
-        reasonKey: "registration_unpaid"
+        runAt: new Date("2026-07-23T10:00:00.000Z")
       }
     ]);
   });

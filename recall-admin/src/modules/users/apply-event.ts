@@ -7,12 +7,12 @@ import { prisma } from "@/lib/db/prisma";
 import type { TransactionClient } from "@/lib/db/transaction";
 import { createFieldCipher } from "@/lib/crypto/field-encryption";
 import { resegmentUser } from "@/modules/segmentation/resegment-user";
-import { loadActiveSegmentRule } from "@/modules/segmentation/rule-config";
+import { getNextRuleBoundary } from "@/modules/segmentation/next-rule-boundary";
+import { loadActiveSegmentRuleSet } from "@/modules/segmentation/rule-config";
 import {
   noopTaskScheduler,
   type TaskScheduler
 } from "@/modules/tasks/scheduler";
-import { getNextTemporalBoundary } from "@/modules/tasks/trigger-policy";
 import {
   rightTokenEventSchema,
   type RightTokenEventInput
@@ -354,16 +354,17 @@ async function ingestParsedEvent(
           };
 
       if (factResult.applied) {
-        const { config } = await loadActiveSegmentRule(tx);
-        const boundary = getNextTemporalBoundary(
+        const { config, version } = await loadActiveSegmentRuleSet(tx);
+        const boundary = getNextRuleBoundary(
           factResult.user,
-          evaluationTime,
-          config
+          config,
+          version,
+          evaluationTime
         );
         if (boundary) {
           await scheduler.scheduleSegmentCheck({
-            userId: factResult.user.id,
-            ...boundary
+            ...boundary,
+            userId: factResult.user.id
           });
         }
       }

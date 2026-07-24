@@ -15,13 +15,18 @@ import { JOBS } from "@/worker/job-names";
 export async function registerHandlers(
   boss: PgBoss
 ): Promise<void> {
+  const taskScheduler = new PgTaskScheduler(boss);
   await boss.work<SegmentCheckInput>(
     JOBS.SEGMENT_CHECK,
     async ([job]) => {
       if (!job) {
         return { skipped: "empty_batch" };
       }
-      return handleSegmentCheck(job.data);
+      return handleSegmentCheck(
+        job.data,
+        new Date(),
+        taskScheduler
+      );
     }
   );
   await boss.work(JOBS.SLA_ESCALATION, async () =>
@@ -41,7 +46,7 @@ export async function registerHandlers(
     handleUserReconciliation(
       job?.data ?? { mode: "incremental" },
       undefined,
-      new PgTaskScheduler(boss)
+      taskScheduler
     )
   );
 }

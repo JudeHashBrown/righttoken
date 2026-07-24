@@ -3,6 +3,7 @@ import "dotenv/config";
 import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import { prisma } from "@/lib/db/prisma";
+import { loadActiveSegmentRuleSet } from "@/modules/segmentation/rule-config";
 import { handleSegmentCheck } from "@/worker/handlers/segment-check";
 
 const userIds: string[] = [];
@@ -43,6 +44,46 @@ describe("delayed segment checks", () => {
       await prisma.recallTask.count({
         where: {
           userId: user.id,
+          triggerKey: { startsWith: "A:" }
+        }
+      })
+    ).toBe(1);
+  });
+
+  it("creates one task for a structured versioned boundary", async () => {
+    const registeredAt = new Date("2026-07-23T08:00:00.000Z");
+    const user = await prisma.userProfile.create({
+      data: {
+        externalUserId: `worker-structured-${randomUUID()}`,
+        email: `worker-structured-${randomUUID()}@example.test`,
+        emailNormalized:
+          `worker-structured-${randomUUID()}@example.test`,
+        registeredAt,
+        currentSegment: "A"
+      }
+    });
+    userIds.push(user.id);
+    const active = await prisma.$transaction((tx) =>
+      loadActiveSegmentRuleSet(tx)
+    );
+    const input = {
+      userId: user.id,
+      ruleVersion: active.version,
+      runAt: new Date("2026-07-23T10:00:00.000Z"),
+      boundaryKey: `task:A:${registeredAt.toISOString()}`,
+      purpose: "TASK" as const,
+      expectedSegment: "A" as const
+    };
+    const now = new Date("2026-07-23T10:01:00.000Z");
+
+    await handleSegmentCheck(input, now);
+    await handleSegmentCheck(input, now);
+
+    expect(
+      await prisma.recallTask.count({
+        where: {
+          userId: user.id,
+          ruleVersion: active.version,
           triggerKey: { startsWith: "A:" }
         }
       })

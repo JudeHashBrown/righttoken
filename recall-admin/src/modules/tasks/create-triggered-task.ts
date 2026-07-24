@@ -4,7 +4,10 @@ import {
   type SegmentCode
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
-import { getTriggerPolicy } from "@/modules/tasks/trigger-policy";
+import {
+  getTriggerPolicy,
+  type TriggerPolicy
+} from "@/modules/tasks/trigger-policy";
 import { createTaskNotificationIntents } from "@/modules/notifications/notification-service";
 
 const taskTitles: Record<SegmentCode, string> = {
@@ -24,13 +27,14 @@ export type CreateTriggeredTaskInput = {
   windowStart: Date;
   ruleVersion: number;
   reason: string;
+  policy?: TriggerPolicy;
   now?: Date;
 };
 
 export async function createTriggeredTask(
   input: CreateTriggeredTaskInput
 ): Promise<RecallTask> {
-  const policy = getTriggerPolicy(input.segment);
+  const policy = input.policy ?? getTriggerPolicy(input.segment);
   if (!policy.enabled) {
     throw new Error(`segment ${input.segment} does not create recall tasks`);
   }

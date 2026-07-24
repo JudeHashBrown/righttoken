@@ -4,6 +4,9 @@ import type {
   SegmentConfig,
   SegmentFacts
 } from "@/modules/segmentation/types";
+import type {
+  SegmentRuleSet
+} from "@/modules/segmentation/rule-definition";
 
 const MINUTE_MS = 60 * 1000;
 const HOUR_MS = 60 * MINUTE_MS;
@@ -71,6 +74,17 @@ const triggerPolicies: Record<SegmentCode, TriggerPolicy> = {
 
 export function getTriggerPolicy(segment: SegmentCode): TriggerPolicy {
   return triggerPolicies[segment];
+}
+
+export function getTaskPolicy(
+  ruleSet: SegmentRuleSet,
+  segment: SegmentCode
+): TriggerPolicy {
+  const group = ruleSet.groups.find((item) => item.code === segment);
+  if (!group) {
+    throw new Error(`segment ${segment} is missing from the rule set`);
+  }
+  return { ...group.taskPolicy };
 }
 
 export type TemporalBoundary = {

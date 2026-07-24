@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   getNextTemporalBoundary,
+  getTaskPolicy,
   getTriggerPolicy
 } from "@/modules/tasks/trigger-policy";
+import { defaultSegmentRuleSet } from "@/modules/segmentation/default-rule-set";
 import { defaultSegmentConfig } from "@/modules/segmentation/rule-config";
 import type { SegmentFacts } from "@/modules/segmentation/types";
 
@@ -20,6 +22,19 @@ const baseFacts: SegmentFacts = {
 };
 
 describe("default recall trigger policy", () => {
+  it("reads editable task policy from the structured rule set", () => {
+    expect(getTaskPolicy(defaultSegmentRuleSet, "E")).toMatchObject({
+      enabled: true,
+      delayMinutes: 3 * 24 * 60,
+      priority: "NORMAL"
+    });
+    expect(getTaskPolicy(defaultSegmentRuleSet, "F")).toMatchObject({
+      enabled: true,
+      delayMinutes: 0,
+      priority: "URGENT"
+    });
+    expect(getTaskPolicy(defaultSegmentRuleSet, "G").enabled).toBe(false);
+  });
   it.each([
     ["A", 2 * 60, "NORMAL"],
     ["B", 30, "IMPORTANT"],
