@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { assertSameOrigin } from "@/modules/auth/csrf";
 import {
   ForbiddenError,
@@ -12,15 +11,7 @@ import {
   sendReviewedMail
 } from "@/modules/mail/send-reviewed-mail";
 import { MailSendBlockedError } from "@/modules/mail/send-guard";
-
-const sendSchema = z
-  .object({
-    mailboxId: z.string().min(1),
-    taskId: z.string().min(1),
-    subject: z.string().trim().min(1).max(200),
-    bodyText: z.string().trim().min(1).max(100_000)
-  })
-  .strict();
+import { mailSendRequestSchema } from "@/modules/mail/send-request-schema";
 
 export async function POST(
   request: NextRequest
@@ -31,7 +22,7 @@ export async function POST(
       request,
       "mail:send-reviewed"
     );
-    const parsed = sendSchema.safeParse(
+    const parsed = mailSendRequestSchema.safeParse(
       await request.json().catch(() => null)
     );
     if (!parsed.success) {

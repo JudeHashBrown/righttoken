@@ -11,6 +11,7 @@ export type ReviewedMailInput = {
   actorId: string;
   mailboxId: string;
   taskId: string;
+  recipient: string;
   subject: string;
   bodyText: string;
   minimumContactIntervalMinutes: number;
@@ -22,6 +23,7 @@ export async function sendReviewedMail(
   adapter: Pick<MailboxAdapter, "send">
 ): Promise<MailMessage> {
   const now = input.now ?? new Date();
+  const recipient = input.recipient.trim().toLowerCase();
   const [actor, mailbox, task] = await Promise.all([
     prisma.member.findUniqueOrThrow({
       where: { id: input.actorId },
@@ -64,9 +66,14 @@ export async function sendReviewedMail(
     throw new MailSendBlockedError("EMPTY_MESSAGE");
   }
 
-  const [suppressed, lastSent] = await Promise.all([
+  const [userSuppressed, recipientSuppressed, lastSent] =
+    await Promise.all([
     prisma.suppressionEntry.findUnique({
       where: { emailNormalized: task.user.emailNormalized },
+      select: { id: true }
+    }),
+    prisma.suppressionEntry.findUnique({
+      where: { emailNormalized: recipient },
       select: { id: true }
     }),
     prisma.mailMessage.findFirst({
@@ -78,11 +85,11 @@ export async function sendReviewedMail(
       orderBy: { sentAt: "desc" },
       select: { sentAt: true }
     })
-  ]);
+    ]);
   assertMailSendAllowed(
     {
       emailNormalized: task.user.emailNormalized,
-      unsubscribedAt: suppressed
+      unsubscribedAt: userSuppressed || recipientSuppressed
         ? now
         : task.user.unsubscribedAt,
       pausedAt: task.user.pausedAt
@@ -124,7 +131,7 @@ export async function sendReviewedMail(
       status: "DRAFT",
       references: [],
       fromAddress: mailbox.emailAddress,
-      toAddresses: [task.user.email],
+      toAddresses: [recipient],
       subject: input.subject.trim(),
       bodyText: input.bodyText.trim(),
       reviewedById: actor.id
@@ -134,7 +141,7 @@ export async function sendReviewedMail(
   let delivery: { providerMessageId: string };
   try {
     delivery = await adapter.send({
-      to: [task.user.email],
+      to: [recipient],
       subject: draft.subject,
       text: draft.bodyText
     });
@@ -179,8 +186,13 @@ export async function sendReviewedMail(
         metadata: {
           taskId: task.id,
           mailboxId: mailbox.id,
+          recipientOverridden:
+            recipient !== task.user.email.trim().toLowerCase(),
           recipientDomain:
-            task.user.emailNormalized.split("@")[1] ?? "unknown"
+            recipient.split("@")[1] ?? "unknown",
+          originalRecipientDomain:
+            task.user.email.trim().toLowerCase().split("@")[1] ??
+            "unknown"
         }
       }
     });
