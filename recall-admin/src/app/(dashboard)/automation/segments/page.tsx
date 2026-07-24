@@ -1,22 +1,36 @@
 import styles from "@/components/workspaces/workspace.module.css";
 import { SegmentRuleEditor } from "@/components/automation/segment-rule-editor";
-import { requireAdministrator } from "@/modules/admin/page-access";
+import { requireWorkspaceMember } from "@/modules/admin/page-access";
 import { getSegmentWorkspaceOverview } from "@/modules/admin/workspace-queries";
+import { getPublicSegmentFieldRegistry } from "@/modules/segmentation/field-registry";
 
 export default async function SegmentRulesPage(): Promise<React.JSX.Element> {
-  await requireAdministrator("/automation/segments");
+  const member = await requireWorkspaceMember("/automation/segments");
   const overview = await getSegmentWorkspaceOverview();
-  const total = Math.max(
-    1,
-    overview.distribution.reduce((sum, row) => sum + row.count, 0)
+  const total = overview.distribution.reduce(
+    (sum, row) => sum + row.count,
+    0
   );
+  const latestRun = overview.latestRun;
+  const progress = latestRun?.totalUsers
+    ? Math.round(
+        (latestRun.processedUsers / latestRun.totalUsers) * 100
+      )
+    : latestRun?.status === "COMPLETED"
+      ? 100
+      : 0;
+  const distribution = Object.fromEntries(
+    overview.distribution.map((row) => [row.segment, row.count])
+  ) as Record<"A" | "B" | "C" | "D" | "E" | "F" | "G", number>;
 
   return (
     <main className={styles.page}>
       <header className={styles.heading}>
         <div>
           <h1>分组规则</h1>
-          <p>查看当前 A–G 分组参数、用户分布和最近迁移结果。</p>
+          <p>
+            定义每个分组的业务含义、互斥判断顺序和运营任务策略。
+          </p>
         </div>
         <span className={styles.statusGood}>
           当前版本 v{overview.version}
@@ -25,30 +39,46 @@ export default async function SegmentRulesPage(): Promise<React.JSX.Element> {
 
       <div className={styles.cardGrid}>
         <div className={styles.statCard}>
-          <span>A 组观察时长</span>
-          <strong>2 小时</strong>
-          <small>注册后未进入支付流程</small>
+          <span>当前生效版本</span>
+          <strong>v{overview.version}</strong>
+          <small>
+            {overview.publishedBy
+              ? `${overview.publishedBy} 发布`
+              : "系统默认规则"}
+          </small>
         </div>
         <div className={styles.statCard}>
-          <span>D 组停用阈值</span>
-          <strong>
-            {Math.round(overview.config.inactiveMs / 86_400_000)} 天
-          </strong>
-          <small>有余额但持续未调用</small>
+          <span>规则覆盖用户</span>
+          <strong>{total} 人</strong>
+          <small>系统内全部用户均归入唯一分组</small>
         </div>
         <div className={styles.statCard}>
-          <span>E 组余额阈值</span>
-          <strong>{overview.config.emptyBalanceMinor}</strong>
-          <small>按最小货币单位计算</small>
+          <span>最近全量重算</span>
+          <strong>{latestRun ? `${progress}%` : "尚未运行"}</strong>
+          <small>
+            {latestRun
+              ? `${latestRun.processedUsers}/${latestRun.totalUsers} 已处理`
+              : "发布新规则后自动执行"}
+          </small>
         </div>
         <div className={styles.statCard}>
-          <span>F 组优先级</span>
-          <strong>最高</strong>
-          <small>服务异常期间禁止人工覆盖</small>
+          <span>重算失败</span>
+          <strong>{latestRun?.failedUsers ?? 0} 人</strong>
+          <small>
+            {latestRun?.status === "PARTIAL_FAILURE"
+              ? "可在历史版本中重试"
+              : "当前没有待重试失败"}
+          </small>
         </div>
       </div>
 
-      <SegmentRuleEditor initialConfig={overview.config} />
+      <SegmentRuleEditor
+        canEdit={member.role !== "OPERATOR"}
+        currentVersion={overview.version}
+        distribution={distribution}
+        fieldRegistry={getPublicSegmentFieldRegistry()}
+        initialRuleSet={overview.ruleSet}
+      />
 
       <div className={styles.twoColumn}>
         <section className={styles.panel}>

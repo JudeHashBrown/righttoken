@@ -76,8 +76,18 @@ test("every administrator navigation item opens a real page", async ({
     ).toBeVisible();
     if (route.path === "/automation/segments") {
       await expect(
-        page.getByRole("button", { name: "发布分组规则" })
+        page.getByRole("button", { name: "预览并发布" })
       ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "F 组" })
+      ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "G 组" })
+      ).toBeVisible();
+      await page.screenshot({
+        fullPage: true,
+        path: testInfo.outputPath("segment-rules-desktop.png")
+      });
     }
     if (route.path === "/automation/assignment") {
       await expect(

@@ -8,8 +8,10 @@ import type {
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import {
-  defaultSegmentConfig,
-  segmentConfigSchema
+  defaultSegmentRuleSet
+} from "@/modules/segmentation/default-rule-set";
+import {
+  parseSegmentRuleConfig
 } from "@/modules/segmentation/rule-config";
 import {
   defaultNotificationPolicy,
@@ -194,7 +196,8 @@ export async function getMailWorkspaceOverview(
 }
 
 export async function getSegmentWorkspaceOverview() {
-  const [activeRule, groupedUsers, recentChanges] = await Promise.all([
+  const [activeRule, groupedUsers, recentChanges, latestRun] =
+    await Promise.all([
     prisma.automationRuleVersion.findFirst({
       where: { kind: "segmentation", active: true },
       orderBy: { version: "desc" }
@@ -219,10 +222,26 @@ export async function getSegmentWorkspaceOverview() {
           }
         }
       }
+    }),
+    prisma.segmentRecalculationRun.findFirst({
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        status: true,
+        totalUsers: true,
+        processedUsers: true,
+        succeededUsers: true,
+        failedUsers: true,
+        createdAt: true,
+        completedAt: true
+      }
     })
   ]);
-  const parsed = activeRule
-    ? segmentConfigSchema.safeParse(activeRule.config)
+  const publisher = activeRule
+    ? await prisma.member.findUnique({
+        where: { id: activeRule.createdById },
+        select: { displayName: true }
+      })
     : null;
   const counts = new Map(
     groupedUsers.map((row) => [
@@ -233,8 +252,12 @@ export async function getSegmentWorkspaceOverview() {
 
   return {
     version: activeRule?.version ?? 1,
-    config:
-      parsed?.success === true ? parsed.data : defaultSegmentConfig,
+    ruleSet: activeRule
+      ? parseSegmentRuleConfig(activeRule.config)
+      : structuredClone(defaultSegmentRuleSet),
+    publishedAt: activeRule?.createdAt ?? null,
+    publishedBy: publisher?.displayName ?? null,
+    latestRun,
     distribution: segments.map((segment) => ({
       segment,
       count: counts.get(segment) ?? 0

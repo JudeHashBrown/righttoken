@@ -139,10 +139,12 @@ describe("segment rule publication", () => {
     ).rejects.toThrow(ForbiddenError);
 
     const adminPreview = await previewSegmentRuleSet(adminId, draft);
+    const changedDraft = structuredClone(draft);
+    changedDraft.groups[1]!.annotation = "草稿条件定义已经被修改";
     await expect(
       publishSegmentRuleSet({
         actorId: adminId,
-        draft: { ...draft, changeSummary: "草稿已经被修改" },
+        draft: changedDraft,
         previewToken: adminPreview.token,
         idempotencyKey: randomUUID(),
         scheduler

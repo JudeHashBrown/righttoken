@@ -89,8 +89,7 @@ export function AppSidebar({
         {
           label: "分组规则",
           href: "/automation/segments",
-          icon: Sparkles,
-          administratorOnly: true
+          icon: Sparkles
         },
         {
           label: "分配规则",

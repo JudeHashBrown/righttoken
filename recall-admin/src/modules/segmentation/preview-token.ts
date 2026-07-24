@@ -24,8 +24,9 @@ function encode(payload: SegmentPreviewTokenPayload): string {
 }
 
 export function hashSegmentRuleSet(ruleSet: SegmentRuleSet): string {
+  const { changeSummary: _changeSummary, ...ruleDefinition } = ruleSet;
   return createHash("sha256")
-    .update(JSON.stringify(ruleSet))
+    .update(JSON.stringify(ruleDefinition))
     .digest("hex");
 }
 

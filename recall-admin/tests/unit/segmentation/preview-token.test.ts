@@ -10,6 +10,15 @@ const secret = "preview-token-test-secret-that-is-long-enough";
 const now = new Date("2026-07-24T12:00:00.000Z");
 
 describe("segment preview token", () => {
+  it("treats the change summary as publication metadata", () => {
+    expect(
+      hashSegmentRuleSet({
+        ...defaultSegmentRuleSet,
+        changeSummary: "发布时填写的说明"
+      })
+    ).toBe(hashSegmentRuleSet(defaultSegmentRuleSet));
+  });
+
   it("binds a preview to actor, draft hash and expiry", () => {
     const draftHash = hashSegmentRuleSet(defaultSegmentRuleSet);
     const token = signSegmentPreview(
