@@ -100,7 +100,9 @@ describe("RightToken user reconciliation", () => {
           totalPaidMinor: 10_000,
           successfulCallCount: 1,
           lastCallAt: new Date("2026-07-23T23:00:00.000Z"),
-          balanceMinor: 8_000,
+          balanceMinor: 44,
+          balanceCurrency: "EUR",
+          balanceUsdMinor: 49,
           anomalyActive: false
         }
       ]),
@@ -121,7 +123,9 @@ describe("RightToken user reconciliation", () => {
       email: `${externalUserId}@new.example.test`,
       ownerId: owner.id,
       successfulCallCount: 1,
-      balanceMinor: 8_000,
+      balanceMinor: 44,
+      balanceCurrency: "EUR",
+      balanceUsdMinor: 49,
       currentSegment: "G"
     });
     await expect(

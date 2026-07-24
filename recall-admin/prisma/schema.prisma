@@ -131,6 +131,8 @@ model UserProfile {
   lastCallAt          DateTime?
   successfulCallCount Int         @default(0)
   balanceMinor        Int         @default(0)
+  balanceCurrency     String      @default("USD")
+  balanceUsdMinor     Int         @default(0)
   balanceChangedAt    DateTime?
   anomalyActive       Boolean     @default(false)
   anomalyChangedAt    DateTime?

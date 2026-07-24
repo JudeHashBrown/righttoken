@@ -65,6 +65,9 @@ function snapshot(
     successfulCallCount: called ? 1 + (index % 20) : 0,
     lastCallAt,
     balanceMinor: scenario === "E" ? 0 : paid ? 5_000 : 0,
+    balanceCurrency: "USD",
+    balanceUsdMinor:
+      scenario === "E" ? 0 : paid ? 5_000 : 0,
     anomalyActive: scenario === "F"
   };
 }

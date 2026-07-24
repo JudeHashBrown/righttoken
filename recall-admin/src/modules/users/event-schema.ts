@@ -28,7 +28,12 @@ export const rightTokenEventSchema = z.discriminatedUnion(
               .transform((value) => value.trim().toLowerCase()),
             display_name: z.string().trim().min(1).max(120).optional(),
             registration_ip: z.string().trim().min(2).max(64).optional(),
-            country_code: z.string().trim().min(2).max(3).optional(),
+            country_code: z
+              .string()
+              .trim()
+              .length(2)
+              .transform((value) => value.toUpperCase())
+              .optional(),
             region: z.string().trim().min(1).max(120).optional(),
             language: z.string().trim().min(2).max(35).optional(),
             timezone: z.string().trim().min(1).max(80).optional(),
@@ -76,7 +81,14 @@ export const rightTokenEventSchema = z.discriminatedUnion(
         payload: z
           .object({
             payment_id: z.string().trim().min(1).max(160),
-            amount_minor: z.number().int().nonnegative()
+            amount_minor: z.number().int().nonnegative(),
+            currency: z
+              .string()
+              .trim()
+              .length(3)
+              .transform((value) => value.toUpperCase())
+              .optional(),
+            amount_usd_minor: z.number().int().nonnegative().optional()
           })
           .strict()
       })
@@ -87,7 +99,14 @@ export const rightTokenEventSchema = z.discriminatedUnion(
         event_type: z.literal("balance.changed"),
         payload: z
           .object({
-            balance_minor: z.number().int()
+            balance_minor: z.number().int(),
+            balance_currency: z
+              .string()
+              .trim()
+              .length(3)
+              .transform((value) => value.toUpperCase())
+              .optional(),
+            balance_usd_minor: z.number().int().optional()
           })
           .strict()
       })
@@ -143,7 +162,12 @@ export const rightTokenEventSchema = z.discriminatedUnion(
               .transform((value) => value.trim().toLowerCase())
               .optional(),
             display_name: z.string().trim().min(1).max(120).optional(),
-            country_code: z.string().trim().min(2).max(3).optional(),
+            country_code: z
+              .string()
+              .trim()
+              .length(2)
+              .transform((value) => value.toUpperCase())
+              .optional(),
             region: z.string().trim().min(1).max(120).optional(),
             language: z.string().trim().min(2).max(35).optional(),
             timezone: z.string().trim().min(1).max(80).optional(),

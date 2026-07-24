@@ -21,6 +21,8 @@ describe("RightToken adapter contract", () => {
       expect(user.email).toMatch(/@example\.test$/);
       expect(user.updatedAt).toBeInstanceOf(Date);
       expect(Number.isInteger(user.balanceMinor)).toBe(true);
+      expect(user.balanceCurrency).toBe("USD");
+      expect(user.balanceUsdMinor).toBe(user.balanceMinor);
     }
   });
 

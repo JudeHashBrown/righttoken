@@ -82,6 +82,9 @@ function sourceFacts(snapshot: RightTokenUserSnapshot) {
     lastCallAt: snapshot.lastCallAt,
     successfulCallCount: snapshot.successfulCallCount,
     balanceMinor: snapshot.balanceMinor,
+    balanceCurrency: snapshot.balanceCurrency ?? "USD",
+    balanceUsdMinor:
+      snapshot.balanceUsdMinor ?? snapshot.balanceMinor,
     balanceChangedAt: snapshot.updatedAt,
     anomalyActive: snapshot.anomalyActive,
     anomalyChangedAt: snapshot.updatedAt,

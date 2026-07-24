@@ -30,6 +30,7 @@ export type UserProfileAvgAggregateOutputType = {
   totalPaidMinor: number | null
   successfulCallCount: number | null
   balanceMinor: number | null
+  balanceUsdMinor: number | null
   segmentRuleVersion: number | null
 }
 
@@ -37,6 +38,7 @@ export type UserProfileSumAggregateOutputType = {
   totalPaidMinor: number | null
   successfulCallCount: number | null
   balanceMinor: number | null
+  balanceUsdMinor: number | null
   segmentRuleVersion: number | null
 }
 
@@ -63,6 +65,8 @@ export type UserProfileMinAggregateOutputType = {
   lastCallAt: Date | null
   successfulCallCount: number | null
   balanceMinor: number | null
+  balanceCurrency: string | null
+  balanceUsdMinor: number | null
   balanceChangedAt: Date | null
   anomalyActive: boolean | null
   anomalyChangedAt: Date | null
@@ -101,6 +105,8 @@ export type UserProfileMaxAggregateOutputType = {
   lastCallAt: Date | null
   successfulCallCount: number | null
   balanceMinor: number | null
+  balanceCurrency: string | null
+  balanceUsdMinor: number | null
   balanceChangedAt: Date | null
   anomalyActive: boolean | null
   anomalyChangedAt: Date | null
@@ -139,6 +145,8 @@ export type UserProfileCountAggregateOutputType = {
   lastCallAt: number
   successfulCallCount: number
   balanceMinor: number
+  balanceCurrency: number
+  balanceUsdMinor: number
   balanceChangedAt: number
   anomalyActive: number
   anomalyChangedAt: number
@@ -160,6 +168,7 @@ export type UserProfileAvgAggregateInputType = {
   totalPaidMinor?: true
   successfulCallCount?: true
   balanceMinor?: true
+  balanceUsdMinor?: true
   segmentRuleVersion?: true
 }
 
@@ -167,6 +176,7 @@ export type UserProfileSumAggregateInputType = {
   totalPaidMinor?: true
   successfulCallCount?: true
   balanceMinor?: true
+  balanceUsdMinor?: true
   segmentRuleVersion?: true
 }
 
@@ -193,6 +203,8 @@ export type UserProfileMinAggregateInputType = {
   lastCallAt?: true
   successfulCallCount?: true
   balanceMinor?: true
+  balanceCurrency?: true
+  balanceUsdMinor?: true
   balanceChangedAt?: true
   anomalyActive?: true
   anomalyChangedAt?: true
@@ -231,6 +243,8 @@ export type UserProfileMaxAggregateInputType = {
   lastCallAt?: true
   successfulCallCount?: true
   balanceMinor?: true
+  balanceCurrency?: true
+  balanceUsdMinor?: true
   balanceChangedAt?: true
   anomalyActive?: true
   anomalyChangedAt?: true
@@ -269,6 +283,8 @@ export type UserProfileCountAggregateInputType = {
   lastCallAt?: true
   successfulCallCount?: true
   balanceMinor?: true
+  balanceCurrency?: true
+  balanceUsdMinor?: true
   balanceChangedAt?: true
   anomalyActive?: true
   anomalyChangedAt?: true
@@ -394,6 +410,8 @@ export type UserProfileGroupByOutputType = {
   lastCallAt: Date | null
   successfulCallCount: number
   balanceMinor: number
+  balanceCurrency: string
+  balanceUsdMinor: number
   balanceChangedAt: Date | null
   anomalyActive: boolean
   anomalyChangedAt: Date | null
@@ -455,6 +473,8 @@ export type UserProfileWhereInput = {
   lastCallAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   successfulCallCount?: Prisma.IntFilter<"UserProfile"> | number
   balanceMinor?: Prisma.IntFilter<"UserProfile"> | number
+  balanceCurrency?: Prisma.StringFilter<"UserProfile"> | string
+  balanceUsdMinor?: Prisma.IntFilter<"UserProfile"> | number
   balanceChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   anomalyActive?: Prisma.BoolFilter<"UserProfile"> | boolean
   anomalyChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
@@ -501,6 +521,8 @@ export type UserProfileOrderByWithRelationInput = {
   lastCallAt?: Prisma.SortOrderInput | Prisma.SortOrder
   successfulCallCount?: Prisma.SortOrder
   balanceMinor?: Prisma.SortOrder
+  balanceCurrency?: Prisma.SortOrder
+  balanceUsdMinor?: Prisma.SortOrder
   balanceChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   anomalyActive?: Prisma.SortOrder
   anomalyChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -550,6 +572,8 @@ export type UserProfileWhereUniqueInput = Prisma.AtLeast<{
   lastCallAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   successfulCallCount?: Prisma.IntFilter<"UserProfile"> | number
   balanceMinor?: Prisma.IntFilter<"UserProfile"> | number
+  balanceCurrency?: Prisma.StringFilter<"UserProfile"> | string
+  balanceUsdMinor?: Prisma.IntFilter<"UserProfile"> | number
   balanceChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   anomalyActive?: Prisma.BoolFilter<"UserProfile"> | boolean
   anomalyChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
@@ -596,6 +620,8 @@ export type UserProfileOrderByWithAggregationInput = {
   lastCallAt?: Prisma.SortOrderInput | Prisma.SortOrder
   successfulCallCount?: Prisma.SortOrder
   balanceMinor?: Prisma.SortOrder
+  balanceCurrency?: Prisma.SortOrder
+  balanceUsdMinor?: Prisma.SortOrder
   balanceChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   anomalyActive?: Prisma.SortOrder
   anomalyChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -642,6 +668,8 @@ export type UserProfileScalarWhereWithAggregatesInput = {
   lastCallAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
   successfulCallCount?: Prisma.IntWithAggregatesFilter<"UserProfile"> | number
   balanceMinor?: Prisma.IntWithAggregatesFilter<"UserProfile"> | number
+  balanceCurrency?: Prisma.StringWithAggregatesFilter<"UserProfile"> | string
+  balanceUsdMinor?: Prisma.IntWithAggregatesFilter<"UserProfile"> | number
   balanceChangedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
   anomalyActive?: Prisma.BoolWithAggregatesFilter<"UserProfile"> | boolean
   anomalyChangedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
@@ -680,6 +708,8 @@ export type UserProfileCreateInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -725,6 +755,8 @@ export type UserProfileUncheckedCreateInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -770,6 +802,8 @@ export type UserProfileUpdateInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -815,6 +849,8 @@ export type UserProfileUncheckedUpdateInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -860,6 +896,8 @@ export type UserProfileCreateManyInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -898,6 +936,8 @@ export type UserProfileUpdateManyMutationInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -935,6 +975,8 @@ export type UserProfileUncheckedUpdateManyInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -983,6 +1025,8 @@ export type UserProfileCountOrderByAggregateInput = {
   lastCallAt?: Prisma.SortOrder
   successfulCallCount?: Prisma.SortOrder
   balanceMinor?: Prisma.SortOrder
+  balanceCurrency?: Prisma.SortOrder
+  balanceUsdMinor?: Prisma.SortOrder
   balanceChangedAt?: Prisma.SortOrder
   anomalyActive?: Prisma.SortOrder
   anomalyChangedAt?: Prisma.SortOrder
@@ -1002,6 +1046,7 @@ export type UserProfileAvgOrderByAggregateInput = {
   totalPaidMinor?: Prisma.SortOrder
   successfulCallCount?: Prisma.SortOrder
   balanceMinor?: Prisma.SortOrder
+  balanceUsdMinor?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
 }
 
@@ -1028,6 +1073,8 @@ export type UserProfileMaxOrderByAggregateInput = {
   lastCallAt?: Prisma.SortOrder
   successfulCallCount?: Prisma.SortOrder
   balanceMinor?: Prisma.SortOrder
+  balanceCurrency?: Prisma.SortOrder
+  balanceUsdMinor?: Prisma.SortOrder
   balanceChangedAt?: Prisma.SortOrder
   anomalyActive?: Prisma.SortOrder
   anomalyChangedAt?: Prisma.SortOrder
@@ -1066,6 +1113,8 @@ export type UserProfileMinOrderByAggregateInput = {
   lastCallAt?: Prisma.SortOrder
   successfulCallCount?: Prisma.SortOrder
   balanceMinor?: Prisma.SortOrder
+  balanceCurrency?: Prisma.SortOrder
+  balanceUsdMinor?: Prisma.SortOrder
   balanceChangedAt?: Prisma.SortOrder
   anomalyActive?: Prisma.SortOrder
   anomalyChangedAt?: Prisma.SortOrder
@@ -1085,6 +1134,7 @@ export type UserProfileSumOrderByAggregateInput = {
   totalPaidMinor?: Prisma.SortOrder
   successfulCallCount?: Prisma.SortOrder
   balanceMinor?: Prisma.SortOrder
+  balanceUsdMinor?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
 }
 
@@ -1275,6 +1325,8 @@ export type UserProfileCreateWithoutOwnerInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -1319,6 +1371,8 @@ export type UserProfileUncheckedCreateWithoutOwnerInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -1392,6 +1446,8 @@ export type UserProfileScalarWhereInput = {
   lastCallAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   successfulCallCount?: Prisma.IntFilter<"UserProfile"> | number
   balanceMinor?: Prisma.IntFilter<"UserProfile"> | number
+  balanceCurrency?: Prisma.StringFilter<"UserProfile"> | string
+  balanceUsdMinor?: Prisma.IntFilter<"UserProfile"> | number
   balanceChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   anomalyActive?: Prisma.BoolFilter<"UserProfile"> | boolean
   anomalyChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
@@ -1430,6 +1486,8 @@ export type UserProfileCreateWithoutEventsInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -1474,6 +1532,8 @@ export type UserProfileUncheckedCreateWithoutEventsInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -1534,6 +1594,8 @@ export type UserProfileUpdateWithoutEventsInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1578,6 +1640,8 @@ export type UserProfileUncheckedUpdateWithoutEventsInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1622,6 +1686,8 @@ export type UserProfileCreateWithoutSegmentHistoryInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -1666,6 +1732,8 @@ export type UserProfileUncheckedCreateWithoutSegmentHistoryInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -1726,6 +1794,8 @@ export type UserProfileUpdateWithoutSegmentHistoryInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1770,6 +1840,8 @@ export type UserProfileUncheckedUpdateWithoutSegmentHistoryInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1814,6 +1886,8 @@ export type UserProfileCreateWithoutSegmentOverridesInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -1858,6 +1932,8 @@ export type UserProfileUncheckedCreateWithoutSegmentOverridesInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -1918,6 +1994,8 @@ export type UserProfileUpdateWithoutSegmentOverridesInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1962,6 +2040,8 @@ export type UserProfileUncheckedUpdateWithoutSegmentOverridesInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2006,6 +2086,8 @@ export type UserProfileCreateWithoutNotesInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -2050,6 +2132,8 @@ export type UserProfileUncheckedCreateWithoutNotesInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -2110,6 +2194,8 @@ export type UserProfileUpdateWithoutNotesInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2154,6 +2240,8 @@ export type UserProfileUncheckedUpdateWithoutNotesInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2198,6 +2286,8 @@ export type UserProfileCreateWithoutTasksInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -2242,6 +2332,8 @@ export type UserProfileUncheckedCreateWithoutTasksInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -2302,6 +2394,8 @@ export type UserProfileUpdateWithoutTasksInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2346,6 +2440,8 @@ export type UserProfileUncheckedUpdateWithoutTasksInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2390,6 +2486,8 @@ export type UserProfileCreateWithoutMailThreadsInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -2434,6 +2532,8 @@ export type UserProfileUncheckedCreateWithoutMailThreadsInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -2494,6 +2594,8 @@ export type UserProfileUpdateWithoutMailThreadsInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2538,6 +2640,8 @@ export type UserProfileUncheckedUpdateWithoutMailThreadsInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2582,6 +2686,8 @@ export type UserProfileCreateWithoutMailMessagesInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -2626,6 +2732,8 @@ export type UserProfileUncheckedCreateWithoutMailMessagesInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -2686,6 +2794,8 @@ export type UserProfileUpdateWithoutMailMessagesInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2730,6 +2840,8 @@ export type UserProfileUncheckedUpdateWithoutMailMessagesInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2774,6 +2886,8 @@ export type UserProfileCreateManyOwnerInput = {
   lastCallAt?: Date | string | null
   successfulCallCount?: number
   balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
@@ -2811,6 +2925,8 @@ export type UserProfileUpdateWithoutOwnerInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2855,6 +2971,8 @@ export type UserProfileUncheckedUpdateWithoutOwnerInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2899,6 +3017,8 @@ export type UserProfileUncheckedUpdateManyWithoutOwnerInput = {
   lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
   balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3021,6 +3141,8 @@ export type UserProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   lastCallAt?: boolean
   successfulCallCount?: boolean
   balanceMinor?: boolean
+  balanceCurrency?: boolean
+  balanceUsdMinor?: boolean
   balanceChangedAt?: boolean
   anomalyActive?: boolean
   anomalyChangedAt?: boolean
@@ -3068,6 +3190,8 @@ export type UserProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   lastCallAt?: boolean
   successfulCallCount?: boolean
   balanceMinor?: boolean
+  balanceCurrency?: boolean
+  balanceUsdMinor?: boolean
   balanceChangedAt?: boolean
   anomalyActive?: boolean
   anomalyChangedAt?: boolean
@@ -3107,6 +3231,8 @@ export type UserProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   lastCallAt?: boolean
   successfulCallCount?: boolean
   balanceMinor?: boolean
+  balanceCurrency?: boolean
+  balanceUsdMinor?: boolean
   balanceChangedAt?: boolean
   anomalyActive?: boolean
   anomalyChangedAt?: boolean
@@ -3146,6 +3272,8 @@ export type UserProfileSelectScalar = {
   lastCallAt?: boolean
   successfulCallCount?: boolean
   balanceMinor?: boolean
+  balanceCurrency?: boolean
+  balanceUsdMinor?: boolean
   balanceChangedAt?: boolean
   anomalyActive?: boolean
   anomalyChangedAt?: boolean
@@ -3161,7 +3289,7 @@ export type UserProfileSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "externalUserId" | "email" | "emailNormalized" | "displayName" | "registeredAt" | "registrationIpEnc" | "registrationIpHash" | "countryCode" | "region" | "language" | "timezone" | "source" | "checkoutStartedAt" | "checkoutChangedAt" | "paymentStatus" | "firstPaidAt" | "totalPaidMinor" | "firstCallAt" | "lastCallAt" | "successfulCallCount" | "balanceMinor" | "balanceChangedAt" | "anomalyActive" | "anomalyChangedAt" | "currentSegment" | "segmentRuleVersion" | "ownerId" | "reasonLabel" | "unsubscribedAt" | "pausedAt" | "profileChangedAt" | "lastExternalEventAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProfile"]>
+export type UserProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "externalUserId" | "email" | "emailNormalized" | "displayName" | "registeredAt" | "registrationIpEnc" | "registrationIpHash" | "countryCode" | "region" | "language" | "timezone" | "source" | "checkoutStartedAt" | "checkoutChangedAt" | "paymentStatus" | "firstPaidAt" | "totalPaidMinor" | "firstCallAt" | "lastCallAt" | "successfulCallCount" | "balanceMinor" | "balanceCurrency" | "balanceUsdMinor" | "balanceChangedAt" | "anomalyActive" | "anomalyChangedAt" | "currentSegment" | "segmentRuleVersion" | "ownerId" | "reasonLabel" | "unsubscribedAt" | "pausedAt" | "profileChangedAt" | "lastExternalEventAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProfile"]>
 export type UserProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
   events?: boolean | Prisma.UserProfile$eventsArgs<ExtArgs>
@@ -3215,6 +3343,8 @@ export type $UserProfilePayload<ExtArgs extends runtime.Types.Extensions.Interna
     lastCallAt: Date | null
     successfulCallCount: number
     balanceMinor: number
+    balanceCurrency: string
+    balanceUsdMinor: number
     balanceChangedAt: Date | null
     anomalyActive: boolean
     anomalyChangedAt: Date | null
@@ -3681,6 +3811,8 @@ export interface UserProfileFieldRefs {
   readonly lastCallAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
   readonly successfulCallCount: Prisma.FieldRef<"UserProfile", 'Int'>
   readonly balanceMinor: Prisma.FieldRef<"UserProfile", 'Int'>
+  readonly balanceCurrency: Prisma.FieldRef<"UserProfile", 'String'>
+  readonly balanceUsdMinor: Prisma.FieldRef<"UserProfile", 'Int'>
   readonly balanceChangedAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
   readonly anomalyActive: Prisma.FieldRef<"UserProfile", 'Boolean'>
   readonly anomalyChangedAt: Prisma.FieldRef<"UserProfile", 'DateTime'>

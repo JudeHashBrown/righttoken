@@ -2159,6 +2159,8 @@ export const UserProfileScalarFieldEnum = {
   lastCallAt: 'lastCallAt',
   successfulCallCount: 'successfulCallCount',
   balanceMinor: 'balanceMinor',
+  balanceCurrency: 'balanceCurrency',
+  balanceUsdMinor: 'balanceUsdMinor',
   balanceChangedAt: 'balanceChangedAt',
   anomalyActive: 'anomalyActive',
   anomalyChangedAt: 'anomalyChangedAt',

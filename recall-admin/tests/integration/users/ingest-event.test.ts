@@ -150,7 +150,11 @@ describe("idempotent user event ingestion", () => {
         userId,
         "balance.changed",
         "2026-07-23T10:00:00.000Z",
-        { balance_minor: 9_000 }
+        {
+          balance_minor: 44,
+          balance_currency: "EUR",
+          balance_usd_minor: 49
+        }
       )
     );
     const staleEventId = `stale-event-${randomUUID()}`;
@@ -167,7 +171,11 @@ describe("idempotent user event ingestion", () => {
     const stored = await prisma.userProfile.findUniqueOrThrow({
       where: { externalUserId: userId }
     });
-    expect(stored.balanceMinor).toBe(9_000);
+    expect(stored).toMatchObject({
+      balanceMinor: 44,
+      balanceCurrency: "EUR",
+      balanceUsdMinor: 49
+    });
     expect(
       (
         await prisma.userEvent.findUniqueOrThrow({

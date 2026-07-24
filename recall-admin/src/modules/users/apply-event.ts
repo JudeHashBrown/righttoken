@@ -215,6 +215,13 @@ async function applyFacts(
                 balanceMinor: {
                   increment: input.payload.amount_minor
                 },
+                balanceCurrency:
+                  input.payload.currency ?? user.balanceCurrency,
+                balanceUsdMinor: {
+                  increment:
+                    input.payload.amount_usd_minor ??
+                    input.payload.amount_minor
+                },
                 balanceChangedAt: occurredAt
               }
             : {})
@@ -230,6 +237,11 @@ async function applyFacts(
           where: { id: user.id },
           data: {
             balanceMinor: input.payload.balance_minor,
+            balanceCurrency:
+              input.payload.balance_currency ?? user.balanceCurrency,
+            balanceUsdMinor:
+              input.payload.balance_usd_minor ??
+              input.payload.balance_minor,
             balanceChangedAt: occurredAt
           }
         });

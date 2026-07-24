@@ -18,6 +18,8 @@ export type RightTokenUserSnapshot = {
   successfulCallCount: number;
   lastCallAt: Date | null;
   balanceMinor: number;
+  balanceCurrency?: string;
+  balanceUsdMinor?: number;
   anomalyActive: boolean;
 };
 
@@ -28,7 +30,11 @@ export const rightTokenUserSnapshotSchema = z.object({
   registeredAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   registrationIp: z.string().min(3).max(64).nullable(),
-  countryCode: z.string().max(8).nullable(),
+  countryCode: z
+    .string()
+    .length(2)
+    .transform((value) => value.toUpperCase())
+    .nullable(),
   region: z.string().max(160).nullable(),
   language: z.string().max(32).nullable(),
   timezone: z.string().max(80).nullable(),
@@ -39,8 +45,19 @@ export const rightTokenUserSnapshotSchema = z.object({
   successfulCallCount: z.number().int().nonnegative(),
   lastCallAt: z.coerce.date().nullable(),
   balanceMinor: z.number().int(),
+  balanceCurrency: z
+    .string()
+    .trim()
+    .length(3)
+    .transform((value) => value.toUpperCase())
+    .default("USD"),
+  balanceUsdMinor: z.number().int().optional(),
   anomalyActive: z.boolean()
-});
+}).transform((snapshot) => ({
+  ...snapshot,
+  balanceUsdMinor:
+    snapshot.balanceUsdMinor ?? snapshot.balanceMinor
+}));
 
 export interface RightTokenAdapter {
   listUsers(input: {
