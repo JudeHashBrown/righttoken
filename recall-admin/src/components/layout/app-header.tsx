@@ -15,11 +15,20 @@ export function AppHeader({
   urgentCount
 }: AppHeaderProps): React.JSX.Element {
   const pathname = usePathname();
-  const workspaceLabel = pathname.startsWith("/tasks")
-    ? "任务中心"
-    : pathname.startsWith("/users")
-      ? "用户中心"
-      : "运营驾驶舱";
+  const workspaceLabel =
+    [
+      ["/automation/notifications", "通知策略"],
+      ["/automation/assignment", "分配规则"],
+      ["/automation/segments", "分组规则"],
+      ["/dashboard", "运营驾驶舱"],
+      ["/tasks", "任务中心"],
+      ["/users", "用户中心"],
+      ["/mail", "邮件中心"],
+      ["/reports", "数据报表"],
+      ["/members", "成员与权限"],
+      ["/settings", "系统设置"]
+    ].find(([prefix]) => pathname.startsWith(prefix))?.[1] ??
+    "运营驾驶舱";
 
   return (
     <header className={styles.header}>
