@@ -72,6 +72,14 @@ type RuleHistoryVersion = {
   }>;
 };
 
+type RecalculationProgress = {
+  status: string;
+  totalUsers: number;
+  processedUsers: number;
+  succeededUsers: number;
+  failedUsers: number;
+};
+
 const operatorLabels: Record<ConditionOperator, string> = {
   eq: "等于",
   neq: "不等于",
@@ -199,6 +207,9 @@ export function SegmentRuleEditor({
   const [rollbackTarget, setRollbackTarget] =
     useState<RuleHistoryVersion | null>(null);
   const [rollbackSummary, setRollbackSummary] = useState("");
+  const [activeRunId, setActiveRunId] = useState<string | null>(null);
+  const [runProgress, setRunProgress] =
+    useState<RecalculationProgress | null>(null);
 
   const fieldMap = useMemo(
     () => new Map(fieldRegistry.map((field) => [field.key, field])),
@@ -213,6 +224,42 @@ export function SegmentRuleEditor({
     window.addEventListener("beforeunload", guard);
     return () => window.removeEventListener("beforeunload", guard);
   }, [dirty]);
+
+  useEffect(() => {
+    if (!activeRunId) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const poll = async () => {
+      try {
+        const response = await fetch(
+          `/api/automation/segment-rules/runs/${activeRunId}`
+        );
+        const result = (await response.json().catch(() => null)) as {
+          run?: RecalculationProgress;
+        } | null;
+        if (!response.ok || !result?.run || cancelled) return;
+        setRunProgress(result.run);
+        if (
+          ["COMPLETED", "PARTIAL_FAILURE", "FAILED"].includes(
+            result.run.status
+          )
+        ) {
+          setActiveRunId(null);
+          router.refresh();
+          return;
+        }
+      } finally {
+        if (!cancelled) {
+          timer = setTimeout(poll, 2_000);
+        }
+      }
+    };
+    void poll();
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
+  }, [activeRunId, router]);
 
   function mutate(
     updater: (next: SegmentRuleSet) => void
@@ -381,6 +428,8 @@ export function SegmentRuleEditor({
       setMessage(
         `分组规则 v${result.version} 已发布，正在全量重算`
       );
+      setActiveRunId(result.runId ?? null);
+      setRunProgress(null);
       setPreview(null);
       setDirty(false);
       setChangeSummary("");
@@ -1149,6 +1198,35 @@ export function SegmentRuleEditor({
           <Check size={15} />
           {message}
         </p>
+      ) : null}
+      {runProgress ? (
+        <div className={styles.progress} role="status">
+          <div>
+            <strong>全量重算：{runProgress.status}</strong>
+            <span>
+              {runProgress.processedUsers}/{runProgress.totalUsers} 已处理，
+              成功 {runProgress.succeededUsers}，失败{" "}
+              {runProgress.failedUsers}
+            </span>
+          </div>
+          <span className={styles.progressTrack}>
+            <span
+              className={styles.progressFill}
+              style={{
+                width: `${
+                  runProgress.totalUsers
+                    ? Math.min(
+                        100,
+                        (runProgress.processedUsers /
+                          runProgress.totalUsers) *
+                          100
+                      )
+                    : 0
+                }%`
+              }}
+            />
+          </span>
+        </div>
       ) : null}
 
       {preview ? (

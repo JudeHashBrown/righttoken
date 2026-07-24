@@ -556,6 +556,48 @@
   color: #147552;
 }
 
+.progress {
+  display: grid;
+  gap: 9px;
+  border: 1px solid #dfe3f8;
+  border-radius: 9px;
+  background: #f7f8ff;
+  padding: 11px 12px;
+}
+
+.progress > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.progress strong {
+  color: #4653b8;
+  font-size: 11px;
+}
+
+.progress span {
+  color: #68738d;
+  font-size: 10px;
+}
+
+.progressTrack {
+  display: block;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e7e9f7;
+}
+
+.progressFill {
+  display: block;
+  min-width: 2px;
+  height: 100%;
+  border-radius: inherit;
+  background: #6675e8;
+}
+
 .modalBackdrop {
   position: fixed;
   z-index: 50;

@@ -110,6 +110,19 @@ describe("SegmentRuleEditor", () => {
         ok: true,
         json: () =>
           Promise.resolve({ version: 4, runId: "run-1" })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            run: {
+              status: "COMPLETED",
+              totalUsers: 54,
+              processedUsers: 54,
+              succeededUsers: 54,
+              failedUsers: 0
+            }
+          })
       });
     vi.stubGlobal("fetch", fetchMock);
     renderEditor();
