@@ -59,6 +59,7 @@ export const ModelName = {
   SegmentOverride: 'SegmentOverride',
   UserNote: 'UserNote',
   AutomationRuleVersion: 'AutomationRuleVersion',
+  SegmentRecalculationRun: 'SegmentRecalculationRun',
   AssignmentRule: 'AssignmentRule',
   RecallTask: 'RecallTask',
   TaskActivity: 'TaskActivity',
@@ -229,6 +230,32 @@ export const AutomationRuleVersionScalarFieldEnum = {
 } as const
 
 export type AutomationRuleVersionScalarFieldEnum = (typeof AutomationRuleVersionScalarFieldEnum)[keyof typeof AutomationRuleVersionScalarFieldEnum]
+
+
+export const SegmentRecalculationRunScalarFieldEnum = {
+  id: 'id',
+  ruleVersionId: 'ruleVersionId',
+  ruleVersionNumber: 'ruleVersionNumber',
+  requestedById: 'requestedById',
+  idempotencyKey: 'idempotencyKey',
+  status: 'status',
+  totalUsers: 'totalUsers',
+  processedUsers: 'processedUsers',
+  succeededUsers: 'succeededUsers',
+  failedUsers: 'failedUsers',
+  segmentChanges: 'segmentChanges',
+  cancelledTasks: 'cancelledTasks',
+  createdTasks: 'createdTasks',
+  lastProcessedUserId: 'lastProcessedUserId',
+  previewSummary: 'previewSummary',
+  errorSummary: 'errorSummary',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SegmentRecalculationRunScalarFieldEnum = (typeof SegmentRecalculationRunScalarFieldEnum)[keyof typeof SegmentRecalculationRunScalarFieldEnum]
 
 
 export const AssignmentRuleScalarFieldEnum = {

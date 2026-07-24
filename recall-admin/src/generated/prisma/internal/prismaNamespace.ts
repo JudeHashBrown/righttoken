@@ -405,6 +405,7 @@ export const ModelName = {
   SegmentOverride: 'SegmentOverride',
   UserNote: 'UserNote',
   AutomationRuleVersion: 'AutomationRuleVersion',
+  SegmentRecalculationRun: 'SegmentRecalculationRun',
   AssignmentRule: 'AssignmentRule',
   RecallTask: 'RecallTask',
   TaskActivity: 'TaskActivity',
@@ -434,7 +435,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "member" | "session" | "userProfile" | "userEvent" | "segmentHistory" | "segmentOverride" | "userNote" | "automationRuleVersion" | "assignmentRule" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
+    modelProps: "member" | "session" | "userProfile" | "userEvent" | "segmentHistory" | "segmentOverride" | "userNote" | "automationRuleVersion" | "segmentRecalculationRun" | "assignmentRule" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1027,6 +1028,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.AutomationRuleVersionCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.AutomationRuleVersionCountAggregateOutputType> | number
+        }
+      }
+    }
+    SegmentRecalculationRun: {
+      payload: Prisma.$SegmentRecalculationRunPayload<ExtArgs>
+      fields: Prisma.SegmentRecalculationRunFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SegmentRecalculationRunFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentRecalculationRunPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SegmentRecalculationRunFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentRecalculationRunPayload>
+        }
+        findFirst: {
+          args: Prisma.SegmentRecalculationRunFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentRecalculationRunPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SegmentRecalculationRunFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentRecalculationRunPayload>
+        }
+        findMany: {
+          args: Prisma.SegmentRecalculationRunFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentRecalculationRunPayload>[]
+        }
+        create: {
+          args: Prisma.SegmentRecalculationRunCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentRecalculationRunPayload>
+        }
+        createMany: {
+          args: Prisma.SegmentRecalculationRunCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SegmentRecalculationRunCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentRecalculationRunPayload>[]
+        }
+        delete: {
+          args: Prisma.SegmentRecalculationRunDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentRecalculationRunPayload>
+        }
+        update: {
+          args: Prisma.SegmentRecalculationRunUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentRecalculationRunPayload>
+        }
+        deleteMany: {
+          args: Prisma.SegmentRecalculationRunDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SegmentRecalculationRunUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SegmentRecalculationRunUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentRecalculationRunPayload>[]
+        }
+        upsert: {
+          args: Prisma.SegmentRecalculationRunUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SegmentRecalculationRunPayload>
+        }
+        aggregate: {
+          args: Prisma.SegmentRecalculationRunAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSegmentRecalculationRun>
+        }
+        groupBy: {
+          args: Prisma.SegmentRecalculationRunGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SegmentRecalculationRunGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SegmentRecalculationRunCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SegmentRecalculationRunCountAggregateOutputType> | number
         }
       }
     }
@@ -2245,6 +2320,32 @@ export const AutomationRuleVersionScalarFieldEnum = {
 export type AutomationRuleVersionScalarFieldEnum = (typeof AutomationRuleVersionScalarFieldEnum)[keyof typeof AutomationRuleVersionScalarFieldEnum]
 
 
+export const SegmentRecalculationRunScalarFieldEnum = {
+  id: 'id',
+  ruleVersionId: 'ruleVersionId',
+  ruleVersionNumber: 'ruleVersionNumber',
+  requestedById: 'requestedById',
+  idempotencyKey: 'idempotencyKey',
+  status: 'status',
+  totalUsers: 'totalUsers',
+  processedUsers: 'processedUsers',
+  succeededUsers: 'succeededUsers',
+  failedUsers: 'failedUsers',
+  segmentChanges: 'segmentChanges',
+  cancelledTasks: 'cancelledTasks',
+  createdTasks: 'createdTasks',
+  lastProcessedUserId: 'lastProcessedUserId',
+  previewSummary: 'previewSummary',
+  errorSummary: 'errorSummary',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SegmentRecalculationRunScalarFieldEnum = (typeof SegmentRecalculationRunScalarFieldEnum)[keyof typeof SegmentRecalculationRunScalarFieldEnum]
+
+
 export const AssignmentRuleScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -2536,14 +2637,14 @@ export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof Json
  * Reference to a field of type 'String'
  */
 export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
-    
+
 
 
 /**
  * Reference to a field of type 'String[]'
  */
 export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
-    
+
 
 
 /**
@@ -2621,6 +2722,20 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
+
+
+/**
+ * Reference to a field of type 'RecalculationStatus'
+ */
+export type EnumRecalculationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecalculationStatus'>
+
+
+
+/**
+ * Reference to a field of type 'RecalculationStatus[]'
+ */
+export type ListEnumRecalculationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecalculationStatus[]'>
+
 
 
 /**
@@ -2893,6 +3008,7 @@ export type GlobalOmitConfig = {
   segmentOverride?: Prisma.SegmentOverrideOmit
   userNote?: Prisma.UserNoteOmit
   automationRuleVersion?: Prisma.AutomationRuleVersionOmit
+  segmentRecalculationRun?: Prisma.SegmentRecalculationRunOmit
   assignmentRule?: Prisma.AssignmentRuleOmit
   recallTask?: Prisma.RecallTaskOmit
   taskActivity?: Prisma.TaskActivityOmit
@@ -2969,4 +3085,3 @@ export type PrismaAction =
  * `PrismaClient` proxy available in interactive transactions.
  */
 export type TransactionClient = Omit<DefaultPrismaClient, runtime.ITXClientDenyList>
-

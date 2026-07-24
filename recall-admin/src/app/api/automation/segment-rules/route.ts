@@ -5,8 +5,8 @@ import {
   requireRequestPermission,
   UnauthorizedError
 } from "@/modules/auth/guards";
-import { publishAutomationRuleVersion } from "@/modules/automation/rule-version";
-import { segmentConfigSchema } from "@/modules/segmentation/rule-config";
+import { publishSegmentRuleSet } from "@/modules/segmentation/publish-rule-set";
+import { getRuntimeTaskScheduler } from "@/modules/tasks/runtime-scheduler";
 
 export async function POST(
   request: NextRequest
@@ -17,24 +17,43 @@ export async function POST(
       request,
       "rules:publish"
     );
-    const parsed = segmentConfigSchema.safeParse(
-      await request.json().catch(() => null)
-    );
-    if (!parsed.success) {
+    const body = (await request.json().catch(() => null)) as {
+      draft?: unknown;
+      previewToken?: string;
+      changeSummary?: string;
+    } | null;
+    const idempotencyKey = request.headers.get("idempotency-key");
+    if (
+      !body ||
+      typeof body.previewToken !== "string" ||
+      typeof body.changeSummary !== "string" ||
+      !idempotencyKey
+    ) {
       return NextResponse.json(
         { code: "INVALID_SEGMENT_RULE" },
         { status: 400 }
       );
     }
 
-    const published = await publishAutomationRuleVersion(
-      member.id,
-      "segmentation",
-      parsed.data
-    );
+    const draft =
+      body.draft && typeof body.draft === "object"
+        ? {
+            ...(body.draft as Record<string, unknown>),
+            changeSummary: body.changeSummary
+          }
+        : body.draft;
+    const published = await publishSegmentRuleSet({
+      actorId: member.id,
+      draft,
+      previewToken: body.previewToken,
+      idempotencyKey,
+      scheduler: await getRuntimeTaskScheduler()
+    });
     return NextResponse.json({
-      id: published.id,
-      version: published.version
+      id: published.ruleVersion.id,
+      version: published.ruleVersion.version,
+      runId: published.run.id,
+      status: published.run.status
     });
   } catch (error) {
     if (error instanceof UnauthorizedError) {

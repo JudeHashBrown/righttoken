@@ -24,7 +24,7 @@ export * as $Enums from './enums'
 export * from "./enums"
 /**
  * ## Prisma Client
- * 
+ *
  * Type-safe database client for TypeScript
  * @example
  * ```
@@ -81,6 +81,11 @@ export type UserNote = Prisma.UserNoteModel
  * 
  */
 export type AutomationRuleVersion = Prisma.AutomationRuleVersionModel
+/**
+ * Model SegmentRecalculationRun
+ *
+ */
+export type SegmentRecalculationRun = Prisma.SegmentRecalculationRunModel
 /**
  * Model AssignmentRule
  * 

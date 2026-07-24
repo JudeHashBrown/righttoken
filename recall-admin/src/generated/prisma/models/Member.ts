@@ -229,6 +229,7 @@ export type MemberWhereInput = {
   auditLogs?: Prisma.AuditLogListRelationFilter
   recoveryCodes?: Prisma.RecoveryCodeListRelationFilter
   reviewedMailMessages?: Prisma.MailMessageListRelationFilter
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunListRelationFilter
 }
 
 export type MemberOrderByWithRelationInput = {
@@ -249,6 +250,7 @@ export type MemberOrderByWithRelationInput = {
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
   recoveryCodes?: Prisma.RecoveryCodeOrderByRelationAggregateInput
   reviewedMailMessages?: Prisma.MailMessageOrderByRelationAggregateInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunOrderByRelationAggregateInput
 }
 
 export type MemberWhereUniqueInput = Prisma.AtLeast<{
@@ -272,6 +274,7 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<{
   auditLogs?: Prisma.AuditLogListRelationFilter
   recoveryCodes?: Prisma.RecoveryCodeListRelationFilter
   reviewedMailMessages?: Prisma.MailMessageListRelationFilter
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunListRelationFilter
 }, "id" | "email">
 
 export type MemberOrderByWithAggregationInput = {
@@ -324,6 +327,7 @@ export type MemberCreateInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateInput = {
@@ -344,6 +348,7 @@ export type MemberUncheckedCreateInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUpdateInput = {
@@ -364,6 +369,7 @@ export type MemberUpdateInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateInput = {
@@ -384,6 +390,7 @@ export type MemberUncheckedUpdateInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberCreateManyInput = {
@@ -538,6 +545,20 @@ export type MemberUpdateOneRequiredWithoutNotesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MemberUpdateToOneWithWhereWithoutNotesInput, Prisma.MemberUpdateWithoutNotesInput>, Prisma.MemberUncheckedUpdateWithoutNotesInput>
 }
 
+export type MemberCreateNestedOneWithoutSegmentRecalculationRunsInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutSegmentRecalculationRunsInput, Prisma.MemberUncheckedCreateWithoutSegmentRecalculationRunsInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutSegmentRecalculationRunsInput
+  connect?: Prisma.MemberWhereUniqueInput
+}
+
+export type MemberUpdateOneRequiredWithoutSegmentRecalculationRunsNestedInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutSegmentRecalculationRunsInput, Prisma.MemberUncheckedCreateWithoutSegmentRecalculationRunsInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutSegmentRecalculationRunsInput
+  upsert?: Prisma.MemberUpsertWithoutSegmentRecalculationRunsInput
+  connect?: Prisma.MemberWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MemberUpdateToOneWithWhereWithoutSegmentRecalculationRunsInput, Prisma.MemberUpdateWithoutSegmentRecalculationRunsInput>, Prisma.MemberUncheckedUpdateWithoutSegmentRecalculationRunsInput>
+}
+
 export type MemberCreateNestedOneWithoutAssignedTasksInput = {
   create?: Prisma.XOR<Prisma.MemberCreateWithoutAssignedTasksInput, Prisma.MemberUncheckedCreateWithoutAssignedTasksInput>
   connectOrCreate?: Prisma.MemberCreateOrConnectWithoutAssignedTasksInput
@@ -617,6 +638,7 @@ export type MemberCreateWithoutSessionsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutSessionsInput = {
@@ -636,6 +658,7 @@ export type MemberUncheckedCreateWithoutSessionsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutSessionsInput = {
@@ -671,6 +694,7 @@ export type MemberUpdateWithoutSessionsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutSessionsInput = {
@@ -690,6 +714,7 @@ export type MemberUncheckedUpdateWithoutSessionsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberCreateWithoutOwnedUsersInput = {
@@ -709,6 +734,7 @@ export type MemberCreateWithoutOwnedUsersInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutOwnedUsersInput = {
@@ -728,6 +754,7 @@ export type MemberUncheckedCreateWithoutOwnedUsersInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutOwnedUsersInput = {
@@ -763,6 +790,7 @@ export type MemberUpdateWithoutOwnedUsersInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutOwnedUsersInput = {
@@ -782,6 +810,7 @@ export type MemberUncheckedUpdateWithoutOwnedUsersInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberCreateWithoutNotesInput = {
@@ -801,6 +830,7 @@ export type MemberCreateWithoutNotesInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutNotesInput = {
@@ -820,6 +850,7 @@ export type MemberUncheckedCreateWithoutNotesInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutNotesInput = {
@@ -855,6 +886,7 @@ export type MemberUpdateWithoutNotesInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutNotesInput = {
@@ -871,6 +903,103 @@ export type MemberUncheckedUpdateWithoutNotesInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
   assignedTasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutAssigneeNestedInput
   ownedUsers?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+}
+
+export type MemberCreateWithoutSegmentRecalculationRunsInput = {
+  id?: string
+  email: string
+  displayName: string
+  passwordHash: string
+  role: $Enums.MemberRole
+  active?: boolean
+  twoFactorSecret?: string | null
+  twoFactorOn?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutMemberInput
+  assignedTasks?: Prisma.RecallTaskCreateNestedManyWithoutAssigneeInput
+  ownedUsers?: Prisma.UserProfileCreateNestedManyWithoutOwnerInput
+  notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
+}
+
+export type MemberUncheckedCreateWithoutSegmentRecalculationRunsInput = {
+  id?: string
+  email: string
+  displayName: string
+  passwordHash: string
+  role: $Enums.MemberRole
+  active?: boolean
+  twoFactorSecret?: string | null
+  twoFactorOn?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutMemberInput
+  assignedTasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutAssigneeInput
+  ownedUsers?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerInput
+  notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
+}
+
+export type MemberCreateOrConnectWithoutSegmentRecalculationRunsInput = {
+  where: Prisma.MemberWhereUniqueInput
+  create: Prisma.XOR<Prisma.MemberCreateWithoutSegmentRecalculationRunsInput, Prisma.MemberUncheckedCreateWithoutSegmentRecalculationRunsInput>
+}
+
+export type MemberUpsertWithoutSegmentRecalculationRunsInput = {
+  update: Prisma.XOR<Prisma.MemberUpdateWithoutSegmentRecalculationRunsInput, Prisma.MemberUncheckedUpdateWithoutSegmentRecalculationRunsInput>
+  create: Prisma.XOR<Prisma.MemberCreateWithoutSegmentRecalculationRunsInput, Prisma.MemberUncheckedCreateWithoutSegmentRecalculationRunsInput>
+  where?: Prisma.MemberWhereInput
+}
+
+export type MemberUpdateToOneWithWhereWithoutSegmentRecalculationRunsInput = {
+  where?: Prisma.MemberWhereInput
+  data: Prisma.XOR<Prisma.MemberUpdateWithoutSegmentRecalculationRunsInput, Prisma.MemberUncheckedUpdateWithoutSegmentRecalculationRunsInput>
+}
+
+export type MemberUpdateWithoutSegmentRecalculationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutMemberNestedInput
+  assignedTasks?: Prisma.RecallTaskUpdateManyWithoutAssigneeNestedInput
+  ownedUsers?: Prisma.UserProfileUpdateManyWithoutOwnerNestedInput
+  notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
+}
+
+export type MemberUncheckedUpdateWithoutSegmentRecalculationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
+  assignedTasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  ownedUsers?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerNestedInput
+  notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
@@ -893,6 +1022,7 @@ export type MemberCreateWithoutAssignedTasksInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutAssignedTasksInput = {
@@ -912,6 +1042,7 @@ export type MemberUncheckedCreateWithoutAssignedTasksInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutAssignedTasksInput = {
@@ -947,6 +1078,7 @@ export type MemberUpdateWithoutAssignedTasksInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutAssignedTasksInput = {
@@ -966,6 +1098,7 @@ export type MemberUncheckedUpdateWithoutAssignedTasksInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberCreateWithoutAuditLogsInput = {
@@ -985,6 +1118,7 @@ export type MemberCreateWithoutAuditLogsInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutAuditLogsInput = {
@@ -1004,6 +1138,7 @@ export type MemberUncheckedCreateWithoutAuditLogsInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutAuditLogsInput = {
@@ -1039,6 +1174,7 @@ export type MemberUpdateWithoutAuditLogsInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutAuditLogsInput = {
@@ -1058,6 +1194,7 @@ export type MemberUncheckedUpdateWithoutAuditLogsInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberCreateWithoutRecoveryCodesInput = {
@@ -1077,6 +1214,7 @@ export type MemberCreateWithoutRecoveryCodesInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutRecoveryCodesInput = {
@@ -1096,6 +1234,7 @@ export type MemberUncheckedCreateWithoutRecoveryCodesInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutRecoveryCodesInput = {
@@ -1131,6 +1270,7 @@ export type MemberUpdateWithoutRecoveryCodesInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutRecoveryCodesInput = {
@@ -1150,6 +1290,7 @@ export type MemberUncheckedUpdateWithoutRecoveryCodesInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberCreateWithoutReviewedMailMessagesInput = {
@@ -1169,6 +1310,7 @@ export type MemberCreateWithoutReviewedMailMessagesInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutReviewedMailMessagesInput = {
@@ -1188,6 +1330,7 @@ export type MemberUncheckedCreateWithoutReviewedMailMessagesInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutReviewedMailMessagesInput = {
@@ -1223,6 +1366,7 @@ export type MemberUpdateWithoutReviewedMailMessagesInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutReviewedMailMessagesInput = {
@@ -1242,6 +1386,7 @@ export type MemberUncheckedUpdateWithoutReviewedMailMessagesInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 
@@ -1257,6 +1402,7 @@ export type MemberCountOutputType = {
   auditLogs: number
   recoveryCodes: number
   reviewedMailMessages: number
+  segmentRecalculationRuns: number
 }
 
 export type MemberCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1267,6 +1413,7 @@ export type MemberCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   auditLogs?: boolean | MemberCountOutputTypeCountAuditLogsArgs
   recoveryCodes?: boolean | MemberCountOutputTypeCountRecoveryCodesArgs
   reviewedMailMessages?: boolean | MemberCountOutputTypeCountReviewedMailMessagesArgs
+  segmentRecalculationRuns?: boolean | MemberCountOutputTypeCountSegmentRecalculationRunsArgs
 }
 
 /**
@@ -1328,6 +1475,13 @@ export type MemberCountOutputTypeCountReviewedMailMessagesArgs<ExtArgs extends r
   where?: Prisma.MailMessageWhereInput
 }
 
+/**
+ * MemberCountOutputType without action
+ */
+export type MemberCountOutputTypeCountSegmentRecalculationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SegmentRecalculationRunWhereInput
+}
+
 
 export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1347,6 +1501,7 @@ export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   auditLogs?: boolean | Prisma.Member$auditLogsArgs<ExtArgs>
   recoveryCodes?: boolean | Prisma.Member$recoveryCodesArgs<ExtArgs>
   reviewedMailMessages?: boolean | Prisma.Member$reviewedMailMessagesArgs<ExtArgs>
+  segmentRecalculationRuns?: boolean | Prisma.Member$segmentRecalculationRunsArgs<ExtArgs>
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["member"]>
 
@@ -1398,6 +1553,7 @@ export type MemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   auditLogs?: boolean | Prisma.Member$auditLogsArgs<ExtArgs>
   recoveryCodes?: boolean | Prisma.Member$recoveryCodesArgs<ExtArgs>
   reviewedMailMessages?: boolean | Prisma.Member$reviewedMailMessagesArgs<ExtArgs>
+  segmentRecalculationRuns?: boolean | Prisma.Member$segmentRecalculationRunsArgs<ExtArgs>
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MemberIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1413,6 +1569,7 @@ export type $MemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
     recoveryCodes: Prisma.$RecoveryCodePayload<ExtArgs>[]
     reviewedMailMessages: Prisma.$MailMessagePayload<ExtArgs>[]
+    segmentRecalculationRuns: Prisma.$SegmentRecalculationRunPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1826,6 +1983,7 @@ export interface Prisma__MemberClient<T, Null = never, ExtArgs extends runtime.T
   auditLogs<T extends Prisma.Member$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   recoveryCodes<T extends Prisma.Member$recoveryCodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$recoveryCodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecoveryCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviewedMailMessages<T extends Prisma.Member$reviewedMailMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$reviewedMailMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  segmentRecalculationRuns<T extends Prisma.Member$segmentRecalculationRunsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$segmentRecalculationRunsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SegmentRecalculationRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2423,6 +2581,30 @@ export type Member$reviewedMailMessagesArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.MailMessageScalarFieldEnum | Prisma.MailMessageScalarFieldEnum[]
+}
+
+/**
+ * Member.segmentRecalculationRuns
+ */
+export type Member$segmentRecalculationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SegmentRecalculationRun
+   */
+  select?: Prisma.SegmentRecalculationRunSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SegmentRecalculationRun
+   */
+  omit?: Prisma.SegmentRecalculationRunOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SegmentRecalculationRunInclude<ExtArgs> | null
+  where?: Prisma.SegmentRecalculationRunWhereInput
+  orderBy?: Prisma.SegmentRecalculationRunOrderByWithRelationInput | Prisma.SegmentRecalculationRunOrderByWithRelationInput[]
+  cursor?: Prisma.SegmentRecalculationRunWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SegmentRecalculationRunScalarFieldEnum | Prisma.SegmentRecalculationRunScalarFieldEnum[]
 }
 
 /**

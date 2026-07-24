@@ -98,3 +98,14 @@ export const DeliveryStatus = {
 } as const
 
 export type DeliveryStatus = (typeof DeliveryStatus)[keyof typeof DeliveryStatus]
+
+
+export const RecalculationStatus = {
+  PENDING: 'PENDING',
+  RUNNING: 'RUNNING',
+  COMPLETED: 'COMPLETED',
+  PARTIAL_FAILURE: 'PARTIAL_FAILURE',
+  FAILED: 'FAILED'
+} as const
+
+export type RecalculationStatus = (typeof RecalculationStatus)[keyof typeof RecalculationStatus]

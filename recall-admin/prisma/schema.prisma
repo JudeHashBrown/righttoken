@@ -71,6 +71,14 @@ enum DeliveryStatus {
   DEAD_LETTER
 }
 
+enum RecalculationStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  PARTIAL_FAILURE
+  FAILED
+}
+
 model Member {
   id              String     @id @default(cuid())
   email           String     @unique
@@ -90,6 +98,7 @@ model Member {
   auditLogs     AuditLog[]     @relation("AuditActor")
   recoveryCodes RecoveryCode[]
   reviewedMailMessages MailMessage[] @relation("MailReviewer")
+  segmentRecalculationRuns SegmentRecalculationRun[] @relation("SegmentRecalculationRequester")
 }
 
 model Session {
@@ -228,8 +237,38 @@ model AutomationRuleVersion {
   createdById String
   createdAt   DateTime @default(now())
 
+  recalculationRun SegmentRecalculationRun?
+
   @@unique([kind, version])
   @@index([kind, active])
+}
+
+model SegmentRecalculationRun {
+  id                  String              @id @default(cuid())
+  ruleVersionId       String              @unique
+  ruleVersionNumber   Int
+  requestedById       String
+  idempotencyKey      String              @unique
+  status              RecalculationStatus @default(PENDING)
+  totalUsers          Int                 @default(0)
+  processedUsers      Int                 @default(0)
+  succeededUsers      Int                 @default(0)
+  failedUsers         Int                 @default(0)
+  segmentChanges      Int                 @default(0)
+  cancelledTasks      Int                 @default(0)
+  createdTasks        Int                 @default(0)
+  lastProcessedUserId String?
+  previewSummary      Json
+  errorSummary        Json?
+  startedAt           DateTime?
+  completedAt         DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  ruleVersion AutomationRuleVersion @relation(fields: [ruleVersionId], references: [id], onDelete: Restrict)
+  requestedBy Member @relation("SegmentRecalculationRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+
+  @@index([status, createdAt])
 }
 
 model AssignmentRule {

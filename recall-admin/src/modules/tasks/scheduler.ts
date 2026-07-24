@@ -23,6 +23,9 @@ export type SegmentCheckSchedule =
 
 export interface TaskScheduler {
   scheduleSegmentCheck(input: SegmentCheckSchedule): Promise<void>;
+  scheduleSegmentRecalculation?(
+    input: { runId: string }
+  ): Promise<void>;
 }
 
 export const noopTaskScheduler: TaskScheduler = {
