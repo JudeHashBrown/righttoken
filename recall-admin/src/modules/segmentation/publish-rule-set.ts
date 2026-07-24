@@ -94,7 +94,13 @@ export async function publishSegmentRuleSet(
               createdById: actor.id
             }
           });
-          const totalUsers = await tx.userProfile.count();
+          const [totalUsers, upperBoundUser] = await Promise.all([
+            tx.userProfile.count(),
+            tx.userProfile.findFirst({
+              orderBy: { id: "desc" },
+              select: { id: true }
+            })
+          ]);
           const run = await tx.segmentRecalculationRun.create({
             data: {
               ruleVersionId: ruleVersion.id,
@@ -102,6 +108,7 @@ export async function publishSegmentRuleSet(
               requestedById: actor.id,
               idempotencyKey,
               totalUsers,
+              upperBoundUserId: upperBoundUser?.id ?? null,
               previewSummary: {
                 draftHash
               }

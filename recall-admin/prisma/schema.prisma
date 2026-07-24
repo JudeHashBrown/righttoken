@@ -258,6 +258,7 @@ model SegmentRecalculationRun {
   cancelledTasks      Int                 @default(0)
   createdTasks        Int                 @default(0)
   lastProcessedUserId String?
+  upperBoundUserId    String?
   previewSummary      Json
   errorSummary        Json?
   startedAt           DateTime?

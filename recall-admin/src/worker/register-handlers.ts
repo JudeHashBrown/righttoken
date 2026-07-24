@@ -4,6 +4,10 @@ import { handlePiiRetention } from "@/worker/handlers/pii-retention";
 import { handleMailSync } from "@/worker/handlers/mail-sync";
 import { handleNotificationDelivery } from "@/worker/handlers/notification-delivery";
 import { handleUserReconciliation } from "@/worker/handlers/user-reconciliation";
+import {
+  handleSegmentRecalculation,
+  type SegmentRecalculationInput
+} from "@/worker/handlers/segment-recalculation";
 import { PgTaskScheduler } from "@/modules/tasks/pg-task-scheduler";
 import {
   handleSegmentCheck,
@@ -23,6 +27,19 @@ export async function registerHandlers(
         return { skipped: "empty_batch" };
       }
       return handleSegmentCheck(
+        job.data,
+        new Date(),
+        taskScheduler
+      );
+    }
+  );
+  await boss.work<SegmentRecalculationInput>(
+    JOBS.SEGMENT_RECALCULATION,
+    async ([job]) => {
+      if (!job) {
+        return { skipped: "empty_batch" };
+      }
+      return handleSegmentRecalculation(
         job.data,
         new Date(),
         taskScheduler

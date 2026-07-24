@@ -63,6 +63,7 @@ export type SegmentRecalculationRunMinAggregateOutputType = {
   cancelledTasks: number | null
   createdTasks: number | null
   lastProcessedUserId: string | null
+  upperBoundUserId: string | null
   startedAt: Date | null
   completedAt: Date | null
   createdAt: Date | null
@@ -84,6 +85,7 @@ export type SegmentRecalculationRunMaxAggregateOutputType = {
   cancelledTasks: number | null
   createdTasks: number | null
   lastProcessedUserId: string | null
+  upperBoundUserId: string | null
   startedAt: Date | null
   completedAt: Date | null
   createdAt: Date | null
@@ -105,6 +107,7 @@ export type SegmentRecalculationRunCountAggregateOutputType = {
   cancelledTasks: number
   createdTasks: number
   lastProcessedUserId: number
+  upperBoundUserId: number
   previewSummary: number
   errorSummary: number
   startedAt: number
@@ -152,6 +155,7 @@ export type SegmentRecalculationRunMinAggregateInputType = {
   cancelledTasks?: true
   createdTasks?: true
   lastProcessedUserId?: true
+  upperBoundUserId?: true
   startedAt?: true
   completedAt?: true
   createdAt?: true
@@ -173,6 +177,7 @@ export type SegmentRecalculationRunMaxAggregateInputType = {
   cancelledTasks?: true
   createdTasks?: true
   lastProcessedUserId?: true
+  upperBoundUserId?: true
   startedAt?: true
   completedAt?: true
   createdAt?: true
@@ -194,6 +199,7 @@ export type SegmentRecalculationRunCountAggregateInputType = {
   cancelledTasks?: true
   createdTasks?: true
   lastProcessedUserId?: true
+  upperBoundUserId?: true
   previewSummary?: true
   errorSummary?: true
   startedAt?: true
@@ -304,6 +310,7 @@ export type SegmentRecalculationRunGroupByOutputType = {
   cancelledTasks: number
   createdTasks: number
   lastProcessedUserId: string | null
+  upperBoundUserId: string | null
   previewSummary: runtime.JsonValue
   errorSummary: runtime.JsonValue | null
   startedAt: Date | null
@@ -350,6 +357,7 @@ export type SegmentRecalculationRunWhereInput = {
   cancelledTasks?: Prisma.IntFilter<"SegmentRecalculationRun"> | number
   createdTasks?: Prisma.IntFilter<"SegmentRecalculationRun"> | number
   lastProcessedUserId?: Prisma.StringNullableFilter<"SegmentRecalculationRun"> | string | null
+  upperBoundUserId?: Prisma.StringNullableFilter<"SegmentRecalculationRun"> | string | null
   previewSummary?: Prisma.JsonFilter<"SegmentRecalculationRun">
   errorSummary?: Prisma.JsonNullableFilter<"SegmentRecalculationRun">
   startedAt?: Prisma.DateTimeNullableFilter<"SegmentRecalculationRun"> | Date | string | null
@@ -375,6 +383,7 @@ export type SegmentRecalculationRunOrderByWithRelationInput = {
   cancelledTasks?: Prisma.SortOrder
   createdTasks?: Prisma.SortOrder
   lastProcessedUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  upperBoundUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   previewSummary?: Prisma.SortOrder
   errorSummary?: Prisma.SortOrderInput | Prisma.SortOrder
   startedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -403,6 +412,7 @@ export type SegmentRecalculationRunWhereUniqueInput = Prisma.AtLeast<{
   cancelledTasks?: Prisma.IntFilter<"SegmentRecalculationRun"> | number
   createdTasks?: Prisma.IntFilter<"SegmentRecalculationRun"> | number
   lastProcessedUserId?: Prisma.StringNullableFilter<"SegmentRecalculationRun"> | string | null
+  upperBoundUserId?: Prisma.StringNullableFilter<"SegmentRecalculationRun"> | string | null
   previewSummary?: Prisma.JsonFilter<"SegmentRecalculationRun">
   errorSummary?: Prisma.JsonNullableFilter<"SegmentRecalculationRun">
   startedAt?: Prisma.DateTimeNullableFilter<"SegmentRecalculationRun"> | Date | string | null
@@ -428,6 +438,7 @@ export type SegmentRecalculationRunOrderByWithAggregationInput = {
   cancelledTasks?: Prisma.SortOrder
   createdTasks?: Prisma.SortOrder
   lastProcessedUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  upperBoundUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   previewSummary?: Prisma.SortOrder
   errorSummary?: Prisma.SortOrderInput | Prisma.SortOrder
   startedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -459,6 +470,7 @@ export type SegmentRecalculationRunScalarWhereWithAggregatesInput = {
   cancelledTasks?: Prisma.IntWithAggregatesFilter<"SegmentRecalculationRun"> | number
   createdTasks?: Prisma.IntWithAggregatesFilter<"SegmentRecalculationRun"> | number
   lastProcessedUserId?: Prisma.StringNullableWithAggregatesFilter<"SegmentRecalculationRun"> | string | null
+  upperBoundUserId?: Prisma.StringNullableWithAggregatesFilter<"SegmentRecalculationRun"> | string | null
   previewSummary?: Prisma.JsonWithAggregatesFilter<"SegmentRecalculationRun">
   errorSummary?: Prisma.JsonNullableWithAggregatesFilter<"SegmentRecalculationRun">
   startedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"SegmentRecalculationRun"> | Date | string | null
@@ -480,6 +492,7 @@ export type SegmentRecalculationRunCreateInput = {
   cancelledTasks?: number
   createdTasks?: number
   lastProcessedUserId?: string | null
+  upperBoundUserId?: string | null
   previewSummary: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Date | string | null
@@ -505,6 +518,7 @@ export type SegmentRecalculationRunUncheckedCreateInput = {
   cancelledTasks?: number
   createdTasks?: number
   lastProcessedUserId?: string | null
+  upperBoundUserId?: string | null
   previewSummary: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Date | string | null
@@ -526,6 +540,7 @@ export type SegmentRecalculationRunUpdateInput = {
   cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
   createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
   lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -551,6 +566,7 @@ export type SegmentRecalculationRunUncheckedUpdateInput = {
   cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
   createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
   lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -574,6 +590,7 @@ export type SegmentRecalculationRunCreateManyInput = {
   cancelledTasks?: number
   createdTasks?: number
   lastProcessedUserId?: string | null
+  upperBoundUserId?: string | null
   previewSummary: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Date | string | null
@@ -595,6 +612,7 @@ export type SegmentRecalculationRunUpdateManyMutationInput = {
   cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
   createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
   lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -618,6 +636,7 @@ export type SegmentRecalculationRunUncheckedUpdateManyInput = {
   cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
   createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
   lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -656,6 +675,7 @@ export type SegmentRecalculationRunCountOrderByAggregateInput = {
   cancelledTasks?: Prisma.SortOrder
   createdTasks?: Prisma.SortOrder
   lastProcessedUserId?: Prisma.SortOrder
+  upperBoundUserId?: Prisma.SortOrder
   previewSummary?: Prisma.SortOrder
   errorSummary?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
@@ -690,6 +710,7 @@ export type SegmentRecalculationRunMaxOrderByAggregateInput = {
   cancelledTasks?: Prisma.SortOrder
   createdTasks?: Prisma.SortOrder
   lastProcessedUserId?: Prisma.SortOrder
+  upperBoundUserId?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -711,6 +732,7 @@ export type SegmentRecalculationRunMinOrderByAggregateInput = {
   cancelledTasks?: Prisma.SortOrder
   createdTasks?: Prisma.SortOrder
   lastProcessedUserId?: Prisma.SortOrder
+  upperBoundUserId?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -819,6 +841,7 @@ export type SegmentRecalculationRunCreateWithoutRequestedByInput = {
   cancelledTasks?: number
   createdTasks?: number
   lastProcessedUserId?: string | null
+  upperBoundUserId?: string | null
   previewSummary: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Date | string | null
@@ -842,6 +865,7 @@ export type SegmentRecalculationRunUncheckedCreateWithoutRequestedByInput = {
   cancelledTasks?: number
   createdTasks?: number
   lastProcessedUserId?: string | null
+  upperBoundUserId?: string | null
   previewSummary: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Date | string | null
@@ -894,6 +918,7 @@ export type SegmentRecalculationRunScalarWhereInput = {
   cancelledTasks?: Prisma.IntFilter<"SegmentRecalculationRun"> | number
   createdTasks?: Prisma.IntFilter<"SegmentRecalculationRun"> | number
   lastProcessedUserId?: Prisma.StringNullableFilter<"SegmentRecalculationRun"> | string | null
+  upperBoundUserId?: Prisma.StringNullableFilter<"SegmentRecalculationRun"> | string | null
   previewSummary?: Prisma.JsonFilter<"SegmentRecalculationRun">
   errorSummary?: Prisma.JsonNullableFilter<"SegmentRecalculationRun">
   startedAt?: Prisma.DateTimeNullableFilter<"SegmentRecalculationRun"> | Date | string | null
@@ -915,6 +940,7 @@ export type SegmentRecalculationRunCreateWithoutRuleVersionInput = {
   cancelledTasks?: number
   createdTasks?: number
   lastProcessedUserId?: string | null
+  upperBoundUserId?: string | null
   previewSummary: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Date | string | null
@@ -938,6 +964,7 @@ export type SegmentRecalculationRunUncheckedCreateWithoutRuleVersionInput = {
   cancelledTasks?: number
   createdTasks?: number
   lastProcessedUserId?: string | null
+  upperBoundUserId?: string | null
   previewSummary: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Date | string | null
@@ -975,6 +1002,7 @@ export type SegmentRecalculationRunUpdateWithoutRuleVersionInput = {
   cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
   createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
   lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -998,6 +1026,7 @@ export type SegmentRecalculationRunUncheckedUpdateWithoutRuleVersionInput = {
   cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
   createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
   lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1020,6 +1049,7 @@ export type SegmentRecalculationRunCreateManyRequestedByInput = {
   cancelledTasks?: number
   createdTasks?: number
   lastProcessedUserId?: string | null
+  upperBoundUserId?: string | null
   previewSummary: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Date | string | null
@@ -1041,6 +1071,7 @@ export type SegmentRecalculationRunUpdateWithoutRequestedByInput = {
   cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
   createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
   lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1064,6 +1095,7 @@ export type SegmentRecalculationRunUncheckedUpdateWithoutRequestedByInput = {
   cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
   createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
   lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1086,6 +1118,7 @@ export type SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByInput = 
   cancelledTasks?: Prisma.IntFieldUpdateOperationsInput | number
   createdTasks?: Prisma.IntFieldUpdateOperationsInput | number
   lastProcessedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upperBoundUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previewSummary?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   errorSummary?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1111,6 +1144,7 @@ export type SegmentRecalculationRunSelect<ExtArgs extends runtime.Types.Extensio
   cancelledTasks?: boolean
   createdTasks?: boolean
   lastProcessedUserId?: boolean
+  upperBoundUserId?: boolean
   previewSummary?: boolean
   errorSummary?: boolean
   startedAt?: boolean
@@ -1136,6 +1170,7 @@ export type SegmentRecalculationRunSelectCreateManyAndReturn<ExtArgs extends run
   cancelledTasks?: boolean
   createdTasks?: boolean
   lastProcessedUserId?: boolean
+  upperBoundUserId?: boolean
   previewSummary?: boolean
   errorSummary?: boolean
   startedAt?: boolean
@@ -1161,6 +1196,7 @@ export type SegmentRecalculationRunSelectUpdateManyAndReturn<ExtArgs extends run
   cancelledTasks?: boolean
   createdTasks?: boolean
   lastProcessedUserId?: boolean
+  upperBoundUserId?: boolean
   previewSummary?: boolean
   errorSummary?: boolean
   startedAt?: boolean
@@ -1186,6 +1222,7 @@ export type SegmentRecalculationRunSelectScalar = {
   cancelledTasks?: boolean
   createdTasks?: boolean
   lastProcessedUserId?: boolean
+  upperBoundUserId?: boolean
   previewSummary?: boolean
   errorSummary?: boolean
   startedAt?: boolean
@@ -1194,7 +1231,7 @@ export type SegmentRecalculationRunSelectScalar = {
   updatedAt?: boolean
 }
 
-export type SegmentRecalculationRunOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ruleVersionId" | "ruleVersionNumber" | "requestedById" | "idempotencyKey" | "status" | "totalUsers" | "processedUsers" | "succeededUsers" | "failedUsers" | "segmentChanges" | "cancelledTasks" | "createdTasks" | "lastProcessedUserId" | "previewSummary" | "errorSummary" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["segmentRecalculationRun"]>
+export type SegmentRecalculationRunOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ruleVersionId" | "ruleVersionNumber" | "requestedById" | "idempotencyKey" | "status" | "totalUsers" | "processedUsers" | "succeededUsers" | "failedUsers" | "segmentChanges" | "cancelledTasks" | "createdTasks" | "lastProcessedUserId" | "upperBoundUserId" | "previewSummary" | "errorSummary" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["segmentRecalculationRun"]>
 export type SegmentRecalculationRunInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ruleVersion?: boolean | Prisma.AutomationRuleVersionDefaultArgs<ExtArgs>
   requestedBy?: boolean | Prisma.MemberDefaultArgs<ExtArgs>
@@ -1229,6 +1266,7 @@ export type $SegmentRecalculationRunPayload<ExtArgs extends runtime.Types.Extens
     cancelledTasks: number
     createdTasks: number
     lastProcessedUserId: string | null
+    upperBoundUserId: string | null
     previewSummary: runtime.JsonValue
     errorSummary: runtime.JsonValue | null
     startedAt: Date | null
@@ -1674,6 +1712,7 @@ export interface SegmentRecalculationRunFieldRefs {
   readonly cancelledTasks: Prisma.FieldRef<"SegmentRecalculationRun", 'Int'>
   readonly createdTasks: Prisma.FieldRef<"SegmentRecalculationRun", 'Int'>
   readonly lastProcessedUserId: Prisma.FieldRef<"SegmentRecalculationRun", 'String'>
+  readonly upperBoundUserId: Prisma.FieldRef<"SegmentRecalculationRun", 'String'>
   readonly previewSummary: Prisma.FieldRef<"SegmentRecalculationRun", 'Json'>
   readonly errorSummary: Prisma.FieldRef<"SegmentRecalculationRun", 'Json'>
   readonly startedAt: Prisma.FieldRef<"SegmentRecalculationRun", 'DateTime'>

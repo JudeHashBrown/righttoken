@@ -247,6 +247,7 @@ export const SegmentRecalculationRunScalarFieldEnum = {
   cancelledTasks: 'cancelledTasks',
   createdTasks: 'createdTasks',
   lastProcessedUserId: 'lastProcessedUserId',
+  upperBoundUserId: 'upperBoundUserId',
   previewSummary: 'previewSummary',
   errorSummary: 'errorSummary',
   startedAt: 'startedAt',

@@ -1,26 +1,12 @@
-import type {
-  SegmentCode,
-  TaskStatus
-} from "@/generated/prisma/client";
 import type { TransactionClient } from "@/lib/db/transaction";
+import {
+  cancellableAutomationTaskStatuses
+} from "@/modules/tasks/close-obsolete-tasks";
 
-export const openTaskStatuses: TaskStatus[] = [
-  "UNASSIGNED",
-  "TODO",
-  "IN_PROGRESS",
-  "WAITING_USER",
-  "PAUSED"
-];
-
-export const cancellableAutomationTaskStatuses: TaskStatus[] = [
-  "UNASSIGNED",
-  "TODO"
-];
-
-export async function closeObsoleteAutomationTasks(
+export async function cancelSupersededAutomationTasks(
   tx: TransactionClient,
   userId: string,
-  oldSegment: SegmentCode,
+  ruleVersion: number,
   now: Date
 ): Promise<number> {
   const tasks = await tx.recallTask.findMany({
@@ -28,7 +14,7 @@ export async function closeObsoleteAutomationTasks(
       userId,
       origin: "AUTOMATION",
       status: { in: cancellableAutomationTaskStatuses },
-      triggerKey: { startsWith: `${oldSegment}:` }
+      ruleVersion: { lt: ruleVersion }
     },
     select: { id: true }
   });
@@ -36,7 +22,6 @@ export async function closeObsoleteAutomationTasks(
     return 0;
   }
   const taskIds = tasks.map((task) => task.id);
-
   await tx.recallTask.updateMany({
     where: {
       id: { in: taskIds },
@@ -45,7 +30,7 @@ export async function closeObsoleteAutomationTasks(
     data: {
       status: "CANCELLED",
       cancelledAt: now,
-      cancelReason: "segment_changed"
+      cancelReason: "segment_rule_republished"
     }
   });
   await tx.taskActivity.createMany({
@@ -53,8 +38,8 @@ export async function closeObsoleteAutomationTasks(
       taskId,
       action: "task.auto_cancelled",
       detail: {
-        reason: "segment_changed",
-        oldSegment
+        reason: "segment_rule_republished",
+        ruleVersion
       }
     }))
   });
