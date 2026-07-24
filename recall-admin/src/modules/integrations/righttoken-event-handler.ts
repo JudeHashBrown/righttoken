@@ -8,7 +8,10 @@ export type EventHandlerDependencies = {
   getSecrets(): {
     current: string;
     previous?: string;
-  };
+  } | Promise<{
+    current: string;
+    previous?: string;
+  }>;
   getScheduler(): Promise<TaskScheduler>;
   ingestEvent(
     input: unknown,
@@ -22,7 +25,7 @@ export function createRightTokenEventHandler(
   return async function rightTokenEventHandler(
     request: NextRequest
   ): Promise<NextResponse> {
-    const secrets = dependencies.getSecrets();
+    const secrets = await dependencies.getSecrets();
     if (
       !isValidInternalBearer(
         request.headers.get("authorization"),

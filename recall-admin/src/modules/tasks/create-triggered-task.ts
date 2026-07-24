@@ -5,6 +5,7 @@ import {
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { getTriggerPolicy } from "@/modules/tasks/trigger-policy";
+import { createTaskNotificationIntents } from "@/modules/notifications/notification-service";
 
 const taskTitles: Record<SegmentCode, string> = {
   A: "注册后尚未完成首单支付",
@@ -42,8 +43,9 @@ export async function createTriggeredTask(
   const triggerKey =
     `${input.segment}:${policyKey}:${input.windowStart.toISOString()}`;
 
+  let task: RecallTask;
   try {
-    return await prisma.$transaction(async (tx) => {
+    task = await prisma.$transaction(async (tx) => {
       const task = await tx.recallTask.create({
         data: {
           userId: input.userId,
@@ -77,7 +79,7 @@ export async function createTriggeredTask(
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
-      return prisma.recallTask.findUniqueOrThrow({
+      task = await prisma.recallTask.findUniqueOrThrow({
         where: {
           userId_triggerKey_ruleVersion: {
             userId: input.userId,
@@ -86,7 +88,10 @@ export async function createTriggeredTask(
           }
         }
       });
+    } else {
+      throw error;
     }
-    throw error;
   }
+  await createTaskNotificationIntents(task.id, now);
+  return task;
 }

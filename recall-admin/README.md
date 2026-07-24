@@ -11,8 +11,9 @@
 - 运营驾驶舱、优先任务、分组分布与团队负载
 - 主管理员、管理员和运营人员权限
 - 仅主管理员可导出 CSV
-- RightToken 内部事件接口
-- 邮件和企业微信渠道扩展边界
+- 邮件审核发送、SMTP/IMAP 收信、回复匹配和人工归档
+- 企微群机器人脱敏通知、失败重试和死信留痕
+- RightToken 实时事件接口、模拟数据源和定时全量校准
 
 ## 一键启动本地完整环境
 
@@ -54,6 +55,29 @@ Worker 另开一个终端运行：
 ```bash
 npm run worker
 ```
+
+开发服务器如果使用 3101 端口，必须同时让同源地址保持一致：
+
+```bash
+APP_URL=http://127.0.0.1:3101 npm run dev -- --hostname 127.0.0.1 --port 3101
+```
+
+## 集成配置
+
+登录后在“系统设置”中完成配置，密码、Webhook 和接口密钥都会加密保存：
+
+- 客服邮箱：支持 Namecheap Private Email、企业微信邮箱和自定义 SMTP/IMAP。
+- 企业微信：保存群机器人 Webhook 后，可先发送一条不含用户信息的测试消息。
+- RightToken：正式用户接口未提供前可启用 100 位安全模拟用户；正式接入时切换为 HTTP 模式。
+
+RightToken 实时事件兼容地址：
+
+```text
+POST /api/integrations/righttoken/events
+POST /api/internal/righttoken/events
+```
+
+后台 Worker 每两分钟收取邮件、每分钟投递通知、每十五分钟增量校准用户，并在每天 02:00 执行全量校准。未启用对应连接时任务会安全跳过。
 
 ## 验证
 

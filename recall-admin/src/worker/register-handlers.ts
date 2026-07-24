@@ -1,6 +1,10 @@
 import type { PgBoss } from "pg-boss";
 import { handleDailyDigest } from "@/worker/handlers/daily-digest";
 import { handlePiiRetention } from "@/worker/handlers/pii-retention";
+import { handleMailSync } from "@/worker/handlers/mail-sync";
+import { handleNotificationDelivery } from "@/worker/handlers/notification-delivery";
+import { handleUserReconciliation } from "@/worker/handlers/user-reconciliation";
+import { PgTaskScheduler } from "@/modules/tasks/pg-task-scheduler";
 import {
   handleSegmentCheck,
   type SegmentCheckInput
@@ -28,5 +32,16 @@ export async function registerHandlers(
   );
   await boss.work(JOBS.PII_RETENTION, async () =>
     handlePiiRetention()
+  );
+  await boss.work(JOBS.MAIL_SYNC, async () => handleMailSync());
+  await boss.work(JOBS.NOTIFICATION_DELIVERY, async () =>
+    handleNotificationDelivery()
+  );
+  await boss.work(JOBS.USER_RECONCILIATION, async ([job]) =>
+    handleUserReconciliation(
+      job?.data ?? { mode: "incremental" },
+      undefined,
+      new PgTaskScheduler(boss)
+    )
   );
 }

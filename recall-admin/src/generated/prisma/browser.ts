@@ -92,3 +92,38 @@ export type Invitation = Prisma.InvitationModel
  * 
  */
 export type RecoveryCode = Prisma.RecoveryCodeModel
+/**
+ * Model Mailbox
+ * 
+ */
+export type Mailbox = Prisma.MailboxModel
+/**
+ * Model MailTemplate
+ * 
+ */
+export type MailTemplate = Prisma.MailTemplateModel
+/**
+ * Model MailThread
+ * 
+ */
+export type MailThread = Prisma.MailThreadModel
+/**
+ * Model MailMessage
+ * 
+ */
+export type MailMessage = Prisma.MailMessageModel
+/**
+ * Model SuppressionEntry
+ * 
+ */
+export type SuppressionEntry = Prisma.SuppressionEntryModel
+/**
+ * Model NotificationIntent
+ * 
+ */
+export type NotificationIntent = Prisma.NotificationIntentModel
+/**
+ * Model IntegrationCredential
+ * 
+ */
+export type IntegrationCredential = Prisma.IntegrationCredentialModel

@@ -182,7 +182,7 @@ curl --fail \
       "country_code": "SG"
     }
   }' \
-  https://recall.righttoken.ai/api/internal/righttoken/events
+  https://recall.righttoken.ai/api/integrations/righttoken/events
 ```
 
 第一次应返回 `duplicate: false`，再次提交同一 `event_id` 应返回 `duplicate: true`。
@@ -190,12 +190,25 @@ curl --fail \
 主站正式发送事件时使用 Docker 内部地址：
 
 ```text
-http://recall-web:3000/api/internal/righttoken/events
+http://recall-web:3000/api/integrations/righttoken/events
 ```
 
 内部密钥轮换时先设置 `RECALL_INTERNAL_API_SECRET_PREVIOUS`，确认主站已经切换到新密钥后再清空上一密钥。
 
-## 9. 备份与恢复演练
+旧地址 `/api/internal/righttoken/events` 继续保留，便于 RightToken 主站平滑迁移。
+
+## 9. 邮箱、企微与用户校准
+
+部署完成后由主管理员进入“系统设置”保存连接信息，不要把邮箱密码、企微 Webhook 或 RightToken API Token 写入镜像：
+
+1. 保存客服邮箱并执行“测试连接”和“立即同步”。
+2. 保存企微机器人并发送不含用户信息的测试消息。
+3. 首次先使用 RightToken 模拟模式验证任务与分组，再切换正式 HTTP 接口。
+4. 正式切换后执行一次全量校准，确认统计结果和抽样用户。
+
+连接配置使用 `APP_ENCRYPTION_KEY` 加密后保存在召回数据库。Worker 会自动运行邮件同步、通知投递、十五分钟增量校准和每日全量校准。
+
+## 10. 备份与恢复演练
 
 创建备份：
 
@@ -218,7 +231,7 @@ pg_restore \
 
 不得直接在生产数据库执行未经演练的恢复命令。
 
-## 10. 回滚
+## 11. 回滚
 
 1. 保留当前数据库备份。
 2. 将 `RECALL_IMAGE` 改为上一条已验证的 Git SHA。
@@ -229,7 +242,7 @@ pg_restore \
 
 如果数据库迁移不向后兼容，不得只回滚镜像；先按已审核的数据库恢复方案处理。
 
-## 11. RightToken 单点登录
+## 12. RightToken 单点登录
 
 首发固定：
 

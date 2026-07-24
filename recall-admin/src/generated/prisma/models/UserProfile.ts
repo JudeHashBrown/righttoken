@@ -474,6 +474,8 @@ export type UserProfileWhereInput = {
   segmentOverrides?: Prisma.SegmentOverrideListRelationFilter
   tasks?: Prisma.RecallTaskListRelationFilter
   notes?: Prisma.UserNoteListRelationFilter
+  mailThreads?: Prisma.MailThreadListRelationFilter
+  mailMessages?: Prisma.MailMessageListRelationFilter
 }
 
 export type UserProfileOrderByWithRelationInput = {
@@ -518,6 +520,8 @@ export type UserProfileOrderByWithRelationInput = {
   segmentOverrides?: Prisma.SegmentOverrideOrderByRelationAggregateInput
   tasks?: Prisma.RecallTaskOrderByRelationAggregateInput
   notes?: Prisma.UserNoteOrderByRelationAggregateInput
+  mailThreads?: Prisma.MailThreadOrderByRelationAggregateInput
+  mailMessages?: Prisma.MailMessageOrderByRelationAggregateInput
 }
 
 export type UserProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -565,6 +569,8 @@ export type UserProfileWhereUniqueInput = Prisma.AtLeast<{
   segmentOverrides?: Prisma.SegmentOverrideListRelationFilter
   tasks?: Prisma.RecallTaskListRelationFilter
   notes?: Prisma.UserNoteListRelationFilter
+  mailThreads?: Prisma.MailThreadListRelationFilter
+  mailMessages?: Prisma.MailMessageListRelationFilter
 }, "id" | "externalUserId">
 
 export type UserProfileOrderByWithAggregationInput = {
@@ -692,6 +698,8 @@ export type UserProfileCreateInput = {
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileUncheckedCreateInput = {
@@ -735,6 +743,8 @@ export type UserProfileUncheckedCreateInput = {
   segmentOverrides?: Prisma.SegmentOverrideUncheckedCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileUpdateInput = {
@@ -778,6 +788,8 @@ export type UserProfileUpdateInput = {
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateInput = {
@@ -821,6 +833,8 @@ export type UserProfileUncheckedUpdateInput = {
   segmentOverrides?: Prisma.SegmentOverrideUncheckedUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateManyInput = {
@@ -1079,6 +1093,11 @@ export type UserProfileScalarRelationFilter = {
   isNot?: Prisma.UserProfileWhereInput
 }
 
+export type UserProfileNullableScalarRelationFilter = {
+  is?: Prisma.UserProfileWhereInput | null
+  isNot?: Prisma.UserProfileWhereInput | null
+}
+
 export type UserProfileCreateNestedManyWithoutOwnerInput = {
   create?: Prisma.XOR<Prisma.UserProfileCreateWithoutOwnerInput, Prisma.UserProfileUncheckedCreateWithoutOwnerInput> | Prisma.UserProfileCreateWithoutOwnerInput[] | Prisma.UserProfileUncheckedCreateWithoutOwnerInput[]
   connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutOwnerInput | Prisma.UserProfileCreateOrConnectWithoutOwnerInput[]
@@ -1203,6 +1222,36 @@ export type UserProfileUpdateOneRequiredWithoutTasksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserProfileUpdateToOneWithWhereWithoutTasksInput, Prisma.UserProfileUpdateWithoutTasksInput>, Prisma.UserProfileUncheckedUpdateWithoutTasksInput>
 }
 
+export type UserProfileCreateNestedOneWithoutMailThreadsInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutMailThreadsInput, Prisma.UserProfileUncheckedCreateWithoutMailThreadsInput>
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutMailThreadsInput
+  connect?: Prisma.UserProfileWhereUniqueInput
+}
+
+export type UserProfileUpdateOneRequiredWithoutMailThreadsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutMailThreadsInput, Prisma.UserProfileUncheckedCreateWithoutMailThreadsInput>
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutMailThreadsInput
+  upsert?: Prisma.UserProfileUpsertWithoutMailThreadsInput
+  connect?: Prisma.UserProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserProfileUpdateToOneWithWhereWithoutMailThreadsInput, Prisma.UserProfileUpdateWithoutMailThreadsInput>, Prisma.UserProfileUncheckedUpdateWithoutMailThreadsInput>
+}
+
+export type UserProfileCreateNestedOneWithoutMailMessagesInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutMailMessagesInput, Prisma.UserProfileUncheckedCreateWithoutMailMessagesInput>
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutMailMessagesInput
+  connect?: Prisma.UserProfileWhereUniqueInput
+}
+
+export type UserProfileUpdateOneWithoutMailMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutMailMessagesInput, Prisma.UserProfileUncheckedCreateWithoutMailMessagesInput>
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutMailMessagesInput
+  upsert?: Prisma.UserProfileUpsertWithoutMailMessagesInput
+  disconnect?: Prisma.UserProfileWhereInput | boolean
+  delete?: Prisma.UserProfileWhereInput | boolean
+  connect?: Prisma.UserProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserProfileUpdateToOneWithWhereWithoutMailMessagesInput, Prisma.UserProfileUpdateWithoutMailMessagesInput>, Prisma.UserProfileUncheckedUpdateWithoutMailMessagesInput>
+}
+
 export type UserProfileCreateWithoutOwnerInput = {
   id?: string
   externalUserId: string
@@ -1243,6 +1292,8 @@ export type UserProfileCreateWithoutOwnerInput = {
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileUncheckedCreateWithoutOwnerInput = {
@@ -1285,6 +1336,8 @@ export type UserProfileUncheckedCreateWithoutOwnerInput = {
   segmentOverrides?: Prisma.SegmentOverrideUncheckedCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutOwnerInput = {
@@ -1394,6 +1447,8 @@ export type UserProfileCreateWithoutEventsInput = {
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileUncheckedCreateWithoutEventsInput = {
@@ -1436,6 +1491,8 @@ export type UserProfileUncheckedCreateWithoutEventsInput = {
   segmentOverrides?: Prisma.SegmentOverrideUncheckedCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutEventsInput = {
@@ -1494,6 +1551,8 @@ export type UserProfileUpdateWithoutEventsInput = {
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutEventsInput = {
@@ -1536,6 +1595,8 @@ export type UserProfileUncheckedUpdateWithoutEventsInput = {
   segmentOverrides?: Prisma.SegmentOverrideUncheckedUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutSegmentHistoryInput = {
@@ -1578,6 +1639,8 @@ export type UserProfileCreateWithoutSegmentHistoryInput = {
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileUncheckedCreateWithoutSegmentHistoryInput = {
@@ -1620,6 +1683,8 @@ export type UserProfileUncheckedCreateWithoutSegmentHistoryInput = {
   segmentOverrides?: Prisma.SegmentOverrideUncheckedCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutSegmentHistoryInput = {
@@ -1678,6 +1743,8 @@ export type UserProfileUpdateWithoutSegmentHistoryInput = {
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutSegmentHistoryInput = {
@@ -1720,6 +1787,8 @@ export type UserProfileUncheckedUpdateWithoutSegmentHistoryInput = {
   segmentOverrides?: Prisma.SegmentOverrideUncheckedUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutSegmentOverridesInput = {
@@ -1762,6 +1831,8 @@ export type UserProfileCreateWithoutSegmentOverridesInput = {
   segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileUncheckedCreateWithoutSegmentOverridesInput = {
@@ -1804,6 +1875,8 @@ export type UserProfileUncheckedCreateWithoutSegmentOverridesInput = {
   segmentHistory?: Prisma.SegmentHistoryUncheckedCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutSegmentOverridesInput = {
@@ -1862,6 +1935,8 @@ export type UserProfileUpdateWithoutSegmentOverridesInput = {
   segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutSegmentOverridesInput = {
@@ -1904,6 +1979,8 @@ export type UserProfileUncheckedUpdateWithoutSegmentOverridesInput = {
   segmentHistory?: Prisma.SegmentHistoryUncheckedUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutNotesInput = {
@@ -1946,6 +2023,8 @@ export type UserProfileCreateWithoutNotesInput = {
   segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileUncheckedCreateWithoutNotesInput = {
@@ -1988,6 +2067,8 @@ export type UserProfileUncheckedCreateWithoutNotesInput = {
   segmentHistory?: Prisma.SegmentHistoryUncheckedCreateNestedManyWithoutUserInput
   segmentOverrides?: Prisma.SegmentOverrideUncheckedCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutNotesInput = {
@@ -2046,6 +2127,8 @@ export type UserProfileUpdateWithoutNotesInput = {
   segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutNotesInput = {
@@ -2088,6 +2171,8 @@ export type UserProfileUncheckedUpdateWithoutNotesInput = {
   segmentHistory?: Prisma.SegmentHistoryUncheckedUpdateManyWithoutUserNestedInput
   segmentOverrides?: Prisma.SegmentOverrideUncheckedUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutTasksInput = {
@@ -2130,6 +2215,8 @@ export type UserProfileCreateWithoutTasksInput = {
   segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileUncheckedCreateWithoutTasksInput = {
@@ -2172,6 +2259,8 @@ export type UserProfileUncheckedCreateWithoutTasksInput = {
   segmentHistory?: Prisma.SegmentHistoryUncheckedCreateNestedManyWithoutUserInput
   segmentOverrides?: Prisma.SegmentOverrideUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutTasksInput = {
@@ -2230,6 +2319,8 @@ export type UserProfileUpdateWithoutTasksInput = {
   segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutTasksInput = {
@@ -2272,6 +2363,392 @@ export type UserProfileUncheckedUpdateWithoutTasksInput = {
   segmentHistory?: Prisma.SegmentHistoryUncheckedUpdateManyWithoutUserNestedInput
   segmentOverrides?: Prisma.SegmentOverrideUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserProfileCreateWithoutMailThreadsInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  events?: Prisma.UserEventCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+}
+
+export type UserProfileUncheckedCreateWithoutMailThreadsInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerId?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserProfileCreateOrConnectWithoutMailThreadsInput = {
+  where: Prisma.UserProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutMailThreadsInput, Prisma.UserProfileUncheckedCreateWithoutMailThreadsInput>
+}
+
+export type UserProfileUpsertWithoutMailThreadsInput = {
+  update: Prisma.XOR<Prisma.UserProfileUpdateWithoutMailThreadsInput, Prisma.UserProfileUncheckedUpdateWithoutMailThreadsInput>
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutMailThreadsInput, Prisma.UserProfileUncheckedCreateWithoutMailThreadsInput>
+  where?: Prisma.UserProfileWhereInput
+}
+
+export type UserProfileUpdateToOneWithWhereWithoutMailThreadsInput = {
+  where?: Prisma.UserProfileWhereInput
+  data: Prisma.XOR<Prisma.UserProfileUpdateWithoutMailThreadsInput, Prisma.UserProfileUncheckedUpdateWithoutMailThreadsInput>
+}
+
+export type UserProfileUpdateWithoutMailThreadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+}
+
+export type UserProfileUncheckedUpdateWithoutMailThreadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserProfileCreateWithoutMailMessagesInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  events?: Prisma.UserEventCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+}
+
+export type UserProfileUncheckedCreateWithoutMailMessagesInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerId?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserProfileCreateOrConnectWithoutMailMessagesInput = {
+  where: Prisma.UserProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutMailMessagesInput, Prisma.UserProfileUncheckedCreateWithoutMailMessagesInput>
+}
+
+export type UserProfileUpsertWithoutMailMessagesInput = {
+  update: Prisma.XOR<Prisma.UserProfileUpdateWithoutMailMessagesInput, Prisma.UserProfileUncheckedUpdateWithoutMailMessagesInput>
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutMailMessagesInput, Prisma.UserProfileUncheckedCreateWithoutMailMessagesInput>
+  where?: Prisma.UserProfileWhereInput
+}
+
+export type UserProfileUpdateToOneWithWhereWithoutMailMessagesInput = {
+  where?: Prisma.UserProfileWhereInput
+  data: Prisma.XOR<Prisma.UserProfileUpdateWithoutMailMessagesInput, Prisma.UserProfileUncheckedUpdateWithoutMailMessagesInput>
+}
+
+export type UserProfileUpdateWithoutMailMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+}
+
+export type UserProfileUncheckedUpdateWithoutMailMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateManyOwnerInput = {
@@ -2351,6 +2828,8 @@ export type UserProfileUpdateWithoutOwnerInput = {
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutOwnerInput = {
@@ -2393,6 +2872,8 @@ export type UserProfileUncheckedUpdateWithoutOwnerInput = {
   segmentOverrides?: Prisma.SegmentOverrideUncheckedUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateManyWithoutOwnerInput = {
@@ -2443,6 +2924,8 @@ export type UserProfileCountOutputType = {
   segmentOverrides: number
   tasks: number
   notes: number
+  mailThreads: number
+  mailMessages: number
 }
 
 export type UserProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2451,6 +2934,8 @@ export type UserProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Exten
   segmentOverrides?: boolean | UserProfileCountOutputTypeCountSegmentOverridesArgs
   tasks?: boolean | UserProfileCountOutputTypeCountTasksArgs
   notes?: boolean | UserProfileCountOutputTypeCountNotesArgs
+  mailThreads?: boolean | UserProfileCountOutputTypeCountMailThreadsArgs
+  mailMessages?: boolean | UserProfileCountOutputTypeCountMailMessagesArgs
 }
 
 /**
@@ -2498,6 +2983,20 @@ export type UserProfileCountOutputTypeCountNotesArgs<ExtArgs extends runtime.Typ
   where?: Prisma.UserNoteWhereInput
 }
 
+/**
+ * UserProfileCountOutputType without action
+ */
+export type UserProfileCountOutputTypeCountMailThreadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MailThreadWhereInput
+}
+
+/**
+ * UserProfileCountOutputType without action
+ */
+export type UserProfileCountOutputTypeCountMailMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MailMessageWhereInput
+}
+
 
 export type UserProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2541,6 +3040,8 @@ export type UserProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   segmentOverrides?: boolean | Prisma.UserProfile$segmentOverridesArgs<ExtArgs>
   tasks?: boolean | Prisma.UserProfile$tasksArgs<ExtArgs>
   notes?: boolean | Prisma.UserProfile$notesArgs<ExtArgs>
+  mailThreads?: boolean | Prisma.UserProfile$mailThreadsArgs<ExtArgs>
+  mailMessages?: boolean | Prisma.UserProfile$mailMessagesArgs<ExtArgs>
   _count?: boolean | Prisma.UserProfileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["userProfile"]>
 
@@ -2668,6 +3169,8 @@ export type UserProfileInclude<ExtArgs extends runtime.Types.Extensions.Internal
   segmentOverrides?: boolean | Prisma.UserProfile$segmentOverridesArgs<ExtArgs>
   tasks?: boolean | Prisma.UserProfile$tasksArgs<ExtArgs>
   notes?: boolean | Prisma.UserProfile$notesArgs<ExtArgs>
+  mailThreads?: boolean | Prisma.UserProfile$mailThreadsArgs<ExtArgs>
+  mailMessages?: boolean | Prisma.UserProfile$mailMessagesArgs<ExtArgs>
   _count?: boolean | Prisma.UserProfileCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserProfileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2686,6 +3189,8 @@ export type $UserProfilePayload<ExtArgs extends runtime.Types.Extensions.Interna
     segmentOverrides: Prisma.$SegmentOverridePayload<ExtArgs>[]
     tasks: Prisma.$RecallTaskPayload<ExtArgs>[]
     notes: Prisma.$UserNotePayload<ExtArgs>[]
+    mailThreads: Prisma.$MailThreadPayload<ExtArgs>[]
+    mailMessages: Prisma.$MailMessagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3123,6 +3628,8 @@ export interface Prisma__UserProfileClient<T, Null = never, ExtArgs extends runt
   segmentOverrides<T extends Prisma.UserProfile$segmentOverridesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$segmentOverridesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SegmentOverridePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tasks<T extends Prisma.UserProfile$tasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecallTaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notes<T extends Prisma.UserProfile$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  mailThreads<T extends Prisma.UserProfile$mailThreadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$mailThreadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  mailMessages<T extends Prisma.UserProfile$mailMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$mailMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3724,6 +4231,54 @@ export type UserProfile$notesArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.UserNoteScalarFieldEnum | Prisma.UserNoteScalarFieldEnum[]
+}
+
+/**
+ * UserProfile.mailThreads
+ */
+export type UserProfile$mailThreadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailThread
+   */
+  select?: Prisma.MailThreadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailThread
+   */
+  omit?: Prisma.MailThreadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailThreadInclude<ExtArgs> | null
+  where?: Prisma.MailThreadWhereInput
+  orderBy?: Prisma.MailThreadOrderByWithRelationInput | Prisma.MailThreadOrderByWithRelationInput[]
+  cursor?: Prisma.MailThreadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MailThreadScalarFieldEnum | Prisma.MailThreadScalarFieldEnum[]
+}
+
+/**
+ * UserProfile.mailMessages
+ */
+export type UserProfile$mailMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailMessage
+   */
+  select?: Prisma.MailMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailMessage
+   */
+  omit?: Prisma.MailMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailMessageInclude<ExtArgs> | null
+  where?: Prisma.MailMessageWhereInput
+  orderBy?: Prisma.MailMessageOrderByWithRelationInput | Prisma.MailMessageOrderByWithRelationInput[]
+  cursor?: Prisma.MailMessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MailMessageScalarFieldEnum | Prisma.MailMessageScalarFieldEnum[]
 }
 
 /**

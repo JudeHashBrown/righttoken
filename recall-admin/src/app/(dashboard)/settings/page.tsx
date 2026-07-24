@@ -1,4 +1,8 @@
 import styles from "@/components/workspaces/workspace.module.css";
+import { MailboxSettingsForm } from "@/components/settings/mailbox-settings-form";
+import { MailboxActions } from "@/components/settings/mailbox-actions";
+import { WecomSettingsForm } from "@/components/settings/wecom-settings-form";
+import { RightTokenSettingsForm } from "@/components/settings/righttoken-settings-form";
 import { requireAdministrator } from "@/modules/admin/page-access";
 import { getSettingsWorkspaceOverview } from "@/modules/admin/workspace-queries";
 
@@ -52,7 +56,7 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
         <div className={styles.panelHeader}>
           <div>
             <h2>集成连接</h2>
-            <p>保存凭据功能将在取得正式账号后启用</p>
+            <p>凭据加密保存，页面只显示连接状态</p>
           </div>
         </div>
         <ul className={styles.list}>
@@ -62,7 +66,7 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
                 <strong>{integration.name}</strong>
                 <p>
                   {integration.configured
-                    ? "服务端环境变量已配置"
+                    ? "数据源或通知通道已配置"
                     : "等待正式账号或接口信息"}
                 </p>
               </div>
@@ -79,6 +83,40 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
           ))}
         </ul>
       </section>
+
+      {overview.mailboxes.length ? (
+        <section className={styles.panel}>
+          <div className={styles.panelHeader}>
+            <div>
+              <h2>已保存邮箱</h2>
+              <p>页面只显示邮箱地址和运行状态，不返回密码</p>
+            </div>
+          </div>
+          <ul className={styles.list}>
+            {overview.mailboxes.map((mailbox) => (
+              <li className={styles.listItem} key={mailbox.id}>
+                <div>
+                  <strong>{mailbox.name}</strong>
+                  <p>
+                    {mailbox.emailAddress}
+                    {" · "}
+                    {mailbox.lastErrorCode
+                      ? `错误：${mailbox.lastErrorCode}`
+                      : mailbox.lastSuccessAt
+                        ? "最近连接正常"
+                        : "尚未测试连接"}
+                  </p>
+                </div>
+                <MailboxActions mailboxId={mailbox.id} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      <MailboxSettingsForm />
+      <WecomSettingsForm />
+      <RightTokenSettingsForm />
     </main>
   );
 }

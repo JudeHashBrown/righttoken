@@ -60,3 +60,41 @@ export const TaskOrigin = {
 } as const
 
 export type TaskOrigin = (typeof TaskOrigin)[keyof typeof TaskOrigin]
+
+
+export const MailDirection = {
+  OUTBOUND: 'OUTBOUND',
+  INBOUND: 'INBOUND'
+} as const
+
+export type MailDirection = (typeof MailDirection)[keyof typeof MailDirection]
+
+
+export const MailMessageStatus = {
+  DRAFT: 'DRAFT',
+  SENT: 'SENT',
+  RECEIVED: 'RECEIVED',
+  FAILED: 'FAILED',
+  UNMATCHED: 'UNMATCHED'
+} as const
+
+export type MailMessageStatus = (typeof MailMessageStatus)[keyof typeof MailMessageStatus]
+
+
+export const NotificationChannel = {
+  IN_APP: 'IN_APP',
+  WECOM: 'WECOM',
+  EMAIL: 'EMAIL'
+} as const
+
+export type NotificationChannel = (typeof NotificationChannel)[keyof typeof NotificationChannel]
+
+
+export const DeliveryStatus = {
+  PENDING: 'PENDING',
+  SENT: 'SENT',
+  FAILED: 'FAILED',
+  DEAD_LETTER: 'DEAD_LETTER'
+} as const
+
+export type DeliveryStatus = (typeof DeliveryStatus)[keyof typeof DeliveryStatus]

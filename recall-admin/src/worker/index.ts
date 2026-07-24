@@ -34,6 +34,37 @@ export async function startWorker(): Promise<PgBoss> {
     key: "pii-retention-3am-shanghai",
     tz: "Asia/Shanghai"
   });
+  await boss.schedule(JOBS.MAIL_SYNC, "*/2 * * * *", null, {
+    key: "mail-sync-two-minutes",
+    tz: "Asia/Shanghai"
+  });
+  await boss.schedule(
+    JOBS.NOTIFICATION_DELIVERY,
+    "* * * * *",
+    null,
+    {
+      key: "notification-delivery-every-minute",
+      tz: "Asia/Shanghai"
+    }
+  );
+  await boss.schedule(
+    JOBS.USER_RECONCILIATION,
+    "*/15 * * * *",
+    { mode: "incremental" },
+    {
+      key: "righttoken-incremental-fifteen-minutes",
+      tz: "Asia/Shanghai"
+    }
+  );
+  await boss.schedule(
+    JOBS.USER_RECONCILIATION,
+    "0 2 * * *",
+    { mode: "full" },
+    {
+      key: "righttoken-full-2am-shanghai",
+      tz: "Asia/Shanghai"
+    }
+  );
 
   activeBoss = boss;
   return boss;

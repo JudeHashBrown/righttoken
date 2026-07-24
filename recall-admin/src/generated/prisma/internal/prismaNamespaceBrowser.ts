@@ -65,7 +65,14 @@ export const ModelName = {
   AuditLog: 'AuditLog',
   LoginAttempt: 'LoginAttempt',
   Invitation: 'Invitation',
-  RecoveryCode: 'RecoveryCode'
+  RecoveryCode: 'RecoveryCode',
+  Mailbox: 'Mailbox',
+  MailTemplate: 'MailTemplate',
+  MailThread: 'MailThread',
+  MailMessage: 'MailMessage',
+  SuppressionEntry: 'SuppressionEntry',
+  NotificationIntent: 'NotificationIntent',
+  IntegrationCredential: 'IntegrationCredential'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -325,6 +332,134 @@ export const RecoveryCodeScalarFieldEnum = {
 } as const
 
 export type RecoveryCodeScalarFieldEnum = (typeof RecoveryCodeScalarFieldEnum)[keyof typeof RecoveryCodeScalarFieldEnum]
+
+
+export const MailboxScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  emailAddress: 'emailAddress',
+  encryptedConfig: 'encryptedConfig',
+  enabled: 'enabled',
+  trackingEnabled: 'trackingEnabled',
+  trackingDisclosure: 'trackingDisclosure',
+  lastSyncedAt: 'lastSyncedAt',
+  lastTestedAt: 'lastTestedAt',
+  lastSuccessAt: 'lastSuccessAt',
+  lastErrorCode: 'lastErrorCode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MailboxScalarFieldEnum = (typeof MailboxScalarFieldEnum)[keyof typeof MailboxScalarFieldEnum]
+
+
+export const MailTemplateScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  version: 'version',
+  name: 'name',
+  locale: 'locale',
+  subject: 'subject',
+  bodyText: 'bodyText',
+  segment: 'segment',
+  active: 'active',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+} as const
+
+export type MailTemplateScalarFieldEnum = (typeof MailTemplateScalarFieldEnum)[keyof typeof MailTemplateScalarFieldEnum]
+
+
+export const MailThreadScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  mailboxId: 'mailboxId',
+  subject: 'subject',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MailThreadScalarFieldEnum = (typeof MailThreadScalarFieldEnum)[keyof typeof MailThreadScalarFieldEnum]
+
+
+export const MailMessageScalarFieldEnum = {
+  id: 'id',
+  mailboxId: 'mailboxId',
+  threadId: 'threadId',
+  userId: 'userId',
+  taskId: 'taskId',
+  direction: 'direction',
+  status: 'status',
+  providerMessageId: 'providerMessageId',
+  inReplyTo: 'inReplyTo',
+  references: 'references',
+  fromAddress: 'fromAddress',
+  toAddresses: 'toAddresses',
+  subject: 'subject',
+  bodyText: 'bodyText',
+  templateKey: 'templateKey',
+  templateVersion: 'templateVersion',
+  reviewedById: 'reviewedById',
+  openedAt: 'openedAt',
+  firstClickedAt: 'firstClickedAt',
+  openCount: 'openCount',
+  clickCount: 'clickCount',
+  sentAt: 'sentAt',
+  receivedAt: 'receivedAt',
+  lastErrorCode: 'lastErrorCode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MailMessageScalarFieldEnum = (typeof MailMessageScalarFieldEnum)[keyof typeof MailMessageScalarFieldEnum]
+
+
+export const SuppressionEntryScalarFieldEnum = {
+  id: 'id',
+  emailNormalized: 'emailNormalized',
+  reason: 'reason',
+  source: 'source',
+  createdAt: 'createdAt'
+} as const
+
+export type SuppressionEntryScalarFieldEnum = (typeof SuppressionEntryScalarFieldEnum)[keyof typeof SuppressionEntryScalarFieldEnum]
+
+
+export const NotificationIntentScalarFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  channel: 'channel',
+  recipient: 'recipient',
+  payload: 'payload',
+  status: 'status',
+  attemptCount: 'attemptCount',
+  lastErrorCode: 'lastErrorCode',
+  providerMessageId: 'providerMessageId',
+  sentAt: 'sentAt',
+  nextAttemptAt: 'nextAttemptAt',
+  readAt: 'readAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationIntentScalarFieldEnum = (typeof NotificationIntentScalarFieldEnum)[keyof typeof NotificationIntentScalarFieldEnum]
+
+
+export const IntegrationCredentialScalarFieldEnum = {
+  id: 'id',
+  kind: 'kind',
+  displayName: 'displayName',
+  encryptedConfig: 'encryptedConfig',
+  enabled: 'enabled',
+  lastTestedAt: 'lastTestedAt',
+  lastSuccessAt: 'lastSuccessAt',
+  lastErrorCode: 'lastErrorCode',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type IntegrationCredentialScalarFieldEnum = (typeof IntegrationCredentialScalarFieldEnum)[keyof typeof IntegrationCredentialScalarFieldEnum]
 
 
 export const SortOrder = {

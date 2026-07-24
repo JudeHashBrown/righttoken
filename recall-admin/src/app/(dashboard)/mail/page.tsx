@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "@/components/workspaces/workspace.module.css";
+import { MailComposer } from "@/components/mail/mail-composer";
 import {
   getMailWorkspaceOverview
 } from "@/modules/admin/workspace-queries";
@@ -13,6 +14,14 @@ const statusLabels = {
   COMPLETED: "已完成",
   PAUSED: "已暂停",
   CANCELLED: "已取消"
+} as const;
+
+const mailStatusLabels = {
+  DRAFT: "草稿",
+  SENT: "已发送",
+  RECEIVED: "已收到",
+  FAILED: "发送失败",
+  UNMATCHED: "待归档"
 } as const;
 
 export default async function MailPage(): Promise<React.JSX.Element> {
@@ -45,15 +54,104 @@ export default async function MailPage(): Promise<React.JSX.Element> {
           <small>发送前将由服务端拦截</small>
         </div>
         <div className={styles.statCard}>
-          <span>邮箱连接</span>
-          <strong>0 / 2</strong>
-          <small>Namecheap 与企业微信邮箱待配置</small>
+          <span>已启用邮箱</span>
+          <strong>
+            {overview.mailboxes.filter((mailbox) => mailbox.enabled).length} /{" "}
+            {overview.mailboxes.length}
+          </strong>
+          <small>Namecheap、企业微信或自定义邮箱</small>
         </div>
       </div>
 
-      <p className={styles.notice}>
-        邮箱账号、SMTP 和 IMAP 尚未配置，因此当前不会真实收发邮件。任务、用户备注和退订状态仍会正常保存。
-      </p>
+      <div className={styles.cardGrid}>
+        <div className={styles.statCard}>
+          <span>人工归档箱</span>
+          <strong>{overview.unmatchedMessages}</strong>
+          <small>无法可靠关联用户的来信</small>
+        </div>
+        <div className={styles.statCard}>
+          <span>草稿</span>
+          <strong>{overview.draftMessages}</strong>
+          <small>尚未完成发送的最终版本</small>
+        </div>
+        <div className={styles.statCard}>
+          <span>发送失败</span>
+          <strong>{overview.failedMessages}</strong>
+          <small>保留稳定错误码供重新处理</small>
+        </div>
+        <div className={styles.statCard}>
+          <span>最近同步</span>
+          <strong>
+            {overview.mailboxes.some((mailbox) => mailbox.lastSyncedAt)
+              ? "已运行"
+              : "未运行"}
+          </strong>
+          <small>启用邮箱后每两分钟同步一次</small>
+        </div>
+      </div>
+
+      {overview.mailboxes.some((mailbox) => mailbox.enabled) ? null : (
+        <p className={styles.notice}>
+          尚未启用邮箱。请先由管理员在系统设置中连接 Namecheap、企业微信邮箱或自定义 SMTP/IMAP。
+        </p>
+      )}
+
+      <MailComposer
+        tasks={overview.eligibleTasks.map((task) => ({
+          id: task.id,
+          title: task.title,
+          userLabel:
+            task.user.displayName || task.user.externalUserId,
+          recipient: task.user.email,
+          suppressed: Boolean(task.user.unsubscribedAt)
+        }))}
+        mailboxes={overview.mailboxes
+          .filter((mailbox) => mailbox.enabled)
+          .map((mailbox) => ({
+            id: mailbox.id,
+            name: mailbox.name,
+            emailAddress: mailbox.emailAddress
+          }))}
+        initialSubject="RightToken 使用提醒"
+        initialBody="你好，我们是 RightToken 用户运营团队。如你在使用过程中需要帮助，请直接回复此邮件。"
+      />
+
+      <section className={styles.panel}>
+        <div className={styles.panelHeader}>
+          <div>
+            <h2>最近邮件</h2>
+            <p>已发送、已收到、失败和未匹配邮件统一留痕</p>
+          </div>
+        </div>
+        {overview.recentMessages.length ? (
+          <ul className={styles.list}>
+            {overview.recentMessages.map((message) => (
+              <li className={styles.listItem} key={message.id}>
+                <div>
+                  <strong>{message.subject}</strong>
+                  <p>
+                    {message.user?.displayName ||
+                      message.user?.externalUserId ||
+                      message.fromAddress}
+                    {" · "}
+                    {message.direction === "INBOUND"
+                      ? "用户来信"
+                      : "运营发送"}
+                  </p>
+                </div>
+                <span className={styles.status}>
+                  {mailStatusLabels[message.status]}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className={styles.empty}>
+            <strong>暂无邮件记录</strong>
+            <p>发送首封审核邮件或同步到用户回复后会显示在这里。</p>
+          </div>
+        )}
+      </section>
 
       <section className={styles.panel}>
         <div className={styles.panelHeader}>

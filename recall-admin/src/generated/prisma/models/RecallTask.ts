@@ -323,6 +323,8 @@ export type RecallTaskWhereInput = {
   user?: Prisma.XOR<Prisma.UserProfileScalarRelationFilter, Prisma.UserProfileWhereInput>
   assignee?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   activities?: Prisma.TaskActivityListRelationFilter
+  mailMessages?: Prisma.MailMessageListRelationFilter
+  notificationIntents?: Prisma.NotificationIntentListRelationFilter
 }
 
 export type RecallTaskOrderByWithRelationInput = {
@@ -347,6 +349,8 @@ export type RecallTaskOrderByWithRelationInput = {
   user?: Prisma.UserProfileOrderByWithRelationInput
   assignee?: Prisma.MemberOrderByWithRelationInput
   activities?: Prisma.TaskActivityOrderByRelationAggregateInput
+  mailMessages?: Prisma.MailMessageOrderByRelationAggregateInput
+  notificationIntents?: Prisma.NotificationIntentOrderByRelationAggregateInput
 }
 
 export type RecallTaskWhereUniqueInput = Prisma.AtLeast<{
@@ -375,6 +379,8 @@ export type RecallTaskWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserProfileScalarRelationFilter, Prisma.UserProfileWhereInput>
   assignee?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   activities?: Prisma.TaskActivityListRelationFilter
+  mailMessages?: Prisma.MailMessageListRelationFilter
+  notificationIntents?: Prisma.NotificationIntentListRelationFilter
 }, "id" | "userId_triggerKey_ruleVersion">
 
 export type RecallTaskOrderByWithAggregationInput = {
@@ -447,6 +453,8 @@ export type RecallTaskCreateInput = {
   user: Prisma.UserProfileCreateNestedOneWithoutTasksInput
   assignee?: Prisma.MemberCreateNestedOneWithoutAssignedTasksInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutTaskInput
+  notificationIntents?: Prisma.NotificationIntentCreateNestedManyWithoutTaskInput
 }
 
 export type RecallTaskUncheckedCreateInput = {
@@ -469,6 +477,8 @@ export type RecallTaskUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutTaskInput
+  notificationIntents?: Prisma.NotificationIntentUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type RecallTaskUpdateInput = {
@@ -491,6 +501,8 @@ export type RecallTaskUpdateInput = {
   user?: Prisma.UserProfileUpdateOneRequiredWithoutTasksNestedInput
   assignee?: Prisma.MemberUpdateOneWithoutAssignedTasksNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutTaskNestedInput
+  notificationIntents?: Prisma.NotificationIntentUpdateManyWithoutTaskNestedInput
 }
 
 export type RecallTaskUncheckedUpdateInput = {
@@ -513,6 +525,8 @@ export type RecallTaskUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutTaskNestedInput
+  notificationIntents?: Prisma.NotificationIntentUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type RecallTaskCreateManyInput = {
@@ -668,6 +682,11 @@ export type RecallTaskScalarRelationFilter = {
   isNot?: Prisma.RecallTaskWhereInput
 }
 
+export type RecallTaskNullableScalarRelationFilter = {
+  is?: Prisma.RecallTaskWhereInput | null
+  isNot?: Prisma.RecallTaskWhereInput | null
+}
+
 export type RecallTaskCreateNestedManyWithoutAssigneeInput = {
   create?: Prisma.XOR<Prisma.RecallTaskCreateWithoutAssigneeInput, Prisma.RecallTaskUncheckedCreateWithoutAssigneeInput> | Prisma.RecallTaskCreateWithoutAssigneeInput[] | Prisma.RecallTaskUncheckedCreateWithoutAssigneeInput[]
   connectOrCreate?: Prisma.RecallTaskCreateOrConnectWithoutAssigneeInput | Prisma.RecallTaskCreateOrConnectWithoutAssigneeInput[]
@@ -778,6 +797,38 @@ export type RecallTaskUpdateOneRequiredWithoutActivitiesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.RecallTaskUpdateToOneWithWhereWithoutActivitiesInput, Prisma.RecallTaskUpdateWithoutActivitiesInput>, Prisma.RecallTaskUncheckedUpdateWithoutActivitiesInput>
 }
 
+export type RecallTaskCreateNestedOneWithoutMailMessagesInput = {
+  create?: Prisma.XOR<Prisma.RecallTaskCreateWithoutMailMessagesInput, Prisma.RecallTaskUncheckedCreateWithoutMailMessagesInput>
+  connectOrCreate?: Prisma.RecallTaskCreateOrConnectWithoutMailMessagesInput
+  connect?: Prisma.RecallTaskWhereUniqueInput
+}
+
+export type RecallTaskUpdateOneWithoutMailMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.RecallTaskCreateWithoutMailMessagesInput, Prisma.RecallTaskUncheckedCreateWithoutMailMessagesInput>
+  connectOrCreate?: Prisma.RecallTaskCreateOrConnectWithoutMailMessagesInput
+  upsert?: Prisma.RecallTaskUpsertWithoutMailMessagesInput
+  disconnect?: Prisma.RecallTaskWhereInput | boolean
+  delete?: Prisma.RecallTaskWhereInput | boolean
+  connect?: Prisma.RecallTaskWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.RecallTaskUpdateToOneWithWhereWithoutMailMessagesInput, Prisma.RecallTaskUpdateWithoutMailMessagesInput>, Prisma.RecallTaskUncheckedUpdateWithoutMailMessagesInput>
+}
+
+export type RecallTaskCreateNestedOneWithoutNotificationIntentsInput = {
+  create?: Prisma.XOR<Prisma.RecallTaskCreateWithoutNotificationIntentsInput, Prisma.RecallTaskUncheckedCreateWithoutNotificationIntentsInput>
+  connectOrCreate?: Prisma.RecallTaskCreateOrConnectWithoutNotificationIntentsInput
+  connect?: Prisma.RecallTaskWhereUniqueInput
+}
+
+export type RecallTaskUpdateOneWithoutNotificationIntentsNestedInput = {
+  create?: Prisma.XOR<Prisma.RecallTaskCreateWithoutNotificationIntentsInput, Prisma.RecallTaskUncheckedCreateWithoutNotificationIntentsInput>
+  connectOrCreate?: Prisma.RecallTaskCreateOrConnectWithoutNotificationIntentsInput
+  upsert?: Prisma.RecallTaskUpsertWithoutNotificationIntentsInput
+  disconnect?: Prisma.RecallTaskWhereInput | boolean
+  delete?: Prisma.RecallTaskWhereInput | boolean
+  connect?: Prisma.RecallTaskWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.RecallTaskUpdateToOneWithWhereWithoutNotificationIntentsInput, Prisma.RecallTaskUpdateWithoutNotificationIntentsInput>, Prisma.RecallTaskUncheckedUpdateWithoutNotificationIntentsInput>
+}
+
 export type RecallTaskCreateWithoutAssigneeInput = {
   id?: string
   origin: $Enums.TaskOrigin
@@ -797,6 +848,8 @@ export type RecallTaskCreateWithoutAssigneeInput = {
   updatedAt?: Date | string
   user: Prisma.UserProfileCreateNestedOneWithoutTasksInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutTaskInput
+  notificationIntents?: Prisma.NotificationIntentCreateNestedManyWithoutTaskInput
 }
 
 export type RecallTaskUncheckedCreateWithoutAssigneeInput = {
@@ -818,6 +871,8 @@ export type RecallTaskUncheckedCreateWithoutAssigneeInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutTaskInput
+  notificationIntents?: Prisma.NotificationIntentUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type RecallTaskCreateOrConnectWithoutAssigneeInput = {
@@ -889,6 +944,8 @@ export type RecallTaskCreateWithoutUserInput = {
   updatedAt?: Date | string
   assignee?: Prisma.MemberCreateNestedOneWithoutAssignedTasksInput
   activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutTaskInput
+  notificationIntents?: Prisma.NotificationIntentCreateNestedManyWithoutTaskInput
 }
 
 export type RecallTaskUncheckedCreateWithoutUserInput = {
@@ -910,6 +967,8 @@ export type RecallTaskUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutTaskInput
+  notificationIntents?: Prisma.NotificationIntentUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type RecallTaskCreateOrConnectWithoutUserInput = {
@@ -957,6 +1016,8 @@ export type RecallTaskCreateWithoutActivitiesInput = {
   updatedAt?: Date | string
   user: Prisma.UserProfileCreateNestedOneWithoutTasksInput
   assignee?: Prisma.MemberCreateNestedOneWithoutAssignedTasksInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutTaskInput
+  notificationIntents?: Prisma.NotificationIntentCreateNestedManyWithoutTaskInput
 }
 
 export type RecallTaskUncheckedCreateWithoutActivitiesInput = {
@@ -978,6 +1039,8 @@ export type RecallTaskUncheckedCreateWithoutActivitiesInput = {
   cancelReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutTaskInput
+  notificationIntents?: Prisma.NotificationIntentUncheckedCreateNestedManyWithoutTaskInput
 }
 
 export type RecallTaskCreateOrConnectWithoutActivitiesInput = {
@@ -1015,6 +1078,8 @@ export type RecallTaskUpdateWithoutActivitiesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserProfileUpdateOneRequiredWithoutTasksNestedInput
   assignee?: Prisma.MemberUpdateOneWithoutAssignedTasksNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutTaskNestedInput
+  notificationIntents?: Prisma.NotificationIntentUpdateManyWithoutTaskNestedInput
 }
 
 export type RecallTaskUncheckedUpdateWithoutActivitiesInput = {
@@ -1036,6 +1101,224 @@ export type RecallTaskUncheckedUpdateWithoutActivitiesInput = {
   cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutTaskNestedInput
+  notificationIntents?: Prisma.NotificationIntentUncheckedUpdateManyWithoutTaskNestedInput
+}
+
+export type RecallTaskCreateWithoutMailMessagesInput = {
+  id?: string
+  origin: $Enums.TaskOrigin
+  triggerKey: string
+  ruleVersion: number
+  title: string
+  reason: string
+  priority: $Enums.TaskPriority
+  status?: $Enums.TaskStatus
+  assignmentReason?: string | null
+  dueAt: Date | string
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancelReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserProfileCreateNestedOneWithoutTasksInput
+  assignee?: Prisma.MemberCreateNestedOneWithoutAssignedTasksInput
+  activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
+  notificationIntents?: Prisma.NotificationIntentCreateNestedManyWithoutTaskInput
+}
+
+export type RecallTaskUncheckedCreateWithoutMailMessagesInput = {
+  id?: string
+  userId: string
+  origin: $Enums.TaskOrigin
+  triggerKey: string
+  ruleVersion: number
+  title: string
+  reason: string
+  priority: $Enums.TaskPriority
+  status?: $Enums.TaskStatus
+  assigneeId?: string | null
+  assignmentReason?: string | null
+  dueAt: Date | string
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancelReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  notificationIntents?: Prisma.NotificationIntentUncheckedCreateNestedManyWithoutTaskInput
+}
+
+export type RecallTaskCreateOrConnectWithoutMailMessagesInput = {
+  where: Prisma.RecallTaskWhereUniqueInput
+  create: Prisma.XOR<Prisma.RecallTaskCreateWithoutMailMessagesInput, Prisma.RecallTaskUncheckedCreateWithoutMailMessagesInput>
+}
+
+export type RecallTaskUpsertWithoutMailMessagesInput = {
+  update: Prisma.XOR<Prisma.RecallTaskUpdateWithoutMailMessagesInput, Prisma.RecallTaskUncheckedUpdateWithoutMailMessagesInput>
+  create: Prisma.XOR<Prisma.RecallTaskCreateWithoutMailMessagesInput, Prisma.RecallTaskUncheckedCreateWithoutMailMessagesInput>
+  where?: Prisma.RecallTaskWhereInput
+}
+
+export type RecallTaskUpdateToOneWithWhereWithoutMailMessagesInput = {
+  where?: Prisma.RecallTaskWhereInput
+  data: Prisma.XOR<Prisma.RecallTaskUpdateWithoutMailMessagesInput, Prisma.RecallTaskUncheckedUpdateWithoutMailMessagesInput>
+}
+
+export type RecallTaskUpdateWithoutMailMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  origin?: Prisma.EnumTaskOriginFieldUpdateOperationsInput | $Enums.TaskOrigin
+  triggerKey?: Prisma.StringFieldUpdateOperationsInput | string
+  ruleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  assignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dueAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserProfileUpdateOneRequiredWithoutTasksNestedInput
+  assignee?: Prisma.MemberUpdateOneWithoutAssignedTasksNestedInput
+  activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
+  notificationIntents?: Prisma.NotificationIntentUpdateManyWithoutTaskNestedInput
+}
+
+export type RecallTaskUncheckedUpdateWithoutMailMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  origin?: Prisma.EnumTaskOriginFieldUpdateOperationsInput | $Enums.TaskOrigin
+  triggerKey?: Prisma.StringFieldUpdateOperationsInput | string
+  ruleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dueAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  notificationIntents?: Prisma.NotificationIntentUncheckedUpdateManyWithoutTaskNestedInput
+}
+
+export type RecallTaskCreateWithoutNotificationIntentsInput = {
+  id?: string
+  origin: $Enums.TaskOrigin
+  triggerKey: string
+  ruleVersion: number
+  title: string
+  reason: string
+  priority: $Enums.TaskPriority
+  status?: $Enums.TaskStatus
+  assignmentReason?: string | null
+  dueAt: Date | string
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancelReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserProfileCreateNestedOneWithoutTasksInput
+  assignee?: Prisma.MemberCreateNestedOneWithoutAssignedTasksInput
+  activities?: Prisma.TaskActivityCreateNestedManyWithoutTaskInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutTaskInput
+}
+
+export type RecallTaskUncheckedCreateWithoutNotificationIntentsInput = {
+  id?: string
+  userId: string
+  origin: $Enums.TaskOrigin
+  triggerKey: string
+  ruleVersion: number
+  title: string
+  reason: string
+  priority: $Enums.TaskPriority
+  status?: $Enums.TaskStatus
+  assigneeId?: string | null
+  assignmentReason?: string | null
+  dueAt: Date | string
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancelReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  activities?: Prisma.TaskActivityUncheckedCreateNestedManyWithoutTaskInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutTaskInput
+}
+
+export type RecallTaskCreateOrConnectWithoutNotificationIntentsInput = {
+  where: Prisma.RecallTaskWhereUniqueInput
+  create: Prisma.XOR<Prisma.RecallTaskCreateWithoutNotificationIntentsInput, Prisma.RecallTaskUncheckedCreateWithoutNotificationIntentsInput>
+}
+
+export type RecallTaskUpsertWithoutNotificationIntentsInput = {
+  update: Prisma.XOR<Prisma.RecallTaskUpdateWithoutNotificationIntentsInput, Prisma.RecallTaskUncheckedUpdateWithoutNotificationIntentsInput>
+  create: Prisma.XOR<Prisma.RecallTaskCreateWithoutNotificationIntentsInput, Prisma.RecallTaskUncheckedCreateWithoutNotificationIntentsInput>
+  where?: Prisma.RecallTaskWhereInput
+}
+
+export type RecallTaskUpdateToOneWithWhereWithoutNotificationIntentsInput = {
+  where?: Prisma.RecallTaskWhereInput
+  data: Prisma.XOR<Prisma.RecallTaskUpdateWithoutNotificationIntentsInput, Prisma.RecallTaskUncheckedUpdateWithoutNotificationIntentsInput>
+}
+
+export type RecallTaskUpdateWithoutNotificationIntentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  origin?: Prisma.EnumTaskOriginFieldUpdateOperationsInput | $Enums.TaskOrigin
+  triggerKey?: Prisma.StringFieldUpdateOperationsInput | string
+  ruleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  assignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dueAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserProfileUpdateOneRequiredWithoutTasksNestedInput
+  assignee?: Prisma.MemberUpdateOneWithoutAssignedTasksNestedInput
+  activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutTaskNestedInput
+}
+
+export type RecallTaskUncheckedUpdateWithoutNotificationIntentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  origin?: Prisma.EnumTaskOriginFieldUpdateOperationsInput | $Enums.TaskOrigin
+  triggerKey?: Prisma.StringFieldUpdateOperationsInput | string
+  ruleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumTaskPriorityFieldUpdateOperationsInput | $Enums.TaskPriority
+  status?: Prisma.EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+  assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dueAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type RecallTaskCreateManyAssigneeInput = {
@@ -1077,6 +1360,8 @@ export type RecallTaskUpdateWithoutAssigneeInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserProfileUpdateOneRequiredWithoutTasksNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutTaskNestedInput
+  notificationIntents?: Prisma.NotificationIntentUpdateManyWithoutTaskNestedInput
 }
 
 export type RecallTaskUncheckedUpdateWithoutAssigneeInput = {
@@ -1098,6 +1383,8 @@ export type RecallTaskUncheckedUpdateWithoutAssigneeInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutTaskNestedInput
+  notificationIntents?: Prisma.NotificationIntentUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type RecallTaskUncheckedUpdateManyWithoutAssigneeInput = {
@@ -1159,6 +1446,8 @@ export type RecallTaskUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignee?: Prisma.MemberUpdateOneWithoutAssignedTasksNestedInput
   activities?: Prisma.TaskActivityUpdateManyWithoutTaskNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutTaskNestedInput
+  notificationIntents?: Prisma.NotificationIntentUpdateManyWithoutTaskNestedInput
 }
 
 export type RecallTaskUncheckedUpdateWithoutUserInput = {
@@ -1180,6 +1469,8 @@ export type RecallTaskUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.TaskActivityUncheckedUpdateManyWithoutTaskNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutTaskNestedInput
+  notificationIntents?: Prisma.NotificationIntentUncheckedUpdateManyWithoutTaskNestedInput
 }
 
 export type RecallTaskUncheckedUpdateManyWithoutUserInput = {
@@ -1209,10 +1500,14 @@ export type RecallTaskUncheckedUpdateManyWithoutUserInput = {
 
 export type RecallTaskCountOutputType = {
   activities: number
+  mailMessages: number
+  notificationIntents: number
 }
 
 export type RecallTaskCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   activities?: boolean | RecallTaskCountOutputTypeCountActivitiesArgs
+  mailMessages?: boolean | RecallTaskCountOutputTypeCountMailMessagesArgs
+  notificationIntents?: boolean | RecallTaskCountOutputTypeCountNotificationIntentsArgs
 }
 
 /**
@@ -1230,6 +1525,20 @@ export type RecallTaskCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.E
  */
 export type RecallTaskCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.TaskActivityWhereInput
+}
+
+/**
+ * RecallTaskCountOutputType without action
+ */
+export type RecallTaskCountOutputTypeCountMailMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MailMessageWhereInput
+}
+
+/**
+ * RecallTaskCountOutputType without action
+ */
+export type RecallTaskCountOutputTypeCountNotificationIntentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationIntentWhereInput
 }
 
 
@@ -1255,6 +1564,8 @@ export type RecallTaskSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   user?: boolean | Prisma.UserProfileDefaultArgs<ExtArgs>
   assignee?: boolean | Prisma.RecallTask$assigneeArgs<ExtArgs>
   activities?: boolean | Prisma.RecallTask$activitiesArgs<ExtArgs>
+  mailMessages?: boolean | Prisma.RecallTask$mailMessagesArgs<ExtArgs>
+  notificationIntents?: boolean | Prisma.RecallTask$notificationIntentsArgs<ExtArgs>
   _count?: boolean | Prisma.RecallTaskCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["recallTask"]>
 
@@ -1330,6 +1641,8 @@ export type RecallTaskInclude<ExtArgs extends runtime.Types.Extensions.InternalA
   user?: boolean | Prisma.UserProfileDefaultArgs<ExtArgs>
   assignee?: boolean | Prisma.RecallTask$assigneeArgs<ExtArgs>
   activities?: boolean | Prisma.RecallTask$activitiesArgs<ExtArgs>
+  mailMessages?: boolean | Prisma.RecallTask$mailMessagesArgs<ExtArgs>
+  notificationIntents?: boolean | Prisma.RecallTask$notificationIntentsArgs<ExtArgs>
   _count?: boolean | Prisma.RecallTaskCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type RecallTaskIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1347,6 +1660,8 @@ export type $RecallTaskPayload<ExtArgs extends runtime.Types.Extensions.Internal
     user: Prisma.$UserProfilePayload<ExtArgs>
     assignee: Prisma.$MemberPayload<ExtArgs> | null
     activities: Prisma.$TaskActivityPayload<ExtArgs>[]
+    mailMessages: Prisma.$MailMessagePayload<ExtArgs>[]
+    notificationIntents: Prisma.$NotificationIntentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1764,6 +2079,8 @@ export interface Prisma__RecallTaskClient<T, Null = never, ExtArgs extends runti
   user<T extends Prisma.UserProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__UserProfileClient<runtime.Types.Result.GetResult<Prisma.$UserProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   assignee<T extends Prisma.RecallTask$assigneeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecallTask$assigneeArgs<ExtArgs>>): Prisma.Prisma__MemberClient<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   activities<T extends Prisma.RecallTask$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecallTask$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  mailMessages<T extends Prisma.RecallTask$mailMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecallTask$mailMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notificationIntents<T extends Prisma.RecallTask$notificationIntentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecallTask$notificationIntentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationIntentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2252,6 +2569,54 @@ export type RecallTask$activitiesArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.TaskActivityScalarFieldEnum | Prisma.TaskActivityScalarFieldEnum[]
+}
+
+/**
+ * RecallTask.mailMessages
+ */
+export type RecallTask$mailMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailMessage
+   */
+  select?: Prisma.MailMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailMessage
+   */
+  omit?: Prisma.MailMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailMessageInclude<ExtArgs> | null
+  where?: Prisma.MailMessageWhereInput
+  orderBy?: Prisma.MailMessageOrderByWithRelationInput | Prisma.MailMessageOrderByWithRelationInput[]
+  cursor?: Prisma.MailMessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MailMessageScalarFieldEnum | Prisma.MailMessageScalarFieldEnum[]
+}
+
+/**
+ * RecallTask.notificationIntents
+ */
+export type RecallTask$notificationIntentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NotificationIntent
+   */
+  select?: Prisma.NotificationIntentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NotificationIntent
+   */
+  omit?: Prisma.NotificationIntentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationIntentInclude<ExtArgs> | null
+  where?: Prisma.NotificationIntentWhereInput
+  orderBy?: Prisma.NotificationIntentOrderByWithRelationInput | Prisma.NotificationIntentOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationIntentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationIntentScalarFieldEnum | Prisma.NotificationIntentScalarFieldEnum[]
 }
 
 /**

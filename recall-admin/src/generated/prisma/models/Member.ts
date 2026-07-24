@@ -228,6 +228,7 @@ export type MemberWhereInput = {
   notes?: Prisma.UserNoteListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
   recoveryCodes?: Prisma.RecoveryCodeListRelationFilter
+  reviewedMailMessages?: Prisma.MailMessageListRelationFilter
 }
 
 export type MemberOrderByWithRelationInput = {
@@ -247,6 +248,7 @@ export type MemberOrderByWithRelationInput = {
   notes?: Prisma.UserNoteOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
   recoveryCodes?: Prisma.RecoveryCodeOrderByRelationAggregateInput
+  reviewedMailMessages?: Prisma.MailMessageOrderByRelationAggregateInput
 }
 
 export type MemberWhereUniqueInput = Prisma.AtLeast<{
@@ -269,6 +271,7 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<{
   notes?: Prisma.UserNoteListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
   recoveryCodes?: Prisma.RecoveryCodeListRelationFilter
+  reviewedMailMessages?: Prisma.MailMessageListRelationFilter
 }, "id" | "email">
 
 export type MemberOrderByWithAggregationInput = {
@@ -320,6 +323,7 @@ export type MemberCreateInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberUncheckedCreateInput = {
@@ -339,6 +343,7 @@ export type MemberUncheckedCreateInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberUpdateInput = {
@@ -358,6 +363,7 @@ export type MemberUpdateInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
 }
 
 export type MemberUncheckedUpdateInput = {
@@ -377,6 +383,7 @@ export type MemberUncheckedUpdateInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type MemberCreateManyInput = {
@@ -577,6 +584,22 @@ export type MemberUpdateOneRequiredWithoutRecoveryCodesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MemberUpdateToOneWithWhereWithoutRecoveryCodesInput, Prisma.MemberUpdateWithoutRecoveryCodesInput>, Prisma.MemberUncheckedUpdateWithoutRecoveryCodesInput>
 }
 
+export type MemberCreateNestedOneWithoutReviewedMailMessagesInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutReviewedMailMessagesInput, Prisma.MemberUncheckedCreateWithoutReviewedMailMessagesInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutReviewedMailMessagesInput
+  connect?: Prisma.MemberWhereUniqueInput
+}
+
+export type MemberUpdateOneWithoutReviewedMailMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutReviewedMailMessagesInput, Prisma.MemberUncheckedCreateWithoutReviewedMailMessagesInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutReviewedMailMessagesInput
+  upsert?: Prisma.MemberUpsertWithoutReviewedMailMessagesInput
+  disconnect?: Prisma.MemberWhereInput | boolean
+  delete?: Prisma.MemberWhereInput | boolean
+  connect?: Prisma.MemberWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MemberUpdateToOneWithWhereWithoutReviewedMailMessagesInput, Prisma.MemberUpdateWithoutReviewedMailMessagesInput>, Prisma.MemberUncheckedUpdateWithoutReviewedMailMessagesInput>
+}
+
 export type MemberCreateWithoutSessionsInput = {
   id?: string
   email: string
@@ -593,6 +616,7 @@ export type MemberCreateWithoutSessionsInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberUncheckedCreateWithoutSessionsInput = {
@@ -611,6 +635,7 @@ export type MemberUncheckedCreateWithoutSessionsInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberCreateOrConnectWithoutSessionsInput = {
@@ -645,6 +670,7 @@ export type MemberUpdateWithoutSessionsInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutSessionsInput = {
@@ -663,6 +689,7 @@ export type MemberUncheckedUpdateWithoutSessionsInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type MemberCreateWithoutOwnedUsersInput = {
@@ -681,6 +708,7 @@ export type MemberCreateWithoutOwnedUsersInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberUncheckedCreateWithoutOwnedUsersInput = {
@@ -699,6 +727,7 @@ export type MemberUncheckedCreateWithoutOwnedUsersInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberCreateOrConnectWithoutOwnedUsersInput = {
@@ -733,6 +762,7 @@ export type MemberUpdateWithoutOwnedUsersInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutOwnedUsersInput = {
@@ -751,6 +781,7 @@ export type MemberUncheckedUpdateWithoutOwnedUsersInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type MemberCreateWithoutNotesInput = {
@@ -769,6 +800,7 @@ export type MemberCreateWithoutNotesInput = {
   ownedUsers?: Prisma.UserProfileCreateNestedManyWithoutOwnerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberUncheckedCreateWithoutNotesInput = {
@@ -787,6 +819,7 @@ export type MemberUncheckedCreateWithoutNotesInput = {
   ownedUsers?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberCreateOrConnectWithoutNotesInput = {
@@ -821,6 +854,7 @@ export type MemberUpdateWithoutNotesInput = {
   ownedUsers?: Prisma.UserProfileUpdateManyWithoutOwnerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutNotesInput = {
@@ -839,6 +873,7 @@ export type MemberUncheckedUpdateWithoutNotesInput = {
   ownedUsers?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type MemberCreateWithoutAssignedTasksInput = {
@@ -857,6 +892,7 @@ export type MemberCreateWithoutAssignedTasksInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberUncheckedCreateWithoutAssignedTasksInput = {
@@ -875,6 +911,7 @@ export type MemberUncheckedCreateWithoutAssignedTasksInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberCreateOrConnectWithoutAssignedTasksInput = {
@@ -909,6 +946,7 @@ export type MemberUpdateWithoutAssignedTasksInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutAssignedTasksInput = {
@@ -927,6 +965,7 @@ export type MemberUncheckedUpdateWithoutAssignedTasksInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type MemberCreateWithoutAuditLogsInput = {
@@ -945,6 +984,7 @@ export type MemberCreateWithoutAuditLogsInput = {
   ownedUsers?: Prisma.UserProfileCreateNestedManyWithoutOwnerInput
   notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberUncheckedCreateWithoutAuditLogsInput = {
@@ -963,6 +1003,7 @@ export type MemberUncheckedCreateWithoutAuditLogsInput = {
   ownedUsers?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerInput
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberCreateOrConnectWithoutAuditLogsInput = {
@@ -997,6 +1038,7 @@ export type MemberUpdateWithoutAuditLogsInput = {
   ownedUsers?: Prisma.UserProfileUpdateManyWithoutOwnerNestedInput
   notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutAuditLogsInput = {
@@ -1015,6 +1057,7 @@ export type MemberUncheckedUpdateWithoutAuditLogsInput = {
   ownedUsers?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerNestedInput
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type MemberCreateWithoutRecoveryCodesInput = {
@@ -1033,6 +1076,7 @@ export type MemberCreateWithoutRecoveryCodesInput = {
   ownedUsers?: Prisma.UserProfileCreateNestedManyWithoutOwnerInput
   notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberUncheckedCreateWithoutRecoveryCodesInput = {
@@ -1051,6 +1095,7 @@ export type MemberUncheckedCreateWithoutRecoveryCodesInput = {
   ownedUsers?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerInput
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type MemberCreateOrConnectWithoutRecoveryCodesInput = {
@@ -1085,6 +1130,7 @@ export type MemberUpdateWithoutRecoveryCodesInput = {
   ownedUsers?: Prisma.UserProfileUpdateManyWithoutOwnerNestedInput
   notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutRecoveryCodesInput = {
@@ -1103,6 +1149,99 @@ export type MemberUncheckedUpdateWithoutRecoveryCodesInput = {
   ownedUsers?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerNestedInput
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
+}
+
+export type MemberCreateWithoutReviewedMailMessagesInput = {
+  id?: string
+  email: string
+  displayName: string
+  passwordHash: string
+  role: $Enums.MemberRole
+  active?: boolean
+  twoFactorSecret?: string | null
+  twoFactorOn?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutMemberInput
+  assignedTasks?: Prisma.RecallTaskCreateNestedManyWithoutAssigneeInput
+  ownedUsers?: Prisma.UserProfileCreateNestedManyWithoutOwnerInput
+  notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
+}
+
+export type MemberUncheckedCreateWithoutReviewedMailMessagesInput = {
+  id?: string
+  email: string
+  displayName: string
+  passwordHash: string
+  role: $Enums.MemberRole
+  active?: boolean
+  twoFactorSecret?: string | null
+  twoFactorOn?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutMemberInput
+  assignedTasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutAssigneeInput
+  ownedUsers?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerInput
+  notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
+}
+
+export type MemberCreateOrConnectWithoutReviewedMailMessagesInput = {
+  where: Prisma.MemberWhereUniqueInput
+  create: Prisma.XOR<Prisma.MemberCreateWithoutReviewedMailMessagesInput, Prisma.MemberUncheckedCreateWithoutReviewedMailMessagesInput>
+}
+
+export type MemberUpsertWithoutReviewedMailMessagesInput = {
+  update: Prisma.XOR<Prisma.MemberUpdateWithoutReviewedMailMessagesInput, Prisma.MemberUncheckedUpdateWithoutReviewedMailMessagesInput>
+  create: Prisma.XOR<Prisma.MemberCreateWithoutReviewedMailMessagesInput, Prisma.MemberUncheckedCreateWithoutReviewedMailMessagesInput>
+  where?: Prisma.MemberWhereInput
+}
+
+export type MemberUpdateToOneWithWhereWithoutReviewedMailMessagesInput = {
+  where?: Prisma.MemberWhereInput
+  data: Prisma.XOR<Prisma.MemberUpdateWithoutReviewedMailMessagesInput, Prisma.MemberUncheckedUpdateWithoutReviewedMailMessagesInput>
+}
+
+export type MemberUpdateWithoutReviewedMailMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutMemberNestedInput
+  assignedTasks?: Prisma.RecallTaskUpdateManyWithoutAssigneeNestedInput
+  ownedUsers?: Prisma.UserProfileUpdateManyWithoutOwnerNestedInput
+  notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
+}
+
+export type MemberUncheckedUpdateWithoutReviewedMailMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
+  assignedTasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  ownedUsers?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerNestedInput
+  notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
 }
 
 
@@ -1117,6 +1256,7 @@ export type MemberCountOutputType = {
   notes: number
   auditLogs: number
   recoveryCodes: number
+  reviewedMailMessages: number
 }
 
 export type MemberCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1126,6 +1266,7 @@ export type MemberCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   notes?: boolean | MemberCountOutputTypeCountNotesArgs
   auditLogs?: boolean | MemberCountOutputTypeCountAuditLogsArgs
   recoveryCodes?: boolean | MemberCountOutputTypeCountRecoveryCodesArgs
+  reviewedMailMessages?: boolean | MemberCountOutputTypeCountReviewedMailMessagesArgs
 }
 
 /**
@@ -1180,6 +1321,13 @@ export type MemberCountOutputTypeCountRecoveryCodesArgs<ExtArgs extends runtime.
   where?: Prisma.RecoveryCodeWhereInput
 }
 
+/**
+ * MemberCountOutputType without action
+ */
+export type MemberCountOutputTypeCountReviewedMailMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MailMessageWhereInput
+}
+
 
 export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1198,6 +1346,7 @@ export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   notes?: boolean | Prisma.Member$notesArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Member$auditLogsArgs<ExtArgs>
   recoveryCodes?: boolean | Prisma.Member$recoveryCodesArgs<ExtArgs>
+  reviewedMailMessages?: boolean | Prisma.Member$reviewedMailMessagesArgs<ExtArgs>
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["member"]>
 
@@ -1248,6 +1397,7 @@ export type MemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   notes?: boolean | Prisma.Member$notesArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Member$auditLogsArgs<ExtArgs>
   recoveryCodes?: boolean | Prisma.Member$recoveryCodesArgs<ExtArgs>
+  reviewedMailMessages?: boolean | Prisma.Member$reviewedMailMessagesArgs<ExtArgs>
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MemberIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1262,6 +1412,7 @@ export type $MemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     notes: Prisma.$UserNotePayload<ExtArgs>[]
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
     recoveryCodes: Prisma.$RecoveryCodePayload<ExtArgs>[]
+    reviewedMailMessages: Prisma.$MailMessagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1674,6 +1825,7 @@ export interface Prisma__MemberClient<T, Null = never, ExtArgs extends runtime.T
   notes<T extends Prisma.Member$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.Member$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   recoveryCodes<T extends Prisma.Member$recoveryCodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$recoveryCodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecoveryCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviewedMailMessages<T extends Prisma.Member$reviewedMailMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$reviewedMailMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2247,6 +2399,30 @@ export type Member$recoveryCodesArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.RecoveryCodeScalarFieldEnum | Prisma.RecoveryCodeScalarFieldEnum[]
+}
+
+/**
+ * Member.reviewedMailMessages
+ */
+export type Member$reviewedMailMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailMessage
+   */
+  select?: Prisma.MailMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailMessage
+   */
+  omit?: Prisma.MailMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailMessageInclude<ExtArgs> | null
+  where?: Prisma.MailMessageWhereInput
+  orderBy?: Prisma.MailMessageOrderByWithRelationInput | Prisma.MailMessageOrderByWithRelationInput[]
+  cursor?: Prisma.MailMessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MailMessageScalarFieldEnum | Prisma.MailMessageScalarFieldEnum[]
 }
 
 /**

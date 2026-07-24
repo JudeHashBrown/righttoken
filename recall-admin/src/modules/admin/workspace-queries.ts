@@ -48,7 +48,27 @@ export async function getMailWorkspaceOverview(
 ) {
   const tasks = taskScope(viewer);
   const users = userScope(viewer);
-  const [replyTasks, openReplyTasks, unsubscribedUsers, recentTasks] =
+  const messageScope =
+    viewer.role === "OPERATOR"
+      ? {
+          OR: [
+            { user: { ownerId: viewer.id } },
+            { task: { assigneeId: viewer.id } }
+          ]
+        }
+      : {};
+  const [
+    replyTasks,
+    openReplyTasks,
+    unsubscribedUsers,
+    recentTasks,
+    mailboxes,
+    unmatchedMessages,
+    draftMessages,
+    failedMessages,
+    recentMessages,
+    eligibleTasks
+  ] =
     await Promise.all([
       prisma.recallTask.count({
         where: { ...tasks, origin: "EMAIL_REPLY" }
@@ -80,6 +100,82 @@ export async function getMailWorkspaceOverview(
             }
           }
         }
+      }),
+      prisma.mailbox.findMany({
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          name: true,
+          emailAddress: true,
+          enabled: true,
+          lastSyncedAt: true,
+          lastSuccessAt: true,
+          lastErrorCode: true
+        }
+      }),
+      prisma.mailMessage.count({
+        where: {
+          ...messageScope,
+          direction: "INBOUND",
+          status: "UNMATCHED"
+        }
+      }),
+      prisma.mailMessage.count({
+        where: {
+          ...messageScope,
+          direction: "OUTBOUND",
+          status: "DRAFT"
+        }
+      }),
+      prisma.mailMessage.count({
+        where: {
+          ...messageScope,
+          direction: "OUTBOUND",
+          status: "FAILED"
+        }
+      }),
+      prisma.mailMessage.findMany({
+        where: messageScope,
+        orderBy: { createdAt: "desc" },
+        take: 12,
+        select: {
+          id: true,
+          direction: true,
+          status: true,
+          subject: true,
+          fromAddress: true,
+          toAddresses: true,
+          sentAt: true,
+          receivedAt: true,
+          createdAt: true,
+          user: {
+            select: {
+              displayName: true,
+              externalUserId: true
+            }
+          }
+        }
+      }),
+      prisma.recallTask.findMany({
+        where: {
+          ...tasks,
+          status: { in: openStatuses },
+          user: { pausedAt: null }
+        },
+        orderBy: [{ priority: "asc" }, { dueAt: "asc" }],
+        take: 100,
+        select: {
+          id: true,
+          title: true,
+          user: {
+            select: {
+              displayName: true,
+              externalUserId: true,
+              email: true,
+              unsubscribedAt: true
+            }
+          }
+        }
       })
     ]);
 
@@ -87,7 +183,13 @@ export async function getMailWorkspaceOverview(
     replyTasks,
     openReplyTasks,
     unsubscribedUsers,
-    recentTasks
+    recentTasks,
+    mailboxes,
+    unmatchedMessages,
+    draftMessages,
+    failedMessages,
+    recentMessages,
+    eligibleTasks
   };
 }
 
@@ -318,20 +420,52 @@ export async function getSettingsWorkspaceOverview() {
     databaseReady = false;
   }
 
+  const [mailboxes, integrationCredentials] = await Promise.all([
+    prisma.mailbox.findMany({
+      orderBy: { createdAt: "asc" },
+      select: {
+        id: true,
+        name: true,
+        emailAddress: true,
+        enabled: true,
+        lastTestedAt: true,
+        lastSuccessAt: true,
+        lastErrorCode: true,
+        lastSyncedAt: true
+      }
+    }),
+    prisma.integrationCredential.findMany({
+      where: {
+        kind: { in: ["RIGHTTOKEN_SOURCE", "WECOM_ROBOT"] }
+      },
+      select: { kind: true, enabled: true }
+    })
+  ]);
+  const configuredCredentials = new Set(
+    integrationCredentials
+      .filter((credential) => credential.enabled)
+      .map((credential) => credential.kind)
+  );
+
   return {
     databaseReady,
+    mailboxes,
     integrations: [
       {
         name: "RightToken 数据源",
-        configured: Boolean(process.env.RIGHTTOKEN_INTERNAL_SECRET)
+        configured:
+          configuredCredentials.has("RIGHTTOKEN_SOURCE") ||
+          Boolean(process.env.INTERNAL_API_SECRET_CURRENT)
       },
       {
         name: "Namecheap 客服邮箱",
-        configured: Boolean(
-          process.env.SMTP_HOST &&
-            process.env.SMTP_USER &&
-            process.env.SMTP_PASSWORD
-        )
+        configured:
+          mailboxes.length > 0 ||
+          Boolean(
+            process.env.SMTP_HOST &&
+              process.env.SMTP_USER &&
+              process.env.SMTP_PASSWORD
+          )
       },
       {
         name: "企业微信邮箱",
@@ -339,7 +473,9 @@ export async function getSettingsWorkspaceOverview() {
       },
       {
         name: "企微群机器人",
-        configured: Boolean(process.env.WECOM_WEBHOOK_URL)
+        configured:
+          configuredCredentials.has("WECOM_ROBOT") ||
+          Boolean(process.env.WECOM_WEBHOOK_URL)
       }
     ]
   };
