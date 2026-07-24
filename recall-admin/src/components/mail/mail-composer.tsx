@@ -43,6 +43,9 @@ export function MailComposer({
 }: MailComposerProps): React.JSX.Element {
   const router = useRouter();
   const [taskId, setTaskId] = useState(tasks[0]?.id ?? "");
+  const [recipient, setRecipient] = useState(
+    tasks[0]?.recipient ?? ""
+  );
   const [mailboxId, setMailboxId] = useState(
     mailboxes[0]?.id ?? ""
   );
@@ -52,6 +55,16 @@ export function MailComposer({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const selectedTask = tasks.find((task) => task.id === taskId);
+  const normalizedRecipient = recipient.trim().toLowerCase();
+  const originalRecipient =
+    selectedTask?.recipient.trim().toLowerCase() ?? "";
+  const recipientValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+    normalizedRecipient
+  );
+  const recipientOverridden =
+    Boolean(selectedTask) &&
+    recipientValid &&
+    normalizedRecipient !== originalRecipient;
   const unresolved = useMemo(
     () => unresolvedVariables(subject, body),
     [subject, body]
@@ -59,6 +72,7 @@ export function MailComposer({
   const blocked =
     !selectedTask ||
     !mailboxId ||
+    !recipientValid ||
     selectedTask.suppressed ||
     unresolved.length > 0 ||
     !subject.trim() ||
@@ -81,6 +95,7 @@ export function MailComposer({
         body: JSON.stringify({
           taskId,
           mailboxId,
+          recipient: normalizedRecipient,
           subject,
           bodyText: body
         })
@@ -110,6 +125,13 @@ export function MailComposer({
     }
   }
 
+  function selectTask(nextTaskId: string): void {
+    setTaskId(nextTaskId);
+    setRecipient(
+      tasks.find((task) => task.id === nextTaskId)?.recipient ?? ""
+    );
+  }
+
   return (
     <section className={styles.panel}>
       <div className={styles.panelHeader}>
@@ -126,7 +148,7 @@ export function MailComposer({
               className={styles.select}
               id="mail-task"
               value={taskId}
-              onChange={(event) => setTaskId(event.target.value)}
+              onChange={(event) => selectTask(event.target.value)}
               disabled={submitting || tasks.length === 0}
             >
               {tasks.length === 0 ? (
@@ -159,14 +181,25 @@ export function MailComposer({
             </select>
           </div>
           <div className={styles.field}>
-            <label>最终收件人</label>
+            <label htmlFor="mail-recipient">最终收件人</label>
             <input
               className={styles.input}
-              value={selectedTask?.recipient ?? ""}
-              readOnly
+              id="mail-recipient"
+              type="email"
+              value={recipient}
+              onChange={(event) => setRecipient(event.target.value)}
+              required
+              disabled={submitting}
             />
           </div>
         </div>
+        {recipientOverridden ? (
+          <p className={styles.notice}>
+            <strong>当前使用手动收件人</strong>
+            <br />
+            邮件仍会关联所选任务，并记录实际收件地址。
+          </p>
+        ) : null}
         <div className={styles.field}>
           <label htmlFor="mail-subject">邮件主题</label>
           <input

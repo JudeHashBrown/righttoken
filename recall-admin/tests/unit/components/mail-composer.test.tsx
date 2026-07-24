@@ -22,6 +22,12 @@ const task = {
   recipient: "person@example.test",
   suppressed: false
 };
+const secondTask = {
+  ...task,
+  id: "task-2",
+  userLabel: "第二位用户",
+  recipient: "second@example.test"
+};
 const mailbox = {
   id: "mailbox-1",
   name: "Namecheap 客服邮箱",
@@ -97,5 +103,71 @@ describe("MailComposer", () => {
         body: expect.stringContaining('"taskId":"task-1"')
       })
     );
+  });
+
+  it("submits an edited recipient and resets it when the task changes", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          message: { id: "message-1", status: "SENT" }
+        })
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    render(
+      <MailComposer
+        tasks={[task, secondTask]}
+        mailboxes={[mailbox]}
+        initialSubject="RightToken 使用提醒"
+        initialBody="你好，我们可以协助你。"
+      />
+    );
+
+    const recipient = screen.getByLabelText("最终收件人");
+    fireEvent.change(recipient, {
+      target: { value: "manual@example.test" }
+    });
+    expect(
+      screen.getByText("当前使用手动收件人")
+    ).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("关联任务与用户"), {
+      target: { value: "task-2" }
+    });
+    expect(recipient).toHaveValue("second@example.test");
+
+    fireEvent.change(recipient, {
+      target: { value: "manual@example.test" }
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "审核并发送" })
+    );
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/mail/send",
+        expect.objectContaining({
+          body: expect.stringContaining(
+            '"recipient":"manual@example.test"'
+          )
+        })
+      );
+    });
+  });
+
+  it("blocks an invalid final recipient", () => {
+    render(
+      <MailComposer
+        tasks={[task]}
+        mailboxes={[mailbox]}
+        initialSubject="RightToken 使用提醒"
+        initialBody="你好，我们可以协助你。"
+      />
+    );
+    fireEvent.change(screen.getByLabelText("最终收件人"), {
+      target: { value: "invalid-email" }
+    });
+    expect(
+      screen.getByRole("button", { name: "审核并发送" })
+    ).toBeDisabled();
   });
 });
