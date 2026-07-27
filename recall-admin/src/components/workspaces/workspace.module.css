@@ -474,6 +474,26 @@
   padding: 16px;
 }
 
+.statLink {
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 160ms ease-out,
+    box-shadow 160ms ease-out,
+    transform 160ms ease-out;
+}
+
+.statLink:hover {
+  border-color: #aeb7dc;
+  box-shadow: 0 8px 22px rgb(39 51 89 / 8%);
+  transform: translateY(-1px);
+}
+
+.statLink:focus-visible {
+  outline: 3px solid rgb(89 103 215 / 22%);
+  outline-offset: 2px;
+}
+
 .statCard span {
   display: block;
   color: #747e93;

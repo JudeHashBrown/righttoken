@@ -1,6 +1,7 @@
 import Link from "next/link";
 import styles from "@/components/workspaces/workspace.module.css";
 import { MailComposer } from "@/components/mail/mail-composer";
+import { MailStatLinks } from "@/components/mail/mail-stat-links";
 import {
   getMailWorkspaceOverview
 } from "@/modules/admin/workspace-queries";
@@ -37,58 +38,23 @@ export default async function MailPage(): Promise<React.JSX.Element> {
         </div>
       </header>
 
-      <div className={styles.cardGrid}>
-        <div className={styles.statCard}>
-          <span>邮件回复任务</span>
-          <strong>{overview.replyTasks}</strong>
-          <small>由用户回复自动创建</small>
-        </div>
-        <div className={styles.statCard}>
-          <span>待处理回复</span>
-          <strong>{overview.openReplyTasks}</strong>
-          <small>尚未完成的邮件任务</small>
-        </div>
-        <div className={styles.statCard}>
-          <span>已退订用户</span>
-          <strong>{overview.unsubscribedUsers}</strong>
-          <small>发送前将由服务端拦截</small>
-        </div>
-        <div className={styles.statCard}>
-          <span>已启用邮箱</span>
-          <strong>
-            {overview.mailboxes.filter((mailbox) => mailbox.enabled).length} /{" "}
-            {overview.mailboxes.length}
-          </strong>
-          <small>Namecheap、企业微信或自定义邮箱</small>
-        </div>
-      </div>
-
-      <div className={styles.cardGrid}>
-        <div className={styles.statCard}>
-          <span>人工归档箱</span>
-          <strong>{overview.unmatchedMessages}</strong>
-          <small>无法可靠关联用户的来信</small>
-        </div>
-        <div className={styles.statCard}>
-          <span>草稿</span>
-          <strong>{overview.draftMessages}</strong>
-          <small>尚未完成发送的最终版本</small>
-        </div>
-        <div className={styles.statCard}>
-          <span>发送失败</span>
-          <strong>{overview.failedMessages}</strong>
-          <small>保留稳定错误码供重新处理</small>
-        </div>
-        <div className={styles.statCard}>
-          <span>最近同步</span>
-          <strong>
-            {overview.mailboxes.some((mailbox) => mailbox.lastSyncedAt)
-              ? "已运行"
-              : "未运行"}
-          </strong>
-          <small>启用邮箱后每两分钟同步一次</small>
-        </div>
-      </div>
+      <MailStatLinks
+        stats={{
+          replyTasks: overview.replyTasks,
+          openReplyTasks: overview.openReplyTasks,
+          unsubscribedUsers: overview.unsubscribedUsers,
+          enabledMailboxes: overview.mailboxes.filter(
+            (mailbox) => mailbox.enabled
+          ).length,
+          totalMailboxes: overview.mailboxes.length,
+          unmatchedMessages: overview.unmatchedMessages,
+          draftMessages: overview.draftMessages,
+          failedMessages: overview.failedMessages,
+          lastSyncRan: overview.mailboxes.some(
+            (mailbox) => mailbox.lastSyncedAt
+          )
+        }}
+      />
 
       {overview.mailboxes.some((mailbox) => mailbox.enabled) ? null : (
         <p className={styles.notice}>
