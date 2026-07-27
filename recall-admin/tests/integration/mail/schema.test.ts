@@ -1,5 +1,6 @@
 import "dotenv/config";
 
+import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import { prisma } from "@/lib/db/prisma";
 
@@ -31,5 +32,32 @@ describe("mail domain schema", () => {
       templates: expect.any(Number),
       suppressions: expect.any(Number)
     });
+  });
+
+  it("stores template update and soft-archive metadata", async () => {
+    const template = await prisma.mailTemplate.create({
+      data: {
+        key: `schema-${randomUUID()}`,
+        version: 1,
+        name: "Schema template",
+        subject: "Schema subject",
+        bodyText: "Schema body",
+        createdById: `member-${randomUUID()}`
+      }
+    });
+
+    try {
+      expect(template).toMatchObject({
+        archivedAt: null,
+        archivedById: null
+      });
+      expect(
+        (template as typeof template & { updatedAt?: Date }).updatedAt
+      ).toBeInstanceOf(Date);
+    } finally {
+      await prisma.mailTemplate.delete({
+        where: { id: template.id }
+      });
+    }
   });
 });

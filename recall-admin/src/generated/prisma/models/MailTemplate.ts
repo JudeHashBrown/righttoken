@@ -46,6 +46,9 @@ export type MailTemplateMinAggregateOutputType = {
   active: boolean | null
   createdById: string | null
   createdAt: Date | null
+  updatedAt: Date | null
+  archivedAt: Date | null
+  archivedById: string | null
 }
 
 export type MailTemplateMaxAggregateOutputType = {
@@ -60,6 +63,9 @@ export type MailTemplateMaxAggregateOutputType = {
   active: boolean | null
   createdById: string | null
   createdAt: Date | null
+  updatedAt: Date | null
+  archivedAt: Date | null
+  archivedById: string | null
 }
 
 export type MailTemplateCountAggregateOutputType = {
@@ -74,6 +80,9 @@ export type MailTemplateCountAggregateOutputType = {
   active: number
   createdById: number
   createdAt: number
+  updatedAt: number
+  archivedAt: number
+  archivedById: number
   _all: number
 }
 
@@ -98,6 +107,9 @@ export type MailTemplateMinAggregateInputType = {
   active?: true
   createdById?: true
   createdAt?: true
+  updatedAt?: true
+  archivedAt?: true
+  archivedById?: true
 }
 
 export type MailTemplateMaxAggregateInputType = {
@@ -112,6 +124,9 @@ export type MailTemplateMaxAggregateInputType = {
   active?: true
   createdById?: true
   createdAt?: true
+  updatedAt?: true
+  archivedAt?: true
+  archivedById?: true
 }
 
 export type MailTemplateCountAggregateInputType = {
@@ -126,6 +141,9 @@ export type MailTemplateCountAggregateInputType = {
   active?: true
   createdById?: true
   createdAt?: true
+  updatedAt?: true
+  archivedAt?: true
+  archivedById?: true
   _all?: true
 }
 
@@ -227,6 +245,9 @@ export type MailTemplateGroupByOutputType = {
   active: boolean
   createdById: string
   createdAt: Date
+  updatedAt: Date
+  archivedAt: Date | null
+  archivedById: string | null
   _count: MailTemplateCountAggregateOutputType | null
   _avg: MailTemplateAvgAggregateOutputType | null
   _sum: MailTemplateSumAggregateOutputType | null
@@ -264,6 +285,9 @@ export type MailTemplateWhereInput = {
   active?: Prisma.BoolFilter<"MailTemplate"> | boolean
   createdById?: Prisma.StringFilter<"MailTemplate"> | string
   createdAt?: Prisma.DateTimeFilter<"MailTemplate"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"MailTemplate"> | Date | string
+  archivedAt?: Prisma.DateTimeNullableFilter<"MailTemplate"> | Date | string | null
+  archivedById?: Prisma.StringNullableFilter<"MailTemplate"> | string | null
 }
 
 export type MailTemplateOrderByWithRelationInput = {
@@ -278,6 +302,9 @@ export type MailTemplateOrderByWithRelationInput = {
   active?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  archivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  archivedById?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type MailTemplateWhereUniqueInput = Prisma.AtLeast<{
@@ -296,6 +323,9 @@ export type MailTemplateWhereUniqueInput = Prisma.AtLeast<{
   active?: Prisma.BoolFilter<"MailTemplate"> | boolean
   createdById?: Prisma.StringFilter<"MailTemplate"> | string
   createdAt?: Prisma.DateTimeFilter<"MailTemplate"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"MailTemplate"> | Date | string
+  archivedAt?: Prisma.DateTimeNullableFilter<"MailTemplate"> | Date | string | null
+  archivedById?: Prisma.StringNullableFilter<"MailTemplate"> | string | null
 }, "id" | "key_version">
 
 export type MailTemplateOrderByWithAggregationInput = {
@@ -310,6 +340,9 @@ export type MailTemplateOrderByWithAggregationInput = {
   active?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  archivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  archivedById?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.MailTemplateCountOrderByAggregateInput
   _avg?: Prisma.MailTemplateAvgOrderByAggregateInput
   _max?: Prisma.MailTemplateMaxOrderByAggregateInput
@@ -332,6 +365,9 @@ export type MailTemplateScalarWhereWithAggregatesInput = {
   active?: Prisma.BoolWithAggregatesFilter<"MailTemplate"> | boolean
   createdById?: Prisma.StringWithAggregatesFilter<"MailTemplate"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"MailTemplate"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"MailTemplate"> | Date | string
+  archivedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"MailTemplate"> | Date | string | null
+  archivedById?: Prisma.StringNullableWithAggregatesFilter<"MailTemplate"> | string | null
 }
 
 export type MailTemplateCreateInput = {
@@ -346,6 +382,9 @@ export type MailTemplateCreateInput = {
   active?: boolean
   createdById: string
   createdAt?: Date | string
+  updatedAt?: Date | string
+  archivedAt?: Date | string | null
+  archivedById?: string | null
 }
 
 export type MailTemplateUncheckedCreateInput = {
@@ -360,6 +399,9 @@ export type MailTemplateUncheckedCreateInput = {
   active?: boolean
   createdById: string
   createdAt?: Date | string
+  updatedAt?: Date | string
+  archivedAt?: Date | string | null
+  archivedById?: string | null
 }
 
 export type MailTemplateUpdateInput = {
@@ -374,6 +416,9 @@ export type MailTemplateUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MailTemplateUncheckedUpdateInput = {
@@ -388,6 +433,9 @@ export type MailTemplateUncheckedUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MailTemplateCreateManyInput = {
@@ -402,6 +450,9 @@ export type MailTemplateCreateManyInput = {
   active?: boolean
   createdById: string
   createdAt?: Date | string
+  updatedAt?: Date | string
+  archivedAt?: Date | string | null
+  archivedById?: string | null
 }
 
 export type MailTemplateUpdateManyMutationInput = {
@@ -416,6 +467,9 @@ export type MailTemplateUpdateManyMutationInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MailTemplateUncheckedUpdateManyInput = {
@@ -430,6 +484,9 @@ export type MailTemplateUncheckedUpdateManyInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MailTemplateKeyVersionCompoundUniqueInput = {
@@ -449,6 +506,9 @@ export type MailTemplateCountOrderByAggregateInput = {
   active?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  archivedAt?: Prisma.SortOrder
+  archivedById?: Prisma.SortOrder
 }
 
 export type MailTemplateAvgOrderByAggregateInput = {
@@ -467,6 +527,9 @@ export type MailTemplateMaxOrderByAggregateInput = {
   active?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  archivedAt?: Prisma.SortOrder
+  archivedById?: Prisma.SortOrder
 }
 
 export type MailTemplateMinOrderByAggregateInput = {
@@ -481,6 +544,9 @@ export type MailTemplateMinOrderByAggregateInput = {
   active?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  archivedAt?: Prisma.SortOrder
+  archivedById?: Prisma.SortOrder
 }
 
 export type MailTemplateSumOrderByAggregateInput = {
@@ -501,6 +567,9 @@ export type MailTemplateSelect<ExtArgs extends runtime.Types.Extensions.Internal
   active?: boolean
   createdById?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
+  archivedAt?: boolean
+  archivedById?: boolean
 }, ExtArgs["result"]["mailTemplate"]>
 
 export type MailTemplateSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -515,6 +584,9 @@ export type MailTemplateSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   active?: boolean
   createdById?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
+  archivedAt?: boolean
+  archivedById?: boolean
 }, ExtArgs["result"]["mailTemplate"]>
 
 export type MailTemplateSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -529,6 +601,9 @@ export type MailTemplateSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   active?: boolean
   createdById?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
+  archivedAt?: boolean
+  archivedById?: boolean
 }, ExtArgs["result"]["mailTemplate"]>
 
 export type MailTemplateSelectScalar = {
@@ -543,9 +618,12 @@ export type MailTemplateSelectScalar = {
   active?: boolean
   createdById?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
+  archivedAt?: boolean
+  archivedById?: boolean
 }
 
-export type MailTemplateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "key" | "version" | "name" | "locale" | "subject" | "bodyText" | "segment" | "active" | "createdById" | "createdAt", ExtArgs["result"]["mailTemplate"]>
+export type MailTemplateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "key" | "version" | "name" | "locale" | "subject" | "bodyText" | "segment" | "active" | "createdById" | "createdAt" | "updatedAt" | "archivedAt" | "archivedById", ExtArgs["result"]["mailTemplate"]>
 
 export type $MailTemplatePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "MailTemplate"
@@ -562,6 +640,9 @@ export type $MailTemplatePayload<ExtArgs extends runtime.Types.Extensions.Intern
     active: boolean
     createdById: string
     createdAt: Date
+    updatedAt: Date
+    archivedAt: Date | null
+    archivedById: string | null
   }, ExtArgs["result"]["mailTemplate"]>
   composites: {}
 }
@@ -996,6 +1077,9 @@ export interface MailTemplateFieldRefs {
   readonly active: Prisma.FieldRef<"MailTemplate", 'Boolean'>
   readonly createdById: Prisma.FieldRef<"MailTemplate", 'String'>
   readonly createdAt: Prisma.FieldRef<"MailTemplate", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"MailTemplate", 'DateTime'>
+  readonly archivedAt: Prisma.FieldRef<"MailTemplate", 'DateTime'>
+  readonly archivedById: Prisma.FieldRef<"MailTemplate", 'String'>
 }
     
 

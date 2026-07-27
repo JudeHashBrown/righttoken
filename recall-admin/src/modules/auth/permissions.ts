@@ -7,6 +7,8 @@ export type Permission =
   | "users:export"
   | "tasks:work"
   | "mail:send-reviewed"
+  | "mail:manage-templates"
+  | "mail:archive-template-version"
   | "rules:publish"
   | "location-rules:publish"
   | "operators:manage"
@@ -22,6 +24,8 @@ const permissions: Record<Role, ReadonlySet<Permission>> = {
     "users:export",
     "tasks:work",
     "mail:send-reviewed",
+    "mail:manage-templates",
+    "mail:archive-template-version",
     "rules:publish",
     "location-rules:publish",
     "operators:manage",
@@ -35,6 +39,7 @@ const permissions: Record<Role, ReadonlySet<Permission>> = {
     "users:import",
     "tasks:work",
     "mail:send-reviewed",
+    "mail:manage-templates",
     "rules:publish",
     "operators:manage",
     "integrations:manage",
@@ -44,7 +49,8 @@ const permissions: Record<Role, ReadonlySet<Permission>> = {
     "users:read",
     "users:reveal-sensitive",
     "tasks:work",
-    "mail:send-reviewed"
+    "mail:send-reviewed",
+    "mail:manage-templates"
   ])
 };
 

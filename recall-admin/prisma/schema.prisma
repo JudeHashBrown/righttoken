@@ -559,20 +559,23 @@ model Mailbox {
 }
 
 model MailTemplate {
-  id          String       @id @default(cuid())
-  key         String
-  version     Int
-  name        String
-  locale      String       @default("zh-CN")
-  subject     String
-  bodyText    String
-  segment     SegmentCode?
-  active      Boolean      @default(false)
-  createdById String
-  createdAt   DateTime     @default(now())
+  id           String       @id @default(cuid())
+  key          String
+  version      Int
+  name         String
+  locale       String       @default("zh-CN")
+  subject      String
+  bodyText     String
+  segment      SegmentCode?
+  active       Boolean      @default(false)
+  createdById  String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  archivedAt   DateTime?
+  archivedById String?
 
   @@unique([key, version])
-  @@index([active, segment, locale])
+  @@index([active, archivedAt, segment, locale])
   @@schema("recall")
 }
 

@@ -475,7 +475,10 @@ export const MailTemplateScalarFieldEnum = {
   segment: 'segment',
   active: 'active',
   createdById: 'createdById',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  archivedAt: 'archivedAt',
+  archivedById: 'archivedById'
 } as const
 
 export type MailTemplateScalarFieldEnum = (typeof MailTemplateScalarFieldEnum)[keyof typeof MailTemplateScalarFieldEnum]

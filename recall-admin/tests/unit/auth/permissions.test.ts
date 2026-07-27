@@ -27,4 +27,23 @@ describe("role permissions", () => {
     expect(can("OPERATOR", "users:reveal-sensitive")).toBe(true);
     expect(can("OPERATOR", "rules:publish")).toBe(false);
   });
+
+  it("allows every workspace role to manage templates but only the primary admin to archive versions", () => {
+    for (const role of [
+      "PRIMARY_ADMIN",
+      "ADMIN",
+      "OPERATOR"
+    ] as const) {
+      expect(can(role, "mail:manage-templates")).toBe(true);
+    }
+    expect(
+      can("PRIMARY_ADMIN", "mail:archive-template-version")
+    ).toBe(true);
+    expect(
+      can("ADMIN", "mail:archive-template-version")
+    ).toBe(false);
+    expect(
+      can("OPERATOR", "mail:archive-template-version")
+    ).toBe(false);
+  });
 });
