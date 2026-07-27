@@ -106,6 +106,90 @@ export async function loadAssignmentWorkload(
   );
 }
 
+async function decideUserAssignment(
+  tx: TransactionClient,
+  user: UserProfile,
+  now: Date
+): Promise<AssignmentDecision> {
+  const storedRules = await tx.assignmentRule.findMany({
+    where: {
+      enabled: true,
+      AND: [
+        {
+          OR: [
+            { effectiveFrom: null },
+            { effectiveFrom: { lte: now } }
+          ]
+        },
+        {
+          OR: [
+            { effectiveTo: null },
+            { effectiveTo: { gt: now } }
+          ]
+        }
+      ]
+    },
+    orderBy: { priority: "asc" }
+  });
+  const rules = storedRules.map(storedRuleToInput);
+  const defaultOwner = await tx.member.findFirst({
+    where: { role: "PRIMARY_ADMIN", active: true },
+    orderBy: { createdAt: "asc" },
+    select: { id: true }
+  });
+  const workload = await loadAssignmentWorkload(
+    tx,
+    [
+      ...rules.flatMap((rule) =>
+        [rule.assigneeId, rule.fallbackAssigneeId].filter(
+          (id): id is string => Boolean(id)
+        )
+      ),
+      ...(defaultOwner ? [defaultOwner.id] : [])
+    ]
+  );
+  return matchRule(
+    userToAssignmentContext(user),
+    rules,
+    workload,
+    now,
+    defaultOwner?.id ?? null
+  );
+}
+
+export async function assignUserOwner(
+  userId: string,
+  now = new Date()
+): Promise<AssignmentDecision> {
+  return prisma.$transaction(async (tx) => {
+    return assignUserOwnerInTransaction(tx, userId, now);
+  });
+}
+
+export async function assignUserOwnerInTransaction(
+  tx: TransactionClient,
+  userId: string,
+  now = new Date()
+): Promise<AssignmentDecision> {
+  await tx.$queryRaw(
+    Prisma.sql`
+      SELECT "id"
+      FROM "UserProfile"
+      WHERE "id" = ${userId}
+      FOR UPDATE
+    `
+  );
+  const user = await tx.userProfile.findUniqueOrThrow({
+    where: { id: userId }
+  });
+  const decision = await decideUserAssignment(tx, user, now);
+  await tx.userProfile.update({
+    where: { id: user.id },
+    data: { ownerId: decision.assigneeId }
+  });
+  return decision;
+}
+
 export async function assignTask(
   taskId: string,
   now = new Date()
@@ -127,41 +211,7 @@ export async function assignTask(
       throw new Error("only unstarted tasks can be assigned");
     }
 
-    const storedRules = await tx.assignmentRule.findMany({
-      where: {
-        enabled: true,
-        AND: [
-          {
-            OR: [
-              { effectiveFrom: null },
-              { effectiveFrom: { lte: now } }
-            ]
-          },
-          {
-            OR: [
-              { effectiveTo: null },
-              { effectiveTo: { gt: now } }
-            ]
-          }
-        ]
-      },
-      orderBy: { priority: "asc" }
-    });
-    const rules = storedRules.map(storedRuleToInput);
-    const workload = await loadAssignmentWorkload(
-      tx,
-      rules.flatMap((rule) =>
-        [rule.assigneeId, rule.fallbackAssigneeId].filter(
-          (id): id is string => Boolean(id)
-        )
-      )
-    );
-    const decision = matchRule(
-      userToAssignmentContext(task.user),
-      rules,
-      workload,
-      now
-    );
+    const decision = await decideUserAssignment(tx, task.user, now);
 
     await tx.recallTask.update({
       where: { id: task.id },

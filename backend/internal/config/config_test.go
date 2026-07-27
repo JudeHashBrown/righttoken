@@ -30,6 +30,34 @@ func TestLoadForBootstrapAllowsMissingJWTSecret(t *testing.T) {
 	}
 }
 
+func TestLoadReadsRecallExportSecretFromEnv(t *testing.T) {
+	viper.Reset()
+	t.Setenv("JWT_SECRET", strings.Repeat("x", 32))
+	t.Setenv("RECALL_EXPORT_SECRET", "recall-export-secret-from-env")
+
+	cfg, err := Load()
+	require.NoError(t, err)
+	require.Equal(t, "recall-export-secret-from-env", cfg.RecallExport.Secret)
+}
+
+func TestLoadReadsRecallSSOConfigFromEnv(t *testing.T) {
+	viper.Reset()
+	t.Setenv("JWT_SECRET", strings.Repeat("x", 32))
+	t.Setenv("RECALL_SSO_BASE_URL", "https://recall.righttoken.ai/")
+	t.Setenv("RECALL_SSO_INTERNAL_SECRET", strings.Repeat("i", 32))
+	t.Setenv("RECALL_SSO_SSO_SECRET", strings.Repeat("s", 32))
+	t.Setenv("RECALL_SSO_ISSUER", "https://righttoken.ai")
+	t.Setenv("RECALL_SSO_AUDIENCE", "righttoken-recall")
+
+	cfg, err := Load()
+	require.NoError(t, err)
+	require.Equal(t, "https://recall.righttoken.ai", cfg.RecallSSO.BaseURL)
+	require.Equal(t, strings.Repeat("i", 32), cfg.RecallSSO.InternalSecret)
+	require.Equal(t, strings.Repeat("s", 32), cfg.RecallSSO.SSOSecret)
+	require.Equal(t, "https://righttoken.ai", cfg.RecallSSO.Issuer)
+	require.Equal(t, "righttoken-recall", cfg.RecallSSO.Audience)
+}
+
 func TestNormalizeRunMode(t *testing.T) {
 	tests := []struct {
 		input    string

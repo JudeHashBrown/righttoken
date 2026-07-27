@@ -30,6 +30,7 @@ import type {
   SegmentGroupRule,
   SegmentRuleSet
 } from "@/modules/segmentation/rule-definition";
+import { describeOperationalClause } from "@/modules/segmentation/operational-copy";
 import type { SegmentCode } from "@/modules/segmentation/types";
 import styles from "./segment-rule-editor.module.css";
 
@@ -39,8 +40,8 @@ type SegmentRuleEditorProps = {
   initialRuleSet: SegmentRuleSet;
   fieldRegistry: PublicSegmentFieldDefinition[];
   distribution: Distribution;
-  currentVersion: number;
   canEdit: boolean;
+  topLayout?: boolean;
 };
 
 type Preview = {
@@ -81,21 +82,21 @@ type RecalculationProgress = {
 };
 
 const operatorLabels: Record<ConditionOperator, string> = {
-  eq: "等于",
-  neq: "不等于",
+  eq: "为",
+  neq: "不是",
   in: "属于列表",
   not_in: "不属于列表",
-  gt: "大于",
-  gte: "大于等于",
-  lt: "小于",
-  lte: "小于等于",
-  between: "介于",
+  gt: "高于",
+  gte: "不少于",
+  lt: "低于",
+  lte: "不超过",
+  between: "在范围内",
   before: "早于",
-  before_or_equal: "早于或等于",
+  before_or_equal: "不晚于",
   after: "晚于",
-  after_or_equal: "晚于或等于",
-  is_null: "为空",
-  is_not_null: "不为空"
+  after_or_equal: "不早于",
+  is_null: "暂无记录",
+  is_not_null: "已有记录"
 };
 
 const priorityLabels = {
@@ -144,6 +145,20 @@ function clauseValueText(clause: SegmentClause): string {
     : String(clause.value ?? "");
 }
 
+function booleanValueLabels(
+  field: SegmentFieldKey
+): [affirmative: string, negative: string] {
+  const labels: Partial<
+    Record<SegmentFieldKey, [string, string]>
+  > = {
+    anomalyActive: ["存在", "不存在"],
+    checkoutStarted: ["已进入", "未进入"],
+    unsubscribed: ["已退订", "未退订"],
+    paused: ["已暂停", "未暂停"]
+  };
+  return labels[field] ?? ["是", "否"];
+}
+
 function friendlySummary(
   group: SegmentGroupRule,
   fields: Map<SegmentFieldKey, PublicSegmentFieldDefinition>
@@ -154,31 +169,12 @@ function friendlySummary(
   if (!group.enabled) return `${group.code} 组当前未启用。`;
   const branches = group.branches.map((branch) =>
     branch.clauses
-      .map((clause) => {
-        const field = fields.get(clause.field);
-        const rawValue =
-          typeof clause.value === "boolean"
-            ? clause.value
-              ? "是"
-              : "否"
-            : clauseValueText(clause);
-        const value =
-          clause.operator === "is_null" ||
-          clause.operator === "is_not_null"
-            ? ""
-            : ` ${rawValue}${
-                clause.unit === "days"
-                  ? " 天"
-                  : clause.unit === "hours"
-                    ? " 小时"
-                    : clause.unit === "minutes"
-                      ? " 分钟"
-                      : ""
-              }`;
-        return `${field?.label ?? clause.field}${
-          operatorLabels[clause.operator]
-        }${value}`;
-      })
+      .map((clause) =>
+        describeOperationalClause(
+          clause,
+          fields.get(clause.field)?.label
+        )
+      )
       .join("，并且 ")
   );
   return `如果 ${branches.join("；或者 ")}，则进入 ${group.code} 组。`;
@@ -188,12 +184,12 @@ export function SegmentRuleEditor({
   initialRuleSet,
   fieldRegistry,
   distribution,
-  currentVersion,
-  canEdit
+  canEdit,
+  topLayout = false
 }: SegmentRuleEditorProps): React.JSX.Element {
   const router = useRouter();
   const [draft, setDraft] = useState(() => cloneRuleSet(initialRuleSet));
-  const [expanded, setExpanded] = useState<SegmentCode[]>(["F", "G"]);
+  const [expanded, setExpanded] = useState<SegmentCode[]>(["F"]);
   const [dirty, setDirty] = useState(false);
   const [preview, setPreview] = useState<Preview | null>(null);
   const [previewing, setPreviewing] = useState(false);
@@ -215,6 +211,10 @@ export function SegmentRuleEditor({
     () => new Map(fieldRegistry.map((field) => [field.key, field])),
     [fieldRegistry]
   );
+  const displayOrder: SegmentCode[] = ["F", "A", "B", "C", "D", "E", "G"];
+  const displayGroups = displayOrder
+    .map((code) => draft.groups.find((group) => group.code === code))
+    .filter((group): group is SegmentGroupRule => Boolean(group));
 
   useEffect(() => {
     const guard = (event: BeforeUnloadEvent) => {
@@ -426,7 +426,7 @@ export function SegmentRuleEditor({
         throw new Error("publish rejected");
       }
       setMessage(
-        `分组规则 v${result.version} 已发布，正在全量重算`
+        `版本 v${result.version} 已发布，正在更新用户分组`
       );
       setActiveRunId(result.runId ?? null);
       setRunProgress(null);
@@ -532,35 +532,8 @@ export function SegmentRuleEditor({
   }
 
   return (
-    <section className={styles.builder}>
-      <div className={styles.algorithm}>
-        <div className={styles.algorithmIcon} aria-hidden="true">
-          <Check size={18} />
-        </div>
-        <div>
-          <strong>互斥分配逻辑</strong>
-          <p>
-            系统从上到下判断，用户命中第一个分组后停止。F
-            始终优先，G 接收所有未命中的用户。
-          </p>
-          <p>
-            同一分支内的条件是“并且”，不同分支之间是“或者”。
-          </p>
-        </div>
-        <span className={canEdit ? styles.editBadge : styles.readBadge}>
-          {canEdit
-            ? dirty
-              ? "草稿未发布"
-              : `已同步 v${currentVersion}`
-            : "只读模式"}
-        </span>
-      </div>
-
+    <section className={`${styles.builder} ${topLayout ? styles.builderOnTop : ""}`}>
       <div className={styles.toolbar}>
-        <div>
-          <strong>分组优先级与定义</strong>
-          <span>F 与 G 已锁定，A–E 可调整顺序</span>
-        </div>
         <div className={styles.toolbarActions}>
           <button
             className={styles.secondary}
@@ -662,8 +635,34 @@ export function SegmentRuleEditor({
         </section>
       ) : null}
 
+      <div className={styles.groupRail} role="group" aria-label="用户分组导航">
+        {displayGroups.map((group) => {
+          const isOpen = expanded.includes(group.code);
+          const isLocked = group.code === "F" || group.code === "G";
+          return (
+            <button
+              className={`${styles.groupRailItem} ${isOpen ? styles.groupRailItemActive : ""}`}
+              key={group.code}
+              type="button"
+              onClick={() => setExpanded([group.code])}
+              aria-pressed={isOpen}
+            >
+              <span className={`${styles.groupRailCode} ${group.code === "F" ? styles.groupCodeUrgent : group.code === "G" ? styles.groupCodeFallback : ""}`}>
+                {group.code}
+              </span>
+              <span className={styles.groupRailMeta}>
+                <strong>{distribution[group.code]} 人</strong>
+                <span>{group.annotation || friendlySummary(group, fieldMap)}</span>
+              </span>
+              {isLocked ? <LockKeyhole size={13} /> : null}
+            </button>
+          );
+        })}
+      </div>
+
       <div className={styles.groupList}>
-        {draft.groups.map((group, groupIndex) => {
+        {displayGroups.filter((group) => expanded.includes(group.code)).map((group) => {
+          const groupIndex = draft.groups.findIndex((item) => item.code === group.code);
           const isLocked = group.code === "F" || group.code === "G";
           const isOpen = expanded.includes(group.code);
           const movable = !isLocked;
@@ -686,7 +685,7 @@ export function SegmentRuleEditor({
                   <span>{distribution[group.code]} 人</span>
                 </div>
                 <p className={styles.groupSummary}>
-                  {friendlySummary(group, fieldMap)}
+                  {group.annotation || friendlySummary(group, fieldMap)}
                 </p>
                 <div className={styles.groupActions}>
                   {movable && canEdit ? (
@@ -752,16 +751,15 @@ export function SegmentRuleEditor({
                         })
                       }
                     />
-                    <small>仅用于解释分组含义，不参与规则计算</small>
                   </div>
 
                   {group.code === "G" ? (
                     <div className={styles.lockedNote}>
                       <LockKeyhole size={16} />
                       <div>
-                        <strong>G 组为固定兜底组</strong>
+                        <strong>G 组自动接收其他用户</strong>
                         <p>
-                          不配置条件，也不创建个人召回任务。
+                          该组不配置筛选条件，也不创建个人召回任务。
                         </p>
                       </div>
                     </div>
@@ -769,8 +767,7 @@ export function SegmentRuleEditor({
                     <>
                       <div className={styles.sectionHeading}>
                         <div>
-                          <strong>进入分组的条件</strong>
-                          <span>分支内全部满足，分支间任一满足</span>
+                          <strong>筛选条件（满足这些条件的用户会归入此组）</strong>
                         </div>
                         {canEdit ? (
                           <button
@@ -786,7 +783,7 @@ export function SegmentRuleEditor({
                               })
                             }
                           >
-                            <Plus size={14} /> 添加“或者”分支
+                            <Plus size={14} /> 添加条件组
                           </button>
                         ) : null}
                       </div>
@@ -797,14 +794,14 @@ export function SegmentRuleEditor({
                             key={`${group.code}-${branchIndex}`}
                           >
                             <div className={styles.branchHeader}>
-                              <strong>条件分支 {branchIndex + 1}</strong>
+                              <strong>条件组 {branchIndex + 1}</strong>
                               <span>
-                                {branchIndex === 0 ? "如果" : "或者"}
+                                  {branchIndex === 0 ? "主要" : "补充"}
                               </span>
                               {canEdit ? (
                                 <div>
                                   <button
-                                    aria-label={`复制 ${group.code} 组条件分支 ${
+                                    aria-label={`复制 ${group.code} 组条件组 ${
                                       branchIndex + 1
                                     }`}
                                     type="button"
@@ -825,7 +822,7 @@ export function SegmentRuleEditor({
                                   </button>
                                   {group.branches.length > 1 ? (
                                     <button
-                                      aria-label={`删除 ${group.code} 组条件分支 ${
+                                      aria-label={`删除 ${group.code} 组条件组 ${
                                         branchIndex + 1
                                       }`}
                                       type="button"
@@ -852,6 +849,8 @@ export function SegmentRuleEditor({
                               const hidesValue =
                                 clause.operator === "is_null" ||
                                 clause.operator === "is_not_null";
+                              const booleanLabels =
+                                booleanValueLabels(clause.field);
                               return (
                                 <div
                                   className={styles.conditionWrap}
@@ -932,8 +931,12 @@ export function SegmentRuleEditor({
                                               )
                                             }
                                           >
-                                            <option value="true">是</option>
-                                            <option value="false">否</option>
+                                            <option value="true">
+                                              {booleanLabels[0]}
+                                            </option>
+                                            <option value="false">
+                                              {booleanLabels[1]}
+                                            </option>
                                           </select>
                                         ) : field.type === "enum" &&
                                           clause.operator !== "in" &&
@@ -1068,7 +1071,7 @@ export function SegmentRuleEditor({
                                   })
                                 }
                               >
-                                <Plus size={14} /> 添加“并且”条件
+                                <Plus size={14} /> 添加筛选条件
                               </button>
                             ) : null}
                           </div>
@@ -1078,8 +1081,8 @@ export function SegmentRuleEditor({
                       <div className={styles.policy}>
                         <div className={styles.sectionHeading}>
                           <div>
-                            <strong>运营任务策略</strong>
-                            <span>与进入分组的条件分开设置</span>
+                            <strong>触达设置</strong>
+                            <span>进入此组后的运营提醒设置</span>
                           </div>
                         </div>
                         <div className={styles.policyGrid}>

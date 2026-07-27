@@ -13,6 +13,7 @@ export type EditableAssignmentRule = {
   enabled: boolean;
   priority: number;
   countryCodes: string;
+  regions?: string;
   sources: string;
   segments: SegmentCode[];
   assigneeId: string;
@@ -40,6 +41,7 @@ function emptyRule(priority: number): EditableAssignmentRule {
     enabled: true,
     priority,
     countryCodes: "",
+    regions: "",
     sources: "",
     segments: [],
     assigneeId: "",
@@ -70,6 +72,9 @@ function requestRules(rules: EditableAssignmentRule[]) {
               code.toUpperCase()
             )
           }
+        : {}),
+      ...(list(rule.regions ?? "")
+        ? { regionIncludes: list(rule.regions ?? "") }
         : {}),
       ...(list(rule.sources) ? { sources: list(rule.sources) } : {}),
       ...(rule.segments.length ? { segments: rule.segments } : {})
@@ -266,7 +271,7 @@ export function AssignmentRuleEditor({
                 </div>
                 <div className={styles.field}>
                   <label htmlFor={`rule-countries-${index}`}>
-                    国家代码
+                    国家（代码）
                   </label>
                   <input
                     className={styles.input}
@@ -276,8 +281,20 @@ export function AssignmentRuleEditor({
                         countryCodes: event.target.value
                       })
                     }
-                    placeholder="SG, US, DE"
+                    placeholder="CN, US, SG"
                     value={rule.countryCodes}
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label htmlFor={`rule-regions-${index}`}>省 / 州 / 地区</label>
+                  <input
+                    className={styles.input}
+                    id={`rule-regions-${index}`}
+                    onChange={(event) =>
+                      update(index, { regions: event.target.value })
+                    }
+                    placeholder="广东省、California、东京"
+                    value={rule.regions ?? ""}
                   />
                 </div>
                 <div className={styles.field}>
@@ -392,14 +409,14 @@ export function AssignmentRuleEditor({
       ) : (
         <div className={styles.empty}>
           <strong>尚未配置分配规则</strong>
-          <p>新增第一条规则，或继续让所有任务进入公共任务池。</p>
+          <p>新增第一条规则；未命中的任务将交给主管理员。</p>
         </div>
       )}
 
       {preview ? (
         <div className={styles.previewResult} role="status">
           <strong>抽样 {preview.sampledUsers} 位用户</strong>
-          <span>公共池 {preview.publicPool} 人</span>
+          <span>待默认接管 {preview.publicPool} 人</span>
           <span>未匹配 {preview.unmatchedConditions} 人</span>
         </div>
       ) : null}

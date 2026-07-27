@@ -152,7 +152,13 @@ test("administrator previews, publishes and inspects history", async ({
   );
 
   await page.goto("/automation/segments");
-  await page.getByRole("button", { name: "A 组展开" }).click();
+  await expect(
+    page.getByText(
+      "定义每个分组的业务含义、互斥判断顺序和运营任务策略。"
+    )
+  ).toHaveCount(0);
+  await expect(page.getByText("互斥分配逻辑")).toHaveCount(0);
+  await page.getByRole("button", { name: /^A12 人/ }).click();
   await page
     .getByLabel("A 组注释")
     .fill("注册后未支付，需要重点跟进");
@@ -163,7 +169,7 @@ test("administrator previews, publishes and inspects history", async ({
     .getByRole("button", { name: "确认发布新版本" })
     .click();
   await expect(
-    page.getByText("分组规则 v2 已发布，正在全量重算")
+    page.getByText("版本 v2 已发布，正在更新用户分组")
   ).toBeVisible();
   await expect(
     page.getByText(/182\/182 已处理，\s*成功 182，失败 0/)

@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import type { SegmentCode } from "@/generated/prisma/client";
 import { UserTable } from "@/components/tables/user-table";
 import styles from "@/components/workspaces/workspace.module.css";
 import { prisma } from "@/lib/db/prisma";
-import { getCurrentMember } from "@/modules/auth/guards";
+import { requireWorkspaceMember } from "@/modules/admin/page-access";
 import { findUsers } from "@/modules/users/user-queries";
 
 type SearchParams = Promise<
@@ -33,8 +32,7 @@ export default async function UsersPage({
 }: {
   searchParams: SearchParams;
 }): Promise<React.JSX.Element> {
-  const member = await getCurrentMember();
-  if (!member) redirect("/login?next=/users");
+  const member = await requireWorkspaceMember("/users");
   const params = await searchParams;
   const segment = first(params.segment);
   const registeredFrom = first(params.registeredFrom);

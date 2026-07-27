@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import styles from "@/app/(auth)/login/login.module.css";
+import styles from "@/app/(auth)/members/invitations/accept/invitation.module.css";
 
 type InvitationAcceptFormProps = {
   token: string;
@@ -23,14 +23,6 @@ export function InvitationAcceptForm({
     setError(null);
 
     const formData = new FormData(event.currentTarget);
-    const password = String(formData.get("password") ?? "");
-    const passwordConfirmation = String(
-      formData.get("passwordConfirmation") ?? ""
-    );
-    if (password !== passwordConfirmation) {
-      setError("两次输入的密码不一致。");
-      return;
-    }
 
     setSubmitting(true);
     try {
@@ -39,8 +31,7 @@ export function InvitationAcceptForm({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           token,
-          displayName: formData.get("displayName"),
-          password
+          displayName: formData.get("displayName")
         })
       });
       if (!response.ok) {
@@ -49,7 +40,7 @@ export function InvitationAcceptForm({
       }
 
       setCompleted(true);
-      router.replace("/login");
+      router.replace("/dashboard");
       router.refresh();
     } catch {
       setError("网络连接异常，请稍后重试。");
@@ -72,34 +63,6 @@ export function InvitationAcceptForm({
           disabled={submitting || completed}
         />
       </div>
-      <div className={styles.field}>
-        <div className={styles.labelRow}>
-          <label htmlFor="accept-password">设置密码</label>
-          <span>至少 12 位</span>
-        </div>
-        <input
-          id="accept-password"
-          name="password"
-          type="password"
-          autoComplete="new-password"
-          minLength={12}
-          required
-          disabled={submitting || completed}
-        />
-      </div>
-      <div className={styles.field}>
-        <label htmlFor="accept-password-confirmation">确认密码</label>
-        <input
-          id="accept-password-confirmation"
-          name="passwordConfirmation"
-          type="password"
-          autoComplete="new-password"
-          minLength={12}
-          required
-          disabled={submitting || completed}
-        />
-      </div>
-
       {error ? (
         <p className={styles.error} role="alert">
           {error}
@@ -107,7 +70,7 @@ export function InvitationAcceptForm({
       ) : null}
       {completed ? (
         <p className={styles.success} role="status">
-          账号已开通，正在前往登录页
+          成员已开通，正在进入后台
         </p>
       ) : null}
 

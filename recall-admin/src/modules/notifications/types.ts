@@ -1,4 +1,8 @@
-export type NotificationChannel = "IN_APP" | "WECOM" | "EMAIL";
+export type NotificationChannel =
+  | "IN_APP"
+  | "WECOM_APP"
+  | "WECOM_ROBOT"
+  | "EMAIL";
 
 export type RedactedNotification = {
   title: string;

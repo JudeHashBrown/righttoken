@@ -26,6 +26,12 @@ export interface TaskScheduler {
   scheduleSegmentRecalculation?(
     input: { runId: string }
   ): Promise<void>;
+  scheduleLocationRecalculation?(
+    input: { runId: string }
+  ): Promise<void>;
+  scheduleAssignmentRecalculation?(
+    input: { runId: string }
+  ): Promise<void>;
 }
 
 export const noopTaskScheduler: TaskScheduler = {

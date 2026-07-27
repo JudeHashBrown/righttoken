@@ -60,7 +60,8 @@ enum MailMessageStatus {
 
 enum NotificationChannel {
   IN_APP
-  WECOM
+  WECOM_APP
+  WECOM_ROBOT
   EMAIL
 }
 
@@ -79,15 +80,31 @@ enum RecalculationStatus {
   FAILED
 }
 
+enum LocationAttributionSource {
+  EMAIL_EXACT_DOMAIN
+  EMAIL_DOMAIN_SUFFIX
+  IP_GEOIP
+  IP_RIR
+  IP_EVENT
+  INVALID_REGISTRATION_DATA
+}
+
+enum LocationRuleMatchType {
+  EXACT_DOMAIN
+  DOMAIN_SUFFIX
+}
+
 model Member {
   id              String     @id @default(cuid())
   email           String     @unique
+  rightTokenUserId String?    @unique
   displayName     String
   passwordHash    String
   role            MemberRole
   active          Boolean    @default(true)
   twoFactorSecret String?
   twoFactorOn     Boolean    @default(false)
+  wecomUserId     String?    @unique
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 
@@ -99,6 +116,16 @@ model Member {
   recoveryCodes RecoveryCode[]
   reviewedMailMessages MailMessage[] @relation("MailReviewer")
   segmentRecalculationRuns SegmentRecalculationRun[] @relation("SegmentRecalculationRequester")
+  locationRecalculationRuns LocationRecalculationRun[] @relation("LocationRecalculationRequester")
+  assignmentRecalculationRuns AssignmentRecalculationRun[] @relation("AssignmentRecalculationRequester")
+}
+
+model SsoTicketRedemption {
+  jti        String   @id
+  expiresAt  DateTime
+  redeemedAt DateTime @default(now())
+
+  @@index([expiresAt])
 }
 
 model Session {
@@ -128,6 +155,11 @@ model UserProfile {
   registrationIpHash  String?
   countryCode         String?
   region              String?
+  ipCountryCode       String?
+  ipRegion            String?
+  locationSource      LocationAttributionSource?
+  locationRuleId      String?
+  locationEvaluatedAt DateTime?
   language            String?
   timezone            String?
   source              String?
@@ -164,9 +196,12 @@ model UserProfile {
   notes            UserNote[]
   mailThreads      MailThread[]
   mailMessages     MailMessage[]
+  locationRule     LocationAttributionRule? @relation(fields: [locationRuleId], references: [id], onDelete: SetNull)
 
   @@index([currentSegment, updatedAt])
   @@index([countryCode, region])
+  @@index([ipCountryCode, ipRegion])
+  @@index([locationRuleId])
   @@index([emailNormalized])
 }
 
@@ -290,6 +325,73 @@ model AssignmentRule {
 
   @@unique([priority])
   @@index([enabled, priority])
+}
+
+model AssignmentRecalculationRun {
+  id                  String              @id @default(cuid())
+  requestedById       String
+  status              RecalculationStatus @default(PENDING)
+  totalUsers          Int                 @default(0)
+  processedUsers      Int                 @default(0)
+  succeededUsers      Int                 @default(0)
+  failedUsers         Int                 @default(0)
+  ownerChanges        Int                 @default(0)
+  reassignedTasks     Int                 @default(0)
+  lastProcessedUserId String?
+  upperBoundUserId    String?
+  errorSummary        Json?
+  startedAt           DateTime?
+  completedAt         DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  requestedBy Member @relation("AssignmentRecalculationRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+
+  @@index([status, createdAt])
+  @@index([requestedById, createdAt])
+}
+
+model LocationAttributionRule {
+  id          String                @id @default(cuid())
+  name        String
+  enabled     Boolean               @default(true)
+  priority    Int
+  matchType   LocationRuleMatchType
+  pattern     String
+  countryCode String
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  users UserProfile[]
+
+  @@unique([priority])
+  @@unique([matchType, pattern])
+  @@index([enabled, matchType, priority])
+}
+
+model LocationRecalculationRun {
+  id                  String              @id @default(cuid())
+  requestedById       String
+  status              RecalculationStatus @default(PENDING)
+  totalUsers          Int                 @default(0)
+  processedUsers      Int                 @default(0)
+  succeededUsers      Int                 @default(0)
+  failedUsers         Int                 @default(0)
+  countryChanges      Int                 @default(0)
+  reassignedTasks     Int                 @default(0)
+  lastProcessedUserId String?
+  upperBoundUserId    String?
+  ruleSnapshot        Json
+  errorSummary        Json?
+  startedAt           DateTime?
+  completedAt         DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  requestedBy Member @relation("LocationRecalculationRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+
+  @@index([status, createdAt])
+  @@index([requestedById, createdAt])
 }
 
 model RecallTask {

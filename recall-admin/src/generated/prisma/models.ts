@@ -9,6 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Member'
+export type * from './models/SsoTicketRedemption'
 export type * from './models/Session'
 export type * from './models/UserProfile'
 export type * from './models/UserEvent'
@@ -18,6 +19,9 @@ export type * from './models/UserNote'
 export type * from './models/AutomationRuleVersion'
 export type * from './models/SegmentRecalculationRun'
 export type * from './models/AssignmentRule'
+export type * from './models/AssignmentRecalculationRun'
+export type * from './models/LocationAttributionRule'
+export type * from './models/LocationRecalculationRun'
 export type * from './models/RecallTask'
 export type * from './models/TaskActivity'
 export type * from './models/AuditLog'

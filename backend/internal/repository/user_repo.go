@@ -15,6 +15,7 @@ import (
 	dbuser "github.com/Wei-Shaw/sub2api/ent/user"
 	"github.com/Wei-Shaw/sub2api/ent/userallowedgroup"
 	"github.com/Wei-Shaw/sub2api/ent/usersubscription"
+	"github.com/Wei-Shaw/sub2api/internal/pkg/ctxkey"
 	"github.com/Wei-Shaw/sub2api/internal/pkg/pagination"
 	"github.com/Wei-Shaw/sub2api/internal/service"
 
@@ -85,8 +86,32 @@ func (r *userRepository) Create(ctx context.Context, userIn *service.User) error
 		}
 	}
 
+	r.captureRegistrationIP(ctx, created.ID)
 	applyUserEntityToService(userIn, created)
 	return nil
+}
+
+func (r *userRepository) captureRegistrationIP(ctx context.Context, userID int64) {
+	if r == nil || r.sql == nil || userID < 1 {
+		return
+	}
+	registrationIP, _ := ctx.Value(ctxkey.RegistrationIP).(string)
+	registrationIP = strings.TrimSpace(registrationIP)
+	if registrationIP == "" {
+		return
+	}
+	// Best effort after user creation. The WHERE clause guarantees that login
+	// and repeated OAuth flows can never replace the original registration IP.
+	_, _ = r.sql.ExecContext(
+		ctx,
+		`UPDATE users
+		 SET registration_ip = $1,
+		     updated_at = NOW()
+		 WHERE id = $2
+		   AND registration_ip IS NULL`,
+		registrationIP,
+		userID,
+	)
 }
 
 func (r *userRepository) GetByID(ctx context.Context, id int64) (*service.User, error) {

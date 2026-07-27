@@ -16,6 +16,7 @@ const inputSchema = z.object({
 type Dependencies = {
   getAdapter(): Promise<RightTokenAdapter | null>;
   readCheckpoint(): Promise<Date | null>;
+  reconcile?: typeof reconcileRightTokenUsers;
   saveCheckpoint(
     checkpoint: Date,
     result: Awaited<ReturnType<typeof reconcileRightTokenUsers>>
@@ -94,12 +95,19 @@ export async function handleUserReconciliation(
       ? await deps.readCheckpoint()
       : null;
   try {
-    const result = await reconcileRightTokenUsers({
+    const reconcile = deps.reconcile ?? reconcileRightTokenUsers;
+    const result = await reconcile({
       adapter,
       scheduler,
       updatedAfter: updatedAfter ?? undefined,
+      maxPages: 10_000,
       now
     });
+    if (result.nextCursor) {
+      throw new Error(
+        "RIGHTTOKEN_RECONCILIATION_INCOMPLETE"
+      );
+    }
     await deps.saveCheckpoint(now, result);
     return { mode: input.mode, ...result };
   } catch (error) {

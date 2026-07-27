@@ -21,28 +21,22 @@ describe("MemberInviteForm", () => {
     vi.unstubAllGlobals();
   });
 
-  it("reauthenticates and creates an operator invitation", async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ reauthenticated: true })
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            invitationId: "invite-1",
-            token: "a-very-long-development-invitation-token",
+  it("grants access to a synchronized RightToken user", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          member: {
+            id: "member-1",
+            email: "operator@example.test",
             role: "OPERATOR",
-            expiresAt: "2026-07-26T10:00:00.000Z"
-          })
-      });
+            active: true
+          }
+        })
+    });
     vi.stubGlobal("fetch", fetchMock);
 
-    render(
-      <MemberInviteForm viewerRole="PRIMARY_ADMIN" twoFactorOn={false} />
-    );
+    render(<MemberInviteForm viewerRole="PRIMARY_ADMIN" />);
 
     fireEvent.change(screen.getByLabelText("成员邮箱"), {
       target: { value: "operator@example.test" }
@@ -50,41 +44,33 @@ describe("MemberInviteForm", () => {
     fireEvent.change(screen.getByLabelText("成员角色"), {
       target: { value: "OPERATOR" }
     });
-    fireEvent.change(screen.getByLabelText("当前账号密码"), {
-      target: { value: "DevelopmentOnlyPassword123!" }
-    });
-    fireEvent.click(screen.getByRole("button", { name: "创建邀请" }));
+    fireEvent.click(screen.getByRole("button", { name: "添加成员" }));
 
     await waitFor(() => {
       expect(
-        screen.getByText("邀请已创建，有效期 48 小时")
+        screen.getByText("成员权限已添加")
       ).toBeInTheDocument();
     });
     expect(fetchMock).toHaveBeenNthCalledWith(
       1,
-      "/api/auth/reauthenticate",
-      expect.objectContaining({ method: "POST" })
-    );
-    expect(fetchMock).toHaveBeenNthCalledWith(
-      2,
-      "/api/members/invitations",
+      "/api/members/access",
       expect.objectContaining({ method: "POST" })
     );
     expect(
-      screen.getByDisplayValue(
-        /\/members\/invitations\/accept\?token=a-very-long-development-invitation-token/
-      )
-    ).toBeInTheDocument();
+      screen.queryByLabelText("邀请链接")
+    ).not.toBeInTheDocument();
   });
 
-  it("only allows administrators to invite operators", () => {
-    render(<MemberInviteForm viewerRole="ADMIN" twoFactorOn={true} />);
+  it("only allows administrators to add operators", () => {
+    render(<MemberInviteForm viewerRole="ADMIN" />);
 
     const roleSelect = screen.getByLabelText("成员角色");
     expect(roleSelect).toHaveValue("OPERATOR");
     expect(
       screen.queryByRole("option", { name: "管理员" })
     ).not.toBeInTheDocument();
-    expect(screen.getByLabelText("二次验证码")).toBeInTheDocument();
+    expect(
+      screen.getByText("只能添加已经注册 RightToken 的用户")
+    ).toBeInTheDocument();
   });
 });

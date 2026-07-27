@@ -1,5 +1,6 @@
 import { Prisma, type SegmentCode } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
+import { assignUserOwnerInTransaction } from "@/modules/assignment/assign-task";
 import {
   assertMemberPermission,
   ForbiddenError
@@ -88,6 +89,7 @@ export async function createSegmentOverride(
         }
       });
       await resegmentUser(tx, user, "manual override created", now);
+      await assignUserOwnerInTransaction(tx, user.id, now);
       await tx.auditLog.create({
         data: {
           actorId: actor.id,
@@ -148,6 +150,7 @@ export async function revokeSegmentOverride(
         where: { id: override.userId }
       });
       await resegmentUser(tx, user, "manual override revoked", now);
+      await assignUserOwnerInTransaction(tx, user.id, now);
       await tx.auditLog.create({
         data: {
           actorId: actor.id,

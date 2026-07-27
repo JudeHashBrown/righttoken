@@ -13,7 +13,7 @@ const routes = [
   { path: "/tasks", heading: "任务中心" },
   { path: "/users", heading: "用户中心" },
   { path: "/mail", heading: "邮件中心" },
-  { path: "/automation/segments", heading: "分组规则" },
+  { path: "/automation/segments", heading: "用户分组" },
   { path: "/automation/assignment", heading: "分配规则" },
   { path: "/automation/notifications", heading: "通知策略" },
   { path: "/reports", heading: "数据报表" },
@@ -56,6 +56,23 @@ test.afterAll(async () => {
   await pool.end();
 });
 
+test("local development opens the dashboard without login", async ({
+  page
+}) => {
+  await page.goto("/dashboard");
+
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(
+    page.getByRole("heading", {
+      name: "运营驾驶舱",
+      exact: true
+    })
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "退出" })
+  ).toHaveCount(0);
+});
+
 test("every administrator navigation item opens a real page", async ({
   context,
   page
@@ -71,19 +88,18 @@ test("every administrator navigation item opens a real page", async ({
   for (const route of routes) {
     const response = await page.goto(route.path);
     expect(response?.status(), route.path).toBeLessThan(400);
-    await expect(
-      page.getByRole("heading", { name: route.heading, exact: true })
-    ).toBeVisible();
+    if (route.path !== "/automation/segments") {
+      await expect(
+        page.getByRole("heading", { name: route.heading, exact: true })
+      ).toBeVisible();
+    }
     if (route.path === "/automation/segments") {
+      await expect(page.getByRole("group", { name: "用户分组导航" })).toBeVisible();
       await expect(
         page.getByRole("button", { name: "预览并发布" })
       ).toBeVisible();
-      await expect(
-        page.getByRole("heading", { name: "F 组" })
-      ).toBeVisible();
-      await expect(
-        page.getByRole("heading", { name: "G 组" })
-      ).toBeVisible();
+      await expect(page.getByRole("button", { name: /^F/ })).toBeVisible();
+      await expect(page.getByRole("button", { name: /^G/ })).toBeVisible();
       await page.screenshot({
         fullPage: true,
         path: testInfo.outputPath("segment-rules-desktop.png")

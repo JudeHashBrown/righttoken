@@ -27,12 +27,14 @@ export type AggregateMember = {
 export type MemberMinAggregateOutputType = {
   id: string | null
   email: string | null
+  rightTokenUserId: string | null
   displayName: string | null
   passwordHash: string | null
   role: $Enums.MemberRole | null
   active: boolean | null
   twoFactorSecret: string | null
   twoFactorOn: boolean | null
+  wecomUserId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -40,12 +42,14 @@ export type MemberMinAggregateOutputType = {
 export type MemberMaxAggregateOutputType = {
   id: string | null
   email: string | null
+  rightTokenUserId: string | null
   displayName: string | null
   passwordHash: string | null
   role: $Enums.MemberRole | null
   active: boolean | null
   twoFactorSecret: string | null
   twoFactorOn: boolean | null
+  wecomUserId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -53,12 +57,14 @@ export type MemberMaxAggregateOutputType = {
 export type MemberCountAggregateOutputType = {
   id: number
   email: number
+  rightTokenUserId: number
   displayName: number
   passwordHash: number
   role: number
   active: number
   twoFactorSecret: number
   twoFactorOn: number
+  wecomUserId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -68,12 +74,14 @@ export type MemberCountAggregateOutputType = {
 export type MemberMinAggregateInputType = {
   id?: true
   email?: true
+  rightTokenUserId?: true
   displayName?: true
   passwordHash?: true
   role?: true
   active?: true
   twoFactorSecret?: true
   twoFactorOn?: true
+  wecomUserId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -81,12 +89,14 @@ export type MemberMinAggregateInputType = {
 export type MemberMaxAggregateInputType = {
   id?: true
   email?: true
+  rightTokenUserId?: true
   displayName?: true
   passwordHash?: true
   role?: true
   active?: true
   twoFactorSecret?: true
   twoFactorOn?: true
+  wecomUserId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -94,12 +104,14 @@ export type MemberMaxAggregateInputType = {
 export type MemberCountAggregateInputType = {
   id?: true
   email?: true
+  rightTokenUserId?: true
   displayName?: true
   passwordHash?: true
   role?: true
   active?: true
   twoFactorSecret?: true
   twoFactorOn?: true
+  wecomUserId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -180,12 +192,14 @@ export type MemberGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 export type MemberGroupByOutputType = {
   id: string
   email: string
+  rightTokenUserId: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active: boolean
   twoFactorSecret: string | null
   twoFactorOn: boolean
+  wecomUserId: string | null
   createdAt: Date
   updatedAt: Date
   _count: MemberCountAggregateOutputType | null
@@ -214,12 +228,14 @@ export type MemberWhereInput = {
   NOT?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[]
   id?: Prisma.StringFilter<"Member"> | string
   email?: Prisma.StringFilter<"Member"> | string
+  rightTokenUserId?: Prisma.StringNullableFilter<"Member"> | string | null
   displayName?: Prisma.StringFilter<"Member"> | string
   passwordHash?: Prisma.StringFilter<"Member"> | string
   role?: Prisma.EnumMemberRoleFilter<"Member"> | $Enums.MemberRole
   active?: Prisma.BoolFilter<"Member"> | boolean
   twoFactorSecret?: Prisma.StringNullableFilter<"Member"> | string | null
   twoFactorOn?: Prisma.BoolFilter<"Member"> | boolean
+  wecomUserId?: Prisma.StringNullableFilter<"Member"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Member"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Member"> | Date | string
   sessions?: Prisma.SessionListRelationFilter
@@ -230,17 +246,21 @@ export type MemberWhereInput = {
   recoveryCodes?: Prisma.RecoveryCodeListRelationFilter
   reviewedMailMessages?: Prisma.MailMessageListRelationFilter
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunListRelationFilter
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunListRelationFilter
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunListRelationFilter
 }
 
 export type MemberOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  rightTokenUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   displayName?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   active?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
   twoFactorOn?: Prisma.SortOrder
+  wecomUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   sessions?: Prisma.SessionOrderByRelationAggregateInput
@@ -251,11 +271,15 @@ export type MemberOrderByWithRelationInput = {
   recoveryCodes?: Prisma.RecoveryCodeOrderByRelationAggregateInput
   reviewedMailMessages?: Prisma.MailMessageOrderByRelationAggregateInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunOrderByRelationAggregateInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunOrderByRelationAggregateInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunOrderByRelationAggregateInput
 }
 
 export type MemberWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   email?: string
+  rightTokenUserId?: string
+  wecomUserId?: string
   AND?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[]
   OR?: Prisma.MemberWhereInput[]
   NOT?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[]
@@ -275,17 +299,21 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<{
   recoveryCodes?: Prisma.RecoveryCodeListRelationFilter
   reviewedMailMessages?: Prisma.MailMessageListRelationFilter
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunListRelationFilter
-}, "id" | "email">
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunListRelationFilter
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunListRelationFilter
+}, "id" | "email" | "rightTokenUserId" | "wecomUserId">
 
 export type MemberOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  rightTokenUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   displayName?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   active?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
   twoFactorOn?: Prisma.SortOrder
+  wecomUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.MemberCountOrderByAggregateInput
@@ -299,12 +327,14 @@ export type MemberScalarWhereWithAggregatesInput = {
   NOT?: Prisma.MemberScalarWhereWithAggregatesInput | Prisma.MemberScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Member"> | string
   email?: Prisma.StringWithAggregatesFilter<"Member"> | string
+  rightTokenUserId?: Prisma.StringNullableWithAggregatesFilter<"Member"> | string | null
   displayName?: Prisma.StringWithAggregatesFilter<"Member"> | string
   passwordHash?: Prisma.StringWithAggregatesFilter<"Member"> | string
   role?: Prisma.EnumMemberRoleWithAggregatesFilter<"Member"> | $Enums.MemberRole
   active?: Prisma.BoolWithAggregatesFilter<"Member"> | boolean
   twoFactorSecret?: Prisma.StringNullableWithAggregatesFilter<"Member"> | string | null
   twoFactorOn?: Prisma.BoolWithAggregatesFilter<"Member"> | boolean
+  wecomUserId?: Prisma.StringNullableWithAggregatesFilter<"Member"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Member"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Member"> | Date | string
 }
@@ -312,12 +342,14 @@ export type MemberScalarWhereWithAggregatesInput = {
 export type MemberCreateInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutMemberInput
@@ -328,17 +360,21 @@ export type MemberCreateInput = {
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutMemberInput
@@ -349,17 +385,21 @@ export type MemberUncheckedCreateInput = {
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutMemberNestedInput
@@ -370,17 +410,21 @@ export type MemberUpdateInput = {
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
@@ -391,17 +435,21 @@ export type MemberUncheckedUpdateInput = {
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberCreateManyInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -409,12 +457,14 @@ export type MemberCreateManyInput = {
 export type MemberUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -422,12 +472,14 @@ export type MemberUpdateManyMutationInput = {
 export type MemberUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -435,12 +487,14 @@ export type MemberUncheckedUpdateManyInput = {
 export type MemberCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  rightTokenUserId?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   active?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrder
   twoFactorOn?: Prisma.SortOrder
+  wecomUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -448,12 +502,14 @@ export type MemberCountOrderByAggregateInput = {
 export type MemberMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  rightTokenUserId?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   active?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrder
   twoFactorOn?: Prisma.SortOrder
+  wecomUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -461,12 +517,14 @@ export type MemberMaxOrderByAggregateInput = {
 export type MemberMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  rightTokenUserId?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   active?: Prisma.SortOrder
   twoFactorSecret?: Prisma.SortOrder
   twoFactorOn?: Prisma.SortOrder
+  wecomUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -485,16 +543,16 @@ export type StringFieldUpdateOperationsInput = {
   set?: string
 }
 
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
 export type EnumMemberRoleFieldUpdateOperationsInput = {
   set?: $Enums.MemberRole
 }
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -557,6 +615,34 @@ export type MemberUpdateOneRequiredWithoutSegmentRecalculationRunsNestedInput = 
   upsert?: Prisma.MemberUpsertWithoutSegmentRecalculationRunsInput
   connect?: Prisma.MemberWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.MemberUpdateToOneWithWhereWithoutSegmentRecalculationRunsInput, Prisma.MemberUpdateWithoutSegmentRecalculationRunsInput>, Prisma.MemberUncheckedUpdateWithoutSegmentRecalculationRunsInput>
+}
+
+export type MemberCreateNestedOneWithoutAssignmentRecalculationRunsInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutAssignmentRecalculationRunsInput, Prisma.MemberUncheckedCreateWithoutAssignmentRecalculationRunsInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutAssignmentRecalculationRunsInput
+  connect?: Prisma.MemberWhereUniqueInput
+}
+
+export type MemberUpdateOneRequiredWithoutAssignmentRecalculationRunsNestedInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutAssignmentRecalculationRunsInput, Prisma.MemberUncheckedCreateWithoutAssignmentRecalculationRunsInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutAssignmentRecalculationRunsInput
+  upsert?: Prisma.MemberUpsertWithoutAssignmentRecalculationRunsInput
+  connect?: Prisma.MemberWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MemberUpdateToOneWithWhereWithoutAssignmentRecalculationRunsInput, Prisma.MemberUpdateWithoutAssignmentRecalculationRunsInput>, Prisma.MemberUncheckedUpdateWithoutAssignmentRecalculationRunsInput>
+}
+
+export type MemberCreateNestedOneWithoutLocationRecalculationRunsInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutLocationRecalculationRunsInput, Prisma.MemberUncheckedCreateWithoutLocationRecalculationRunsInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutLocationRecalculationRunsInput
+  connect?: Prisma.MemberWhereUniqueInput
+}
+
+export type MemberUpdateOneRequiredWithoutLocationRecalculationRunsNestedInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutLocationRecalculationRunsInput, Prisma.MemberUncheckedCreateWithoutLocationRecalculationRunsInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutLocationRecalculationRunsInput
+  upsert?: Prisma.MemberUpsertWithoutLocationRecalculationRunsInput
+  connect?: Prisma.MemberWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MemberUpdateToOneWithWhereWithoutLocationRecalculationRunsInput, Prisma.MemberUpdateWithoutLocationRecalculationRunsInput>, Prisma.MemberUncheckedUpdateWithoutLocationRecalculationRunsInput>
 }
 
 export type MemberCreateNestedOneWithoutAssignedTasksInput = {
@@ -624,12 +710,14 @@ export type MemberUpdateOneWithoutReviewedMailMessagesNestedInput = {
 export type MemberCreateWithoutSessionsInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedTasks?: Prisma.RecallTaskCreateNestedManyWithoutAssigneeInput
@@ -639,17 +727,21 @@ export type MemberCreateWithoutSessionsInput = {
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutSessionsInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignedTasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutAssigneeInput
@@ -659,6 +751,8 @@ export type MemberUncheckedCreateWithoutSessionsInput = {
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutSessionsInput = {
@@ -680,12 +774,14 @@ export type MemberUpdateToOneWithWhereWithoutSessionsInput = {
 export type MemberUpdateWithoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedTasks?: Prisma.RecallTaskUpdateManyWithoutAssigneeNestedInput
@@ -695,17 +791,21 @@ export type MemberUpdateWithoutSessionsInput = {
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedTasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -715,17 +815,21 @@ export type MemberUncheckedUpdateWithoutSessionsInput = {
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberCreateWithoutOwnedUsersInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutMemberInput
@@ -735,17 +839,21 @@ export type MemberCreateWithoutOwnedUsersInput = {
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutOwnedUsersInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutMemberInput
@@ -755,6 +863,8 @@ export type MemberUncheckedCreateWithoutOwnedUsersInput = {
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutOwnedUsersInput = {
@@ -776,12 +886,14 @@ export type MemberUpdateToOneWithWhereWithoutOwnedUsersInput = {
 export type MemberUpdateWithoutOwnedUsersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutMemberNestedInput
@@ -791,17 +903,21 @@ export type MemberUpdateWithoutOwnedUsersInput = {
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutOwnedUsersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
@@ -811,17 +927,21 @@ export type MemberUncheckedUpdateWithoutOwnedUsersInput = {
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberCreateWithoutNotesInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutMemberInput
@@ -831,17 +951,21 @@ export type MemberCreateWithoutNotesInput = {
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutNotesInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutMemberInput
@@ -851,6 +975,8 @@ export type MemberUncheckedCreateWithoutNotesInput = {
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutNotesInput = {
@@ -872,12 +998,14 @@ export type MemberUpdateToOneWithWhereWithoutNotesInput = {
 export type MemberUpdateWithoutNotesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutMemberNestedInput
@@ -887,17 +1015,21 @@ export type MemberUpdateWithoutNotesInput = {
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutNotesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
@@ -907,17 +1039,21 @@ export type MemberUncheckedUpdateWithoutNotesInput = {
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberCreateWithoutSegmentRecalculationRunsInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutMemberInput
@@ -927,17 +1063,21 @@ export type MemberCreateWithoutSegmentRecalculationRunsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutSegmentRecalculationRunsInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutMemberInput
@@ -947,6 +1087,8 @@ export type MemberUncheckedCreateWithoutSegmentRecalculationRunsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutSegmentRecalculationRunsInput = {
@@ -968,12 +1110,14 @@ export type MemberUpdateToOneWithWhereWithoutSegmentRecalculationRunsInput = {
 export type MemberUpdateWithoutSegmentRecalculationRunsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutMemberNestedInput
@@ -983,17 +1127,21 @@ export type MemberUpdateWithoutSegmentRecalculationRunsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutSegmentRecalculationRunsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
@@ -1003,17 +1151,245 @@ export type MemberUncheckedUpdateWithoutSegmentRecalculationRunsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
-export type MemberCreateWithoutAssignedTasksInput = {
+export type MemberCreateWithoutAssignmentRecalculationRunsInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutMemberInput
+  assignedTasks?: Prisma.RecallTaskCreateNestedManyWithoutAssigneeInput
+  ownedUsers?: Prisma.UserProfileCreateNestedManyWithoutOwnerInput
+  notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
+}
+
+export type MemberUncheckedCreateWithoutAssignmentRecalculationRunsInput = {
+  id?: string
+  email: string
+  rightTokenUserId?: string | null
+  displayName: string
+  passwordHash: string
+  role: $Enums.MemberRole
+  active?: boolean
+  twoFactorSecret?: string | null
+  twoFactorOn?: boolean
+  wecomUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutMemberInput
+  assignedTasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutAssigneeInput
+  ownedUsers?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerInput
+  notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+}
+
+export type MemberCreateOrConnectWithoutAssignmentRecalculationRunsInput = {
+  where: Prisma.MemberWhereUniqueInput
+  create: Prisma.XOR<Prisma.MemberCreateWithoutAssignmentRecalculationRunsInput, Prisma.MemberUncheckedCreateWithoutAssignmentRecalculationRunsInput>
+}
+
+export type MemberUpsertWithoutAssignmentRecalculationRunsInput = {
+  update: Prisma.XOR<Prisma.MemberUpdateWithoutAssignmentRecalculationRunsInput, Prisma.MemberUncheckedUpdateWithoutAssignmentRecalculationRunsInput>
+  create: Prisma.XOR<Prisma.MemberCreateWithoutAssignmentRecalculationRunsInput, Prisma.MemberUncheckedCreateWithoutAssignmentRecalculationRunsInput>
+  where?: Prisma.MemberWhereInput
+}
+
+export type MemberUpdateToOneWithWhereWithoutAssignmentRecalculationRunsInput = {
+  where?: Prisma.MemberWhereInput
+  data: Prisma.XOR<Prisma.MemberUpdateWithoutAssignmentRecalculationRunsInput, Prisma.MemberUncheckedUpdateWithoutAssignmentRecalculationRunsInput>
+}
+
+export type MemberUpdateWithoutAssignmentRecalculationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutMemberNestedInput
+  assignedTasks?: Prisma.RecallTaskUpdateManyWithoutAssigneeNestedInput
+  ownedUsers?: Prisma.UserProfileUpdateManyWithoutOwnerNestedInput
+  notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
+}
+
+export type MemberUncheckedUpdateWithoutAssignmentRecalculationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
+  assignedTasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  ownedUsers?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerNestedInput
+  notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+}
+
+export type MemberCreateWithoutLocationRecalculationRunsInput = {
+  id?: string
+  email: string
+  rightTokenUserId?: string | null
+  displayName: string
+  passwordHash: string
+  role: $Enums.MemberRole
+  active?: boolean
+  twoFactorSecret?: string | null
+  twoFactorOn?: boolean
+  wecomUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutMemberInput
+  assignedTasks?: Prisma.RecallTaskCreateNestedManyWithoutAssigneeInput
+  ownedUsers?: Prisma.UserProfileCreateNestedManyWithoutOwnerInput
+  notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
+}
+
+export type MemberUncheckedCreateWithoutLocationRecalculationRunsInput = {
+  id?: string
+  email: string
+  rightTokenUserId?: string | null
+  displayName: string
+  passwordHash: string
+  role: $Enums.MemberRole
+  active?: boolean
+  twoFactorSecret?: string | null
+  twoFactorOn?: boolean
+  wecomUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutMemberInput
+  assignedTasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutAssigneeInput
+  ownedUsers?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerInput
+  notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+}
+
+export type MemberCreateOrConnectWithoutLocationRecalculationRunsInput = {
+  where: Prisma.MemberWhereUniqueInput
+  create: Prisma.XOR<Prisma.MemberCreateWithoutLocationRecalculationRunsInput, Prisma.MemberUncheckedCreateWithoutLocationRecalculationRunsInput>
+}
+
+export type MemberUpsertWithoutLocationRecalculationRunsInput = {
+  update: Prisma.XOR<Prisma.MemberUpdateWithoutLocationRecalculationRunsInput, Prisma.MemberUncheckedUpdateWithoutLocationRecalculationRunsInput>
+  create: Prisma.XOR<Prisma.MemberCreateWithoutLocationRecalculationRunsInput, Prisma.MemberUncheckedCreateWithoutLocationRecalculationRunsInput>
+  where?: Prisma.MemberWhereInput
+}
+
+export type MemberUpdateToOneWithWhereWithoutLocationRecalculationRunsInput = {
+  where?: Prisma.MemberWhereInput
+  data: Prisma.XOR<Prisma.MemberUpdateWithoutLocationRecalculationRunsInput, Prisma.MemberUncheckedUpdateWithoutLocationRecalculationRunsInput>
+}
+
+export type MemberUpdateWithoutLocationRecalculationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutMemberNestedInput
+  assignedTasks?: Prisma.RecallTaskUpdateManyWithoutAssigneeNestedInput
+  ownedUsers?: Prisma.UserProfileUpdateManyWithoutOwnerNestedInput
+  notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
+}
+
+export type MemberUncheckedUpdateWithoutLocationRecalculationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
+  assignedTasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  ownedUsers?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerNestedInput
+  notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+}
+
+export type MemberCreateWithoutAssignedTasksInput = {
+  id?: string
+  email: string
+  rightTokenUserId?: string | null
+  displayName: string
+  passwordHash: string
+  role: $Enums.MemberRole
+  active?: boolean
+  twoFactorSecret?: string | null
+  twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutMemberInput
@@ -1023,17 +1399,21 @@ export type MemberCreateWithoutAssignedTasksInput = {
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutAssignedTasksInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutMemberInput
@@ -1043,6 +1423,8 @@ export type MemberUncheckedCreateWithoutAssignedTasksInput = {
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutAssignedTasksInput = {
@@ -1064,12 +1446,14 @@ export type MemberUpdateToOneWithWhereWithoutAssignedTasksInput = {
 export type MemberUpdateWithoutAssignedTasksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutMemberNestedInput
@@ -1079,17 +1463,21 @@ export type MemberUpdateWithoutAssignedTasksInput = {
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutAssignedTasksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
@@ -1099,17 +1487,21 @@ export type MemberUncheckedUpdateWithoutAssignedTasksInput = {
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberCreateWithoutAuditLogsInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutMemberInput
@@ -1119,17 +1511,21 @@ export type MemberCreateWithoutAuditLogsInput = {
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutAuditLogsInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutMemberInput
@@ -1139,6 +1535,8 @@ export type MemberUncheckedCreateWithoutAuditLogsInput = {
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutAuditLogsInput = {
@@ -1160,12 +1558,14 @@ export type MemberUpdateToOneWithWhereWithoutAuditLogsInput = {
 export type MemberUpdateWithoutAuditLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutMemberNestedInput
@@ -1175,17 +1575,21 @@ export type MemberUpdateWithoutAuditLogsInput = {
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutAuditLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
@@ -1195,17 +1599,21 @@ export type MemberUncheckedUpdateWithoutAuditLogsInput = {
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberCreateWithoutRecoveryCodesInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutMemberInput
@@ -1215,17 +1623,21 @@ export type MemberCreateWithoutRecoveryCodesInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutRecoveryCodesInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutMemberInput
@@ -1235,6 +1647,8 @@ export type MemberUncheckedCreateWithoutRecoveryCodesInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutRecoveryCodesInput = {
@@ -1256,12 +1670,14 @@ export type MemberUpdateToOneWithWhereWithoutRecoveryCodesInput = {
 export type MemberUpdateWithoutRecoveryCodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutMemberNestedInput
@@ -1271,17 +1687,21 @@ export type MemberUpdateWithoutRecoveryCodesInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutRecoveryCodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
@@ -1291,17 +1711,21 @@ export type MemberUncheckedUpdateWithoutRecoveryCodesInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberCreateWithoutReviewedMailMessagesInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutMemberInput
@@ -1311,17 +1735,21 @@ export type MemberCreateWithoutReviewedMailMessagesInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberUncheckedCreateWithoutReviewedMailMessagesInput = {
   id?: string
   email: string
+  rightTokenUserId?: string | null
   displayName: string
   passwordHash: string
   role: $Enums.MemberRole
   active?: boolean
   twoFactorSecret?: string | null
   twoFactorOn?: boolean
+  wecomUserId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutMemberInput
@@ -1331,6 +1759,8 @@ export type MemberUncheckedCreateWithoutReviewedMailMessagesInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type MemberCreateOrConnectWithoutReviewedMailMessagesInput = {
@@ -1352,12 +1782,14 @@ export type MemberUpdateToOneWithWhereWithoutReviewedMailMessagesInput = {
 export type MemberUpdateWithoutReviewedMailMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutMemberNestedInput
@@ -1367,17 +1799,21 @@ export type MemberUpdateWithoutReviewedMailMessagesInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutReviewedMailMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
@@ -1387,6 +1823,8 @@ export type MemberUncheckedUpdateWithoutReviewedMailMessagesInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
   recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
   segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 
@@ -1403,6 +1841,8 @@ export type MemberCountOutputType = {
   recoveryCodes: number
   reviewedMailMessages: number
   segmentRecalculationRuns: number
+  locationRecalculationRuns: number
+  assignmentRecalculationRuns: number
 }
 
 export type MemberCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1414,6 +1854,8 @@ export type MemberCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   recoveryCodes?: boolean | MemberCountOutputTypeCountRecoveryCodesArgs
   reviewedMailMessages?: boolean | MemberCountOutputTypeCountReviewedMailMessagesArgs
   segmentRecalculationRuns?: boolean | MemberCountOutputTypeCountSegmentRecalculationRunsArgs
+  locationRecalculationRuns?: boolean | MemberCountOutputTypeCountLocationRecalculationRunsArgs
+  assignmentRecalculationRuns?: boolean | MemberCountOutputTypeCountAssignmentRecalculationRunsArgs
 }
 
 /**
@@ -1482,16 +1924,32 @@ export type MemberCountOutputTypeCountSegmentRecalculationRunsArgs<ExtArgs exten
   where?: Prisma.SegmentRecalculationRunWhereInput
 }
 
+/**
+ * MemberCountOutputType without action
+ */
+export type MemberCountOutputTypeCountLocationRecalculationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LocationRecalculationRunWhereInput
+}
+
+/**
+ * MemberCountOutputType without action
+ */
+export type MemberCountOutputTypeCountAssignmentRecalculationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssignmentRecalculationRunWhereInput
+}
+
 
 export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
+  rightTokenUserId?: boolean
   displayName?: boolean
   passwordHash?: boolean
   role?: boolean
   active?: boolean
   twoFactorSecret?: boolean
   twoFactorOn?: boolean
+  wecomUserId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   sessions?: boolean | Prisma.Member$sessionsArgs<ExtArgs>
@@ -1502,18 +1960,22 @@ export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   recoveryCodes?: boolean | Prisma.Member$recoveryCodesArgs<ExtArgs>
   reviewedMailMessages?: boolean | Prisma.Member$reviewedMailMessagesArgs<ExtArgs>
   segmentRecalculationRuns?: boolean | Prisma.Member$segmentRecalculationRunsArgs<ExtArgs>
+  locationRecalculationRuns?: boolean | Prisma.Member$locationRecalculationRunsArgs<ExtArgs>
+  assignmentRecalculationRuns?: boolean | Prisma.Member$assignmentRecalculationRunsArgs<ExtArgs>
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["member"]>
 
 export type MemberSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
+  rightTokenUserId?: boolean
   displayName?: boolean
   passwordHash?: boolean
   role?: boolean
   active?: boolean
   twoFactorSecret?: boolean
   twoFactorOn?: boolean
+  wecomUserId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["member"]>
@@ -1521,12 +1983,14 @@ export type MemberSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
 export type MemberSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
+  rightTokenUserId?: boolean
   displayName?: boolean
   passwordHash?: boolean
   role?: boolean
   active?: boolean
   twoFactorSecret?: boolean
   twoFactorOn?: boolean
+  wecomUserId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["member"]>
@@ -1534,17 +1998,19 @@ export type MemberSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
 export type MemberSelectScalar = {
   id?: boolean
   email?: boolean
+  rightTokenUserId?: boolean
   displayName?: boolean
   passwordHash?: boolean
   role?: boolean
   active?: boolean
   twoFactorSecret?: boolean
   twoFactorOn?: boolean
+  wecomUserId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type MemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "displayName" | "passwordHash" | "role" | "active" | "twoFactorSecret" | "twoFactorOn" | "createdAt" | "updatedAt", ExtArgs["result"]["member"]>
+export type MemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "rightTokenUserId" | "displayName" | "passwordHash" | "role" | "active" | "twoFactorSecret" | "twoFactorOn" | "wecomUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["member"]>
 export type MemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.Member$sessionsArgs<ExtArgs>
   assignedTasks?: boolean | Prisma.Member$assignedTasksArgs<ExtArgs>
@@ -1554,6 +2020,8 @@ export type MemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   recoveryCodes?: boolean | Prisma.Member$recoveryCodesArgs<ExtArgs>
   reviewedMailMessages?: boolean | Prisma.Member$reviewedMailMessagesArgs<ExtArgs>
   segmentRecalculationRuns?: boolean | Prisma.Member$segmentRecalculationRunsArgs<ExtArgs>
+  locationRecalculationRuns?: boolean | Prisma.Member$locationRecalculationRunsArgs<ExtArgs>
+  assignmentRecalculationRuns?: boolean | Prisma.Member$assignmentRecalculationRunsArgs<ExtArgs>
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MemberIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1570,16 +2038,20 @@ export type $MemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     recoveryCodes: Prisma.$RecoveryCodePayload<ExtArgs>[]
     reviewedMailMessages: Prisma.$MailMessagePayload<ExtArgs>[]
     segmentRecalculationRuns: Prisma.$SegmentRecalculationRunPayload<ExtArgs>[]
+    locationRecalculationRuns: Prisma.$LocationRecalculationRunPayload<ExtArgs>[]
+    assignmentRecalculationRuns: Prisma.$AssignmentRecalculationRunPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     email: string
+    rightTokenUserId: string | null
     displayName: string
     passwordHash: string
     role: $Enums.MemberRole
     active: boolean
     twoFactorSecret: string | null
     twoFactorOn: boolean
+    wecomUserId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["member"]>
@@ -1984,6 +2456,8 @@ export interface Prisma__MemberClient<T, Null = never, ExtArgs extends runtime.T
   recoveryCodes<T extends Prisma.Member$recoveryCodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$recoveryCodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecoveryCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviewedMailMessages<T extends Prisma.Member$reviewedMailMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$reviewedMailMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   segmentRecalculationRuns<T extends Prisma.Member$segmentRecalculationRunsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$segmentRecalculationRunsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SegmentRecalculationRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  locationRecalculationRuns<T extends Prisma.Member$locationRecalculationRunsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$locationRecalculationRunsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LocationRecalculationRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  assignmentRecalculationRuns<T extends Prisma.Member$assignmentRecalculationRunsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$assignmentRecalculationRunsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentRecalculationRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2015,12 +2489,14 @@ export interface Prisma__MemberClient<T, Null = never, ExtArgs extends runtime.T
 export interface MemberFieldRefs {
   readonly id: Prisma.FieldRef<"Member", 'String'>
   readonly email: Prisma.FieldRef<"Member", 'String'>
+  readonly rightTokenUserId: Prisma.FieldRef<"Member", 'String'>
   readonly displayName: Prisma.FieldRef<"Member", 'String'>
   readonly passwordHash: Prisma.FieldRef<"Member", 'String'>
   readonly role: Prisma.FieldRef<"Member", 'MemberRole'>
   readonly active: Prisma.FieldRef<"Member", 'Boolean'>
   readonly twoFactorSecret: Prisma.FieldRef<"Member", 'String'>
   readonly twoFactorOn: Prisma.FieldRef<"Member", 'Boolean'>
+  readonly wecomUserId: Prisma.FieldRef<"Member", 'String'>
   readonly createdAt: Prisma.FieldRef<"Member", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Member", 'DateTime'>
 }
@@ -2605,6 +3081,54 @@ export type Member$segmentRecalculationRunsArgs<ExtArgs extends runtime.Types.Ex
   take?: number
   skip?: number
   distinct?: Prisma.SegmentRecalculationRunScalarFieldEnum | Prisma.SegmentRecalculationRunScalarFieldEnum[]
+}
+
+/**
+ * Member.locationRecalculationRuns
+ */
+export type Member$locationRecalculationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LocationRecalculationRun
+   */
+  select?: Prisma.LocationRecalculationRunSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LocationRecalculationRun
+   */
+  omit?: Prisma.LocationRecalculationRunOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LocationRecalculationRunInclude<ExtArgs> | null
+  where?: Prisma.LocationRecalculationRunWhereInput
+  orderBy?: Prisma.LocationRecalculationRunOrderByWithRelationInput | Prisma.LocationRecalculationRunOrderByWithRelationInput[]
+  cursor?: Prisma.LocationRecalculationRunWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LocationRecalculationRunScalarFieldEnum | Prisma.LocationRecalculationRunScalarFieldEnum[]
+}
+
+/**
+ * Member.assignmentRecalculationRuns
+ */
+export type Member$assignmentRecalculationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssignmentRecalculationRun
+   */
+  select?: Prisma.AssignmentRecalculationRunSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssignmentRecalculationRun
+   */
+  omit?: Prisma.AssignmentRecalculationRunOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssignmentRecalculationRunInclude<ExtArgs> | null
+  where?: Prisma.AssignmentRecalculationRunWhereInput
+  orderBy?: Prisma.AssignmentRecalculationRunOrderByWithRelationInput | Prisma.AssignmentRecalculationRunOrderByWithRelationInput[]
+  cursor?: Prisma.AssignmentRecalculationRunWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssignmentRecalculationRunScalarFieldEnum | Prisma.AssignmentRecalculationRunScalarFieldEnum[]
 }
 
 /**

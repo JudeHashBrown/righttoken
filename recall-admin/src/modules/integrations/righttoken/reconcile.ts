@@ -3,11 +3,16 @@ import { Prisma, type UserProfile } from "@/generated/prisma/client";
 import { createFieldCipher } from "@/lib/crypto/field-encryption";
 import { prisma } from "@/lib/db/prisma";
 import type { TransactionClient } from "@/lib/db/transaction";
+import { createGeoIpResolver } from "@/modules/geoip/http-resolver";
+import type { GeoIpResolver } from "@/modules/geoip/types";
+import { assignUserOwnerInTransaction } from "@/modules/assignment/assign-task";
 import {
   rightTokenUserSnapshotSchema,
   type RightTokenAdapter,
   type RightTokenUserSnapshot
 } from "@/modules/integrations/righttoken/adapter";
+import type { AttributionResult } from "@/modules/location/attribution";
+import type { LocationRule } from "@/modules/location/email-domain";
 import { getNextRuleBoundary } from "@/modules/segmentation/next-rule-boundary";
 import { resegmentUser } from "@/modules/segmentation/resegment-user";
 import { loadActiveSegmentRuleSet } from "@/modules/segmentation/rule-config";
@@ -16,6 +21,7 @@ import {
   type SegmentCheckSchedule,
   type TaskScheduler
 } from "@/modules/tasks/scheduler";
+import { resolveRegistrationAttribution } from "@/modules/users/registration-attribution";
 
 export type ReconciliationResult = {
   scanned: number;
@@ -94,9 +100,30 @@ function sourceFacts(snapshot: RightTokenUserSnapshot) {
   };
 }
 
+type AttributedSnapshot = {
+  snapshot: RightTokenUserSnapshot;
+  location: AttributionResult;
+};
+
+function attributedSourceFacts(
+  attributed: AttributedSnapshot,
+  now: Date
+) {
+  return {
+    ...sourceFacts(attributed.snapshot),
+    countryCode: attributed.location.countryCode,
+    region: attributed.location.region,
+    ipCountryCode: attributed.location.ipCountryCode,
+    ipRegion: attributed.location.ipRegion,
+    locationSource: attributed.location.source,
+    locationRuleId: attributed.location.ruleId,
+    locationEvaluatedAt: now
+  };
+}
+
 async function reconcilePage(
   tx: TransactionClient,
-  snapshots: RightTokenUserSnapshot[],
+  snapshots: AttributedSnapshot[],
   now: Date
 ): Promise<PageOutcome> {
   const outcome: PageOutcome = {
@@ -107,7 +134,8 @@ async function reconcilePage(
     schedules: []
   };
 
-  for (const snapshot of snapshots) {
+  for (const attributed of snapshots) {
+    const { snapshot } = attributed;
     await tx.$queryRaw(
       Prisma.sql`
         SELECT pg_advisory_xact_lock(
@@ -122,6 +150,7 @@ async function reconcilePage(
       existing?.lastExternalEventAt &&
       snapshot.updatedAt <= existing.lastExternalEventAt
     ) {
+      await assignUserOwnerInTransaction(tx, existing.id, now);
       outcome.unchanged += 1;
       continue;
     }
@@ -130,7 +159,7 @@ async function reconcilePage(
     if (existing) {
       user = await tx.userProfile.update({
         where: { id: existing.id },
-        data: sourceFacts(snapshot)
+        data: attributedSourceFacts(attributed, now)
       });
       outcome.updated += 1;
     } else {
@@ -138,7 +167,7 @@ async function reconcilePage(
         data: {
           externalUserId: snapshot.externalUserId,
           currentSegment: "A",
-          ...sourceFacts(snapshot)
+          ...attributedSourceFacts(attributed, now)
         }
       });
       outcome.inserted += 1;
@@ -153,6 +182,10 @@ async function reconcilePage(
     if (segmentChange.changed) {
       outcome.segmentChanges += 1;
     }
+    await assignUserOwnerInTransaction(tx, user.id, now);
+    user = await tx.userProfile.findUniqueOrThrow({
+      where: { id: user.id }
+    });
     const { config, version } = await loadActiveSegmentRuleSet(tx);
     const boundary = getNextRuleBoundary(user, config, version, now);
     if (boundary) {
@@ -173,11 +206,27 @@ export async function reconcileRightTokenUsers(input: {
   pageSize?: number;
   maxPages?: number;
   now?: Date;
+  geoIpResolver?: GeoIpResolver;
 }): Promise<ReconciliationResult> {
   const scheduler = input.scheduler ?? noopTaskScheduler;
   const pageSize = Math.min(500, Math.max(1, input.pageSize ?? 200));
   const maxPages = Math.max(1, input.maxPages ?? 100);
   const now = input.now ?? new Date();
+  const geoIpResolver =
+    input.geoIpResolver ?? createGeoIpResolver();
+  const locationRules: LocationRule[] =
+    await prisma.locationAttributionRule.findMany({
+      where: { enabled: true },
+      orderBy: { priority: "asc" },
+      select: {
+        id: true,
+        enabled: true,
+        priority: true,
+        matchType: true,
+        pattern: true,
+        countryCode: true
+      }
+    });
   let cursor = input.cursor;
   const result: ReconciliationResult = {
     scanned: 0,
@@ -206,9 +255,24 @@ export async function reconcileRightTokenUsers(input: {
         result.isolated += 1;
       }
     }
+    const attributedSnapshots = await Promise.all(
+      validSnapshots.map(async (snapshot) => ({
+        snapshot,
+        location: await resolveRegistrationAttribution(
+          {
+            email: snapshot.email,
+            registration_ip: snapshot.registrationIp ?? undefined,
+            country_code: snapshot.countryCode ?? undefined,
+            region: snapshot.region ?? undefined
+          },
+          geoIpResolver,
+          locationRules
+        )
+      }))
+    );
 
     const pageOutcome = await prisma.$transaction((tx) =>
-      reconcilePage(tx, validSnapshots, now)
+      reconcilePage(tx, attributedSnapshots, now)
     );
     result.inserted += pageOutcome.inserted;
     result.updated += pageOutcome.updated;

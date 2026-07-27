@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { hashPassword as defaultHashPassword } from "@/modules/auth/password";
 
 type PrimaryAdminRecord = {
   id: string;
@@ -22,7 +21,6 @@ export interface PrimaryAdminStore {
 
 type BootstrapDependencies = {
   store: PrimaryAdminStore;
-  hashPassword(password: string): Promise<string>;
 };
 
 const bootstrapInputSchema = z.object({
@@ -31,7 +29,6 @@ const bootstrapInputSchema = z.object({
     .trim()
     .email()
     .transform((value) => value.toLowerCase()),
-  password: z.string().min(12),
   displayName: z.string().trim().min(1).max(120).default("主管理员")
 });
 
@@ -70,15 +67,13 @@ async function getDefaultDependencies(): Promise<BootstrapDependencies> {
           },
           select: { id: true }
         })
-    },
-    hashPassword: defaultHashPassword
+    }
   };
 }
 
 export async function bootstrapPrimaryAdmin(
   input: {
     email: string;
-    password: string;
     displayName?: string;
   },
   dependencies?: BootstrapDependencies
@@ -105,13 +100,10 @@ export async function bootstrapPrimaryAdmin(
 
   const existingMember =
     await resolvedDependencies.store.findMemberByEmail(parsed.email);
-  const passwordHash = await resolvedDependencies.hashPassword(
-    parsed.password
-  );
   const member = await resolvedDependencies.store.upsertPrimaryAdmin({
     email: parsed.email,
     displayName: parsed.displayName,
-    passwordHash
+    passwordHash: "RIGHTTOKEN_MANAGED_IDENTITY"
   });
 
   return {

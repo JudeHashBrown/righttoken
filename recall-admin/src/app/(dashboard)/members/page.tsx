@@ -1,5 +1,7 @@
 import styles from "@/components/workspaces/workspace.module.css";
 import { MemberInviteForm } from "@/components/members/member-invite-form";
+import { MemberAccessActions } from "@/components/members/member-access-actions";
+import { MemberWecomMappingForm } from "@/components/members/member-wecom-mapping-form";
 import { requireAdministrator } from "@/modules/admin/page-access";
 import { getMemberWorkspaceOverview } from "@/modules/admin/workspace-queries";
 
@@ -18,7 +20,7 @@ export default async function MembersPage(): Promise<React.JSX.Element> {
       <header className={styles.heading}>
         <div>
           <h1>成员与权限</h1>
-          <p>查看管理员、运营人员、二次验证和当前工作负载。</p>
+          <p>授权主站用户进入召回后台，并管理管理员和运营人员权限。</p>
         </div>
         <span className={styles.statusGood}>
           {roleLabels[viewer.role]}
@@ -45,25 +47,15 @@ export default async function MembersPage(): Promise<React.JSX.Element> {
           </strong>
           <small>按用户和任务范围访问</small>
         </div>
-        <div className={styles.statCard}>
-          <span>已启用二次验证</span>
-          <strong>
-            {members.filter((item) => item.twoFactorOn).length}
-          </strong>
-          <small>管理员正式环境必须启用</small>
-        </div>
       </div>
 
-      <MemberInviteForm
-        viewerRole={viewer.role}
-        twoFactorOn={viewer.twoFactorOn}
-      />
+      <MemberInviteForm viewerRole={viewer.role} />
 
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
             <h2>成员列表</h2>
-            <p>邀请与角色变更由服务端权限控制并记录审计</p>
+            <p>撤销权限不会删除主站账号或历史记录</p>
           </div>
         </div>
         <div className={styles.tableScroll}>
@@ -73,10 +65,10 @@ export default async function MembersPage(): Promise<React.JSX.Element> {
                 <th>成员</th>
                 <th>角色</th>
                 <th>账号状态</th>
-                <th>二次验证</th>
                 <th>未完成任务</th>
                 <th>负责用户</th>
-                <th>有效会话</th>
+                <th>企微通知</th>
+                <th>权限操作</th>
               </tr>
             </thead>
             <tbody>
@@ -100,10 +92,25 @@ export default async function MembersPage(): Promise<React.JSX.Element> {
                       {member.active ? "启用" : "停用"}
                     </span>
                   </td>
-                  <td>{member.twoFactorOn ? "已启用" : "未启用"}</td>
                   <td>{member._count.assignedTasks}</td>
                   <td>{member._count.ownedUsers}</td>
-                  <td>{member._count.sessions}</td>
+                  <td>
+                    <MemberWecomMappingForm
+                      memberId={member.id}
+                      initialWecomUserId={member.wecomUserId}
+                      active={member.active}
+                    />
+                  </td>
+                  <td>
+                    <MemberAccessActions
+                      memberId={member.id}
+                      memberRole={member.role}
+                      memberName={member.displayName}
+                      active={member.active}
+                      viewerId={viewer.id}
+                      viewerRole={viewer.role}
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>

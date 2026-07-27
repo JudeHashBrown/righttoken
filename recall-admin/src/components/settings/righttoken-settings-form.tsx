@@ -140,7 +140,7 @@ export function RightTokenSettingsForm(): React.JSX.Element {
                   className={styles.input}
                   id="righttoken-users-path"
                   name="usersPath"
-                  defaultValue="/api/admin/users"
+                  defaultValue="/api/v1/admin/recall/users"
                   required
                 />
               </div>

@@ -83,7 +83,8 @@ export type MailMessageStatus = (typeof MailMessageStatus)[keyof typeof MailMess
 
 export const NotificationChannel = {
   IN_APP: 'IN_APP',
-  WECOM: 'WECOM',
+  WECOM_APP: 'WECOM_APP',
+  WECOM_ROBOT: 'WECOM_ROBOT',
   EMAIL: 'EMAIL'
 } as const
 
@@ -109,3 +110,23 @@ export const RecalculationStatus = {
 } as const
 
 export type RecalculationStatus = (typeof RecalculationStatus)[keyof typeof RecalculationStatus]
+
+
+export const LocationAttributionSource = {
+  EMAIL_EXACT_DOMAIN: 'EMAIL_EXACT_DOMAIN',
+  EMAIL_DOMAIN_SUFFIX: 'EMAIL_DOMAIN_SUFFIX',
+  IP_GEOIP: 'IP_GEOIP',
+  IP_RIR: 'IP_RIR',
+  IP_EVENT: 'IP_EVENT',
+  INVALID_REGISTRATION_DATA: 'INVALID_REGISTRATION_DATA'
+} as const
+
+export type LocationAttributionSource = (typeof LocationAttributionSource)[keyof typeof LocationAttributionSource]
+
+
+export const LocationRuleMatchType = {
+  EXACT_DOMAIN: 'EXACT_DOMAIN',
+  DOMAIN_SUFFIX: 'DOMAIN_SUFFIX'
+} as const
+
+export type LocationRuleMatchType = (typeof LocationRuleMatchType)[keyof typeof LocationRuleMatchType]

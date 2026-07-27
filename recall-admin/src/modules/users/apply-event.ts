@@ -6,6 +6,12 @@ import {
 import { prisma } from "@/lib/db/prisma";
 import type { TransactionClient } from "@/lib/db/transaction";
 import { createFieldCipher } from "@/lib/crypto/field-encryption";
+import { assignUserOwnerInTransaction } from "@/modules/assignment/assign-task";
+import { createGeoIpResolver } from "@/modules/geoip/http-resolver";
+import type { GeoIpResolver } from "@/modules/geoip/types";
+import type { AttributionResult } from "@/modules/location/attribution";
+import type { LocationRule } from "@/modules/location/email-domain";
+import { loadActiveLocationRules } from "@/modules/location/rule-repository";
 import { resegmentUser } from "@/modules/segmentation/resegment-user";
 import { getNextRuleBoundary } from "@/modules/segmentation/next-rule-boundary";
 import { loadActiveSegmentRuleSet } from "@/modules/segmentation/rule-config";
@@ -21,6 +27,7 @@ import {
   findUserByExternalId,
   requireUserByExternalId
 } from "@/modules/users/user-repository";
+import { resolveRegistrationAttribution } from "@/modules/users/registration-attribution";
 
 export type IngestResult = {
   accepted: true;
@@ -75,7 +82,8 @@ async function duplicateResult(
 
 async function ensureEventUser(
   tx: TransactionClient,
-  input: RightTokenEventInput
+  input: RightTokenEventInput,
+  location?: AttributionResult
 ): Promise<UserProfile> {
   if (input.event_type !== "user.registered") {
     return requireUserByExternalId(tx, input.user_id);
@@ -96,8 +104,13 @@ async function ensureEventUser(
       emailNormalized: input.payload.email,
       displayName: input.payload.display_name,
       registeredAt: input.occurred_at,
-      countryCode: input.payload.country_code,
-      region: input.payload.region,
+      countryCode: location?.countryCode ?? input.payload.country_code,
+      region: location?.region ?? input.payload.region,
+      ipCountryCode: location?.ipCountryCode,
+      ipRegion: location?.ipRegion,
+      locationSource: location?.source,
+      locationRuleId: location?.ruleId,
+      locationEvaluatedAt: location ? new Date() : undefined,
       language: input.payload.language,
       timezone: input.payload.timezone,
       source: input.payload.source,
@@ -112,7 +125,15 @@ async function ensureEventUser(
 async function applyFacts(
   tx: TransactionClient,
   user: UserProfile,
-  input: RightTokenEventInput
+  input: RightTokenEventInput,
+  registrationLocation?: {
+    countryCode: string | null;
+    region: string | null;
+    ipCountryCode: string | null;
+    ipRegion: string | null;
+    source: AttributionResult["source"];
+    ruleId: string | null;
+  }
 ): Promise<{ user: UserProfile; applied: boolean }> {
   const occurredAt = input.occurred_at;
   let applied = false;
@@ -139,11 +160,29 @@ async function applyFacts(
             ...(payload.display_name !== undefined
               ? { displayName: payload.display_name }
               : {}),
-            ...(payload.country_code !== undefined
-              ? { countryCode: payload.country_code }
+            ...(registrationLocation?.countryCode ||
+            payload.country_code !== undefined
+              ? {
+                  countryCode:
+                    registrationLocation?.countryCode ??
+                    payload.country_code
+                }
               : {}),
-            ...(payload.region !== undefined
-              ? { region: payload.region }
+            ...(registrationLocation?.region ||
+            payload.region !== undefined
+              ? {
+                  region:
+                    registrationLocation?.region ?? payload.region
+                }
+              : {}),
+            ...(registrationLocation
+              ? {
+                  ipCountryCode: registrationLocation.ipCountryCode,
+                  ipRegion: registrationLocation.ipRegion,
+                  locationSource: registrationLocation.source,
+                  locationRuleId: registrationLocation.ruleId,
+                  locationEvaluatedAt: new Date()
+                }
               : {}),
             ...(payload.language !== undefined
               ? { language: payload.language }
@@ -309,11 +348,24 @@ async function applyFacts(
 
 async function ingestParsedEvent(
   input: RightTokenEventInput,
-  scheduler: TaskScheduler = noopTaskScheduler
+  scheduler: TaskScheduler = noopTaskScheduler,
+  geoIpResolver: GeoIpResolver = createGeoIpResolver(),
+  locationRuleLoader: () => Promise<
+    LocationRule[]
+  > = loadActiveLocationRules
 ): Promise<IngestResult> {
   const existing = await duplicateResult(input.event_id);
   if (existing) {
     return existing;
+  }
+  let registrationLocation: AttributionResult | undefined;
+  if (input.event_type === "user.registered") {
+    const rules = await locationRuleLoader().catch(() => []);
+    registrationLocation = await resolveRegistrationAttribution(
+      input.payload,
+      geoIpResolver,
+      rules
+    );
   }
 
   try {
@@ -325,7 +377,11 @@ async function ingestParsedEvent(
           )::text AS "locked"
         `
       );
-      const initialUser = await ensureEventUser(tx, input);
+      const initialUser = await ensureEventUser(
+        tx,
+        input,
+        registrationLocation
+      );
       const eventRecord = await tx.userEvent.create({
         data: {
           eventId: input.event_id,
@@ -337,7 +393,12 @@ async function ingestParsedEvent(
           ) as Prisma.InputJsonValue
         }
       });
-      const factResult = await applyFacts(tx, initialUser, input);
+      const factResult = await applyFacts(
+        tx,
+        initialUser,
+        input,
+        registrationLocation
+      );
       const evaluationTime = new Date(
         Math.max(Date.now(), input.occurred_at.getTime())
       );
@@ -354,9 +415,18 @@ async function ingestParsedEvent(
           };
 
       if (factResult.applied) {
+        await assignUserOwnerInTransaction(
+          tx,
+          factResult.user.id,
+          evaluationTime
+        );
+        const currentUser =
+          await tx.userProfile.findUniqueOrThrow({
+            where: { id: factResult.user.id }
+          });
         const { config, version } = await loadActiveSegmentRuleSet(tx);
         const boundary = getNextRuleBoundary(
-          factResult.user,
+          currentUser,
           config,
           version,
           evaluationTime
@@ -398,11 +468,17 @@ async function ingestParsedEvent(
 
 export async function ingestUserEvent(
   input: unknown,
-  scheduler: TaskScheduler = noopTaskScheduler
+  scheduler: TaskScheduler = noopTaskScheduler,
+  geoIpResolver: GeoIpResolver = createGeoIpResolver(),
+  locationRuleLoader: () => Promise<
+    LocationRule[]
+  > = loadActiveLocationRules
 ): Promise<IngestResult> {
   return ingestParsedEvent(
     rightTokenEventSchema.parse(input),
-    scheduler
+    scheduler,
+    geoIpResolver,
+    locationRuleLoader
   );
 }
 

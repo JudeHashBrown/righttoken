@@ -61,6 +61,9 @@ describe("administrator assignment-rule routes", () => {
         name: { in: ["接口美国规则", "接口公共池"] }
       }
     });
+    await prisma.assignmentRecalculationRun.deleteMany({
+      where: { requestedById: adminId }
+    });
     await prisma.member.deleteMany({
       where: { id: { in: [adminId, operatorId].filter(Boolean) } }
     });

@@ -19,6 +19,12 @@ recall.righttoken.ai {
         -Server
     }
 
+    # Requires Caddy 2.8+ for log_skip. The SSO callback carries a 60-second
+    # one-time ticket in the query string.
+    # Never persist that URL in access logs.
+    @sso_callback path /api/auth/righttoken/callback
+    log_skip @sso_callback
+
     log {
         output file /var/log/caddy/righttoken-recall.log {
             roll_size 50mb

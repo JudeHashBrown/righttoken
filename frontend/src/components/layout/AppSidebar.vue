@@ -186,6 +186,7 @@ import { useI18n } from 'vue-i18n'
 import { useAdminSettingsStore, useAppStore, useAuthStore, useOnboardingStore } from '@/stores'
 import VersionBadge from '@/components/common/VersionBadge.vue'
 import { sanitizeSvg } from '@/utils/sanitize'
+import { useRecallAccess } from '@/composables/useRecallAccess'
 
 interface NavItem {
   path: string
@@ -203,6 +204,7 @@ const appStore = useAppStore()
 const authStore = useAuthStore()
 const onboardingStore = useOnboardingStore()
 const adminSettingsStore = useAdminSettingsStore()
+const recallAccess = useRecallAccess()
 
 const sidebarCollapsed = computed(() => appStore.sidebarCollapsed)
 const mobileOpen = computed(() => appStore.mobileOpen)
@@ -568,6 +570,9 @@ const ChevronDownIcon = {
 const userNavItems = computed((): NavItem[] => {
   const items: NavItem[] = [
     { path: '/dashboard', label: t('nav.dashboard'), icon: DashboardIcon },
+    ...(recallAccess.allowed.value
+      ? [{ path: '/user-operations', label: t('nav.userOperations'), icon: UsersIcon }]
+      : []),
     { path: '/keys', label: t('nav.apiKeys'), icon: KeyIcon },
     { path: '/usage', label: t('nav.usage'), icon: ChartIcon, hideInSimpleMode: true },
     { path: '/subscriptions', label: t('nav.mySubscriptions'), icon: CreditCardIcon, hideInSimpleMode: true },
@@ -661,6 +666,9 @@ const customMenuItemsForAdmin = computed(() => {
 const adminNavItems = computed((): NavItem[] => {
   const baseItems: NavItem[] = [
     { path: '/admin/dashboard', label: t('nav.dashboard'), icon: DashboardIcon },
+    ...(recallAccess.allowed.value
+      ? [{ path: '/user-operations', label: t('nav.userOperations'), icon: UsersIcon }]
+      : []),
     ...(adminSettingsStore.opsMonitoringEnabled
       ? [{ path: '/admin/ops', label: t('nav.ops'), icon: ChartIcon }]
       : []),
@@ -798,10 +806,20 @@ watch(
 )
 
 onMounted(() => {
+  if (authStore.isAuthenticated) {
+    void recallAccess.refresh()
+  }
   if (isAdmin.value) {
     adminSettingsStore.fetch()
   }
 })
+
+watch(
+  () => authStore.isAuthenticated,
+  () => {
+    void recallAccess.refresh()
+  }
+)
 </script>
 
 <style scoped>

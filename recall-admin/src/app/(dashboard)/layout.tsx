@@ -1,7 +1,6 @@
-import { redirect } from "next/navigation";
 import { AppHeader } from "@/components/layout/app-header";
 import { AppSidebar } from "@/components/layout/app-sidebar";
-import { getCurrentMember } from "@/modules/auth/guards";
+import { requireWorkspaceMember } from "@/modules/admin/page-access";
 import { getDashboardSnapshot } from "@/modules/reports/dashboard-query";
 import styles from "./shell.module.css";
 
@@ -10,10 +9,7 @@ export default async function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>): Promise<React.JSX.Element> {
-  const member = await getCurrentMember();
-  if (!member) {
-    redirect("/login?next=/dashboard");
-  }
+  const member = await requireWorkspaceMember("/dashboard");
 
   const snapshot = await getDashboardSnapshot(member);
 

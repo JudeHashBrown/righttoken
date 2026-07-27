@@ -18,7 +18,7 @@
   gap: 8px;
   margin: 0;
   color: #7a8297;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .context strong {
@@ -64,13 +64,13 @@
   background: #e24e5d;
   color: #ffffff;
   padding: 0 3px;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 750;
 }
 
 .memberName {
   color: #394157;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 620;
 }
 
@@ -84,7 +84,7 @@
   background: transparent;
   color: #6b7388;
   padding: 0 8px;
-  font-size: 12px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -104,7 +104,7 @@
   align-items: center;
   gap: 9px;
   color: #242c42;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 @media (max-width: 700px) {

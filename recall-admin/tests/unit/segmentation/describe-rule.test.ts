@@ -6,14 +6,34 @@ import {
 } from "@/modules/segmentation/describe-rule";
 
 describe("segment rule descriptions", () => {
-  it("describes typed conditions in Chinese", () => {
+  it("turns stored conditions into operational Chinese", () => {
     expect(
       describeClause({
         field: "balanceUsdMinor",
         operator: "lt",
         value: 50
       })
-    ).toBe("美元等值余额（美分）小于 50");
+    ).toBe("余额低于 0.50 美元");
+    expect(
+      describeClause({
+        field: "anomalyActive",
+        operator: "eq",
+        value: true
+      })
+    ).toBe("存在服务异常");
+    expect(
+      describeClause({
+        field: "checkoutStarted",
+        operator: "eq",
+        value: false
+      })
+    ).toBe("未进入支付流程");
+    expect(
+      describeClause({
+        field: "firstPaidAt",
+        operator: "is_null"
+      })
+    ).toBe("尚未完成首单");
   });
 
   it("joins AND clauses into one group sentence", () => {
@@ -22,7 +42,7 @@ describe("segment rule descriptions", () => {
     )!;
 
     expect(describeGroupRule(dGroup)).toBe(
-      "如果成功调用次数大于 0，并且美元等值余额（美分）大于等于 50，并且距离最后调用时间大于等于 7 天，则进入 D 组。"
+      "如果已有成功调用，并且余额不少于 0.50 美元，并且超过 7 天未调用，则进入 D 组。"
     );
   });
 

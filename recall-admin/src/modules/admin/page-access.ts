@@ -1,6 +1,6 @@
 import "server-only";
 
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import type { Member } from "@/generated/prisma/client";
 import { getCurrentMember } from "@/modules/auth/guards";
 
@@ -9,7 +9,9 @@ export async function requireWorkspaceMember(
 ): Promise<Member> {
   const member = await getCurrentMember();
   if (!member) {
-    redirect(`/login?next=${encodeURIComponent(nextPath)}`);
+    throw new Error(
+      `RightToken identity is unavailable for ${nextPath}`
+    );
   }
   return member;
 }

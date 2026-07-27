@@ -900,6 +900,7 @@ export default {
   // Navigation
   nav: {
     dashboard: '仪表盘',
+    userOperations: '用户运营管理',
     announcements: '公告',
     apiKeys: 'API 密钥',
     usage: '使用记录',

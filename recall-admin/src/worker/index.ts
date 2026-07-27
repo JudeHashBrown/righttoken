@@ -4,6 +4,7 @@ import { parseServerEnv } from "@/lib/env/server";
 import { createBoss, ensureQueues } from "@/worker/boss";
 import { JOBS } from "@/worker/job-names";
 import { registerHandlers } from "@/worker/register-handlers";
+import { reconciliationSchedules } from "@/worker/reconciliation-schedule";
 
 let activeBoss: PgBoss | null = null;
 
@@ -47,24 +48,21 @@ export async function startWorker(): Promise<PgBoss> {
       tz: "Asia/Shanghai"
     }
   );
-  await boss.schedule(
-    JOBS.USER_RECONCILIATION,
-    "*/15 * * * *",
-    { mode: "incremental" },
-    {
-      key: "righttoken-incremental-fifteen-minutes",
-      tz: "Asia/Shanghai"
-    }
-  );
-  await boss.schedule(
-    JOBS.USER_RECONCILIATION,
-    "0 2 * * *",
-    { mode: "full" },
-    {
-      key: "righttoken-full-2am-shanghai",
-      tz: "Asia/Shanghai"
-    }
-  );
+  for (const schedule of reconciliationSchedules({
+    enabled: env.RECONCILE_ENABLED,
+    intervalMinutes: env.RECONCILE_INTERVAL_MINUTES,
+    fullCron: env.FULL_RECONCILE_CRON
+  })) {
+    await boss.schedule(
+      JOBS.USER_RECONCILIATION,
+      schedule.cron,
+      schedule.data,
+      {
+        key: schedule.key,
+        tz: schedule.timezone
+      }
+    );
+  }
 
   activeBoss = boss;
   return boss;

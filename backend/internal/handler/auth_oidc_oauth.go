@@ -315,7 +315,7 @@ func (h *AuthHandler) OIDCOAuthCallback(c *gin.Context) {
 	)
 
 	// 传入空邀请码；如果需要邀请码，服务层返回 ErrOAuthInvitationRequired
-	tokenPair, _, err := h.authService.LoginOrRegisterOAuthWithTokenPair(c.Request.Context(), email, username, "")
+	tokenPair, _, err := h.authService.LoginOrRegisterOAuthWithTokenPair(requestContextWithRegistrationIP(c), email, username, "")
 	if err != nil {
 		if errors.Is(err, service.ErrOAuthInvitationRequired) {
 			pendingToken, tokenErr := h.authService.CreatePendingOAuthToken(email, username)
@@ -364,7 +364,7 @@ func (h *AuthHandler) CompleteOIDCOAuthRegistration(c *gin.Context) {
 		return
 	}
 
-	tokenPair, _, err := h.authService.LoginOrRegisterOAuthWithTokenPair(c.Request.Context(), email, username, req.InvitationCode)
+	tokenPair, _, err := h.authService.LoginOrRegisterOAuthWithTokenPair(requestContextWithRegistrationIP(c), email, username, req.InvitationCode)
 	if err != nil {
 		response.ErrorFrom(c, err)
 		return

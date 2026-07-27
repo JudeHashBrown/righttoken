@@ -87,7 +87,7 @@ export function AppSidebar({
       label: "自动化",
       items: [
         {
-          label: "分组规则",
+          label: "用户分组",
           href: "/automation/segments",
           icon: Sparkles
         },

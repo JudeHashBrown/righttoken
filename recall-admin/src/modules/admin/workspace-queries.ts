@@ -267,8 +267,12 @@ export async function getSegmentWorkspaceOverview() {
 }
 
 export async function getAssignmentWorkspaceOverview() {
-  const [rules, members, publicPoolTasks] = await Promise.all([
+  const [rules, locationRules, members, publicPoolTasks] =
+    await Promise.all([
     prisma.assignmentRule.findMany({
+      orderBy: { priority: "asc" }
+    }),
+    prisma.locationAttributionRule.findMany({
       orderBy: { priority: "asc" }
     }),
     prisma.member.findMany({
@@ -300,6 +304,7 @@ export async function getAssignmentWorkspaceOverview() {
 
   return {
     publicPoolTasks,
+    locationRules,
     members,
     rules: rules.map((rule) => ({
       ...rule,
@@ -354,6 +359,7 @@ export async function getMemberWorkspaceOverview() {
       role: true,
       active: true,
       twoFactorOn: true,
+      wecomUserId: true,
       createdAt: true,
       _count: {
         select: {
@@ -459,7 +465,13 @@ export async function getSettingsWorkspaceOverview() {
     }),
     prisma.integrationCredential.findMany({
       where: {
-        kind: { in: ["RIGHTTOKEN_SOURCE", "WECOM_ROBOT"] }
+        kind: {
+          in: [
+            "RIGHTTOKEN_SOURCE",
+            "WECOM_APP",
+            "WECOM_ROBOT"
+          ]
+        }
       },
       select: { kind: true, enabled: true }
     })
@@ -493,6 +505,10 @@ export async function getSettingsWorkspaceOverview() {
       {
         name: "企业微信邮箱",
         configured: Boolean(process.env.WECOM_MAIL_HOST)
+      },
+      {
+        name: "企业微信应用",
+        configured: configuredCredentials.has("WECOM_APP")
       },
       {
         name: "企微群机器人",

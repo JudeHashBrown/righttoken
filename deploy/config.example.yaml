@@ -67,6 +67,28 @@ server:
 run_mode: "standard"
 
 # =============================================================================
+# Recall Export API
+# 召回后台只读导出接口
+# =============================================================================
+# Keep this independent from JWT and admin API keys. Prefer injecting the
+# RECALL_EXPORT_SECRET environment variable instead of writing it to this file.
+recall_export:
+  secret: ""
+
+# =============================================================================
+# Recall Admin SSO
+# 用户运营管理后台单点登录
+# =============================================================================
+# Prefer injecting RECALL_SSO_* environment variables. The main site verifies
+# recall access through an internal endpoint before issuing a 60-second ticket.
+recall_sso:
+  base_url: "https://recall.righttoken.ai"
+  internal_secret: ""
+  sso_secret: ""
+  issuer: "https://righttoken.ai"
+  audience: "righttoken-recall"
+
+# =============================================================================
 # CORS Configuration
 # 跨域资源共享 (CORS) 配置
 # =============================================================================

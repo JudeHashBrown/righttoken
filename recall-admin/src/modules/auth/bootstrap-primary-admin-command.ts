@@ -2,7 +2,6 @@ import { bootstrapPrimaryAdmin } from "@/modules/auth/bootstrap-primary-admin";
 
 type BootstrapInput = {
   email: string;
-  password: string;
   displayName?: string;
 };
 

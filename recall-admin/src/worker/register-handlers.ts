@@ -8,6 +8,14 @@ import {
   handleSegmentRecalculation,
   type SegmentRecalculationInput
 } from "@/worker/handlers/segment-recalculation";
+import {
+  handleLocationRecalculation,
+  type LocationRecalculationInput
+} from "@/worker/handlers/location-recalculation";
+import {
+  handleAssignmentRecalculation,
+  type AssignmentRecalculationInput
+} from "@/worker/handlers/assignment-recalculation";
 import { PgTaskScheduler } from "@/modules/tasks/pg-task-scheduler";
 import {
   handleSegmentCheck,
@@ -40,6 +48,32 @@ export async function registerHandlers(
         return { skipped: "empty_batch" };
       }
       return handleSegmentRecalculation(
+        job.data,
+        new Date(),
+        taskScheduler
+      );
+    }
+  );
+  await boss.work<LocationRecalculationInput>(
+    JOBS.LOCATION_RECALCULATION,
+    async ([job]) => {
+      if (!job) {
+        return { skipped: "empty_batch" };
+      }
+      return handleLocationRecalculation(
+        job.data,
+        new Date(),
+        taskScheduler
+      );
+    }
+  );
+  await boss.work<AssignmentRecalculationInput>(
+    JOBS.ASSIGNMENT_RECALCULATION,
+    async ([job]) => {
+      if (!job) {
+        return { skipped: "empty_batch" };
+      }
+      return handleAssignmentRecalculation(
         job.data,
         new Date(),
         taskScheduler

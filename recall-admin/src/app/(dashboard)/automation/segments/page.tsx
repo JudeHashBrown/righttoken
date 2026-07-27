@@ -3,6 +3,7 @@ import { SegmentRuleEditor } from "@/components/automation/segment-rule-editor";
 import { requireWorkspaceMember } from "@/modules/admin/page-access";
 import { getSegmentWorkspaceOverview } from "@/modules/admin/workspace-queries";
 import { getPublicSegmentFieldRegistry } from "@/modules/segmentation/field-registry";
+import { presentSegmentReason } from "@/modules/segmentation/present-reason";
 
 export default async function SegmentRulesPage(): Promise<React.JSX.Element> {
   const member = await requireWorkspaceMember("/automation/segments");
@@ -25,60 +26,50 @@ export default async function SegmentRulesPage(): Promise<React.JSX.Element> {
 
   return (
     <main className={styles.page}>
-      <header className={styles.heading}>
-        <div>
-          <h1>分组规则</h1>
-          <p>
-            定义每个分组的业务含义、互斥判断顺序和运营任务策略。
-          </p>
+      <div className={styles.segmentWorkspace}>
+        <div className={`${styles.cardGrid} ${styles.compactCardGrid}`}>
+          <div className={styles.statCard}>
+            <span>当前生效版本</span>
+            <strong>v{overview.version}</strong>
+            <small>
+              {overview.publishedBy
+                ? `${overview.publishedBy} 发布`
+                : "系统默认规则"}
+            </small>
+          </div>
+          <div className={styles.statCard}>
+            <span>规则覆盖用户</span>
+            <strong>{total} 人</strong>
+            <small>系统内全部用户均归入唯一分组</small>
+          </div>
+          <div className={styles.statCard}>
+            <span>最近全量重算</span>
+            <strong>{latestRun ? `${progress}%` : "尚未运行"}</strong>
+            <small>
+              {latestRun
+                ? `${latestRun.processedUsers}/${latestRun.totalUsers} 已处理`
+                : "发布新规则后自动执行"}
+            </small>
+          </div>
+          <div className={styles.statCard}>
+            <span>重算失败</span>
+            <strong>{latestRun?.failedUsers ?? 0} 人</strong>
+            <small>
+              {latestRun?.status === "PARTIAL_FAILURE"
+                ? "可在历史版本中重试"
+                : "当前没有待重试失败"}
+            </small>
+          </div>
         </div>
-        <span className={styles.statusGood}>
-          当前版本 v{overview.version}
-        </span>
-      </header>
 
-      <div className={styles.cardGrid}>
-        <div className={styles.statCard}>
-          <span>当前生效版本</span>
-          <strong>v{overview.version}</strong>
-          <small>
-            {overview.publishedBy
-              ? `${overview.publishedBy} 发布`
-              : "系统默认规则"}
-          </small>
-        </div>
-        <div className={styles.statCard}>
-          <span>规则覆盖用户</span>
-          <strong>{total} 人</strong>
-          <small>系统内全部用户均归入唯一分组</small>
-        </div>
-        <div className={styles.statCard}>
-          <span>最近全量重算</span>
-          <strong>{latestRun ? `${progress}%` : "尚未运行"}</strong>
-          <small>
-            {latestRun
-              ? `${latestRun.processedUsers}/${latestRun.totalUsers} 已处理`
-              : "发布新规则后自动执行"}
-          </small>
-        </div>
-        <div className={styles.statCard}>
-          <span>重算失败</span>
-          <strong>{latestRun?.failedUsers ?? 0} 人</strong>
-          <small>
-            {latestRun?.status === "PARTIAL_FAILURE"
-              ? "可在历史版本中重试"
-              : "当前没有待重试失败"}
-          </small>
-        </div>
+        <SegmentRuleEditor
+          canEdit={member.role !== "OPERATOR"}
+          distribution={distribution}
+          fieldRegistry={getPublicSegmentFieldRegistry()}
+          initialRuleSet={overview.ruleSet}
+          topLayout
+        />
       </div>
-
-      <SegmentRuleEditor
-        canEdit={member.role !== "OPERATOR"}
-        currentVersion={overview.version}
-        distribution={distribution}
-        fieldRegistry={getPublicSegmentFieldRegistry()}
-        initialRuleSet={overview.ruleSet}
-      />
 
       <div className={styles.twoColumn}>
         <section className={styles.panel}>
@@ -120,7 +111,7 @@ export default async function SegmentRulesPage(): Promise<React.JSX.Element> {
                       {change.user.displayName ||
                         change.user.externalUserId}
                     </strong>
-                    <p>{change.reason}</p>
+                    <p>{presentSegmentReason(change.reason)}</p>
                   </div>
                   <span className={styles.segment}>
                     {change.fromSegment || "新"} → {change.toSegment}

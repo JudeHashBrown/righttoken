@@ -148,7 +148,7 @@ const fields: PublicSegmentFieldDefinition[] = [
   {
     key: "checkoutStarted",
     category: "支付",
-    label: "是否进入支付",
+    label: "支付流程",
     type: "boolean",
     operators: ["eq", "neq"]
   },
@@ -235,7 +235,7 @@ const fields: PublicSegmentFieldDefinition[] = [
   {
     key: "anomalyActive",
     category: "异常",
-    label: "是否存在服务异常",
+    label: "服务异常",
     type: "boolean",
     operators: ["eq", "neq"]
   },

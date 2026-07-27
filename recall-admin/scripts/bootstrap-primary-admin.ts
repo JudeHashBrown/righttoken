@@ -13,7 +13,6 @@ function requireValue(name: string): string {
 async function main(): Promise<void> {
   const result = await runBootstrapPrimaryAdminCommand({
     email: requireValue("BOOTSTRAP_PRIMARY_ADMIN_EMAIL"),
-    password: requireValue("BOOTSTRAP_PRIMARY_ADMIN_PASSWORD"),
     displayName:
       process.env.BOOTSTRAP_PRIMARY_ADMIN_NAME?.trim() || "主管理员"
   });

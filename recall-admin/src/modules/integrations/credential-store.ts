@@ -1,7 +1,10 @@
 import { createFieldCipher } from "@/lib/crypto/field-encryption";
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
-import { assertMemberPermission, ForbiddenError } from "@/modules/auth/guards";
+import {
+  assertMemberPermission,
+  ForbiddenError
+} from "@/modules/auth/authorization";
 
 type CredentialConfig = Record<string, unknown>;
 

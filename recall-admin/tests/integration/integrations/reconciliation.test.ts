@@ -12,6 +12,7 @@ import type {
 
 const externalUserIds: string[] = [];
 const memberIds: string[] = [];
+const assignmentRuleIds: string[] = [];
 
 function adapter(
   users: Awaited<ReturnType<RightTokenAdapter["listUsers"]>>["users"]
@@ -28,6 +29,9 @@ function adapter(
 
 describe("RightToken user reconciliation", () => {
   afterAll(async () => {
+    await prisma.assignmentRule.deleteMany({
+      where: { id: { in: assignmentRuleIds } }
+    });
     await prisma.userProfile.deleteMany({
       where: { externalUserId: { in: externalUserIds } }
     });
@@ -37,7 +41,7 @@ describe("RightToken user reconciliation", () => {
     await prisma.$disconnect();
   });
 
-  it("upserts source facts while preserving operational ownership and tasks", async () => {
+  it("upserts facts, resegments, and preserves ownership and tasks", async () => {
     const externalUserId = `reconcile-${randomUUID()}`;
     externalUserIds.push(externalUserId);
     const owner = await prisma.member.create({
@@ -49,6 +53,16 @@ describe("RightToken user reconciliation", () => {
       }
     });
     memberIds.push(owner.id);
+    const assignmentRule = await prisma.assignmentRule.create({
+      data: {
+        name: `校准来源-${randomUUID()}`,
+        enabled: true,
+        priority: 0,
+        conditions: { sources: ["campaign"] },
+        assigneeId: owner.id
+      }
+    });
+    assignmentRuleIds.push(assignmentRule.id);
     const user = await prisma.userProfile.create({
       data: {
         externalUserId,
@@ -117,7 +131,8 @@ describe("RightToken user reconciliation", () => {
       scanned: 1,
       inserted: 0,
       updated: 1,
-      unchanged: 0
+      unchanged: 0,
+      segmentChanges: 1
     });
     expect(stored).toMatchObject({
       email: `${externalUserId}@new.example.test`,
@@ -126,7 +141,7 @@ describe("RightToken user reconciliation", () => {
       balanceMinor: 44,
       balanceCurrency: "EUR",
       balanceUsdMinor: 49,
-      currentSegment: "G"
+      currentSegment: "E"
     });
     await expect(
       prisma.recallTask.findUnique({ where: { id: task.id } })
@@ -183,5 +198,52 @@ describe("RightToken user reconciliation", () => {
     expect(result.unchanged).toBe(1);
     expect(stored.email).toBe(`${externalUserId}@example.test`);
     expect(stored.balanceMinor).toBe(99_000);
+  });
+
+  it("applies email-first operational location during reconciliation", async () => {
+    const externalUserId = `reconcile-location-${randomUUID()}`;
+    externalUserIds.push(externalUserId);
+
+    const result = await reconcileRightTokenUsers({
+      adapter: adapter([
+        {
+          externalUserId,
+          email: `${externalUserId}@yandex.ru`,
+          displayName: "地区归属测试用户",
+          registeredAt: new Date("2026-07-24T00:00:00.000Z"),
+          updatedAt: new Date("2026-07-24T01:00:00.000Z"),
+          registrationIp: "203.0.113.10",
+          countryCode: "SG",
+          region: "Singapore",
+          language: null,
+          timezone: null,
+          source: null,
+          checkoutStartedAt: null,
+          firstPaidAt: null,
+          totalPaidMinor: 0,
+          successfulCallCount: 0,
+          lastCallAt: null,
+          balanceMinor: 0,
+          anomalyActive: false
+        }
+      ]),
+      now: new Date("2026-07-24T02:00:00.000Z")
+    });
+
+    const stored = await prisma.userProfile.findUniqueOrThrow({
+      where: { externalUserId }
+    });
+    expect(result.inserted).toBe(1);
+    expect(stored).toMatchObject({
+      countryCode: "RU",
+      region: null,
+      ipCountryCode: "SG",
+      ipRegion: "Singapore",
+      locationSource: "EMAIL_EXACT_DOMAIN"
+    });
+    expect(stored.locationRuleId).not.toBeNull();
+    expect(stored.locationEvaluatedAt).toEqual(
+      new Date("2026-07-24T02:00:00.000Z")
+    );
   });
 });

@@ -54,6 +54,29 @@ function workload(
 }
 
 describe("ordered assignment rule matching", () => {
+  it("assigns unmatched users to the system default owner", () => {
+    expect(
+      matchRule(
+        user({ countryCode: "ZZ" }),
+        [],
+        {
+          "primary-admin": {
+            active: true,
+            withinWorkHours: true,
+            openTaskCount: 3
+          }
+        },
+        new Date("2026-07-25T00:00:00.000Z"),
+        "primary-admin"
+      )
+    ).toMatchObject({
+      assigneeId: "primary-admin",
+      poolKey: "default-owner",
+      usedFallback: true,
+      assignmentReason: expect.stringContaining("系统默认负责人")
+    });
+  });
+
   const rules = [
     rule(
       10,
@@ -104,6 +127,40 @@ describe("ordered assignment rule matching", () => {
       )
     ).toMatchObject({
       assigneeId: "south-operator",
+      matchedRulePriority: 20
+    });
+  });
+
+  it("prefers a province or region owner over a country owner", () => {
+    const geographicRules = [
+      rule(1, { countryCodes: ["CN"] }, "china-owner", {
+        name: "中国负责人"
+      }),
+      rule(20, { regionIncludes: ["广东"] }, "guangdong-owner", {
+        name: "广东负责人"
+      })
+    ];
+    const geographicWorkload = workload({
+      "china-owner": {
+        active: true,
+        withinWorkHours: true,
+        openTaskCount: 0
+      },
+      "guangdong-owner": {
+        active: true,
+        withinWorkHours: true,
+        openTaskCount: 0
+      }
+    });
+
+    expect(
+      matchRule(
+        user({ countryCode: "CN", region: "广东省" }),
+        geographicRules,
+        geographicWorkload
+      )
+    ).toMatchObject({
+      assigneeId: "guangdong-owner",
       matchedRulePriority: 20
     });
   });

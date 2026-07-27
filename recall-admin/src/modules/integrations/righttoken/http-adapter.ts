@@ -7,8 +7,11 @@ import {
 export const rightTokenHttpConfigSchema = z.object({
   mode: z.literal("http"),
   baseUrl: z.string().url(),
-  apiToken: z.string().min(16),
-  usersPath: z.string().startsWith("/").default("/api/admin/users")
+  apiToken: z.string().min(32),
+  usersPath: z
+    .string()
+    .startsWith("/")
+    .default("/api/v1/admin/recall/users")
 });
 
 type Fetch = typeof fetch;

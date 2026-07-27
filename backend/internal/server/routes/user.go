@@ -38,6 +38,12 @@ func RegisterUserRoutes(
 			}
 		}
 
+		recall := authenticated.Group("/user/recall")
+		{
+			recall.GET("/access", h.RecallSSO.Access)
+			recall.POST("/sso", h.RecallSSO.Start)
+		}
+
 		// API Key管理
 		keys := authenticated.Group("/keys")
 		{

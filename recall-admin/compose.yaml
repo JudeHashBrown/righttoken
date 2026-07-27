@@ -6,13 +6,18 @@ x-recall-environment: &recall-environment
   SESSION_COOKIE_SECRET: ${SESSION_COOKIE_SECRET:-development-session-cookie-secret-only}
   APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=}
   APP_URL: ${APP_URL:-http://127.0.0.1:3000}
-  AUTH_MODE: ${AUTH_MODE:-standalone}
+  AUTH_MODE: ${AUTH_MODE:-development}
+  DEPLOYMENT_ENV: local
   INTERNAL_API_SECRET_CURRENT: ${INTERNAL_API_SECRET_CURRENT:-development-only-internal-secret-32-chars}
   INTERNAL_API_SECRET_PREVIOUS: ${INTERNAL_API_SECRET_PREVIOUS:-}
+  RIGHTTOKEN_API_BASE_URL: ${RIGHTTOKEN_API_BASE_URL:-}
+  RIGHTTOKEN_API_TOKEN: ${RIGHTTOKEN_API_TOKEN:-}
   RECONCILE_ENABLED: ${RECONCILE_ENABLED:-false}
   RECONCILE_INTERVAL_MINUTES: ${RECONCILE_INTERVAL_MINUTES:-15}
   FULL_RECONCILE_CRON: ${FULL_RECONCILE_CRON:-0 2 * * *}
-  NODE_ENV: production
+  GEOIP_MMDB_PATH: ${GEOIP_MMDB_PATH:-/var/lib/righttoken-geoip/GeoLite2-City.mmdb}
+  GEOIP_RIR_PATH: ${GEOIP_RIR_PATH:-/var/lib/righttoken-geoip/delegated-rir.txt}
+  NODE_ENV: development
 
 services:
   recall-db:
@@ -62,7 +67,6 @@ services:
     environment:
       <<: *recall-environment
       SEED_PRIMARY_ADMIN_EMAIL: ${SEED_PRIMARY_ADMIN_EMAIL:-primary-admin@example.test}
-      SEED_PRIMARY_ADMIN_PASSWORD: ${SEED_PRIMARY_ADMIN_PASSWORD:-DevelopmentOnlyPassword123!}
     command: ["npm", "run", "db:seed"]
     depends_on:
       recall-migrate:
@@ -84,6 +88,8 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
     read_only: true
+    volumes:
+      - ./data/geoip:/var/lib/righttoken-geoip:ro
     tmpfs:
       - /tmp
     security_opt:
@@ -105,6 +111,8 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
     read_only: true
+    volumes:
+      - ./data/geoip:/var/lib/righttoken-geoip:ro
     tmpfs:
       - /tmp
     security_opt:

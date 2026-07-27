@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { RevokeOverrideButton } from "@/components/users/revoke-override-button";
 import { SegmentOverrideForm } from "@/components/users/segment-override-form";
 import { UserNoteForm } from "@/components/users/user-note-form";
 import styles from "@/components/workspaces/workspace.module.css";
-import { getCurrentMember } from "@/modules/auth/guards";
+import { requireWorkspaceMember } from "@/modules/admin/page-access";
 import { getUser360 } from "@/modules/users/user-queries";
 
 function dateTime(value: Date | null): string {
@@ -38,14 +38,22 @@ const taskStatusLabels = {
   CANCELLED: "已取消"
 } as const;
 
+const locationSourceLabels = {
+  EMAIL_EXACT_DOMAIN: "邮箱服务商",
+  EMAIL_DOMAIN_SUFFIX: "邮箱国家后缀",
+  IP_GEOIP: "注册 IP",
+  IP_RIR: "IP 地址段",
+  IP_EVENT: "RightToken 注册数据",
+  INVALID_REGISTRATION_DATA: "注册数据异常"
+} as const;
+
 export default async function UserDetailPage({
   params
 }: {
   params: Promise<{ id: string }>;
 }): Promise<React.JSX.Element> {
-  const member = await getCurrentMember();
   const { id } = await params;
-  if (!member) redirect(`/login?next=/users/${id}`);
+  const member = await requireWorkspaceMember(`/users/${id}`);
   const user = await getUser360(member, id);
   if (!user) notFound();
 
@@ -116,11 +124,28 @@ export default async function UserDetailPage({
                 <strong>{user.registrationIp || "未记录或已过期"}</strong>
               </div>
               <div className={styles.summaryItem}>
-                <span className={styles.detailLabel}>国家 / 地区</span>
+                <span className={styles.detailLabel}>运营归属</span>
                 <strong>
                   {[user.countryCode, user.region]
                     .filter(Boolean)
                     .join(" · ") || "待确认"}
+                </strong>
+              </div>
+              <div className={styles.summaryItem}>
+                <span className={styles.detailLabel}>判定依据</span>
+                <strong>
+                  {user.locationRule?.name ??
+                    (user.locationSource
+                      ? locationSourceLabels[user.locationSource]
+                      : "待计算")}
+                </strong>
+              </div>
+              <div className={styles.summaryItem}>
+                <span className={styles.detailLabel}>IP 原始地区</span>
+                <strong>
+                  {[user.ipCountryCode, user.ipRegion]
+                    .filter(Boolean)
+                    .join(" · ") || "待补全"}
                 </strong>
               </div>
               <div className={styles.summaryItem}>

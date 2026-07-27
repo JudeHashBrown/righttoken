@@ -52,4 +52,38 @@ describe("RightToken reconciliation worker", () => {
       expect.objectContaining({ scanned: 0 })
     );
   });
+
+  it("does not advance the checkpoint when pagination is incomplete", async () => {
+    const saveCheckpoint = vi.fn();
+    const incompleteResult = {
+      scanned: 20_000,
+      inserted: 20_000,
+      updated: 0,
+      unchanged: 0,
+      isolated: 0,
+      segmentChanges: 5_000,
+      tasksCreated: 0,
+      nextCursor: "more-users"
+    };
+
+    await expect(
+      handleUserReconciliation(
+        { mode: "full" },
+        {
+          getAdapter: async () => ({
+            async listUsers() {
+              return { users: [], nextCursor: null };
+            },
+            async verifyConnection() {
+              return { ok: true, source: "test" };
+            }
+          }),
+          readCheckpoint: async () => null,
+          reconcile: async () => incompleteResult,
+          saveCheckpoint
+        }
+      )
+    ).rejects.toThrow("RIGHTTOKEN_RECONCILIATION_INCOMPLETE");
+    expect(saveCheckpoint).not.toHaveBeenCalled();
+  });
 });

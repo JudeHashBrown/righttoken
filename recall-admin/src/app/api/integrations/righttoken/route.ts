@@ -20,8 +20,11 @@ const requestSchema = z.discriminatedUnion("mode", [
     displayName: z.string().min(1).max(120),
     enabled: z.boolean(),
     baseUrl: z.string().url(),
-    usersPath: z.string().startsWith("/").default("/api/admin/users"),
-    apiToken: z.string().min(16),
+    usersPath: z
+      .string()
+      .startsWith("/")
+      .default("/api/v1/admin/recall/users"),
+    apiToken: z.string().min(32),
     eventSecret: z.string().min(32).optional()
   })
 ]);

@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { TaskActions } from "@/components/tasks/task-actions";
 import { UserNoteForm } from "@/components/users/user-note-form";
 import styles from "@/components/workspaces/workspace.module.css";
 import { prisma } from "@/lib/db/prisma";
-import { getCurrentMember } from "@/modules/auth/guards";
+import { requireWorkspaceMember } from "@/modules/admin/page-access";
 import { getTaskDetail } from "@/modules/tasks/task-queries";
 
 function dateTime(value: Date | null): string {
@@ -46,9 +46,8 @@ export default async function TaskDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }): Promise<React.JSX.Element> {
-  const member = await getCurrentMember();
   const { id } = await params;
-  if (!member) redirect(`/login?next=/tasks/${id}`);
+  const member = await requireWorkspaceMember(`/tasks/${id}`);
   const task = await getTaskDetail(member, id);
   if (!task) notFound();
   const operators = await prisma.member.findMany({

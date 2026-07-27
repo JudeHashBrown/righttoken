@@ -1,6 +1,9 @@
 import { createFieldCipher } from "@/lib/crypto/field-encryption";
 import { prisma } from "@/lib/db/prisma";
-import { assertMemberPermission, ForbiddenError } from "@/modules/auth/guards";
+import {
+  assertMemberPermission,
+  ForbiddenError
+} from "@/modules/auth/authorization";
 import {
   smtpImapConfigSchema,
   type SmtpImapConfig

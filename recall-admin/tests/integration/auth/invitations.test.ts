@@ -8,7 +8,6 @@ import {
   acceptInvitation,
   createInvitation
 } from "@/modules/auth/invitations";
-import { verifyPassword } from "@/modules/auth/password";
 
 describe("member invitations", () => {
   const createdMemberIds: string[] = [];
@@ -66,25 +65,14 @@ describe("member invitations", () => {
 
     expect(stored.tokenHash).not.toBe(created.token);
     const accepted = await acceptInvitation(created.token, {
-      displayName: "Accepted Admin",
-      password: "a-secure-invitation-password"
+      displayName: "Accepted Admin"
     });
     createdMemberIds.push(accepted.id);
     expect(accepted.role).toBe("ADMIN");
-    expect(
-      await verifyPassword(
-        (
-          await prisma.member.findUniqueOrThrow({
-            where: { id: accepted.id }
-          })
-        ).passwordHash,
-        "a-secure-invitation-password"
-      )
-    ).toBe(true);
+    expect(accepted.passwordHash).toBe("RIGHTTOKEN_MANAGED_IDENTITY");
     await expect(
       acceptInvitation(created.token, {
-        displayName: "Replay",
-        password: "another-secure-password"
+        displayName: "Replay"
       })
     ).rejects.toThrow();
   });

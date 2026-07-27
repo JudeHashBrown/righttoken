@@ -1,21 +1,37 @@
-import { describe, expect, it } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from "vitest";
 import { NextRequest } from "next/server";
 import { proxy } from "@/proxy";
-import {
-  AUTH_STATE_COOKIE_NAME,
-  SESSION_COOKIE_NAME
-} from "@/modules/auth/session";
+import { SESSION_COOKIE_NAME } from "@/modules/auth/session";
 
 describe("browser navigation proxy", () => {
-  it("redirects an anonymous dashboard navigation to login", () => {
+  const previousAuthMode = process.env.AUTH_MODE;
+  const previousDeploymentEnv = process.env.DEPLOYMENT_ENV;
+
+  beforeEach(() => {
+    process.env.AUTH_MODE = "development";
+    process.env.DEPLOYMENT_ENV = "local";
+    vi.stubEnv("NODE_ENV", "test");
+  });
+
+  afterEach(() => {
+    process.env.AUTH_MODE = previousAuthMode;
+    process.env.DEPLOYMENT_ENV = previousDeploymentEnv;
+    vi.unstubAllEnvs();
+  });
+
+  it("lets anonymous local development navigation reach the dashboard", () => {
     const response = proxy(
       new NextRequest("https://recall.righttoken.com/dashboard")
     );
 
-    expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toBe(
-      "https://recall.righttoken.com/login?next=%2Fdashboard"
-    );
+    expect(response.headers.get("x-middleware-next")).toBe("1");
   });
 
   it("lets a navigation with a session cookie reach the page", () => {
@@ -40,21 +56,30 @@ describe("browser navigation proxy", () => {
     expect(response.headers.get("x-middleware-next")).toBe("1");
   });
 
-  it("keeps an administrator in the required second-factor flow", () => {
+  it("ignores obsolete second-factor cookies in development", () => {
     const response = proxy(
       new NextRequest("https://recall.righttoken.com/dashboard", {
         headers: {
           cookie: [
             `${SESSION_COOKIE_NAME}=opaque-token`,
-            `${AUTH_STATE_COOKIE_NAME}=enroll`
+            "rt_recall_auth_state=enroll"
           ].join("; ")
         }
       })
     );
 
-    expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toBe(
-      "https://recall.righttoken.com/2fa/setup?mode=enroll"
+    expect(response.headers.get("x-middleware-next")).toBe("1");
+  });
+
+  it("never enables login-free navigation in production", () => {
+    process.env.DEPLOYMENT_ENV = "production";
+    vi.stubEnv("NODE_ENV", "development");
+
+    const response = proxy(
+      new NextRequest("https://recall.righttoken.ai/dashboard")
     );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain("/login");
   });
 });

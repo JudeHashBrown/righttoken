@@ -8,6 +8,7 @@ export type Permission =
   | "tasks:work"
   | "mail:send-reviewed"
   | "rules:publish"
+  | "location-rules:publish"
   | "operators:manage"
   | "admins:manage"
   | "integrations:manage"
@@ -22,6 +23,7 @@ const permissions: Record<Role, ReadonlySet<Permission>> = {
     "tasks:work",
     "mail:send-reviewed",
     "rules:publish",
+    "location-rules:publish",
     "operators:manage",
     "admins:manage",
     "integrations:manage",
@@ -40,6 +42,7 @@ const permissions: Record<Role, ReadonlySet<Permission>> = {
   ]),
   OPERATOR: new Set([
     "users:read",
+    "users:reveal-sensitive",
     "tasks:work",
     "mail:send-reviewed"
   ])

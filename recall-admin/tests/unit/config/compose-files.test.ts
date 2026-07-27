@@ -27,6 +27,17 @@ describe("recall Compose environments", () => {
     expect(compose).toContain("condition: service_completed_successfully");
   });
 
+  it("uses the supported development auth mode for the local stack", () => {
+    const compose = readRecall("compose.yaml");
+
+    expect(compose).toContain(
+      "AUTH_MODE: ${AUTH_MODE:-development}"
+    );
+    expect(compose).toContain("DEPLOYMENT_ENV: local");
+    expect(compose).toContain("NODE_ENV: development");
+    expect(compose).not.toContain("AUTH_MODE:-standalone");
+  });
+
   it("keeps production data and workers private", () => {
     const compose = readRepository("deploy/docker-compose.recall.yml");
     const databaseBlock = compose.split("  recall-db:")[1]!.split(
@@ -47,9 +58,29 @@ describe("recall Compose environments", () => {
       "image: ${RECALL_IMAGE:?RECALL_IMAGE is required}"
     );
     expect(compose).toContain("internal: true");
+    expect(compose).not.toContain("BOOTSTRAP_PRIMARY_ADMIN_PASSWORD");
     expect(compose).toContain(
-      "BOOTSTRAP_PRIMARY_ADMIN_PASSWORD: ${RECALL_BOOTSTRAP_PRIMARY_ADMIN_PASSWORD:-}"
+      "/var/lib/righttoken-geoip:/var/lib/righttoken-geoip:ro"
     );
+    expect(compose).toContain(
+      "GEOIP_MMDB_PATH: ${RECALL_GEOIP_MMDB_PATH"
+    );
+    expect(compose).toContain(
+      "GEOIP_RIR_PATH: ${RECALL_GEOIP_RIR_PATH"
+    );
+    expect(compose).toContain("DEPLOYMENT_ENV: production");
+  });
+
+  it("ships root-level domain verification files in the web image", () => {
+    const dockerfile = readRecall("Dockerfile");
+    const verification = readRecall(
+      "public/WW_verify_4r7rzaKrRbPD0ZJa.txt"
+    );
+
+    expect(dockerfile).toContain(
+      "COPY --from=builder --chown=nextjs:nodejs /app/public ./public"
+    );
+    expect(verification.trim()).toBe("4r7rzaKrRbPD0ZJa");
   });
 
   it("documents host ingress and protected backups", () => {
@@ -72,5 +103,21 @@ describe("recall Compose environments", () => {
     expect(gitignore).toContain("/scripts");
     expect(gitignore).not.toMatch(/^tests$/m);
     expect(gitignore).not.toMatch(/^scripts$/m);
+  });
+
+  it("runs the main-site recall contract in CI", () => {
+    const workflow = readRepository(
+      ".github/workflows/recall-admin-ci.yml"
+    );
+
+    expect(workflow).toContain('- "backend/**"');
+    expect(workflow).toContain('- "frontend/**"');
+    expect(workflow).toContain("main-contract:");
+    expect(workflow).toContain(
+      "go test -tags=recallcontract ./internal/handler/admin"
+    );
+    expect(workflow).toContain(
+      "npm run test -- --run src/composables/useRecallAccess.test.ts"
+    );
   });
 });

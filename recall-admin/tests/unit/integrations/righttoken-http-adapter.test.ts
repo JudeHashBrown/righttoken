@@ -40,8 +40,7 @@ describe("RightToken HTTP adapter", () => {
       {
         mode: "http",
         baseUrl: "https://righttoken.example",
-        usersPath: "/api/admin/users",
-        apiToken: "test-api-token-at-least-16"
+        apiToken: "test-recall-export-token-at-least-32-characters"
       },
       fetchMock
     );
@@ -55,10 +54,13 @@ describe("RightToken HTTP adapter", () => {
     expect(result.users[0]?.updatedAt).toBeInstanceOf(Date);
     expect(result.nextCursor).toBe("next-page");
     const [url, options] = fetchMock.mock.calls[0]!;
+    expect(new URL(String(url)).pathname).toBe(
+      "/api/v1/admin/recall/users"
+    );
     expect(String(url)).toContain("updated_after=");
     expect(String(url)).toContain("cursor=cursor-1");
     expect(options.headers.authorization).toBe(
-      "Bearer test-api-token-at-least-16"
+      "Bearer test-recall-export-token-at-least-32-characters"
     );
   });
 });

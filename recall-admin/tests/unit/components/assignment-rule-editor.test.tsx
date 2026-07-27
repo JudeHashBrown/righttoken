@@ -44,6 +44,7 @@ describe("AssignmentRuleEditor", () => {
             enabled: true,
             priority: 1,
             countryCodes: "SG",
+            regions: "Central Region",
             sources: "",
             segments: ["A", "B"],
             assigneeId: "member-1",
@@ -64,6 +65,7 @@ describe("AssignmentRuleEditor", () => {
     );
 
     expect(screen.getByDisplayValue("新加坡用户")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Central Region")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "新增规则" }));
     expect(screen.getAllByLabelText("规则名称")).toHaveLength(2);
     fireEvent.change(screen.getAllByLabelText("规则名称")[1]!, {
@@ -73,11 +75,14 @@ describe("AssignmentRuleEditor", () => {
     fireEvent.click(screen.getByRole("button", { name: "预览分配" }));
     await waitFor(() => {
       expect(screen.getByText("抽样 83 位用户")).toBeInTheDocument();
-      expect(screen.getByText("公共池 33 人")).toBeInTheDocument();
+      expect(screen.getByText("待默认接管 33 人")).toBeInTheDocument();
     });
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/automation/assignment-rules/preview",
-      expect.objectContaining({ method: "POST" })
+      expect.objectContaining({
+        method: "POST",
+        body: expect.stringContaining('"regionIncludes":["Central Region"]')
+      })
     );
   });
 

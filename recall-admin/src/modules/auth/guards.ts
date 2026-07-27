@@ -2,46 +2,42 @@ import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import type { Member } from "@/generated/prisma/client";
 import {
-  can,
-  type Permission
-} from "@/modules/auth/permissions";
+  assertMemberPermission,
+  ForbiddenError,
+  UnauthorizedError
+} from "@/modules/auth/authorization";
+import type { Permission } from "@/modules/auth/permissions";
 import {
   findMemberBySessionToken,
   findSessionByToken,
   type SessionContext,
   SESSION_COOKIE_NAME
 } from "@/modules/auth/session";
+import {
+  createDevelopmentSessionContext,
+  getDevelopmentPrimaryAdmin
+} from "@/modules/auth/development-identity";
+import { isDevelopmentAuthMode } from "@/modules/auth/development-mode";
 
-export class UnauthorizedError extends Error {
-  constructor() {
-    super("authentication required");
-    this.name = "UnauthorizedError";
-  }
-}
-
-export class ForbiddenError extends Error {
-  constructor(permission: Permission) {
-    super(`missing permission: ${permission}`);
-    this.name = "ForbiddenError";
-  }
-}
-
-export function assertMemberPermission<
-  T extends Pick<Member, "id" | "role">
->(member: T, permission: Permission): T {
-  if (!can(member.role, permission)) {
-    throw new ForbiddenError(permission);
-  }
-  return member;
-}
+export {
+  assertMemberPermission,
+  ForbiddenError,
+  UnauthorizedError
+};
 
 export async function getCurrentMember(): Promise<Member | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  if (!token) {
-    return null;
+  if (token) {
+    const member = await findMemberBySessionToken(token);
+    if (member) {
+      return member;
+    }
   }
-  return findMemberBySessionToken(token);
+  if (isDevelopmentAuthMode()) {
+    return getDevelopmentPrimaryAdmin();
+  }
+  return null;
 }
 
 export async function requirePermission(
@@ -60,15 +56,21 @@ export async function requireRequestPermission(
   options: { allowPendingSecondFactor?: boolean } = {}
 ): Promise<SessionContext> {
   const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-  if (!token) {
-    throw new UnauthorizedError();
+  if (token) {
+    const context = await findSessionByToken(token, {
+      allowPending: options.allowPendingSecondFactor
+    });
+    if (context) {
+      assertMemberPermission(context.member, permission);
+      return context;
+    }
   }
-  const context = await findSessionByToken(token, {
-    allowPending: options.allowPendingSecondFactor
-  });
-  if (!context) {
-    throw new UnauthorizedError();
+  if (isDevelopmentAuthMode()) {
+    const member = assertMemberPermission(
+      await getDevelopmentPrimaryAdmin(),
+      permission
+    );
+    return createDevelopmentSessionContext(member);
   }
-  assertMemberPermission(context.member, permission);
-  return context;
+  throw new UnauthorizedError();
 }

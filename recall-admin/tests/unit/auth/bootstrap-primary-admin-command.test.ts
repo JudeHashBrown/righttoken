@@ -3,7 +3,6 @@ import { runBootstrapPrimaryAdminCommand } from "@/modules/auth/bootstrap-primar
 
 const input = {
   email: "primary@example.test",
-  password: "bootstrap-test-password-123",
   displayName: "主管理员"
 };
 

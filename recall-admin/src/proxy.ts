@@ -3,8 +3,13 @@ import {
   AUTH_STATE_COOKIE_NAME,
   SESSION_COOKIE_NAME
 } from "@/modules/auth/session";
+import { isDevelopmentAuthMode } from "@/modules/auth/development-mode";
 
 export function proxy(request: NextRequest): NextResponse {
+  if (isDevelopmentAuthMode()) {
+    return NextResponse.next();
+  }
+
   if (
     request.nextUrl.pathname === "/members/invitations/accept"
   ) {

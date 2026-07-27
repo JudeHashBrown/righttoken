@@ -24,7 +24,7 @@ describe("AppHeader", () => {
     ["/users", "用户中心"],
     ["/users/user-1", "用户中心"],
     ["/mail", "邮件中心"],
-    ["/automation/segments", "分组规则"],
+    ["/automation/segments", "用户分组"],
     ["/automation/assignment", "分配规则"],
     ["/automation/notifications", "通知策略"],
     ["/reports", "数据报表"],
@@ -36,5 +36,16 @@ describe("AppHeader", () => {
     render(<AppHeader memberName="林小雨" urgentCount={2} />);
 
     expect(screen.getByText(label)).toBeInTheDocument();
+  });
+
+  it("does not expose standalone logout controls", () => {
+    render(<AppHeader memberName="林小雨" urgentCount={0} />);
+
+    expect(
+      screen.queryByRole("button", { name: "退出" })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("退出")
+    ).not.toBeInTheDocument();
   });
 });

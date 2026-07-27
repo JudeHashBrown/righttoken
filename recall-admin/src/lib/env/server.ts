@@ -59,8 +59,11 @@ const serverEnvSchema = z
       ),
     APP_URL: z.string().url(),
     AUTH_MODE: z
-      .enum(["standalone", "righttoken"])
-      .default("standalone"),
+      .enum(["development", "righttoken"])
+      .default("development"),
+    DEPLOYMENT_ENV: z
+      .enum(["local", "production"])
+      .default("production"),
     INTERNAL_API_SECRET_CURRENT: z.string().min(32),
     INTERNAL_API_SECRET_PREVIOUS: z.preprocess(
       emptyStringToUndefined,
@@ -69,11 +72,24 @@ const serverEnvSchema = z
     RIGHTTOKEN_ISSUER: optionalUrl,
     RIGHTTOKEN_AUDIENCE: optionalString,
     RIGHTTOKEN_JWKS_URL: optionalUrl,
+    RIGHTTOKEN_SSO_SECRET: z.preprocess(
+      emptyStringToUndefined,
+      z.string().min(32).optional()
+    ),
+    RIGHTTOKEN_ADMIN_URL: optionalUrl,
     RIGHTTOKEN_ROLE_MAP: optionalString,
     RIGHTTOKEN_API_BASE_URL: optionalUrl,
     RIGHTTOKEN_API_TOKEN: z.preprocess(
       emptyStringToUndefined,
       z.string().min(32).optional()
+    ),
+    GEOIP_HTTP_URL: optionalString,
+    GEOIP_HTTP_TOKEN: optionalString,
+    GEOIP_MMDB_PATH: optionalString,
+    GEOIP_RIR_PATH: optionalString,
+    GEOIP_HTTP_TIMEOUT_MS: z.preprocess(
+      emptyStringToUndefined,
+      z.coerce.number().int().min(100).max(10_000).default(2_000)
     ),
     RECONCILE_ENABLED: requiredEnvBoolean,
     RECONCILE_INTERVAL_MINUTES: z.coerce
@@ -102,21 +118,49 @@ const serverEnvSchema = z
       .default("development")
   })
   .superRefine((value, context) => {
-    if (value.AUTH_MODE !== "righttoken") {
-      return;
+    if (
+      (value.DEPLOYMENT_ENV === "production" ||
+        value.NODE_ENV === "production") &&
+      value.AUTH_MODE === "development"
+    ) {
+      context.addIssue({
+        code: "custom",
+        path: ["AUTH_MODE"],
+        message:
+          "AUTH_MODE=development is forbidden in production"
+      });
     }
 
-    for (const field of [
-      "RIGHTTOKEN_ISSUER",
-      "RIGHTTOKEN_AUDIENCE",
-      "RIGHTTOKEN_JWKS_URL"
-    ] as const) {
-      if (!value[field]) {
-        context.addIssue({
-          code: "custom",
-          path: [field],
-          message: `${field} is required when AUTH_MODE=righttoken`
-        });
+    if (value.AUTH_MODE === "righttoken") {
+      for (const field of [
+        "RIGHTTOKEN_ISSUER",
+        "RIGHTTOKEN_AUDIENCE",
+        "RIGHTTOKEN_SSO_SECRET",
+        "RIGHTTOKEN_ADMIN_URL"
+      ] as const) {
+        if (!value[field]) {
+          context.addIssue({
+            code: "custom",
+            path: [field],
+            message: `${field} is required when AUTH_MODE=righttoken`
+          });
+        }
+      }
+    }
+
+    if (value.RECONCILE_ENABLED) {
+      for (const field of [
+        "RIGHTTOKEN_API_BASE_URL",
+        "RIGHTTOKEN_API_TOKEN"
+      ] as const) {
+        if (!value[field]) {
+          context.addIssue({
+            code: "custom",
+            path: [field],
+            message:
+              `${field} is required when RECONCILE_ENABLED=true`
+          });
+        }
       }
     }
   });

@@ -19,7 +19,9 @@ export default async function ReportsPage(): Promise<React.JSX.Element> {
           <p>查看注册、支付、活跃、任务和逾期的实时运营指标。</p>
         </div>
         {member.role === "PRIMARY_ADMIN" ? (
-          <span className={styles.statusGood}>可导出 CSV</span>
+          <a className={styles.button} href="/api/users/export">
+            导出用户 CSV
+          </a>
         ) : (
           <span className={styles.status}>在线查看</span>
         )}

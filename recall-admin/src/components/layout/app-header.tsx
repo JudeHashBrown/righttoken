@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, LogOut, Menu } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import styles from "./app-header.module.css";
 
 type AppHeaderProps = {
@@ -19,7 +19,7 @@ export function AppHeader({
     [
       ["/automation/notifications", "通知策略"],
       ["/automation/assignment", "分配规则"],
-      ["/automation/segments", "分组规则"],
+      ["/automation/segments", "用户分组"],
       ["/dashboard", "运营驾驶舱"],
       ["/tasks", "任务中心"],
       ["/users", "用户中心"],
@@ -55,12 +55,6 @@ export function AppHeader({
           ) : null}
         </Link>
         <span className={styles.memberName}>{memberName}</span>
-        <form action="/api/auth/logout" method="post">
-          <button className={styles.logout} type="submit">
-            <LogOut aria-hidden="true" size={16} />
-            <span>退出</span>
-          </button>
-        </form>
       </div>
     </header>
   );

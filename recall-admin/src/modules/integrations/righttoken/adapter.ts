@@ -15,6 +15,7 @@ export type RightTokenUserSnapshot = {
   checkoutStartedAt: Date | null;
   firstPaidAt: Date | null;
   totalPaidMinor: number;
+  totalPaidCurrency?: "USD";
   successfulCallCount: number;
   lastCallAt: Date | null;
   balanceMinor: number;
@@ -42,6 +43,7 @@ export const rightTokenUserSnapshotSchema = z.object({
   checkoutStartedAt: z.coerce.date().nullable(),
   firstPaidAt: z.coerce.date().nullable(),
   totalPaidMinor: z.number().int().nonnegative(),
+  totalPaidCurrency: z.literal("USD").optional(),
   successfulCallCount: z.number().int().nonnegative(),
   lastCallAt: z.coerce.date().nullable(),
   balanceMinor: z.number().int(),

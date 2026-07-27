@@ -1,34 +1,6 @@
 import { Prisma } from "@/generated/prisma/client";
-import type { Session } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { ForbiddenError } from "@/modules/auth/guards";
-
-const REAUTHENTICATION_WINDOW_MS = 5 * 60 * 1000;
-
-export class ReauthenticationRequiredError extends Error {
-  constructor() {
-    super("recent reauthentication is required");
-    this.name = "ReauthenticationRequiredError";
-  }
-}
-
-export function assertRecentReauthentication(
-  session: Pick<
-    Session,
-    "expiresAt" | "reauthenticatedAt"
-  >
-): void {
-  const reauthenticationCutoff = new Date(
-    Date.now() - REAUTHENTICATION_WINDOW_MS
-  );
-  if (
-    session.expiresAt <= new Date() ||
-    !session.reauthenticatedAt ||
-    session.reauthenticatedAt < reauthenticationCutoff
-  ) {
-    throw new ReauthenticationRequiredError();
-  }
-}
 
 export async function countPrimaryAdmins(): Promise<number> {
   return prisma.member.count({
@@ -38,8 +10,7 @@ export async function countPrimaryAdmins(): Promise<number> {
 
 export async function transferPrimaryAdmin(
   currentPrimaryId: string,
-  targetAdminId: string,
-  verifiedSessionId: string
+  targetAdminId: string
 ): Promise<void> {
   await prisma.$transaction(
     async (tx) => {
@@ -52,16 +23,12 @@ export async function transferPrimaryAdmin(
         `
       );
 
-      const [currentPrimary, targetAdmin, session] =
-        await Promise.all([
+      const [currentPrimary, targetAdmin] = await Promise.all([
           tx.member.findUniqueOrThrow({
             where: { id: currentPrimaryId }
           }),
           tx.member.findUniqueOrThrow({
             where: { id: targetAdminId }
-          }),
-          tx.session.findUnique({
-            where: { id: verifiedSessionId }
           })
         ]);
 
@@ -75,14 +42,6 @@ export async function transferPrimaryAdmin(
       ) {
         throw new Error("target must be a different active administrator");
       }
-
-      if (
-        !session ||
-        session.memberId !== currentPrimary.id
-      ) {
-        throw new ReauthenticationRequiredError();
-      }
-      assertRecentReauthentication(session);
 
       await tx.member.update({
         where: { id: currentPrimary.id },
@@ -109,7 +68,7 @@ export async function transferPrimaryAdmin(
           metadata: {
             previousPrimaryId: currentPrimary.id,
             newPrimaryId: targetAdmin.id,
-            verifiedSessionId
+            identitySource: "righttoken-managed"
           }
         }
       });

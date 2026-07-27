@@ -228,6 +228,12 @@ export async function getUser360(viewer: Viewer, userId: string) {
       AND: [authorizedUserScope(viewer)]
     },
     include: {
+      locationRule: {
+        select: {
+          name: true,
+          pattern: true
+        }
+      },
       owner: {
         select: {
           id: true,

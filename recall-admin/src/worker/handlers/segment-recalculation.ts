@@ -1,7 +1,10 @@
 import { z } from "zod";
 import { createFieldCipher } from "@/lib/crypto/field-encryption";
 import { prisma } from "@/lib/db/prisma";
-import { assignTask } from "@/modules/assignment/assign-task";
+import {
+  assignTask,
+  assignUserOwner
+} from "@/modules/assignment/assign-task";
 import { evaluateRuleSet } from "@/modules/segmentation/evaluate-rule-set";
 import { getNextRuleBoundary } from "@/modules/segmentation/next-rule-boundary";
 import { parseSegmentRuleConfig } from "@/modules/segmentation/rule-config";
@@ -146,6 +149,7 @@ export async function handleSegmentRecalculation(
         return { updated, changed, cancelledTasks, reason };
       });
 
+      await assignUserOwner(user.id, now);
       let createdTasks = 0;
       const boundary = getNextRuleBoundary(
         outcome.updated,

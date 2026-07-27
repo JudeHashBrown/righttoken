@@ -2,7 +2,6 @@ import { createHash, randomBytes } from "node:crypto";
 import type { Member, MemberRole } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { ForbiddenError } from "@/modules/auth/guards";
-import { hashPassword } from "@/modules/auth/password";
 
 const INVITATION_DURATION_MS = 48 * 60 * 60 * 1000;
 
@@ -79,7 +78,7 @@ export async function createInvitation(
 
 export async function acceptInvitation(
   token: string,
-  input: { displayName: string; password: string }
+  input: { displayName: string }
 ): Promise<Member> {
   const tokenHash = hashInvitationToken(token);
   const invitation = await prisma.invitation.findUnique({
@@ -97,17 +96,16 @@ export async function acceptInvitation(
   }
 
   const displayName = input.displayName.trim();
-  if (!displayName || input.password.length < 12) {
+  if (!displayName) {
     throw new Error("invalid invitation profile");
   }
-  const passwordHash = await hashPassword(input.password);
 
   return prisma.$transaction(async (tx) => {
     const member = await tx.member.create({
       data: {
         email: invitation.email,
         displayName,
-        passwordHash,
+        passwordHash: "RIGHTTOKEN_MANAGED_IDENTITY",
         role: invitation.role
       }
     });

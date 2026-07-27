@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import type {
   SegmentCode,
   TaskPriority,
@@ -8,7 +7,7 @@ import type {
 import { TaskTable } from "@/components/tables/task-table";
 import styles from "@/components/workspaces/workspace.module.css";
 import { prisma } from "@/lib/db/prisma";
-import { getCurrentMember } from "@/modules/auth/guards";
+import { requireWorkspaceMember } from "@/modules/admin/page-access";
 import {
   findTasks,
   type TaskView
@@ -50,8 +49,7 @@ export default async function TasksPage({
 }: {
   searchParams: SearchParams;
 }): Promise<React.JSX.Element> {
-  const member = await getCurrentMember();
-  if (!member) redirect("/login?next=/tasks");
+  const member = await requireWorkspaceMember("/tasks");
   const params = await searchParams;
   const requestedView = first(params.view) as TaskView;
   const view = tabs.some((tab) => tab.value === requestedView)

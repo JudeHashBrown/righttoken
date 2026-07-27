@@ -48,4 +48,25 @@ describe("WecomSettingsForm", () => {
     });
     expect(screen.getByLabelText("企微机器人 Webhook")).toHaveValue("");
   });
+
+  it("shows separate application and group robot configuration", () => {
+    vi.stubGlobal("fetch", vi.fn());
+    render(<WecomSettingsForm />);
+
+    expect(
+      screen.getByRole("heading", { name: "企业微信应用" })
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("企业 CorpID")).toBeInTheDocument();
+    expect(screen.getByLabelText("应用 AgentID")).toBeInTheDocument();
+    expect(screen.getByLabelText("应用 Secret")).toHaveAttribute(
+      "type",
+      "password"
+    );
+    expect(
+      screen.getByLabelText("测试成员 UserID")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "运营群机器人" })
+    ).toBeInTheDocument();
+  });
 });

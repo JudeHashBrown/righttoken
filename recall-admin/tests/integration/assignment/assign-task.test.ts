@@ -3,7 +3,10 @@ import "dotenv/config";
 import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { prisma } from "@/lib/db/prisma";
-import { assignTask } from "@/modules/assignment/assign-task";
+import {
+  assignTask,
+  assignUserOwner
+} from "@/modules/assignment/assign-task";
 import { previewRules } from "@/modules/assignment/preview-rules";
 
 describe("configurable task assignment", () => {
@@ -12,6 +15,7 @@ describe("configurable task assignment", () => {
   let usUserId: string;
   let southUserId: string;
   let workloadUserId: string;
+  let ownerOnlyUserId: string;
   let usTaskId: string;
   let southTaskId: string;
   const ruleIds: string[] = [];
@@ -38,7 +42,8 @@ describe("configurable task assignment", () => {
     usOperatorId = usOperator.id;
     southOperatorId = southOperator.id;
 
-    const [usUser, southUser, workloadUser] = await Promise.all([
+    const [usUser, southUser, workloadUser, ownerOnlyUser] =
+      await Promise.all([
       prisma.userProfile.create({
         data: {
           externalUserId: `assignment-us-${randomUUID()}`,
@@ -68,11 +73,22 @@ describe("configurable task assignment", () => {
           registeredAt: new Date(),
           currentSegment: "A"
         }
+      }),
+      prisma.userProfile.create({
+        data: {
+          externalUserId: `assignment-owner-only-${randomUUID()}`,
+          email: `assignment-owner-only-${randomUUID()}@example.test`,
+          emailNormalized: `assignment-owner-only-${randomUUID()}@example.test`,
+          registeredAt: new Date(),
+          countryCode: "US",
+          currentSegment: "B"
+        }
       })
     ]);
     usUserId = usUser.id;
     southUserId = southUser.id;
     workloadUserId = workloadUser.id;
+    ownerOnlyUserId = ownerOnlyUser.id;
 
     await prisma.recallTask.createMany({
       data: Array.from({ length: 6 }, (_, index) => ({
@@ -160,7 +176,14 @@ describe("configurable task assignment", () => {
     });
     await prisma.userProfile.deleteMany({
       where: {
-        id: { in: [usUserId, southUserId, workloadUserId].filter(Boolean) }
+        id: {
+          in: [
+            usUserId,
+            southUserId,
+            workloadUserId,
+            ownerOnlyUserId
+          ].filter(Boolean)
+        }
       }
     });
     await prisma.member.deleteMany({
@@ -207,6 +230,25 @@ describe("configurable task assignment", () => {
         where: { id: southUserId }
       })
     ).toMatchObject({ ownerId: southOperatorId });
+  });
+
+  it("assigns an owner even when the user has no task", async () => {
+    const decision = await assignUserOwner(ownerOnlyUserId);
+
+    expect(decision).toMatchObject({
+      assigneeId: usOperatorId,
+      matchedRulePriority: 10
+    });
+    await expect(
+      prisma.userProfile.findUniqueOrThrow({
+        where: { id: ownerOnlyUserId }
+      })
+    ).resolves.toMatchObject({ ownerId: usOperatorId });
+    await expect(
+      prisma.recallTask.count({
+        where: { userId: ownerOnlyUserId }
+      })
+    ).resolves.toBe(0);
   });
 
   it("previews an unsaved ruleset without changing tasks or owners", async () => {

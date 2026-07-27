@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Member: 'Member',
+  SsoTicketRedemption: 'SsoTicketRedemption',
   Session: 'Session',
   UserProfile: 'UserProfile',
   UserEvent: 'UserEvent',
@@ -61,6 +62,9 @@ export const ModelName = {
   AutomationRuleVersion: 'AutomationRuleVersion',
   SegmentRecalculationRun: 'SegmentRecalculationRun',
   AssignmentRule: 'AssignmentRule',
+  AssignmentRecalculationRun: 'AssignmentRecalculationRun',
+  LocationAttributionRule: 'LocationAttributionRule',
+  LocationRecalculationRun: 'LocationRecalculationRun',
   RecallTask: 'RecallTask',
   TaskActivity: 'TaskActivity',
   AuditLog: 'AuditLog',
@@ -95,17 +99,28 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const MemberScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  rightTokenUserId: 'rightTokenUserId',
   displayName: 'displayName',
   passwordHash: 'passwordHash',
   role: 'role',
   active: 'active',
   twoFactorSecret: 'twoFactorSecret',
   twoFactorOn: 'twoFactorOn',
+  wecomUserId: 'wecomUserId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type MemberScalarFieldEnum = (typeof MemberScalarFieldEnum)[keyof typeof MemberScalarFieldEnum]
+
+
+export const SsoTicketRedemptionScalarFieldEnum = {
+  jti: 'jti',
+  expiresAt: 'expiresAt',
+  redeemedAt: 'redeemedAt'
+} as const
+
+export type SsoTicketRedemptionScalarFieldEnum = (typeof SsoTicketRedemptionScalarFieldEnum)[keyof typeof SsoTicketRedemptionScalarFieldEnum]
 
 
 export const SessionScalarFieldEnum = {
@@ -134,6 +149,11 @@ export const UserProfileScalarFieldEnum = {
   registrationIpHash: 'registrationIpHash',
   countryCode: 'countryCode',
   region: 'region',
+  ipCountryCode: 'ipCountryCode',
+  ipRegion: 'ipRegion',
+  locationSource: 'locationSource',
+  locationRuleId: 'locationRuleId',
+  locationEvaluatedAt: 'locationEvaluatedAt',
   language: 'language',
   timezone: 'timezone',
   source: 'source',
@@ -276,6 +296,66 @@ export const AssignmentRuleScalarFieldEnum = {
 } as const
 
 export type AssignmentRuleScalarFieldEnum = (typeof AssignmentRuleScalarFieldEnum)[keyof typeof AssignmentRuleScalarFieldEnum]
+
+
+export const AssignmentRecalculationRunScalarFieldEnum = {
+  id: 'id',
+  requestedById: 'requestedById',
+  status: 'status',
+  totalUsers: 'totalUsers',
+  processedUsers: 'processedUsers',
+  succeededUsers: 'succeededUsers',
+  failedUsers: 'failedUsers',
+  ownerChanges: 'ownerChanges',
+  reassignedTasks: 'reassignedTasks',
+  lastProcessedUserId: 'lastProcessedUserId',
+  upperBoundUserId: 'upperBoundUserId',
+  errorSummary: 'errorSummary',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AssignmentRecalculationRunScalarFieldEnum = (typeof AssignmentRecalculationRunScalarFieldEnum)[keyof typeof AssignmentRecalculationRunScalarFieldEnum]
+
+
+export const LocationAttributionRuleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  enabled: 'enabled',
+  priority: 'priority',
+  matchType: 'matchType',
+  pattern: 'pattern',
+  countryCode: 'countryCode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LocationAttributionRuleScalarFieldEnum = (typeof LocationAttributionRuleScalarFieldEnum)[keyof typeof LocationAttributionRuleScalarFieldEnum]
+
+
+export const LocationRecalculationRunScalarFieldEnum = {
+  id: 'id',
+  requestedById: 'requestedById',
+  status: 'status',
+  totalUsers: 'totalUsers',
+  processedUsers: 'processedUsers',
+  succeededUsers: 'succeededUsers',
+  failedUsers: 'failedUsers',
+  countryChanges: 'countryChanges',
+  reassignedTasks: 'reassignedTasks',
+  lastProcessedUserId: 'lastProcessedUserId',
+  upperBoundUserId: 'upperBoundUserId',
+  ruleSnapshot: 'ruleSnapshot',
+  errorSummary: 'errorSummary',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LocationRecalculationRunScalarFieldEnum = (typeof LocationRecalculationRunScalarFieldEnum)[keyof typeof LocationRecalculationRunScalarFieldEnum]
 
 
 export const RecallTaskScalarFieldEnum = {

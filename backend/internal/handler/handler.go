@@ -33,6 +33,7 @@ type AdminHandlers struct {
 	Channel               *admin.ChannelHandler
 	Payment               *admin.PaymentHandler
 	Referral              *admin.ReferralAdminHandler
+	RecallUser            *admin.RecallUserHandler
 }
 
 // Handlers contains all HTTP handlers
@@ -52,6 +53,7 @@ type Handlers struct {
 	Totp           *TotpHandler
 	Payment        *PaymentHandler
 	PaymentWebhook *PaymentWebhookHandler
+	RecallSSO      *RecallSSOHandler
 }
 
 // BuildInfo contains build-time information

@@ -9,6 +9,7 @@ import {
 } from "@/modules/auth/guards";
 import { assignmentRuleInputSchema } from "@/modules/assignment/match-rule";
 import { publishAssignmentRules } from "@/modules/assignment/publish-rules";
+import { getRuntimeTaskScheduler } from "@/modules/tasks/runtime-scheduler";
 
 const rulesetSchema = z
   .object({
@@ -58,11 +59,16 @@ export async function POST(
         { status: 400 }
       );
     }
-    const published = await publishAssignmentRules(
+    const result = await publishAssignmentRules(
       member.id,
-      parsed.data.rules
+      parsed.data.rules,
+      await getRuntimeTaskScheduler()
     );
-    return NextResponse.json({ published });
+    return NextResponse.json({
+      published: result.published,
+      runId: result.run.id,
+      status: result.run.status
+    });
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       return NextResponse.json(

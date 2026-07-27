@@ -16,13 +16,131 @@ const connectionString = requireSeedValue("DATABASE_URL");
 const primaryAdminEmail = requireSeedValue(
   "SEED_PRIMARY_ADMIN_EMAIL"
 ).toLowerCase();
-const primaryAdminPassword = requireSeedValue(
-  "SEED_PRIMARY_ADMIN_PASSWORD"
-);
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString })
 });
+
+const defaultLocationRules = [
+  ["QQ 邮箱", "EXACT_DOMAIN", "qq.com", "CN"],
+  ["QQ 会员邮箱", "EXACT_DOMAIN", "vip.qq.com", "CN"],
+  ["Foxmail", "EXACT_DOMAIN", "foxmail.com", "CN"],
+  ["网易 163 邮箱", "EXACT_DOMAIN", "163.com", "CN"],
+  ["网易 126 邮箱", "EXACT_DOMAIN", "126.com", "CN"],
+  ["网易 Yeah 邮箱", "EXACT_DOMAIN", "yeah.net", "CN"],
+  ["新浪邮箱", "EXACT_DOMAIN", "sina.com", "CN"],
+  ["新浪中国邮箱", "EXACT_DOMAIN", "sina.cn", "CN"],
+  ["搜狐邮箱", "EXACT_DOMAIN", "sohu.com", "CN"],
+  ["Mail.ru", "EXACT_DOMAIN", "mail.ru", "RU"],
+  ["Inbox.ru", "EXACT_DOMAIN", "inbox.ru", "RU"],
+  ["List.ru", "EXACT_DOMAIN", "list.ru", "RU"],
+  ["BK.ru", "EXACT_DOMAIN", "bk.ru", "RU"],
+  ["Internet.ru", "EXACT_DOMAIN", "internet.ru", "RU"],
+  ["Yandex Russia", "EXACT_DOMAIN", "yandex.ru", "RU"],
+  ["Ya.ru", "EXACT_DOMAIN", "ya.ru", "RU"],
+  ["Rambler", "EXACT_DOMAIN", "rambler.ru", "RU"],
+  ["Yandex Belarus", "EXACT_DOMAIN", "yandex.by", "BY"],
+  ["Mail.by", "EXACT_DOMAIN", "mail.by", "BY"],
+  ["Mail.kz", "EXACT_DOMAIN", "mail.kz", "KZ"],
+  ["Yandex Kazakhstan", "EXACT_DOMAIN", "yandex.kz", "KZ"],
+  ["uMail Uzbekistan", "EXACT_DOMAIN", "umail.uz", "UZ"],
+  ["Kmail Kyrgyzstan", "EXACT_DOMAIN", "kmail.kg", "KG"]
+] as const;
+
+const defaultCountrySuffixes = {
+  CN: [".cn", ".xn--fiqs8s", ".xn--fiqz9s"],
+  RU: [".ru", ".xn--p1ai"],
+  BY: [".by", ".xn--90ais"],
+  KZ: [".kz"],
+  KG: [".kg"],
+  UZ: [".uz"],
+  TJ: [".tj"],
+  TM: [".tm"],
+  AM: [".am"],
+  AZ: [".az"],
+  GE: [".ge"],
+  US: [".us"],
+  GB: [".uk"],
+  IE: [".ie"],
+  DE: [".de"],
+  AT: [".at"],
+  CH: [".ch"],
+  LI: [".li"],
+  FR: [".fr"],
+  BE: [".be"],
+  NL: [".nl"],
+  LU: [".lu"],
+  IT: [".it"],
+  ES: [".es"],
+  PT: [".pt"],
+  GR: [".gr"],
+  MT: [".mt"],
+  CY: [".cy"],
+  SE: [".se"],
+  NO: [".no"],
+  DK: [".dk"],
+  FI: [".fi"],
+  IS: [".is"],
+  PL: [".pl"],
+  CZ: [".cz"],
+  SK: [".sk"],
+  HU: [".hu"],
+  RO: [".ro"],
+  BG: [".bg"],
+  SI: [".si"],
+  HR: [".hr"],
+  RS: [".rs"],
+  BA: [".ba"],
+  MK: [".mk"],
+  AL: [".al"],
+  EE: [".ee"],
+  LV: [".lv"],
+  LT: [".lt"],
+  UA: [".ua"],
+  MD: [".md"],
+  EU: [".eu"]
+} as const;
+
+async function seedLocationAttributionRules(): Promise<void> {
+  const rules = [
+    ...defaultLocationRules.map(
+      ([name, matchType, pattern, countryCode], index) => ({
+        name,
+        matchType,
+        pattern,
+        countryCode,
+        priority: index + 1
+      })
+    ),
+    ...Object.entries(defaultCountrySuffixes).flatMap(
+      ([countryCode, patterns]) =>
+        patterns.map((pattern) => ({
+          name: `${countryCode} 国家域名`,
+          matchType: "DOMAIN_SUFFIX" as const,
+          pattern,
+          countryCode,
+          priority: 0
+        }))
+    )
+  ].map((rule, index) => ({ ...rule, priority: index + 1 }));
+
+  for (const rule of rules) {
+    await prisma.locationAttributionRule.upsert({
+      where: {
+        matchType_pattern: {
+          matchType: rule.matchType,
+          pattern: rule.pattern
+        }
+      },
+      create: { ...rule, enabled: true },
+      update: {
+        name: rule.name,
+        countryCode: rule.countryCode,
+        priority: rule.priority
+      }
+    });
+  }
+}
 
 async function seedSyntheticUsers(): Promise<void> {
   const segments = ["A", "B", "C", "D", "E", "F", "G"] as const;
@@ -222,9 +340,9 @@ async function seedSyntheticTasks(): Promise<void> {
 async function main(): Promise<void> {
   await bootstrapPrimaryAdmin({
     email: primaryAdminEmail,
-    password: primaryAdminPassword,
     displayName: "主管理员"
   });
+  await seedLocationAttributionRules();
   await seedSyntheticUsers();
   await seedSyntheticTasks();
 }

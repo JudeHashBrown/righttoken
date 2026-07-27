@@ -1,7 +1,10 @@
 import { z } from "zod";
 import type { UserProfile } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
-import { assignTask } from "@/modules/assignment/assign-task";
+import {
+  assignTask,
+  assignUserOwnerInTransaction
+} from "@/modules/assignment/assign-task";
 import { getNextRuleBoundary } from "@/modules/segmentation/next-rule-boundary";
 import { resegmentUser } from "@/modules/segmentation/resegment-user";
 import { loadActiveSegmentRuleSet } from "@/modules/segmentation/rule-config";
@@ -94,8 +97,12 @@ export async function handleSegmentCheck(
         `scheduled rule boundary ${input.boundaryKey}`,
         now
       );
+      await assignUserOwnerInTransaction(tx, user.id, now);
+      const currentUser = await tx.userProfile.findUniqueOrThrow({
+        where: { id: user.id }
+      });
       return {
-        user,
+        user: currentUser,
         config: active.config,
         segment: segmentChange.currentSegment,
         ruleVersion: active.version
@@ -184,6 +191,7 @@ export async function handleSegmentCheck(
       `scheduled check ${input.reasonKey}`,
       now
     );
+    await assignUserOwnerInTransaction(tx, user.id, now);
     return {
       segment: segmentChange.currentSegment,
       ruleVersion: segmentChange.ruleVersion

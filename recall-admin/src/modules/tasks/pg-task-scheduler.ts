@@ -31,4 +31,24 @@ export class PgTaskScheduler implements TaskScheduler {
       { singletonKey: input.runId }
     );
   }
+
+  async scheduleLocationRecalculation(
+    input: { runId: string }
+  ): Promise<void> {
+    await this.boss.upsert(
+      JOBS.LOCATION_RECALCULATION,
+      input,
+      { singletonKey: input.runId }
+    );
+  }
+
+  async scheduleAssignmentRecalculation(
+    input: { runId: string }
+  ): Promise<void> {
+    await this.boss.upsert(
+      JOBS.ASSIGNMENT_RECALCULATION,
+      input,
+      { singletonKey: input.runId }
+    );
+  }
 }

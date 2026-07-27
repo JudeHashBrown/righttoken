@@ -25,7 +25,7 @@
   max-width: 72ch;
   margin: 7px 0 0;
   color: #667087;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.6;
   text-wrap: pretty;
 }
@@ -63,7 +63,7 @@
 .field label,
 .detailLabel {
   color: #737d93;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 650;
 }
 
@@ -75,7 +75,7 @@
   border-radius: 8px;
   background: #ffffff;
   color: #202a40;
-  font-size: 12px;
+  font-size: 14px;
   outline: none;
   transition:
     border-color 160ms ease-out,
@@ -113,7 +113,7 @@
   gap: 7px;
   border-radius: 8px;
   padding: 0 12px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 650;
   text-decoration: none;
   cursor: pointer;
@@ -211,14 +211,14 @@
 .panelHeader h3 {
   margin: 0;
   color: #252d42;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.4;
 }
 
 .panelHeader p {
   margin: 3px 0 0;
   color: #7e879a;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .tableScroll {
@@ -242,14 +242,14 @@
 .table th {
   background: #fafbfc;
   color: #747e93;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 680;
   white-space: nowrap;
 }
 
 .table td {
   color: #4d576f;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .table tbody tr:last-child td {
@@ -265,7 +265,7 @@
   max-width: 240px;
   overflow: hidden;
   color: #28324a;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 680;
   text-decoration: none;
   text-overflow: ellipsis;
@@ -284,7 +284,7 @@
   overflow: hidden;
   margin-top: 4px;
   color: #7a8498;
-  font-size: 10px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -297,7 +297,7 @@
   align-items: center;
   border-radius: 999px;
   padding: 0 8px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 720;
   white-space: nowrap;
 }
@@ -337,13 +337,13 @@
   display: block;
   margin-bottom: 7px;
   color: #313b53;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .empty p {
   max-width: 55ch;
   margin: 0 auto;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.6;
 }
 
@@ -381,7 +381,7 @@
   overflow-wrap: anywhere;
   margin-top: 6px;
   color: #2b344b;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 680;
 }
 
@@ -405,19 +405,19 @@
 
 .timelineItem time {
   color: #838ca0;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .timelineItem strong {
   display: block;
   color: #333d54;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .timelineItem p {
   margin: 4px 0 0;
   color: #6e788e;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.55;
 }
 
@@ -433,7 +433,7 @@
   margin: 0;
   border-radius: 8px;
   padding: 9px 10px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -449,7 +449,7 @@
 
 .backLink {
   color: #5967d7;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 650;
   text-decoration: none;
 }
@@ -477,7 +477,7 @@
 .statCard span {
   display: block;
   color: #747e93;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 650;
 }
 
@@ -494,8 +494,71 @@
   display: block;
   margin-top: 6px;
   color: #8991a3;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
+}
+
+.compactCardGrid {
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.compactCardGrid .statCard {
+  display: grid;
+  min-height: 66px;
+  grid-template-columns: minmax(90px, auto) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 10px;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.compactCardGrid .statCard span {
+  grid-column: 1 / -1;
+  font-size: 12px;
+}
+
+.compactCardGrid .statCard strong {
+  white-space: nowrap;
+  margin-top: 2px;
+  font-size: 18px;
+}
+
+.compactCardGrid .statCard small {
+  grid-column: 1 / -1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  align-self: end;
+  margin-top: 0;
+  font-size: 12px;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.segmentWorkspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 158px;
+  gap: 12px 16px;
+  align-items: start;
+}
+
+.segmentWorkspace > .cardGrid {
+  grid-column: 1;
+  grid-row: 1;
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .segmentWorkspace {
+    grid-template-columns: 1fr;
+  }
+
+  .segmentWorkspace > .cardGrid {
+    grid-column: 1;
+  }
 }
 
 .twoColumn {
@@ -512,7 +575,7 @@
   background: #f5f6ff;
   color: #515d79;
   padding: 12px 14px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.65;
 }
 
@@ -544,13 +607,13 @@
   display: block;
   overflow-wrap: anywhere;
   color: #303950;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .listItem p {
   margin: 4px 0 0;
   color: #788297;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -563,7 +626,7 @@
   align-items: center;
   border-radius: 999px;
   padding: 0 9px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 720;
   white-space: nowrap;
 }
@@ -595,7 +658,7 @@
   align-items: center;
   gap: 10px;
   color: #59647b;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .barTrack {
@@ -632,7 +695,7 @@
 .definitionItem span {
   display: block;
   color: #7c8699;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .definitionItem strong {
@@ -640,7 +703,7 @@
   overflow-wrap: anywhere;
   margin-top: 6px;
   color: #2e384f;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .editor {
@@ -674,7 +737,127 @@
 .ruleCardHeader {
   margin-bottom: 14px;
   color: #303950;
-  font-size: 12px;
+  font-size: 14px;
+}
+
+.locationRuleTableWrap {
+  overflow-x: auto;
+  border: 1px solid #e4e7ef;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.locationRuleTable {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.locationRuleTable th {
+  background: #f6f7fb;
+  color: #68738a;
+  font-size: 13px;
+  font-weight: 650;
+  text-align: left;
+}
+
+.locationRuleTable th,
+.locationRuleTable td {
+  border-bottom: 1px solid #eceef4;
+  padding: 8px 10px;
+  vertical-align: middle;
+}
+
+.locationRuleTable tr:last-child td {
+  border-bottom: 0;
+}
+
+.locationRuleTable th:nth-child(1) {
+  width: 24%;
+}
+
+.locationRuleTable th:nth-child(2) {
+  width: 18%;
+}
+
+.locationRuleTable th:nth-child(3) {
+  width: 24%;
+}
+
+.locationRuleTable th:nth-child(4) {
+  width: 9%;
+}
+
+.locationRuleTable th:nth-child(5) {
+  width: 25%;
+}
+
+.locationRuleTable .input,
+.locationRuleTable .select {
+  min-height: 34px;
+  padding: 7px 9px;
+  font-size: 14px;
+}
+
+.locationRuleActions,
+.compactToggle {
+  display: flex;
+  align-items: center;
+}
+
+.locationRuleActions {
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.compactToggle {
+  gap: 5px;
+  margin-right: auto;
+  color: #566078;
+  font-size: 13px;
+}
+
+.compactIconButton,
+.compactDeleteButton {
+  min-width: 30px;
+  min-height: 30px;
+  border-radius: 7px;
+  background: #fff;
+  padding: 5px 8px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.compactIconButton {
+  border: 1px solid #d9deea;
+  color: #4f5b73;
+}
+
+.compactDeleteButton {
+  border: 1px solid #f1cfd4;
+  color: #b23b4b;
+}
+
+.compactIconButton:hover:not(:disabled) {
+  border-color: #aeb8d1;
+  background: #f7f8fc;
+}
+
+.compactDeleteButton:hover {
+  background: #fff5f6;
+}
+
+.compactIconButton:focus-visible,
+.compactDeleteButton:focus-visible {
+  outline: 2px solid #5a69df;
+  outline-offset: 2px;
+}
+
+.compactIconButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
 }
 
 .editorGrid {
@@ -696,7 +879,7 @@
   width: 100%;
   margin-bottom: 6px;
   color: #737d93;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 650;
 }
 
@@ -706,7 +889,7 @@
   align-items: center;
   gap: 6px;
   color: #566078;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .toggle {
@@ -720,7 +903,7 @@
   background: #eef0ff;
   color: #515cc1;
   padding: 11px 12px;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .invitationResult {
@@ -734,14 +917,32 @@
 
 .invitationResult strong {
   color: #147552;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .invitationResult p {
   margin: 0;
   color: #567268;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.55;
+}
+
+.accessConfirmation {
+  display: grid;
+  min-width: 250px;
+  gap: 8px;
+}
+
+.accessConfirmation p {
+  max-width: 34ch;
+  margin: 0;
+  color: #7b3b44;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.accessConfirmation .error {
+  display: block;
 }
 
 .notificationGrid {
@@ -758,7 +959,7 @@
 .notificationGrid legend {
   padding: 0 5px;
   color: #303950;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -845,4 +1046,15 @@
   .textarea {
     transition: none;
   }
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

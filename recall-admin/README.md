@@ -24,14 +24,8 @@
 docker compose --env-file .env.example up --build -d
 ```
 
-打开 `http://127.0.0.1:3000/login`。
-
-本地测试账号：
-
-```text
-账号：primary-admin@example.test
-密码：DevelopmentOnlyPassword123!
-```
+打开 `http://127.0.0.1:3000/dashboard`。本地开发无需登录，
+系统自动使用数据库中的主管理员作为当前操作人。
 
 停止服务但保留测试数据库：
 
@@ -48,7 +42,7 @@ cp .env.example .env
 npm ci
 npm run db:deploy
 npm run db:seed
-npm run dev
+npm run dev -- --hostname 127.0.0.1 --port 3101
 ```
 
 Worker 另开一个终端运行：
@@ -61,15 +55,15 @@ npm run worker
 Web、Worker 和 PostgreSQL 必须同时运行；只启动 Web 会使重算记录
 停留在“等待”状态。
 
-开发服务器如果使用 3101 端口，必须同时让同源地址保持一致：
+本地默认使用 3101 端口：
 
 ```bash
-APP_URL=http://127.0.0.1:3101 npm run dev -- --hostname 127.0.0.1 --port 3101
+npm run dev -- --hostname 127.0.0.1 --port 3101
 ```
 
 ## 集成配置
 
-登录后在“系统设置”中完成配置，密码、Webhook 和接口密钥都会加密保存：
+直接在“系统设置”中完成配置，邮箱凭据、Webhook 和接口密钥都会加密保存：
 
 - 客服邮箱：支持 Namecheap Private Email、企业微信邮箱和自定义 SMTP/IMAP。
 - 企业微信：保存群机器人 Webhook 后，可先发送一条不含用户信息的测试消息。
@@ -85,6 +79,9 @@ POST /api/internal/righttoken/events
 后台 Worker 每两分钟收取邮件、每分钟投递通知、每十五分钟增量校准用户，并在每天 02:00 执行全量校准。未启用对应连接时任务会安全跳过。
 
 ## 验证
+
+联调测试自动使用并重置独立的 `_test` 数据库，不会修改本地网页当前使用的
+开发数据。
 
 ```bash
 npm test
@@ -102,8 +99,9 @@ npm run build
 
 - `.env`、生产凭据、真实用户数据、备份和构建产物不会进入版本库。
 - 示例数据只使用 `example.test` 地址。
-- 首发使用独立运营账号，`AUTH_MODE=standalone`。
-- `AUTH_MODE=righttoken` 只预留配置；身份适配器完成前不得在生产启用。
+- 本地开发使用 `AUTH_MODE=development` 和 `DEPLOYMENT_ENV=local`，不提供登录、密码、验证码或二次验证。
+- 正式环境使用 `AUTH_MODE=righttoken`，身份由 RightToken 主站统一提供。
+- 正式身份适配器完成前，不得将本地免登录模式用于公网部署。
 - 正式接入通过内部事件 API 和只读校准 API，不直接读写 RightToken 主数据库。
 
 ## 分组规则数据约定
@@ -112,6 +110,8 @@ npm run build
 - `balanceCurrency`：原始余额币种。
 - `balanceUsdMinor`：RightToken 按其结算汇率提供的美元等值美分；
   召回后台不自行抓取汇率。
+- `totalPaidMinor`：RightToken 按内部固定 7 CNY/USD 结算口径归一化的
+  累计净支付美元美分，已扣除退款。
 - `countryCode`：RightToken 根据注册 IP 解析的两位 ISO 国家代码。
 - 注册 IP 继续加密保存，预览样本、通知和审计记录不批量返回明文 IP。
 

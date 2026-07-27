@@ -23,14 +23,14 @@
 .pageHeading p {
   margin: 7px 0 0;
   color: #667087;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.6;
 }
 
 .pageHeading time {
   color: #788197;
   padding-top: 5px;
-  font-size: 12px;
+  font-size: 14px;
   white-space: nowrap;
 }
 
@@ -90,7 +90,7 @@
 .metricCopy p {
   margin: 0;
   color: #687187;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .metricCopy strong {
@@ -104,7 +104,7 @@
 .metricCopy small {
   margin-top: 7px;
   color: #7b8498;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.4;
 }
 
@@ -144,19 +144,19 @@
 .panelHeader h2 {
   margin: 0;
   color: #252d42;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.4;
 }
 
 .panelHeader p {
   margin: 3px 0 0;
   color: #7e879a;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .panelHeader a {
   color: #5664d5;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 650;
   text-decoration: none;
 }
@@ -186,7 +186,7 @@
 .taskTable th {
   background: #fafbfc;
   color: #798195;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 630;
 }
 
@@ -214,7 +214,7 @@
   display: block;
   overflow: hidden;
   color: #273047;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 650;
   text-decoration: none;
   text-overflow: ellipsis;
@@ -230,7 +230,7 @@
   overflow: hidden;
   margin-top: 4px;
   color: #7a8398;
-  font-size: 10px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -241,7 +241,7 @@
   align-items: center;
   border-radius: 999px;
   padding: 0 8px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -264,7 +264,7 @@
 .due,
 .overdue {
   color: #596278;
-  font-size: 10px;
+  font-size: 12px;
   white-space: nowrap;
 }
 
@@ -298,14 +298,14 @@
 .emptyState strong {
   margin-top: 14px;
   color: #30384d;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .emptyState p,
 .compactEmpty {
   margin: 6px 0 0;
   color: #81899b;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .segmentList {
@@ -329,14 +329,14 @@
   place-items: center;
   border-radius: 6px;
   color: #ffffff;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 750;
 }
 
 .segmentName {
   overflow: hidden;
   color: #596278;
-  font-size: 10px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -359,7 +359,7 @@
 
 .segmentRow > strong {
   color: #424a5f;
-  font-size: 10px;
+  font-size: 12px;
   text-align: right;
 }
 
@@ -421,14 +421,14 @@
 
 .healthName {
   color: #3e465b;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .healthState {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 620;
 }
 
@@ -473,12 +473,12 @@
   gap: 16px;
   margin-bottom: 8px;
   color: #515a70;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .workloadLabel strong {
   color: #353d52;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .workloadTrack {

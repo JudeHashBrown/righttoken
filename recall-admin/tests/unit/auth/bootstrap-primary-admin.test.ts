@@ -53,28 +53,23 @@ function createFakeStore(seed: FakeMember[] = []): {
   return { store, members };
 }
 
-const hashPassword = async (password: string) => `hashed:${password}`;
-
 describe("bootstrapPrimaryAdmin", () => {
   it("creates one primary administrator and is idempotent", async () => {
     const { store, members } = createFakeStore();
-    const dependencies = { store, hashPassword };
 
     const first = await bootstrapPrimaryAdmin(
       {
         email: " Primary.Admin@Example.Test ",
-        password: "bootstrap-test-password-123",
         displayName: "测试主管理员"
       },
-      dependencies
+      { store }
     );
     const second = await bootstrapPrimaryAdmin(
       {
         email: "primary.admin@example.test",
-        password: "bootstrap-test-password-456",
         displayName: "主管理员"
       },
-      dependencies
+      { store }
     );
 
     expect(first).toEqual({ id: "member-1", created: true });
@@ -83,7 +78,7 @@ describe("bootstrapPrimaryAdmin", () => {
     expect(members[0]).toMatchObject({
       email: "primary.admin@example.test",
       displayName: "主管理员",
-      passwordHash: "hashed:bootstrap-test-password-456",
+      passwordHash: "RIGHTTOKEN_MANAGED_IDENTITY",
       role: "PRIMARY_ADMIN",
       active: true
     });
@@ -104,25 +99,23 @@ describe("bootstrapPrimaryAdmin", () => {
     await expect(
       bootstrapPrimaryAdmin(
         {
-          email: "replacement@example.test",
-          password: "bootstrap-test-password-123"
+          email: "replacement@example.test"
         },
-        { store, hashPassword }
+        { store }
       )
     ).rejects.toThrow("a different primary admin already exists");
   });
 
-  it("rejects a password shorter than twelve characters", async () => {
+  it("does not require standalone login credentials", async () => {
     const { store } = createFakeStore();
 
     await expect(
       bootstrapPrimaryAdmin(
         {
-          email: "primary@example.test",
-          password: "too-short"
+          email: "primary@example.test"
         },
-        { store, hashPassword }
+        { store }
       )
-    ).rejects.toThrow();
+    ).resolves.toMatchObject({ created: true });
   });
 });

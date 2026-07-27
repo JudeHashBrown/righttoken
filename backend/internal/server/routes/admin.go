@@ -2,6 +2,7 @@
 package routes
 
 import (
+	"github.com/Wei-Shaw/sub2api/internal/config"
 	"github.com/Wei-Shaw/sub2api/internal/handler"
 	"github.com/Wei-Shaw/sub2api/internal/server/middleware"
 
@@ -13,7 +14,14 @@ func RegisterAdminRoutes(
 	v1 *gin.RouterGroup,
 	h *handler.Handlers,
 	adminAuth middleware.AdminAuthMiddleware,
+	cfg *config.Config,
 ) {
+	if h.Admin.RecallUser != nil {
+		recall := v1.Group("/admin/recall")
+		recall.Use(middleware.RecallExportAuth(cfg.RecallExport.Secret))
+		recall.GET("/users", h.Admin.RecallUser.List)
+	}
+
 	admin := v1.Group("/admin")
 	admin.Use(gin.HandlerFunc(adminAuth))
 	{

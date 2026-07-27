@@ -34,13 +34,21 @@ export async function previewRules(
       orderBy: { createdAt: "desc" },
       take: 500
     });
+    const defaultOwner = await tx.member.findFirst({
+      where: { role: "PRIMARY_ADMIN", active: true },
+      orderBy: { createdAt: "asc" },
+      select: { id: true }
+    });
     const workload = await loadAssignmentWorkload(
       tx,
-      rules.flatMap((rule) =>
-        [rule.assigneeId, rule.fallbackAssigneeId].filter(
-          (id): id is string => Boolean(id)
-        )
-      )
+      [
+        ...rules.flatMap((rule) =>
+          [rule.assigneeId, rule.fallbackAssigneeId].filter(
+            (id): id is string => Boolean(id)
+          )
+        ),
+        ...(defaultOwner ? [defaultOwner.id] : [])
+      ]
     );
     const result: AssignmentRulePreview = {
       sampledUsers: users.length,
@@ -55,7 +63,8 @@ export async function previewRules(
         userToAssignmentContext(user),
         rules,
         workload,
-        now
+        now,
+        defaultOwner?.id ?? null
       );
       const ruleKey = decision.matchedRuleId
         ? decision.matchedRuleId

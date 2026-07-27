@@ -3,10 +3,8 @@ import "dotenv/config";
 import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { NextRequest } from "next/server";
-import {
-  POST as inviteMember,
-  PUT as acceptMemberInvitation
-} from "@/app/api/members/invitations/route";
+import { POST as grantMemberAccess } from "@/app/api/members/access/route";
+import { DELETE as revokeMemberAccess } from "@/app/api/members/[id]/access/route";
 import { POST as transferPrimary } from "@/app/api/members/primary-transfer/route";
 import { prisma } from "@/lib/db/prisma";
 import {
@@ -17,14 +15,14 @@ import {
 } from "@/modules/auth/session";
 
 describe("privileged member routes", () => {
-  const invitedEmail = `route-invite-${randomUUID()}@example.test`;
-  const staleInvitedEmail = `route-stale-${randomUUID()}@example.test`;
+  const suffix = randomUUID();
+  const registeredEmail = `route-member-${suffix}@example.test`;
   let currentPrimaryId: string;
   let targetAdminId: string;
+  let registeredUserId: string;
   let sessionToken: string;
-  let staleSessionToken: string;
-  let invitationToken: string;
-  let acceptedMemberId: string;
+  let grantedMemberId: string;
+  let grantedSessionToken: string;
 
   beforeAll(async () => {
     currentPrimaryId = (
@@ -35,24 +33,28 @@ describe("privileged member routes", () => {
     targetAdminId = (
       await prisma.member.create({
         data: {
-          email: `route-target-${randomUUID()}@example.test`,
+          email: `route-target-${suffix}@example.test`,
           displayName: "Route Target",
-          passwordHash: "not-used-in-this-test",
+          passwordHash: "RIGHTTOKEN_MANAGED_IDENTITY",
           role: "ADMIN"
+        }
+      })
+    ).id;
+    registeredUserId = (
+      await prisma.userProfile.create({
+        data: {
+          externalUserId: `righttoken-route-${suffix}`,
+          email: registeredEmail,
+          emailNormalized: registeredEmail,
+          displayName: "Registered Route User",
+          registeredAt: new Date(),
+          currentSegment: "G"
         }
       })
     ).id;
     const session = await createSession(currentPrimaryId);
     sessionToken = session.token;
     await markReauthenticated(session.id);
-    const staleSession = await createSession(currentPrimaryId);
-    staleSessionToken = staleSession.token;
-    await prisma.session.update({
-      where: { id: staleSession.id },
-      data: {
-        reauthenticatedAt: new Date(Date.now() - 10 * 60 * 1000)
-      }
-    });
   });
 
   afterAll(async () => {
@@ -67,118 +69,144 @@ describe("privileged member routes", () => {
       })
     ]);
     await revokeSessionByToken(sessionToken);
-    await revokeSessionByToken(staleSessionToken);
-    await prisma.invitation.deleteMany({
-      where: { email: { in: [invitedEmail, staleInvitedEmail] } }
-    });
+    if (grantedSessionToken) {
+      await revokeSessionByToken(grantedSessionToken);
+    }
     await prisma.auditLog.deleteMany({
       where: {
-        action: "primary_admin.transferred",
-        entityId: targetAdminId
+        OR: [
+          { entityId: targetAdminId },
+          ...(grantedMemberId ? [{ entityId: grantedMemberId }] : [])
+        ]
       }
     });
-    if (acceptedMemberId) {
-      await prisma.member.delete({ where: { id: acceptedMemberId } });
+    if (grantedMemberId) {
+      await prisma.member.deleteMany({
+        where: { id: grantedMemberId }
+      });
     }
+    await prisma.userProfile.deleteMany({
+      where: { id: registeredUserId }
+    });
     await prisma.member.delete({ where: { id: targetAdminId } });
     await prisma.$disconnect();
   });
 
-  it("lets the primary administrator create an administrator invitation", async () => {
-    const response = await inviteMember(
-      new NextRequest(
-        "http://127.0.0.1:3000/api/members/invitations",
-        {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            origin: "http://127.0.0.1:3000",
-            cookie: `${SESSION_COOKIE_NAME}=${sessionToken}`
-          },
-          body: JSON.stringify({
-            email: invitedEmail,
-            role: "ADMIN"
-          })
-        }
-      )
+  it("grants access only to a synchronized RightToken user", async () => {
+    const response = await grantMemberAccess(
+      new NextRequest("http://127.0.0.1:3101/api/members/access", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://127.0.0.1:3101",
+          cookie: `${SESSION_COOKIE_NAME}=${sessionToken}`
+        },
+        body: JSON.stringify({
+          email: registeredEmail,
+          role: "OPERATOR"
+        })
+      })
     );
 
     expect(response.status).toBe(201);
     const result = (await response.json()) as {
-      token: string;
-      role: string;
+      member: {
+        id: string;
+        rightTokenUserId: string;
+        role: string;
+      };
     };
-    invitationToken = result.token;
-    expect(result).toMatchObject({
-      token: expect.any(String),
-      role: "ADMIN"
+    grantedMemberId = result.member.id;
+    expect(result.member).toMatchObject({
+      rightTokenUserId: `righttoken-route-${suffix}`,
+      role: "OPERATOR"
     });
+
+    const missing = await grantMemberAccess(
+      new NextRequest("http://127.0.0.1:3101/api/members/access", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://127.0.0.1:3101",
+          cookie: `${SESSION_COOKIE_NAME}=${sessionToken}`
+        },
+        body: JSON.stringify({
+          email: `not-registered-${suffix}@example.test`,
+          role: "OPERATOR"
+        })
+      })
+    );
+    expect(missing.status).toBe(404);
   });
 
-  it("requires recent reauthentication for a privileged invitation", async () => {
-    const response = await inviteMember(
-      new NextRequest(
-        "http://127.0.0.1:3000/api/members/invitations",
-        {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            origin: "http://127.0.0.1:3000",
-            cookie: `${SESSION_COOKIE_NAME}=${staleSessionToken}`
-          },
-          body: JSON.stringify({
-            email: staleInvitedEmail,
-            role: "ADMIN"
-          })
-        }
-      )
-    );
-
-    expect(response.status).toBe(401);
-    await expect(response.json()).resolves.toEqual({
-      error: {
-        code: "REAUTH_REQUIRED",
-        message: "请重新验证后继续"
+  it("revokes sessions and releases assigned work", async () => {
+    const grantedSession = await createSession(grantedMemberId);
+    grantedSessionToken = grantedSession.token;
+    await prisma.userProfile.update({
+      where: { id: registeredUserId },
+      data: { ownerId: grantedMemberId }
+    });
+    const task = await prisma.recallTask.create({
+      data: {
+        userId: registeredUserId,
+        origin: "MANUAL",
+        triggerKey: `member-revoke-${suffix}`,
+        ruleVersion: 1,
+        title: "Release on member revoke",
+        reason: "Integration verification",
+        priority: "NORMAL",
+        status: "IN_PROGRESS",
+        assigneeId: grantedMemberId,
+        dueAt: new Date(Date.now() + 60_000)
       }
     });
-  });
 
-  it("accepts the invitation without exposing its stored token hash", async () => {
-    const response = await acceptMemberInvitation(
+    const response = await revokeMemberAccess(
       new NextRequest(
-        "http://127.0.0.1:3000/api/members/invitations",
+        `http://127.0.0.1:3101/api/members/${grantedMemberId}/access`,
         {
-          method: "PUT",
+          method: "DELETE",
           headers: {
-            "content-type": "application/json",
-            origin: "http://127.0.0.1:3000"
-          },
-          body: JSON.stringify({
-            token: invitationToken,
-            displayName: "Accepted Route Admin",
-            password: "a-secure-route-invitation-password"
-          })
+            origin: "http://127.0.0.1:3101",
+            cookie: `${SESSION_COOKIE_NAME}=${sessionToken}`
+          }
         }
-      )
+      ),
+      { params: Promise.resolve({ id: grantedMemberId }) }
     );
 
-    expect(response.status).toBe(201);
-    const accepted = (await response.json()) as {
-      member: { id: string; role: string };
-    };
-    acceptedMemberId = accepted.member.id;
-    expect(accepted.member.role).toBe("ADMIN");
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      revokedSessions: 1,
+      releasedUsers: 1,
+      releasedTasks: 1
+    });
+    await expect(
+      prisma.member.findUniqueOrThrow({
+        where: { id: grantedMemberId },
+        select: { active: true }
+      })
+    ).resolves.toEqual({ active: false });
+    await expect(
+      prisma.recallTask.findUniqueOrThrow({
+        where: { id: task.id },
+        select: { assigneeId: true, status: true }
+      })
+    ).resolves.toEqual({
+      assigneeId: null,
+      status: "UNASSIGNED"
+    });
   });
 
   it("transfers the primary role through a recently verified session", async () => {
     const response = await transferPrimary(
       new NextRequest(
-        "http://127.0.0.1:3000/api/members/primary-transfer",
+        "http://127.0.0.1:3101/api/members/primary-transfer",
         {
           method: "POST",
           headers: {
             "content-type": "application/json",
-            origin: "http://127.0.0.1:3000",
+            origin: "http://127.0.0.1:3101",
             cookie: `${SESSION_COOKIE_NAME}=${sessionToken}`
           },
           body: JSON.stringify({ targetAdminId })

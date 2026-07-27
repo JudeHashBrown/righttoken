@@ -311,8 +311,37 @@ export function matchRule(
   user: AssignmentUserContext,
   rules: AssignmentRuleInput[],
   workload: AssignmentWorkload,
-  now = new Date()
+  now = new Date(),
+  defaultAssigneeId: string | null = null
 ): AssignmentDecision {
+  const defaultDecision = (
+    reason: string
+  ): AssignmentDecision | null => {
+    if (
+      !defaultAssigneeId ||
+      !isAvailable(workload[defaultAssigneeId], null)
+    ) {
+      return null;
+    }
+    return {
+      assigneeId: defaultAssigneeId,
+      poolKey: "default-owner",
+      matchedRuleId: null,
+      matchedRuleName: null,
+      matchedRulePriority: null,
+      usedFallback: true,
+      matchedConditions: [],
+      assignmentReason: `${reason}；转交系统默认负责人`
+    };
+  };
+  const geographicSpecificity = (
+    rule: AssignmentRuleInput
+  ): number =>
+    rule.conditions.regionIncludes?.length
+      ? 2
+      : rule.conditions.countryCodes?.length
+        ? 1
+        : 0;
   const parsedRules = rules
     .map((rule) => assignmentRuleInputSchema.parse(rule))
     .filter(
@@ -321,7 +350,12 @@ export function matchRule(
         (!rule.effectiveFrom || rule.effectiveFrom <= now) &&
         (!rule.effectiveTo || rule.effectiveTo > now)
     )
-    .sort((left, right) => left.priority - right.priority);
+    .sort(
+      (left, right) =>
+        geographicSpecificity(right) -
+          geographicSpecificity(left) ||
+        left.priority - right.priority
+    );
 
   for (const rule of parsedRules) {
     if (!matchesCondition(user, rule.conditions)) {
@@ -374,7 +408,8 @@ export function matchRule(
       };
     }
 
-    return {
+    return (
+      defaultDecision(`${baseReason}；规则负责人当前不可用`) ?? {
       assigneeId: null,
       poolKey: rule.poolKey ?? "public",
       matchedRuleId: rule.id ?? null,
@@ -383,10 +418,12 @@ export function matchRule(
       usedFallback: false,
       matchedConditions: descriptions,
       assignmentReason: `${baseReason}；进入公共池`
-    };
+      }
+    );
   }
 
-  return {
+  return (
+    defaultDecision("没有规则命中") ?? {
     assigneeId: null,
     poolKey: "public",
     matchedRuleId: null,
@@ -395,5 +432,6 @@ export function matchRule(
     usedFallback: false,
     matchedConditions: [],
     assignmentReason: "没有规则命中；进入公共池"
-  };
+    }
+  );
 }

@@ -38,7 +38,7 @@ export const defaultNotificationPolicy: NotificationPolicy = {
     escalateMinutes: 120
   },
   normal: {
-    wecom: false,
+    wecom: true,
     email: false,
     repeatMinutes: 0,
     escalateMinutes: 1440

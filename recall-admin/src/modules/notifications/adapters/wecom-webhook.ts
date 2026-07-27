@@ -27,7 +27,7 @@ export function createWecomWebhookAdapter(
 ): NotificationAdapter {
   const config = wecomWebhookConfigSchema.parse(rawConfig);
   return {
-    channel: "WECOM",
+    channel: "WECOM_ROBOT",
     async send(input) {
       let response: Response;
       try {

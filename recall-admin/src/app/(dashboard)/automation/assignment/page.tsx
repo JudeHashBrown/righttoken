@@ -3,12 +3,16 @@ import {
   AssignmentRuleEditor,
   type EditableAssignmentRule
 } from "@/components/automation/assignment-rule-editor";
+import {
+  LocationRuleEditor,
+  type EditableLocationRule
+} from "@/components/automation/location-rule-editor";
 import { requireAdministrator } from "@/modules/admin/page-access";
 import { getAssignmentWorkspaceOverview } from "@/modules/admin/workspace-queries";
 
 function stringList(
   conditions: unknown,
-  key: "countryCodes" | "sources"
+  key: "countryCodes" | "regionIncludes" | "sources"
 ): string {
   if (!conditions || typeof conditions !== "object") return "";
   const value = (conditions as Record<string, unknown>)[key];
@@ -28,7 +32,7 @@ function segmentList(conditions: unknown) {
 }
 
 export default async function AssignmentRulesPage(): Promise<React.JSX.Element> {
-  await requireAdministrator("/automation/assignment");
+  const member = await requireAdministrator("/automation/assignment");
   const overview = await getAssignmentWorkspaceOverview();
   const editableRules: EditableAssignmentRule[] = overview.rules.map(
     (rule) => ({
@@ -37,6 +41,7 @@ export default async function AssignmentRulesPage(): Promise<React.JSX.Element> 
       enabled: rule.enabled,
       priority: rule.priority,
       countryCodes: stringList(rule.conditions, "countryCodes"),
+      regions: stringList(rule.conditions, "regionIncludes"),
       sources: stringList(rule.conditions, "sources"),
       segments: segmentList(rule.conditions),
       assigneeId: rule.assigneeId ?? "",
@@ -45,13 +50,26 @@ export default async function AssignmentRulesPage(): Promise<React.JSX.Element> 
       workloadLimit: rule.workloadLimit?.toString() ?? ""
     })
   );
+  const locationRules: EditableLocationRule[] =
+    overview.locationRules.map((rule) => ({
+      id: rule.id,
+      name: rule.name,
+      enabled: rule.enabled,
+      priority: rule.priority,
+      matchType: rule.matchType,
+      pattern: rule.pattern,
+      countryCode: rule.countryCode
+    }));
 
   return (
     <main className={styles.page}>
       <header className={styles.heading}>
         <div>
           <h1>分配规则</h1>
-          <p>按地区、来源、分组和负载顺序为任务分配运营人员。</p>
+          <p>
+            先按邮箱域名判断运营国家，未命中时再按注册 IP
+            解析出的国家、省 / 州或地区分配负责人。
+          </p>
         </div>
       </header>
 
@@ -74,11 +92,24 @@ export default async function AssignmentRulesPage(): Promise<React.JSX.Element> 
           <small>包含管理员和运营人员</small>
         </div>
         <div className={styles.statCard}>
-          <span>公共池任务</span>
+          <span>待默认接管</span>
           <strong>{overview.publicPoolTasks}</strong>
-          <small>未命中或等待领取</small>
+          <small>历史任务或资料异常时交由主管理员</small>
         </div>
       </div>
+
+      <section className={styles.panel}>
+        <div className={styles.panelHeader}>
+          <div>
+            <h2>邮箱归属规则</h2>
+            <p>命中邮箱规则时，优先使用邮箱对应的运营国家。</p>
+          </div>
+        </div>
+        <LocationRuleEditor
+          editable={member.role === "PRIMARY_ADMIN"}
+          initialRules={locationRules}
+        />
+      </section>
 
       <section className={styles.panel}>
         <div className={styles.panelHeader}>

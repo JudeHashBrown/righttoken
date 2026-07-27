@@ -25,6 +25,29 @@ type AdapterRegistry = Partial<
   Record<NotificationChannel, NotificationAdapter>
 >;
 
+function deliveryFailure(error: unknown): {
+  code: string;
+  retryable: boolean;
+} {
+  if (
+    error &&
+    typeof error === "object" &&
+    "code" in error &&
+    typeof error.code === "string" &&
+    "retryable" in error &&
+    typeof error.retryable === "boolean"
+  ) {
+    return {
+      code: error.code,
+      retryable: error.retryable
+    };
+  }
+  return {
+    code: "DELIVERY_FAILED",
+    retryable: true
+  };
+}
+
 export async function createTaskNotificationIntents(
   taskId: string,
   now = new Date(),
@@ -40,7 +63,12 @@ export async function createTaskNotificationIntents(
         priority: true,
         dueAt: true,
         assignee: {
-          select: { id: true, email: true }
+          select: {
+            id: true,
+            email: true,
+            active: true,
+            wecomUserId: true
+          }
         },
         user: {
           select: {
@@ -72,13 +100,33 @@ export async function createTaskNotificationIntents(
       : task.priority === "IMPORTANT"
         ? policy.important
         : policy.normal;
-  const recipient =
-    task.assignee ??
-    (await prisma.member.findFirstOrThrow({
-      where: { active: true },
-      orderBy: [{ role: "asc" }, { createdAt: "asc" }],
-      select: { id: true, email: true }
-    }));
+  const assignedRecipient = task.assignee?.active
+    ? task.assignee
+    : null;
+  const needsPrimary =
+    !assignedRecipient || !assignedRecipient.wecomUserId;
+  const primaryRecipient = needsPrimary
+    ? await prisma.member.findFirst({
+        where: { active: true, role: "PRIMARY_ADMIN" },
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          email: true,
+          active: true,
+          wecomUserId: true
+        }
+      })
+    : null;
+  const recipient = assignedRecipient ?? primaryRecipient;
+  if (!recipient) {
+    throw new Error("ACTIVE_NOTIFICATION_RECIPIENT_REQUIRED");
+  }
+  const wecomRecipient =
+    assignedRecipient?.wecomUserId
+      ? assignedRecipient
+      : primaryRecipient?.wecomUserId
+        ? primaryRecipient
+        : null;
   const payload = redactForNotification({
     taskId: task.id,
     externalUserId: task.user.externalUserId,
@@ -98,10 +146,18 @@ export async function createTaskNotificationIntents(
     recipient: string;
   }> = [
     { channel: "IN_APP", recipient: recipient.id },
-    ...(level.wecom
+    ...(level.wecom && wecomRecipient?.wecomUserId
       ? [
           {
-            channel: "WECOM" as const,
+            channel: "WECOM_APP" as const,
+            recipient: wecomRecipient.wecomUserId
+          }
+        ]
+      : []),
+    ...(task.priority === "URGENT" || needsPrimary
+      ? [
+          {
+            channel: "WECOM_ROBOT" as const,
             recipient: "integration:wecom-robot"
           }
         ]
@@ -117,6 +173,18 @@ export async function createTaskNotificationIntents(
   ];
 
   return prisma.$transaction(async (tx) => {
+    await tx.notificationIntent.deleteMany({
+      where: {
+        taskId: task.id,
+        status: { in: ["PENDING", "FAILED"] },
+        NOT: {
+          OR: targets.map((target) => ({
+            channel: target.channel,
+            recipient: target.recipient
+          }))
+        }
+      }
+    });
     for (const target of targets) {
       await tx.notificationIntent.upsert({
         where: {
@@ -182,14 +250,17 @@ export async function sendNotificationIntent(
         lastErrorCode: null
       }
     });
-  } catch {
-    const deadLetter = attemptCount >= retryDelaysMinutes.length;
+  } catch (error) {
+    const failure = deliveryFailure(error);
+    const deadLetter =
+      !failure.retryable ||
+      attemptCount >= retryDelaysMinutes.length;
     return prisma.notificationIntent.update({
       where: { id: intent.id },
       data: {
         status: deadLetter ? "DEAD_LETTER" : "FAILED",
         attemptCount,
-        lastErrorCode: "DELIVERY_FAILED",
+        lastErrorCode: failure.code,
         nextAttemptAt: deadLetter
           ? null
           : new Date(
