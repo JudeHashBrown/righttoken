@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { prisma } from "@/lib/db/prisma";
 import {
   matchInboundReply,
@@ -6,6 +5,9 @@ import {
 } from "@/modules/mail/reply-matcher";
 import type { MailboxAdapter } from "@/modules/mail/types";
 import { createTaskNotificationIntents } from "@/modules/notifications/notification-service";
+import {
+  replyTriggerKey
+} from "@/modules/mail/reply-task-key";
 
 type SyncResult = {
   received: number;
@@ -13,13 +15,6 @@ type SyncResult = {
   unmatched: number;
   replyTasksCreated: number;
 };
-
-function replyTriggerKey(providerMessageId: string): string {
-  return `email-reply:${createHash("sha256")
-    .update(providerMessageId)
-    .digest("hex")
-    .slice(0, 32)}`;
-}
 
 export async function syncMailbox(
   mailboxId: string,
