@@ -2,7 +2,6 @@ import styles from "@/components/workspaces/workspace.module.css";
 import { MailboxSettingsForm } from "@/components/settings/mailbox-settings-form";
 import { MailboxActions } from "@/components/settings/mailbox-actions";
 import { WecomSettingsForm } from "@/components/settings/wecom-settings-form";
-import { RightTokenSettingsForm } from "@/components/settings/righttoken-settings-form";
 import { requireAdministrator } from "@/modules/admin/page-access";
 import { getSettingsWorkspaceOverview } from "@/modules/admin/workspace-queries";
 
@@ -15,7 +14,7 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
       <header className={styles.heading}>
         <div>
           <h1>系统设置</h1>
-          <p>检查数据库、RightToken 数据源、邮箱和企微通道配置状态。</p>
+          <p>检查共享数据库、邮箱和企微通道配置状态。</p>
         </div>
       </header>
 
@@ -30,7 +29,7 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
           <li className={styles.listItem}>
             <div>
               <strong>PostgreSQL 数据库</strong>
-              <p>用户、任务、规则和审计数据</p>
+              <p>主站用户事实与运营任务、规则和审计数据</p>
             </div>
             <span
               className={
@@ -116,7 +115,6 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
 
       <MailboxSettingsForm />
       <WecomSettingsForm />
-      <RightTokenSettingsForm />
     </main>
   );
 }

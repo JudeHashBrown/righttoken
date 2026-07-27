@@ -7,6 +7,7 @@ import type {
   TaskStatus
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
+import { getProductionRightTokenUserFactsByIds } from "@/modules/users/righttoken-facts";
 import {
   defaultSegmentRuleSet
 } from "@/modules/segmentation/default-rule-set";
@@ -83,7 +84,11 @@ export async function getMailWorkspaceOverview(
         }
       }),
       prisma.userProfile.count({
-        where: { ...users, unsubscribedAt: { not: null } }
+        where: {
+          ...users,
+          sourceDeletedAt: null,
+          unsubscribedAt: { not: null }
+        }
       }),
       prisma.recallTask.findMany({
         where: { ...tasks, origin: "EMAIL_REPLY" },
@@ -204,6 +209,7 @@ export async function getSegmentWorkspaceOverview() {
     }),
     prisma.userProfile.groupBy({
       by: ["currentSegment"],
+      where: { sourceDeletedAt: null },
       _count: { _all: true }
     }),
     prisma.segmentHistory.findMany({
@@ -384,20 +390,19 @@ export async function getReportWorkspaceOverview(
   const tasks = taskScope(viewer);
   const usersScope = userScope(viewer);
   const [
-    users,
-    paidUsers,
-    activeUsers,
+    userRows,
     openTasks,
     completedTasks,
     overdueTasks,
     audits
   ] = await Promise.all([
-    prisma.userProfile.count({ where: usersScope }),
-    prisma.userProfile.count({
-      where: { ...usersScope, firstPaidAt: { not: null } }
-    }),
-    prisma.userProfile.count({
-      where: { ...usersScope, lastCallAt: { gte: sevenDaysAgo } }
+    prisma.userProfile.findMany({
+      where: { ...usersScope, sourceDeletedAt: null },
+      select: {
+        externalUserId: true,
+        firstPaidAt: true,
+        lastCallAt: true
+      }
     }),
     prisma.recallTask.count({
       where: { ...tasks, status: { in: openStatuses } }
@@ -428,6 +433,21 @@ export async function getReportWorkspaceOverview(
       }
     })
   ]);
+  const liveFacts = await getProductionRightTokenUserFactsByIds(
+    userRows.map((user) => user.externalUserId)
+  );
+  const users = userRows.length;
+  const paidUsers = userRows.filter(
+    (user) =>
+      (liveFacts.get(user.externalUserId)?.firstPaidAt ??
+        user.firstPaidAt) !== null
+  ).length;
+  const activeUsers = userRows.filter((user) => {
+    const lastCallAt =
+      liveFacts.get(user.externalUserId)?.lastCallAt ??
+      user.lastCallAt;
+    return lastCallAt !== null && lastCallAt >= sevenDaysAgo;
+  }).length;
 
   return {
     users,
@@ -467,7 +487,6 @@ export async function getSettingsWorkspaceOverview() {
       where: {
         kind: {
           in: [
-            "RIGHTTOKEN_SOURCE",
             "WECOM_APP",
             "WECOM_ROBOT"
           ]
@@ -486,12 +505,6 @@ export async function getSettingsWorkspaceOverview() {
     databaseReady,
     mailboxes,
     integrations: [
-      {
-        name: "RightToken 数据源",
-        configured:
-          configuredCredentials.has("RIGHTTOKEN_SOURCE") ||
-          Boolean(process.env.INTERNAL_API_SECRET_CURRENT)
-      },
       {
         name: "Namecheap 客服邮箱",
         configured:

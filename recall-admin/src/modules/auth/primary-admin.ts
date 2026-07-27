@@ -17,7 +17,7 @@ export async function transferPrimaryAdmin(
       await tx.$queryRaw(
         Prisma.sql`
           SELECT "id"
-          FROM "Member"
+          FROM "recall"."Member"
           WHERE "id" IN (${currentPrimaryId}, ${targetAdminId})
           FOR UPDATE
         `

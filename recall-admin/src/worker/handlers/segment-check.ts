@@ -17,6 +17,8 @@ import {
   getTaskPolicy,
   getTriggerPolicy
 } from "@/modules/tasks/trigger-policy";
+import { mergeManagedUser } from "@/modules/users/managed-user";
+import { getProductionRightTokenUserFactsByIds } from "@/modules/users/righttoken-facts";
 
 const legacySegmentCheckSchema = z.object({
   userId: z.string().min(1),
@@ -80,13 +82,16 @@ export async function handleSegmentCheck(
     const outcome = await prisma.$transaction(async (tx) => {
       await tx.$queryRaw`
         SELECT "id"
-        FROM "UserProfile"
+        FROM "recall"."UserProfile"
         WHERE "id" = ${input.userId}
         FOR UPDATE
       `;
       const user = await tx.userProfile.findUniqueOrThrow({
         where: { id: input.userId }
       });
+      if (user.sourceDeletedAt) {
+        return { skipped: "user_deleted" as const };
+      }
       const active = await loadActiveSegmentRuleSet(tx);
       if (active.version !== input.ruleVersion) {
         return { skipped: "rule_version_changed" as const };
@@ -143,8 +148,16 @@ export async function handleSegmentCheck(
       }
     }
 
+    const liveFacts = (
+      await getProductionRightTokenUserFactsByIds([
+        outcome.user.externalUserId
+      ])
+    ).get(outcome.user.externalUserId);
+    const boundaryUser = liveFacts
+      ? mergeManagedUser(outcome.user, liveFacts)
+      : outcome.user;
     const nextBoundary = getNextRuleBoundary(
-      outcome.user,
+      boundaryUser,
       outcome.config,
       outcome.ruleVersion,
       now,
@@ -166,13 +179,16 @@ export async function handleSegmentCheck(
   const outcome = await prisma.$transaction(async (tx) => {
     await tx.$queryRaw`
       SELECT "id"
-      FROM "UserProfile"
+      FROM "recall"."UserProfile"
       WHERE "id" = ${input.userId}
       FOR UPDATE
     `;
     const user = await tx.userProfile.findUniqueOrThrow({
       where: { id: input.userId }
     });
+    if (user.sourceDeletedAt) {
+      return { skipped: "user_deleted" as const };
+    }
     const factTimestamp = currentFactTimestamp(
       user,
       input.reasonKey

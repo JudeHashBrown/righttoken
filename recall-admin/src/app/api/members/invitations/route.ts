@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 function retiredInvitationResponse(): NextResponse {
   return NextResponse.json(
@@ -12,13 +12,15 @@ function retiredInvitationResponse(): NextResponse {
 }
 
 export async function POST(
-  _request: NextRequest
+  request: NextRequest
 ): Promise<NextResponse> {
+  void request;
   return retiredInvitationResponse();
 }
 
 export async function PUT(
-  _request: NextRequest
+  request: NextRequest
 ): Promise<NextResponse> {
+  void request;
   return retiredInvitationResponse();
 }

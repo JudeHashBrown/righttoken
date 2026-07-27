@@ -21,6 +21,7 @@ import {
   type SegmentCheckSchedule,
   type TaskScheduler
 } from "@/modules/tasks/scheduler";
+import { openTaskStatuses } from "@/modules/tasks/close-obsolete-tasks";
 import { resolveRegistrationAttribution } from "@/modules/users/registration-attribution";
 
 export type ReconciliationResult = {
@@ -84,7 +85,10 @@ function sourceFacts(snapshot: RightTokenUserSnapshot) {
     firstPaidAt: snapshot.firstPaidAt,
     totalPaidMinor: snapshot.totalPaidMinor,
     firstCallAt:
-      snapshot.successfulCallCount > 0 ? snapshot.lastCallAt : null,
+      snapshot.firstCallAt ??
+      (snapshot.successfulCallCount > 0
+        ? snapshot.lastCallAt
+        : null),
     lastCallAt: snapshot.lastCallAt,
     successfulCallCount: snapshot.successfulCallCount,
     balanceMinor: snapshot.balanceMinor,
@@ -96,6 +100,7 @@ function sourceFacts(snapshot: RightTokenUserSnapshot) {
     anomalyChangedAt: snapshot.updatedAt,
     profileChangedAt: snapshot.updatedAt,
     lastExternalEventAt: snapshot.updatedAt,
+    sourceDeletedAt: snapshot.deletedAt ?? null,
     ...registrationIpFields(snapshot.registrationIp)
   };
 }
@@ -152,6 +157,51 @@ async function reconcilePage(
     ) {
       await assignUserOwnerInTransaction(tx, existing.id, now);
       outcome.unchanged += 1;
+      continue;
+    }
+    if (snapshot.deletedAt) {
+      if (!existing) {
+        outcome.unchanged += 1;
+        continue;
+      }
+      const tasks = await tx.recallTask.findMany({
+        where: {
+          userId: existing.id,
+          status: { in: openTaskStatuses }
+        },
+        select: { id: true }
+      });
+      if (tasks.length > 0) {
+        await tx.recallTask.updateMany({
+          where: {
+            id: { in: tasks.map((task) => task.id) },
+            status: { in: openTaskStatuses }
+          },
+          data: {
+            status: "CANCELLED",
+            cancelledAt: now,
+            cancelReason: "righttoken_user_deleted"
+          }
+        });
+        await tx.taskActivity.createMany({
+          data: tasks.map((task) => ({
+            taskId: task.id,
+            action: "task.cancelled",
+            detail: { reason: "righttoken_user_deleted" }
+          }))
+        });
+      }
+      await tx.userProfile.update({
+        where: { id: existing.id },
+        data: {
+          sourceDeletedAt: snapshot.deletedAt,
+          lastExternalEventAt: snapshot.updatedAt,
+          profileChangedAt: snapshot.updatedAt,
+          ownerId: null,
+          reasonLabel: "RightToken 用户已删除"
+        }
+      });
+      outcome.updated += 1;
       continue;
     }
 

@@ -187,6 +187,7 @@ import { useAdminSettingsStore, useAppStore, useAuthStore, useOnboardingStore } 
 import VersionBadge from '@/components/common/VersionBadge.vue'
 import { sanitizeSvg } from '@/utils/sanitize'
 import { useRecallAccess } from '@/composables/useRecallAccess'
+import { appendUserOperationsAfterProfile } from '@/components/layout/nav-items'
 
 interface NavItem {
   path: string
@@ -570,9 +571,6 @@ const ChevronDownIcon = {
 const userNavItems = computed((): NavItem[] => {
   const items: NavItem[] = [
     { path: '/dashboard', label: t('nav.dashboard'), icon: DashboardIcon },
-    ...(recallAccess.allowed.value
-      ? [{ path: '/user-operations', label: t('nav.userOperations'), icon: UsersIcon }]
-      : []),
     { path: '/keys', label: t('nav.apiKeys'), icon: KeyIcon },
     { path: '/usage', label: t('nav.usage'), icon: ChartIcon, hideInSimpleMode: true },
     { path: '/subscriptions', label: t('nav.mySubscriptions'), icon: CreditCardIcon, hideInSimpleMode: true },
@@ -606,7 +604,18 @@ const userNavItems = computed((): NavItem[] => {
       iconSvg: item.icon_svg,
     })),
   ]
-  return authStore.isSimpleMode ? items.filter(item => !item.hideInSimpleMode) : items
+  const visibleItems = authStore.isSimpleMode
+    ? items.filter(item => !item.hideInSimpleMode)
+    : items
+  return appendUserOperationsAfterProfile(
+    visibleItems,
+    recallAccess.allowed.value,
+    {
+      path: '/user-operations',
+      label: t('nav.userOperations'),
+      icon: UsersIcon
+    }
+  )
 })
 
 // Personal navigation items (for admin's "My Account" section, without Dashboard)
@@ -645,7 +654,18 @@ const personalNavItems = computed((): NavItem[] => {
       iconSvg: item.icon_svg,
     })),
   ]
-  return authStore.isSimpleMode ? items.filter(item => !item.hideInSimpleMode) : items
+  const visibleItems = authStore.isSimpleMode
+    ? items.filter(item => !item.hideInSimpleMode)
+    : items
+  return appendUserOperationsAfterProfile(
+    visibleItems,
+    recallAccess.allowed.value,
+    {
+      path: '/user-operations',
+      label: t('nav.userOperations'),
+      icon: UsersIcon
+    }
+  )
 })
 
 // Custom menu items filtered by visibility
@@ -666,9 +686,6 @@ const customMenuItemsForAdmin = computed(() => {
 const adminNavItems = computed((): NavItem[] => {
   const baseItems: NavItem[] = [
     { path: '/admin/dashboard', label: t('nav.dashboard'), icon: DashboardIcon },
-    ...(recallAccess.allowed.value
-      ? [{ path: '/user-operations', label: t('nav.userOperations'), icon: UsersIcon }]
-      : []),
     ...(adminSettingsStore.opsMonitoringEnabled
       ? [{ path: '/admin/ops', label: t('nav.ops'), icon: ChartIcon }]
       : []),
@@ -713,12 +730,21 @@ const adminNavItems = computed((): NavItem[] => {
   if (authStore.isSimpleMode) {
     const filtered = baseItems.filter(item => !item.hideInSimpleMode)
     filtered.push({ path: '/keys', label: t('nav.apiKeys'), icon: KeyIcon })
-    filtered.push({ path: '/admin/settings', label: t('nav.settings'), icon: CogIcon })
+    const withOperations = appendUserOperationsAfterProfile(
+      filtered,
+      recallAccess.allowed.value,
+      {
+        path: '/user-operations',
+        label: t('nav.userOperations'),
+        icon: UsersIcon
+      }
+    )
+    withOperations.push({ path: '/admin/settings', label: t('nav.settings'), icon: CogIcon })
     // Add admin custom menu items after settings
     for (const cm of customMenuItemsForAdmin.value) {
-      filtered.push({ path: `/custom/${cm.id}`, label: cm.label, icon: null, iconSvg: cm.icon_svg })
+      withOperations.push({ path: `/custom/${cm.id}`, label: cm.label, icon: null, iconSvg: cm.icon_svg })
     }
-    return filtered
+    return withOperations
   }
 
   baseItems.push({ path: '/admin/settings', label: t('nav.settings'), icon: CogIcon })

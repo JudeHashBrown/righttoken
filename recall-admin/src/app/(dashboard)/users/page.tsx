@@ -35,26 +35,30 @@ export default async function UsersPage({
   const member = await requireWorkspaceMember("/users");
   const params = await searchParams;
   const segment = first(params.segment);
+  const search = first(params.search).trim();
+  const searchTooShort = search.length > 0 && search.length < 3;
   const registeredFrom = first(params.registeredFrom);
   const registeredTo = first(params.registeredTo);
-  const page = await findUsers(member, {
-    search: first(params.search),
-    segments: /^[A-G]$/.test(segment)
-      ? [segment as SegmentCode]
-      : undefined,
-    countryCode: first(params.countryCode) || undefined,
-    region: first(params.region) || undefined,
-    ownerId: first(params.ownerId) || undefined,
-    source: first(params.source) || undefined,
-    registeredFrom: registeredFrom
-      ? new Date(`${registeredFrom}T00:00:00.000Z`)
-      : undefined,
-    registeredTo: registeredTo
-      ? new Date(`${registeredTo}T23:59:59.999Z`)
-      : undefined,
-    cursor: first(params.cursor) || undefined,
-    pageSize: 30
-  });
+  const page = searchTooShort
+    ? { items: [], nextCursor: null }
+    : await findUsers(member, {
+        search,
+        segments: /^[A-G]$/.test(segment)
+          ? [segment as SegmentCode]
+          : undefined,
+        countryCode: first(params.countryCode) || undefined,
+        region: first(params.region) || undefined,
+        ownerId: first(params.ownerId) || undefined,
+        source: first(params.source) || undefined,
+        registeredFrom: registeredFrom
+          ? new Date(`${registeredFrom}T00:00:00.000Z`)
+          : undefined,
+        registeredTo: registeredTo
+          ? new Date(`${registeredTo}T23:59:59.999Z`)
+          : undefined,
+        cursor: first(params.cursor) || undefined,
+        pageSize: 30
+      });
   const owners =
     member.role === "OPERATOR"
       ? []
@@ -83,8 +87,9 @@ export default async function UsersPage({
             className={styles.input}
             defaultValue={first(params.search)}
             id="user-search"
+            minLength={3}
             name="search"
-            placeholder="用户编号、邮箱、姓名、国家或地区"
+            placeholder="用户编号、邮箱或姓名（至少 3 个字符）"
           />
         </div>
         <div className={styles.field}>
@@ -155,7 +160,11 @@ export default async function UsersPage({
         <div className={styles.panelHeader}>
           <div>
             <h2>用户列表</h2>
-            <p>本页 {page.items.length} 位用户</p>
+            <p>
+              {searchTooShort
+                ? "请输入至少 3 个字符进行搜索"
+                : `本页 ${page.items.length} 位用户`}
+            </p>
           </div>
         </div>
         <UserTable users={page.items} />

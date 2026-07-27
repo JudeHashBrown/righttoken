@@ -68,7 +68,7 @@ async function transitionTask(
     await tx.$queryRaw(
       Prisma.sql`
         SELECT "id"
-        FROM "RecallTask"
+        FROM "recall"."RecallTask"
         WHERE "id" = ${taskId}
         FOR UPDATE
       `
@@ -131,7 +131,7 @@ export async function claimTask(
     await tx.$queryRaw(
       Prisma.sql`
         SELECT "id"
-        FROM "RecallTask"
+        FROM "recall"."RecallTask"
         WHERE "id" = ${taskId}
         FOR UPDATE
       `
@@ -267,7 +267,7 @@ export async function transferTask(
     await tx.$queryRaw(
       Prisma.sql`
         SELECT "id"
-        FROM "RecallTask"
+        FROM "recall"."RecallTask"
         WHERE "id" = ${taskId}
         FOR UPDATE
       `

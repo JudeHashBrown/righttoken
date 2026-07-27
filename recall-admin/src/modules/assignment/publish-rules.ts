@@ -108,8 +108,11 @@ export async function publishAssignmentRules(
             );
           }
           const [totalUsers, upperBoundUser] = await Promise.all([
-            tx.userProfile.count(),
+            tx.userProfile.count({
+              where: { sourceDeletedAt: null }
+            }),
             tx.userProfile.findFirst({
+              where: { sourceDeletedAt: null },
               orderBy: { id: "desc" },
               select: { id: true }
             })

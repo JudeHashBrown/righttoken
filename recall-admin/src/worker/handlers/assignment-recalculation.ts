@@ -51,6 +51,7 @@ export async function handleAssignmentRecalculation(
   const users = run.upperBoundUserId
     ? await prisma.userProfile.findMany({
         where: {
+          sourceDeletedAt: null,
           id: {
             ...(run.lastProcessedUserId
               ? { gt: run.lastProcessedUserId }

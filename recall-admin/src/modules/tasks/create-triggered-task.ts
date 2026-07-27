@@ -50,6 +50,24 @@ export async function createTriggeredTask(
   let task: RecallTask;
   try {
     task = await prisma.$transaction(async (tx) => {
+      await tx.$queryRaw(
+        Prisma.sql`
+          SELECT "id"
+          FROM "recall"."UserProfile"
+          WHERE "id" = ${input.userId}
+          FOR KEY SHARE
+        `
+      );
+      const activeUser = await tx.userProfile.findFirst({
+        where: {
+          id: input.userId,
+          sourceDeletedAt: null
+        },
+        select: { id: true }
+      });
+      if (!activeUser) {
+        throw new Error("RIGHTTOKEN_USER_DELETED");
+      }
       const task = await tx.recallTask.create({
         data: {
           userId: input.userId,

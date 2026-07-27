@@ -2,36 +2,39 @@ import { describe, expect, it } from "vitest";
 import { resolveRuntimeRightTokenConfig } from "@/modules/integrations/righttoken/runtime-adapter";
 
 describe("resolveRuntimeRightTokenConfig", () => {
-  it("uses an enabled database configuration before environment fallback", () => {
-    const stored = { mode: "simulator" };
-
-    expect(
-      resolveRuntimeRightTokenConfig(stored, {
-        RIGHTTOKEN_API_BASE_URL: "https://righttoken.ai",
-        RIGHTTOKEN_API_TOKEN: "t".repeat(32)
-      })
-    ).toBe(stored);
-  });
-
-  it("builds the production HTTP source from environment variables", () => {
+  it("uses the simulator only when local mode explicitly selects it", () => {
     expect(
       resolveRuntimeRightTokenConfig(null, {
-        RIGHTTOKEN_API_BASE_URL: "https://righttoken.ai",
-        RIGHTTOKEN_API_TOKEN: "t".repeat(32)
+        RIGHTTOKEN_SOURCE_MODE: "simulator"
       })
-    ).toEqual({
-      mode: "http",
-      baseUrl: "https://righttoken.ai",
-      apiToken: "t".repeat(32),
-      usersPath: "/api/v1/admin/recall/users"
-    });
+    ).toEqual({ mode: "simulator" });
   });
 
-  it("fails closed when the production source is incomplete", () => {
+  it("forces shared database mode ahead of a stale stored HTTP source", () => {
     expect(
-      resolveRuntimeRightTokenConfig(null, {
-        RIGHTTOKEN_API_BASE_URL: "https://righttoken.ai"
-      })
+      resolveRuntimeRightTokenConfig(
+        {
+          mode: "http",
+          baseUrl: "https://righttoken.ai",
+          apiToken: "t".repeat(32)
+        },
+        {
+          RIGHTTOKEN_SOURCE_MODE: "database"
+        }
+      )
+    ).toEqual({ mode: "database" });
+  });
+
+  it("does not revive a stale stored HTTP source", () => {
+    expect(
+      resolveRuntimeRightTokenConfig(
+        {
+          mode: "http",
+          baseUrl: "https://righttoken.ai",
+          apiToken: "t".repeat(32)
+        },
+        {}
+      )
     ).toBeNull();
   });
 });

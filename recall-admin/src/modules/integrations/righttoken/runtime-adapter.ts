@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { getIntegrationCredential } from "@/modules/integrations/credential-store";
 import type { RightTokenAdapter } from "@/modules/integrations/righttoken/adapter";
-import { createRightTokenHttpAdapter } from "@/modules/integrations/righttoken/http-adapter";
+import { createRightTokenDatabaseAdapter } from "@/modules/integrations/righttoken/database-adapter";
 import { createRightTokenSimulator } from "@/modules/integrations/righttoken/simulator";
 
 const simulatorConfigSchema = z.object({
@@ -9,36 +9,30 @@ const simulatorConfigSchema = z.object({
 });
 
 type RuntimeRightTokenEnv = {
-  RIGHTTOKEN_API_BASE_URL?: string;
-  RIGHTTOKEN_API_TOKEN?: string;
+  RIGHTTOKEN_SOURCE_MODE?: "database" | "simulator";
 };
 
 export function resolveRuntimeRightTokenConfig(
   stored: Record<string, unknown> | null,
   env: RuntimeRightTokenEnv
 ): Record<string, unknown> | null {
-  if (stored) {
+  if (env.RIGHTTOKEN_SOURCE_MODE === "database") {
+    return { mode: "database" };
+  }
+  if (env.RIGHTTOKEN_SOURCE_MODE === "simulator") {
+    return { mode: "simulator" };
+  }
+  if (simulatorConfigSchema.safeParse(stored).success) {
     return stored;
   }
-  const baseUrl = env.RIGHTTOKEN_API_BASE_URL?.trim();
-  const apiToken = env.RIGHTTOKEN_API_TOKEN?.trim();
-  if (!baseUrl || !apiToken || apiToken.length < 32) {
-    return null;
-  }
-  return {
-    mode: "http",
-    baseUrl,
-    apiToken,
-    usersPath: "/api/v1/admin/recall/users"
-  };
+  return null;
 }
 
 export async function getConfiguredRightTokenAdapter(): Promise<RightTokenAdapter | null> {
   const stored = await getIntegrationCredential("RIGHTTOKEN_SOURCE");
   const config = resolveRuntimeRightTokenConfig(stored, {
-    RIGHTTOKEN_API_BASE_URL:
-      process.env.RIGHTTOKEN_API_BASE_URL,
-    RIGHTTOKEN_API_TOKEN: process.env.RIGHTTOKEN_API_TOKEN
+    RIGHTTOKEN_SOURCE_MODE:
+      process.env.RIGHTTOKEN_SOURCE_MODE as RuntimeRightTokenEnv["RIGHTTOKEN_SOURCE_MODE"]
   });
   if (!config) {
     return null;
@@ -46,5 +40,8 @@ export async function getConfiguredRightTokenAdapter(): Promise<RightTokenAdapte
   if (simulatorConfigSchema.safeParse(config).success) {
     return createRightTokenSimulator();
   }
-  return createRightTokenHttpAdapter(config);
+  if (config.mode === "database") {
+    return createRightTokenDatabaseAdapter();
+  }
+  return null;
 }

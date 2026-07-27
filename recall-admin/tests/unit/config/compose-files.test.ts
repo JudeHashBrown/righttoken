@@ -38,17 +38,15 @@ describe("recall Compose environments", () => {
     expect(compose).not.toContain("AUTH_MODE:-standalone");
   });
 
-  it("keeps production data and workers private", () => {
+  it("uses the shared RightToken database without a recall database service", () => {
     const compose = readRepository("deploy/docker-compose.recall.yml");
-    const databaseBlock = compose.split("  recall-db:")[1]!.split(
-      "  recall-migrate:"
-    )[0]!;
     const workerBlock = compose.split("  recall-worker:")[1]!.split(
-      "\nvolumes:"
+      "\nnetworks:"
     )[0]!;
 
-    expect(compose).toContain("postgres:16-bookworm");
-    expect(databaseBlock).not.toContain("ports:");
+    expect(compose).not.toContain("  recall-db:");
+    expect(compose).not.toContain("recall_postgres_data");
+    expect(compose).not.toContain("RECALL_POSTGRES_PASSWORD");
     expect(workerBlock).not.toContain("ports:");
     expect(workerBlock).toContain("- sub2api-network");
     expect(compose).toContain(
@@ -57,7 +55,9 @@ describe("recall Compose environments", () => {
     expect(compose).toContain(
       "image: ${RECALL_IMAGE:?RECALL_IMAGE is required}"
     );
-    expect(compose).toContain("internal: true");
+    expect(compose).toContain("external: true");
+    expect(compose).toContain("RIGHTTOKEN_SOURCE_MODE: database");
+    expect(compose).not.toContain("RIGHTTOKEN_API_TOKEN");
     expect(compose).not.toContain("BOOTSTRAP_PRIMARY_ADMIN_PASSWORD");
     expect(compose).toContain(
       "/var/lib/righttoken-geoip:/var/lib/righttoken-geoip:ro"
@@ -69,6 +69,14 @@ describe("recall Compose environments", () => {
       "GEOIP_RIR_PATH: ${RECALL_GEOIP_RIR_PATH"
     );
     expect(compose).toContain("DEPLOYMENT_ENV: production");
+    expect(
+      readRepository("deploy/recall.env.example")
+    ).toContain(
+      "RECALL_DATABASE_URL=postgresql://righttoken_recall_app:CHANGE_ME_PASSWORD@postgres:5432/sub2api?schema=recall"
+    );
+    expect(readRecall("docs/deployment.md")).toContain(
+      "sub2api?schema=recall"
+    );
   });
 
   it("ships root-level domain verification files in the web image", () => {
@@ -93,7 +101,34 @@ describe("recall Compose environments", () => {
     expect(caddy).toContain("max_size 10MB");
     expect(backup).toContain("umask 077");
     expect(backup).toContain("pg_dump");
+    expect(backup).toContain("exec -T postgres");
+    expect(backup).toContain("--schema=recall --schema=pgboss");
+    expect(backup).not.toContain("exec -T recall-db");
     expect(backup).toContain("-mtime +14");
+  });
+
+  it("provides an explicit legacy-state migration before shared deployment", () => {
+    const migration = readRecall(
+      "scripts/migrate-legacy-recall-state.sh"
+    );
+    const deployment = readRecall("docs/deployment.md");
+
+    expect(migration).toContain("LEGACY_RECALL_DATABASE_URL");
+    expect(migration).toContain("RIGHTTOKEN_DATABASE_OWNER_URL");
+    expect(migration).toContain("INSERT INTO recall.");
+    expect(migration).toContain("--schema=pgboss");
+    expect(migration).toContain(
+      'DELETE FROM recall."LocationAttributionRule";'
+    );
+    expect(migration).toContain(
+      "DROP SCHEMA IF EXISTS pgboss CASCADE;"
+    );
+    expect(deployment).toContain(
+      "migrate-legacy-recall-state.sh"
+    );
+    expect(deployment.indexOf("run --rm recall-migrate")).toBeLessThan(
+      deployment.indexOf("verify-shared-database.sql")
+    );
   });
 
   it("does not ignore nested recall tests or scripts", () => {

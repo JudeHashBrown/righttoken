@@ -3,6 +3,8 @@ import type { TransactionClient } from "@/lib/db/transaction";
 import { classifyUser } from "@/modules/segmentation/classify-user";
 import { loadActiveSegmentRuleSet } from "@/modules/segmentation/rule-config";
 import { closeObsoleteAutomationTasks } from "@/modules/tasks/close-obsolete-tasks";
+import { mergeManagedUser } from "@/modules/users/managed-user";
+import { getProductionRightTokenUserFactsByIds } from "@/modules/users/righttoken-facts";
 
 export type SegmentChange = {
   previousSegment: UserProfile["currentSegment"];
@@ -25,9 +27,31 @@ export async function resegmentUser(
   reason: string,
   now = new Date()
 ): Promise<SegmentChange> {
+  if (user.sourceDeletedAt) {
+    return {
+      previousSegment: user.currentSegment,
+      currentSegment: user.currentSegment,
+      changed: false,
+      reason: "RightToken 用户已删除",
+      ruleVersion: user.segmentRuleVersion,
+      segmentChanged: null
+    };
+  }
   const { config, version: ruleVersion } =
     await loadActiveSegmentRuleSet(tx);
-  const automaticDecision = classifyUser(user, now, config);
+  const liveFacts = (
+    await getProductionRightTokenUserFactsByIds([
+      user.externalUserId
+    ])
+  ).get(user.externalUserId);
+  const currentUser = liveFacts
+    ? mergeManagedUser(user, liveFacts)
+    : user;
+  const automaticDecision = classifyUser(
+    currentUser,
+    now,
+    config
+  );
 
   let decision = automaticDecision;
   if (automaticDecision.segment !== "F") {

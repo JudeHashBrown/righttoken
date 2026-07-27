@@ -121,4 +121,37 @@ describe("delayed segment checks", () => {
       )
     ).resolves.toEqual({ skipped: "state_changed" });
   });
+
+  it("never recreates work for a tombstoned main-site user", async () => {
+    const deletedAt = new Date("2026-07-23T09:00:00.000Z");
+    const user = await prisma.userProfile.create({
+      data: {
+        externalUserId: `worker-deleted-${randomUUID()}`,
+        email: `worker-deleted-${randomUUID()}@example.test`,
+        emailNormalized:
+          `worker-deleted-${randomUUID()}@example.test`,
+        registeredAt: new Date("2026-07-23T08:00:00.000Z"),
+        currentSegment: "A",
+        sourceDeletedAt: deletedAt
+      }
+    });
+    userIds.push(user.id);
+
+    await expect(
+      handleSegmentCheck(
+        {
+          userId: user.id,
+          ruleVersion: 1,
+          runAt: new Date("2026-07-23T10:00:00.000Z"),
+          boundaryKey: "task:A:deleted-user",
+          purpose: "TASK",
+          expectedSegment: "A"
+        },
+        new Date("2026-07-23T10:01:00.000Z")
+      )
+    ).resolves.toEqual({ skipped: "user_deleted" });
+    await expect(
+      prisma.recallTask.count({ where: { userId: user.id } })
+    ).resolves.toBe(0);
+  });
 });

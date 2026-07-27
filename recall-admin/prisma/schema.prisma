@@ -5,12 +5,15 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  schemas  = ["recall"]
 }
 
 enum MemberRole {
   PRIMARY_ADMIN
   ADMIN
   OPERATOR
+
+  @@schema("recall")
 }
 
 enum SegmentCode {
@@ -21,12 +24,16 @@ enum SegmentCode {
   E
   F
   G
+
+  @@schema("recall")
 }
 
 enum TaskPriority {
   URGENT
   IMPORTANT
   NORMAL
+
+  @@schema("recall")
 }
 
 enum TaskStatus {
@@ -37,17 +44,23 @@ enum TaskStatus {
   COMPLETED
   PAUSED
   CANCELLED
+
+  @@schema("recall")
 }
 
 enum TaskOrigin {
   AUTOMATION
   MANUAL
   EMAIL_REPLY
+
+  @@schema("recall")
 }
 
 enum MailDirection {
   OUTBOUND
   INBOUND
+
+  @@schema("recall")
 }
 
 enum MailMessageStatus {
@@ -56,6 +69,8 @@ enum MailMessageStatus {
   RECEIVED
   FAILED
   UNMATCHED
+
+  @@schema("recall")
 }
 
 enum NotificationChannel {
@@ -63,6 +78,8 @@ enum NotificationChannel {
   WECOM_APP
   WECOM_ROBOT
   EMAIL
+
+  @@schema("recall")
 }
 
 enum DeliveryStatus {
@@ -70,6 +87,8 @@ enum DeliveryStatus {
   SENT
   FAILED
   DEAD_LETTER
+
+  @@schema("recall")
 }
 
 enum RecalculationStatus {
@@ -78,6 +97,8 @@ enum RecalculationStatus {
   COMPLETED
   PARTIAL_FAILURE
   FAILED
+
+  @@schema("recall")
 }
 
 enum LocationAttributionSource {
@@ -87,11 +108,15 @@ enum LocationAttributionSource {
   IP_RIR
   IP_EVENT
   INVALID_REGISTRATION_DATA
+
+  @@schema("recall")
 }
 
 enum LocationRuleMatchType {
   EXACT_DOMAIN
   DOMAIN_SUFFIX
+
+  @@schema("recall")
 }
 
 model Member {
@@ -118,6 +143,8 @@ model Member {
   segmentRecalculationRuns SegmentRecalculationRun[] @relation("SegmentRecalculationRequester")
   locationRecalculationRuns LocationRecalculationRun[] @relation("LocationRecalculationRequester")
   assignmentRecalculationRuns AssignmentRecalculationRun[] @relation("AssignmentRecalculationRequester")
+
+  @@schema("recall")
 }
 
 model SsoTicketRedemption {
@@ -126,6 +153,7 @@ model SsoTicketRedemption {
   redeemedAt DateTime @default(now())
 
   @@index([expiresAt])
+  @@schema("recall")
 }
 
 model Session {
@@ -142,6 +170,7 @@ model Session {
   member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
   @@index([memberId, expiresAt])
+  @@schema("recall")
 }
 
 model UserProfile {
@@ -185,6 +214,7 @@ model UserProfile {
   pausedAt            DateTime?
   profileChangedAt    DateTime?
   lastExternalEventAt DateTime?
+  sourceDeletedAt     DateTime?
   createdAt           DateTime    @default(now())
   updatedAt           DateTime    @updatedAt
 
@@ -203,6 +233,8 @@ model UserProfile {
   @@index([ipCountryCode, ipRegion])
   @@index([locationRuleId])
   @@index([emailNormalized])
+  @@index([sourceDeletedAt])
+  @@schema("recall")
 }
 
 model UserEvent {
@@ -219,6 +251,7 @@ model UserEvent {
   user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, occurredAt])
+  @@schema("recall")
 }
 
 model SegmentHistory {
@@ -233,6 +266,7 @@ model SegmentHistory {
   user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, changedAt])
+  @@schema("recall")
 }
 
 model SegmentOverride {
@@ -248,6 +282,7 @@ model SegmentOverride {
   user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, expiresAt])
+  @@schema("recall")
 }
 
 model UserNote {
@@ -261,6 +296,7 @@ model UserNote {
   author Member      @relation(fields: [authorId], references: [id])
 
   @@index([userId, createdAt])
+  @@schema("recall")
 }
 
 model AutomationRuleVersion {
@@ -276,6 +312,7 @@ model AutomationRuleVersion {
 
   @@unique([kind, version])
   @@index([kind, active])
+  @@schema("recall")
 }
 
 model SegmentRecalculationRun {
@@ -306,6 +343,7 @@ model SegmentRecalculationRun {
 
   @@index([status, createdAt])
   @@index([ruleVersionId, createdAt])
+  @@schema("recall")
 }
 
 model AssignmentRule {
@@ -325,6 +363,7 @@ model AssignmentRule {
 
   @@unique([priority])
   @@index([enabled, priority])
+  @@schema("recall")
 }
 
 model AssignmentRecalculationRun {
@@ -349,6 +388,7 @@ model AssignmentRecalculationRun {
 
   @@index([status, createdAt])
   @@index([requestedById, createdAt])
+  @@schema("recall")
 }
 
 model LocationAttributionRule {
@@ -367,6 +407,7 @@ model LocationAttributionRule {
   @@unique([priority])
   @@unique([matchType, pattern])
   @@index([enabled, matchType, priority])
+  @@schema("recall")
 }
 
 model LocationRecalculationRun {
@@ -392,6 +433,7 @@ model LocationRecalculationRun {
 
   @@index([status, createdAt])
   @@index([requestedById, createdAt])
+  @@schema("recall")
 }
 
 model RecallTask {
@@ -423,6 +465,7 @@ model RecallTask {
   @@unique([userId, triggerKey, ruleVersion])
   @@index([status, priority, dueAt])
   @@index([assigneeId, status])
+  @@schema("recall")
 }
 
 model TaskActivity {
@@ -436,6 +479,7 @@ model TaskActivity {
   task RecallTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   @@index([taskId, createdAt])
+  @@schema("recall")
 }
 
 model AuditLog {
@@ -452,6 +496,7 @@ model AuditLog {
 
   @@index([createdAt])
   @@index([entityType, entityId])
+  @@schema("recall")
 }
 
 model LoginAttempt {
@@ -462,6 +507,7 @@ model LoginAttempt {
   createdAt DateTime @default(now())
 
   @@index([emailHash, ipHash, createdAt])
+  @@schema("recall")
 }
 
 model Invitation {
@@ -475,6 +521,7 @@ model Invitation {
   createdAt   DateTime   @default(now())
 
   @@index([email, expiresAt])
+  @@schema("recall")
 }
 
 model RecoveryCode {
@@ -487,6 +534,7 @@ model RecoveryCode {
   member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
   @@index([memberId, usedAt])
+  @@schema("recall")
 }
 
 model Mailbox {
@@ -506,6 +554,8 @@ model Mailbox {
 
   threads  MailThread[]
   messages MailMessage[]
+
+  @@schema("recall")
 }
 
 model MailTemplate {
@@ -523,6 +573,7 @@ model MailTemplate {
 
   @@unique([key, version])
   @@index([active, segment, locale])
+  @@schema("recall")
 }
 
 model MailThread {
@@ -539,6 +590,7 @@ model MailThread {
 
   @@index([userId, updatedAt])
   @@index([mailboxId, updatedAt])
+  @@schema("recall")
 }
 
 model MailMessage {
@@ -579,6 +631,7 @@ model MailMessage {
   @@index([threadId, createdAt])
   @@index([userId, createdAt])
   @@index([taskId])
+  @@schema("recall")
 }
 
 model SuppressionEntry {
@@ -587,6 +640,8 @@ model SuppressionEntry {
   reason          String
   source          String
   createdAt       DateTime @default(now())
+
+  @@schema("recall")
 }
 
 model NotificationIntent {
@@ -610,6 +665,7 @@ model NotificationIntent {
   @@index([status, nextAttemptAt, createdAt])
   @@index([recipient, readAt, createdAt])
   @@unique([taskId, channel, recipient])
+  @@schema("recall")
 }
 
 model IntegrationCredential {
@@ -624,4 +680,6 @@ model IntegrationCredential {
   metadata        Json?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  @@schema("recall")
 }

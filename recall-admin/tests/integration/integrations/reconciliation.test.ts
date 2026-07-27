@@ -200,6 +200,80 @@ describe("RightToken user reconciliation", () => {
     expect(stored.balanceMinor).toBe(99_000);
   });
 
+  it("tombstones soft-deleted users and cancels their open work", async () => {
+    const externalUserId = `reconcile-deleted-${randomUUID()}`;
+    externalUserIds.push(externalUserId);
+    const user = await prisma.userProfile.create({
+      data: {
+        externalUserId,
+        email: `${externalUserId}@example.test`,
+        emailNormalized: `${externalUserId}@example.test`,
+        registeredAt: new Date("2026-07-20T00:00:00.000Z"),
+        currentSegment: "A",
+        lastExternalEventAt: new Date("2026-07-23T00:00:00.000Z")
+      }
+    });
+    const task = await prisma.recallTask.create({
+      data: {
+        userId: user.id,
+        origin: "AUTOMATION",
+        triggerKey: `delete:${randomUUID()}`,
+        ruleVersion: 1,
+        title: "待取消任务",
+        reason: "删除同步测试",
+        priority: "NORMAL",
+        status: "TODO",
+        dueAt: new Date("2026-07-30T00:00:00.000Z")
+      }
+    });
+    const deletedAt = new Date("2026-07-24T01:00:00.000Z");
+
+    const result = await reconcileRightTokenUsers({
+      adapter: adapter([
+        {
+          externalUserId,
+          email: `${externalUserId}@example.test`,
+          displayName: null,
+          registeredAt: new Date("2026-07-20T00:00:00.000Z"),
+          updatedAt: deletedAt,
+          deletedAt,
+          registrationIp: null,
+          countryCode: null,
+          region: null,
+          language: null,
+          timezone: null,
+          source: null,
+          checkoutStartedAt: null,
+          firstPaidAt: null,
+          totalPaidMinor: 0,
+          successfulCallCount: 0,
+          lastCallAt: null,
+          balanceMinor: 0,
+          anomalyActive: false
+        }
+      ]),
+      now: deletedAt
+    });
+
+    await expect(
+      prisma.userProfile.findUniqueOrThrow({
+        where: { externalUserId }
+      })
+    ).resolves.toMatchObject({
+      sourceDeletedAt: deletedAt,
+      ownerId: null
+    });
+    await expect(
+      prisma.recallTask.findUniqueOrThrow({
+        where: { id: task.id }
+      })
+    ).resolves.toMatchObject({
+      status: "CANCELLED",
+      cancelReason: "righttoken_user_deleted"
+    });
+    expect(result.updated).toBe(1);
+  });
+
   it("applies email-first operational location during reconciliation", async () => {
     const externalUserId = `reconcile-location-${randomUUID()}`;
     externalUserIds.push(externalUserId);

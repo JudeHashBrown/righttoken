@@ -34,6 +34,7 @@ export async function previewPublishedLocationRules(
 ) {
   const rules = locationRuleSetSchema.parse(inputRules);
   const users = await prisma.userProfile.findMany({
+    where: { sourceDeletedAt: null },
     select: {
       email: true,
       countryCode: true,
@@ -98,8 +99,11 @@ export async function publishLocationRules(
         countryCode: rule.countryCode
       }));
       const [totalUsers, upperBoundUser] = await Promise.all([
-        tx.userProfile.count(),
+        tx.userProfile.count({
+          where: { sourceDeletedAt: null }
+        }),
         tx.userProfile.findFirst({
+          where: { sourceDeletedAt: null },
           orderBy: { id: "desc" },
           select: { id: true }
         })

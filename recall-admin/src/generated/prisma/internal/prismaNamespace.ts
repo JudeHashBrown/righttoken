@@ -2563,6 +2563,7 @@ export const UserProfileScalarFieldEnum = {
   pausedAt: 'pausedAt',
   profileChangedAt: 'profileChangedAt',
   lastExternalEventAt: 'lastExternalEventAt',
+  sourceDeletedAt: 'sourceDeletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

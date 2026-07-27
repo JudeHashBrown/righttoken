@@ -78,11 +78,9 @@ const serverEnvSchema = z
     ),
     RIGHTTOKEN_ADMIN_URL: optionalUrl,
     RIGHTTOKEN_ROLE_MAP: optionalString,
-    RIGHTTOKEN_API_BASE_URL: optionalUrl,
-    RIGHTTOKEN_API_TOKEN: z.preprocess(
-      emptyStringToUndefined,
-      z.string().min(32).optional()
-    ),
+    RIGHTTOKEN_SOURCE_MODE: z
+      .enum(["database", "simulator"])
+      .default("database"),
     GEOIP_HTTP_URL: optionalString,
     GEOIP_HTTP_TOKEN: optionalString,
     GEOIP_MMDB_PATH: optionalString,
@@ -148,21 +146,6 @@ const serverEnvSchema = z
       }
     }
 
-    if (value.RECONCILE_ENABLED) {
-      for (const field of [
-        "RIGHTTOKEN_API_BASE_URL",
-        "RIGHTTOKEN_API_TOKEN"
-      ] as const) {
-        if (!value[field]) {
-          context.addIssue({
-            code: "custom",
-            path: [field],
-            message:
-              `${field} is required when RECONCILE_ENABLED=true`
-          });
-        }
-      }
-    }
   });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

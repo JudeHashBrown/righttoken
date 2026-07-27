@@ -31,8 +31,8 @@ docker compose \
   --env-file "${recall_env}" \
   -f "${deploy_dir}/docker-compose.yml" \
   -f "${deploy_dir}/docker-compose.recall.yml" \
-  exec -T recall-db \
-  sh -c 'pg_dump --format=custom --no-owner --username="$POSTGRES_USER" "$POSTGRES_DB"' \
+  exec -T postgres \
+  sh -c 'pg_dump --format=custom --no-owner --schema=recall --schema=pgboss --username="$POSTGRES_USER" "$POSTGRES_DB"' \
   > "${backup_path}"
 
 find "${backup_dir}" \

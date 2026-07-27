@@ -5,6 +5,7 @@ import type {
   TaskStatus
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
+import { getProductionRightTokenUserFactsByIds } from "@/modules/users/righttoken-facts";
 
 const OPEN_TASK_STATUSES: TaskStatus[] = [
   "UNASSIGNED",
@@ -184,7 +185,10 @@ export async function getDashboardSnapshot(
     }),
     prisma.userProfile.groupBy({
       by: ["currentSegment"],
-      where: userScope(member),
+      where: {
+        ...userScope(member),
+        sourceDeletedAt: null
+      },
       _count: { _all: true }
     }),
     prisma.recallTask.groupBy({
@@ -194,6 +198,9 @@ export async function getDashboardSnapshot(
     })
   ]);
 
+  const liveFacts = await getProductionRightTokenUserFactsByIds(
+    taskRows.map((task) => task.user.externalUserId)
+  );
   const priorityTasks = taskRows
     .sort((left, right) => {
       const priorityDelta =
@@ -201,22 +208,26 @@ export async function getDashboardSnapshot(
       return priorityDelta || left.dueAt.getTime() - right.dueAt.getTime();
     })
     .slice(0, 8)
-    .map((task) => ({
-      id: task.id,
-      userId: task.userId,
-      externalUserId: task.user.externalUserId,
-      userLabel:
-        task.user.displayName ??
-        `用户 ${task.user.externalUserId.slice(-6)}`,
-      segment: task.user.currentSegment,
-      title: task.title,
-      priority: task.priority,
-      status: task.status,
-      dueAt: task.dueAt,
-      assigneeName: task.assignee?.displayName ?? null,
-      region:
-        task.user.region ?? task.user.countryCode ?? null
-    }));
+    .map((task) => {
+      const facts = liveFacts.get(task.user.externalUserId);
+      return {
+        id: task.id,
+        userId: task.userId,
+        externalUserId: task.user.externalUserId,
+        userLabel:
+          facts?.displayName ??
+          task.user.displayName ??
+          `用户 ${task.user.externalUserId.slice(-6)}`,
+        segment: task.user.currentSegment,
+        title: task.title,
+        priority: task.priority,
+        status: task.status,
+        dueAt: task.dueAt,
+        assigneeName: task.assignee?.displayName ?? null,
+        region:
+          task.user.region ?? task.user.countryCode ?? null
+      };
+    });
 
   const segmentCounts = new Map(
     segmentRows.map((row) => [

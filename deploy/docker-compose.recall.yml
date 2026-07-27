@@ -12,8 +12,7 @@ x-recall-environment: &recall-environment
   RIGHTTOKEN_AUDIENCE: ${RECALL_RIGHTTOKEN_AUDIENCE:-}
   RIGHTTOKEN_SSO_SECRET: ${RECALL_RIGHTTOKEN_SSO_SECRET:-}
   RIGHTTOKEN_ADMIN_URL: ${RECALL_RIGHTTOKEN_ADMIN_URL:-}
-  RIGHTTOKEN_API_BASE_URL: ${RECALL_RIGHTTOKEN_API_BASE_URL:-}
-  RIGHTTOKEN_API_TOKEN: ${RECALL_RIGHTTOKEN_API_TOKEN:-}
+  RIGHTTOKEN_SOURCE_MODE: database
   GEOIP_HTTP_URL: ${RECALL_GEOIP_HTTP_URL:-}
   GEOIP_HTTP_TOKEN: ${RECALL_GEOIP_HTTP_TOKEN:-}
   GEOIP_HTTP_TIMEOUT_MS: ${RECALL_GEOIP_HTTP_TIMEOUT_MS:-2000}
@@ -48,39 +47,12 @@ x-recall-application: &recall-application
     - /var/lib/righttoken-geoip:/var/lib/righttoken-geoip:ro
 
 services:
-  recall-db:
-    image: postgres:16-bookworm
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${RECALL_POSTGRES_DB:-righttoken_recall}
-      POSTGRES_USER: ${RECALL_POSTGRES_USER:-righttoken_recall}
-      POSTGRES_PASSWORD: ${RECALL_POSTGRES_PASSWORD:?RECALL_POSTGRES_PASSWORD is required}
-      PGDATA: /var/lib/postgresql/data
-      TZ: ${TZ:-Asia/Shanghai}
-    volumes:
-      - recall_postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${RECALL_POSTGRES_USER:-righttoken_recall} -d ${RECALL_POSTGRES_DB:-righttoken_recall}"
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-    networks:
-      - recall-network
-
   recall-migrate:
     <<: *recall-application
     command: ["npm", "run", "db:deploy"]
-    depends_on:
-      recall-db:
-        condition: service_healthy
     restart: "no"
     networks:
-      - recall-network
+      - sub2api-network
 
   recall-bootstrap:
     <<: *recall-application
@@ -95,7 +67,7 @@ services:
         condition: service_completed_successfully
     restart: "no"
     networks:
-      - recall-network
+      - sub2api-network
 
   recall-web:
     <<: *recall-application
@@ -108,7 +80,6 @@ services:
     tmpfs:
       - /tmp
     networks:
-      - recall-network
       - sub2api-network
 
   recall-worker:
@@ -127,16 +98,9 @@ services:
       retries: 3
       start_period: 20s
     networks:
-      - recall-network
       - sub2api-network
 
-volumes:
-  recall_postgres_data:
-    driver: local
-
 networks:
-  recall-network:
-    driver: bridge
-    internal: true
   sub2api-network:
-    external: false
+    name: ${RECALL_RIGHTTOKEN_NETWORK_NAME:-deploy_sub2api-network}
+    external: true

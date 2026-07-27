@@ -57,7 +57,7 @@ export async function createSegmentOverride(
       await tx.$queryRaw(
         Prisma.sql`
           SELECT "id"
-          FROM "UserProfile"
+          FROM "recall"."UserProfile"
           WHERE "id" = ${userId}
           FOR UPDATE
         `
@@ -133,7 +133,7 @@ export async function revokeSegmentOverride(
       await tx.$queryRaw(
         Prisma.sql`
           SELECT "id"
-          FROM "UserProfile"
+          FROM "recall"."UserProfile"
           WHERE "id" = ${override.userId}
           FOR UPDATE
         `

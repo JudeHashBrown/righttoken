@@ -174,7 +174,7 @@ export async function assignUserOwnerInTransaction(
   await tx.$queryRaw(
     Prisma.sql`
       SELECT "id"
-      FROM "UserProfile"
+      FROM "recall"."UserProfile"
       WHERE "id" = ${userId}
       FOR UPDATE
     `
@@ -182,6 +182,9 @@ export async function assignUserOwnerInTransaction(
   const user = await tx.userProfile.findUniqueOrThrow({
     where: { id: userId }
   });
+  if (user.sourceDeletedAt) {
+    throw new Error("RIGHTTOKEN_USER_DELETED");
+  }
   const decision = await decideUserAssignment(tx, user, now);
   await tx.userProfile.update({
     where: { id: user.id },
@@ -198,7 +201,7 @@ export async function assignTask(
     await tx.$queryRaw(
       Prisma.sql`
         SELECT "id"
-        FROM "RecallTask"
+        FROM "recall"."RecallTask"
         WHERE "id" = ${taskId}
         FOR UPDATE
       `
@@ -209,6 +212,9 @@ export async function assignTask(
     });
     if (!["UNASSIGNED", "TODO"].includes(task.status)) {
       throw new Error("only unstarted tasks can be assigned");
+    }
+    if (task.user.sourceDeletedAt) {
+      throw new Error("RIGHTTOKEN_USER_DELETED");
     }
 
     const decision = await decideUserAssignment(tx, task.user, now);

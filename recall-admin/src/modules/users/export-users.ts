@@ -1,5 +1,7 @@
 import { createFieldCipher } from "@/lib/crypto/field-encryption";
 import { prisma } from "@/lib/db/prisma";
+import { mergeManagedUser } from "@/modules/users/managed-user";
+import { getProductionRightTokenUserFactsByIds } from "@/modules/users/righttoken-facts";
 
 const MAX_EXPORT_USERS = 100_000;
 
@@ -107,9 +109,11 @@ export async function exportUsersCsv(
   actorId: string
 ): Promise<string> {
   const users = await prisma.userProfile.findMany({
+    where: { sourceDeletedAt: null },
     orderBy: [{ registeredAt: "asc" }, { id: "asc" }],
     take: MAX_EXPORT_USERS + 1,
     select: {
+      id: true,
       externalUserId: true,
       email: true,
       displayName: true,
@@ -131,17 +135,33 @@ export async function exportUsersCsv(
       }
     }
   });
-  if (users.length > MAX_EXPORT_USERS) {
+  const liveFacts = await getProductionRightTokenUserFactsByIds(
+    users.map((user) => user.externalUserId)
+  );
+  const databaseMode =
+    process.env.RIGHTTOKEN_SOURCE_MODE === "database";
+  const exportUsers = users.filter((user) => {
+    const facts = liveFacts.get(user.externalUserId);
+    return !databaseMode || Boolean(facts && !facts.deletedAt);
+  });
+  if (exportUsers.length > MAX_EXPORT_USERS) {
     throw new Error("USER_EXPORT_LIMIT_EXCEEDED");
   }
-
   const csv = buildUsersCsv(
-    users.map((user) => ({
-      ...user,
-      currentSegment: String(user.currentSegment),
-      ownerName: user.owner?.displayName ?? null,
-      registrationIp: decryptIp(user.registrationIpEnc)
-    }))
+    exportUsers.map((persistedUser) => {
+      const facts = liveFacts.get(persistedUser.externalUserId);
+      const user = facts
+        ? mergeManagedUser(persistedUser, facts)
+        : persistedUser;
+      return {
+        ...user,
+        currentSegment: String(user.currentSegment),
+        ownerName: user.owner?.displayName ?? null,
+        registrationIp:
+          facts?.registrationIp ??
+          decryptIp(user.registrationIpEnc)
+      };
+    })
   );
   await prisma.auditLog.create({
     data: {
@@ -149,7 +169,7 @@ export async function exportUsersCsv(
       action: "users.export_csv",
       entityType: "UserProfile",
       metadata: {
-        count: users.length,
+        count: exportUsers.length,
         sensitiveFields: ["email", "registration_ip"]
       }
     }

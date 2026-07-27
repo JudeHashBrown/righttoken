@@ -13,6 +13,9 @@ const inputSchema = z.object({
   mode: z.enum(["incremental", "full"]).default("incremental")
 });
 
+const reconciliationStateKind =
+  "RIGHTTOKEN_RECONCILIATION_STATE";
+
 type Dependencies = {
   getAdapter(): Promise<RightTokenAdapter | null>;
   readCheckpoint(): Promise<Date | null>;
@@ -27,7 +30,7 @@ const dependencies: Dependencies = {
   getAdapter: getConfiguredRightTokenAdapter,
   async readCheckpoint() {
     const credential = await prisma.integrationCredential.findUnique({
-      where: { kind: "RIGHTTOKEN_SOURCE" },
+      where: { kind: reconciliationStateKind },
       select: { metadata: true }
     });
     const metadata = credential?.metadata;
@@ -48,7 +51,7 @@ const dependencies: Dependencies = {
   },
   async saveCheckpoint(checkpoint, result) {
     const credential = await prisma.integrationCredential.findUnique({
-      where: { kind: "RIGHTTOKEN_SOURCE" },
+      where: { kind: reconciliationStateKind },
       select: { metadata: true }
     });
     const oldMetadata =
@@ -57,9 +60,28 @@ const dependencies: Dependencies = {
       !Array.isArray(credential.metadata)
         ? (credential.metadata as Prisma.JsonObject)
         : {};
-    await prisma.integrationCredential.update({
-      where: { kind: "RIGHTTOKEN_SOURCE" },
-      data: {
+    await prisma.integrationCredential.upsert({
+      where: { kind: reconciliationStateKind },
+      create: {
+        kind: reconciliationStateKind,
+        displayName: "RightToken shared database checkpoint",
+        encryptedConfig: "",
+        enabled: false,
+        lastSuccessAt: checkpoint,
+        lastErrorCode: null,
+        metadata: {
+          lastReconciledAt: checkpoint.toISOString(),
+          lastResult: {
+            scanned: result.scanned,
+            inserted: result.inserted,
+            updated: result.updated,
+            unchanged: result.unchanged,
+            isolated: result.isolated,
+            segmentChanges: result.segmentChanges
+          }
+        }
+      },
+      update: {
         lastSuccessAt: checkpoint,
         lastErrorCode: null,
         metadata: {
@@ -113,7 +135,7 @@ export async function handleUserReconciliation(
   } catch (error) {
     await prisma.integrationCredential
       .update({
-        where: { kind: "RIGHTTOKEN_SOURCE" },
+        where: { kind: reconciliationStateKind },
         data: {
           lastErrorCode:
             error instanceof Error

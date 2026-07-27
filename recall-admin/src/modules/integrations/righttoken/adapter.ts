@@ -6,6 +6,7 @@ export type RightTokenUserSnapshot = {
   displayName: string | null;
   registeredAt: Date;
   updatedAt: Date;
+  deletedAt?: Date | null;
   registrationIp: string | null;
   countryCode: string | null;
   region: string | null;
@@ -16,6 +17,7 @@ export type RightTokenUserSnapshot = {
   firstPaidAt: Date | null;
   totalPaidMinor: number;
   totalPaidCurrency?: "USD";
+  firstCallAt?: Date | null;
   successfulCallCount: number;
   lastCallAt: Date | null;
   balanceMinor: number;
@@ -30,6 +32,7 @@ export const rightTokenUserSnapshotSchema = z.object({
   displayName: z.string().max(240).nullable(),
   registeredAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  deletedAt: z.coerce.date().nullable().optional(),
   registrationIp: z.string().min(3).max(64).nullable(),
   countryCode: z
     .string()
@@ -44,6 +47,7 @@ export const rightTokenUserSnapshotSchema = z.object({
   firstPaidAt: z.coerce.date().nullable(),
   totalPaidMinor: z.number().int().nonnegative(),
   totalPaidCurrency: z.literal("USD").optional(),
+  firstCallAt: z.coerce.date().nullable().optional(),
   successfulCallCount: z.number().int().nonnegative(),
   lastCallAt: z.coerce.date().nullable(),
   balanceMinor: z.number().int(),

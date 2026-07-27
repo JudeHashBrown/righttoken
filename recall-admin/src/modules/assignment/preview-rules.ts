@@ -31,6 +31,7 @@ export async function previewRules(
 
   return prisma.$transaction(async (tx) => {
     const users = await tx.userProfile.findMany({
+      where: { sourceDeletedAt: null },
       orderBy: { createdAt: "desc" },
       take: 500
     });

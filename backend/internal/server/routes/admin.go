@@ -16,12 +16,6 @@ func RegisterAdminRoutes(
 	adminAuth middleware.AdminAuthMiddleware,
 	cfg *config.Config,
 ) {
-	if h.Admin.RecallUser != nil {
-		recall := v1.Group("/admin/recall")
-		recall.Use(middleware.RecallExportAuth(cfg.RecallExport.Secret))
-		recall.GET("/users", h.Admin.RecallUser.List)
-	}
-
 	admin := v1.Group("/admin")
 	admin.Use(gin.HandlerFunc(adminAuth))
 	{

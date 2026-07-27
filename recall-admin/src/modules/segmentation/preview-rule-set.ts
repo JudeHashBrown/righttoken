@@ -12,6 +12,8 @@ import {
 import { buildSegmentFacts } from "@/modules/segmentation/segment-facts";
 import type { SegmentCode } from "@/modules/segmentation/types";
 import { getTaskPolicy } from "@/modules/tasks/trigger-policy";
+import { mergeManagedUser } from "@/modules/users/managed-user";
+import { getProductionRightTokenUserFactsByIds } from "@/modules/users/righttoken-facts";
 
 const segmentCodes: SegmentCode[] = [
   "A",
@@ -110,7 +112,10 @@ export async function previewSegmentRuleSet(
 
   while (true) {
     const users = await prisma.userProfile.findMany({
-      where: cursor ? { id: { gt: cursor } } : undefined,
+      where: {
+        sourceDeletedAt: null,
+        ...(cursor ? { id: { gt: cursor } } : {})
+      },
       orderBy: { id: "asc" },
       take: 500,
       include: {
@@ -127,13 +132,23 @@ export async function previewSegmentRuleSet(
       break;
     }
 
-    for (const user of users) {
+    const liveFacts = await getProductionRightTokenUserFactsByIds(
+      users.map((user) => user.externalUserId)
+    );
+    for (const persistedUser of users) {
+      const facts = liveFacts.get(persistedUser.externalUserId);
+      const user = facts
+        ? mergeManagedUser(persistedUser, facts)
+        : persistedUser;
       totalUsers += 1;
       const evaluation = evaluateRuleSet(
         buildSegmentFacts(
           user,
           now,
-          includeIp ? decryptIp(user.registrationIpEnc) : null
+          includeIp
+            ? (facts?.registrationIp ??
+              decryptIp(user.registrationIpEnc))
+            : null
         ),
         draft
       );

@@ -16,6 +16,8 @@ import {
   type TaskScheduler
 } from "@/modules/tasks/scheduler";
 import { getTaskPolicy } from "@/modules/tasks/trigger-policy";
+import { mergeManagedUser } from "@/modules/users/managed-user";
+import { getProductionRightTokenUserFactsByIds } from "@/modules/users/righttoken-facts";
 
 const inputSchema = z.object({
   runId: z.string().min(1)
@@ -71,6 +73,7 @@ export async function handleSegmentRecalculation(
   const users = run.upperBoundUserId
     ? await prisma.userProfile.findMany({
         where: {
+          sourceDeletedAt: null,
           id: {
             ...(run.lastProcessedUserId
               ? { gt: run.lastProcessedUserId }
@@ -82,6 +85,10 @@ export async function handleSegmentRecalculation(
         take: batchSize
       })
     : [];
+  const liveFactsByExternalId =
+    await getProductionRightTokenUserFactsByIds(
+      users.map((user) => user.externalUserId)
+    );
 
   let batchProcessed = 0;
   let batchFailed = 0;
@@ -90,17 +97,24 @@ export async function handleSegmentRecalculation(
       const outcome = await prisma.$transaction(async (tx) => {
         await tx.$queryRaw`
           SELECT "id"
-          FROM "UserProfile"
+          FROM "recall"."UserProfile"
           WHERE "id" = ${user.id}
           FOR UPDATE
         `;
         const current = await tx.userProfile.findUniqueOrThrow({
           where: { id: user.id }
         });
+        const liveFacts = liveFactsByExternalId.get(
+          current.externalUserId
+        );
+        const currentUser = liveFacts
+          ? mergeManagedUser(current, liveFacts)
+          : current;
         const facts = buildSegmentFacts(
-          current,
+          currentUser,
           now,
-          decryptRegistrationIp(current.registrationIpEnc)
+          liveFacts?.registrationIp ??
+            decryptRegistrationIp(current.registrationIpEnc)
         );
         const automaticDecision = evaluateRuleSet(facts, ruleSet);
         let segment = automaticDecision.segment;
@@ -146,13 +160,21 @@ export async function handleSegmentRecalculation(
             }
           });
         }
-        return { updated, changed, cancelledTasks, reason };
+        return {
+          updated,
+          boundaryUser: liveFacts
+            ? mergeManagedUser(updated, liveFacts)
+            : updated,
+          changed,
+          cancelledTasks,
+          reason
+        };
       });
 
       await assignUserOwner(user.id, now);
       let createdTasks = 0;
       const boundary = getNextRuleBoundary(
-        outcome.updated,
+        outcome.boundaryUser,
         ruleSet,
         run.ruleVersionNumber,
         now
@@ -195,7 +217,7 @@ export async function handleSegmentRecalculation(
           await assignTask(task.id, now);
         }
         const nextBoundary = getNextRuleBoundary(
-          outcome.updated,
+          outcome.boundaryUser,
           ruleSet,
           run.ruleVersionNumber,
           now,

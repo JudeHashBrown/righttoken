@@ -131,15 +131,20 @@ class PrismaMemberAccessStore implements MemberAccessStore {
     email: string
   ): Promise<RegisteredRightTokenUser | null> {
     const { prisma } = await import("@/lib/db/prisma");
-    return prisma.userProfile.findFirst({
-      where: { emailNormalized: email },
-      orderBy: { updatedAt: "desc" },
-      select: {
-        externalUserId: true,
-        email: true,
-        displayName: true
-      }
-    });
+    const users = await prisma.$queryRaw<
+      RegisteredRightTokenUser[]
+    >`
+      SELECT
+        id::text AS "externalUserId",
+        email,
+        NULLIF(username, '') AS "displayName"
+      FROM public.users
+      WHERE LOWER(email) = LOWER(${email})
+        AND deleted_at IS NULL
+      ORDER BY updated_at DESC, id DESC
+      LIMIT 1
+    `;
+    return users[0] ?? null;
   }
 
   async grantAccess(

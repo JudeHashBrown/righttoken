@@ -83,6 +83,7 @@ export type UserProfileMinAggregateOutputType = {
   pausedAt: Date | null
   profileChangedAt: Date | null
   lastExternalEventAt: Date | null
+  sourceDeletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -128,6 +129,7 @@ export type UserProfileMaxAggregateOutputType = {
   pausedAt: Date | null
   profileChangedAt: Date | null
   lastExternalEventAt: Date | null
+  sourceDeletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -173,6 +175,7 @@ export type UserProfileCountAggregateOutputType = {
   pausedAt: number
   profileChangedAt: number
   lastExternalEventAt: number
+  sourceDeletedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -236,6 +239,7 @@ export type UserProfileMinAggregateInputType = {
   pausedAt?: true
   profileChangedAt?: true
   lastExternalEventAt?: true
+  sourceDeletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -281,6 +285,7 @@ export type UserProfileMaxAggregateInputType = {
   pausedAt?: true
   profileChangedAt?: true
   lastExternalEventAt?: true
+  sourceDeletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -326,6 +331,7 @@ export type UserProfileCountAggregateInputType = {
   pausedAt?: true
   profileChangedAt?: true
   lastExternalEventAt?: true
+  sourceDeletedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -458,6 +464,7 @@ export type UserProfileGroupByOutputType = {
   pausedAt: Date | null
   profileChangedAt: Date | null
   lastExternalEventAt: Date | null
+  sourceDeletedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: UserProfileCountAggregateOutputType | null
@@ -526,6 +533,7 @@ export type UserProfileWhereInput = {
   pausedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   profileChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   lastExternalEventAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  sourceDeletedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"UserProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserProfile"> | Date | string
   owner?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
@@ -580,6 +588,7 @@ export type UserProfileOrderByWithRelationInput = {
   pausedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   profileChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastExternalEventAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceDeletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   owner?: Prisma.MemberOrderByWithRelationInput
@@ -637,6 +646,7 @@ export type UserProfileWhereUniqueInput = Prisma.AtLeast<{
   pausedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   profileChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   lastExternalEventAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  sourceDeletedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"UserProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserProfile"> | Date | string
   owner?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
@@ -691,6 +701,7 @@ export type UserProfileOrderByWithAggregationInput = {
   pausedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   profileChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastExternalEventAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceDeletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserProfileCountOrderByAggregateInput
@@ -744,6 +755,7 @@ export type UserProfileScalarWhereWithAggregatesInput = {
   pausedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
   profileChangedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
   lastExternalEventAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
+  sourceDeletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"UserProfile"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"UserProfile"> | Date | string
 }
@@ -787,6 +799,7 @@ export type UserProfileCreateInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
@@ -841,6 +854,7 @@ export type UserProfileUncheckedCreateInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
@@ -891,6 +905,7 @@ export type UserProfileUpdateInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
@@ -945,6 +960,7 @@ export type UserProfileUncheckedUpdateInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
@@ -997,6 +1013,7 @@ export type UserProfileCreateManyInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1040,6 +1057,7 @@ export type UserProfileUpdateManyMutationInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1085,6 +1103,7 @@ export type UserProfileUncheckedUpdateManyInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1140,6 +1159,7 @@ export type UserProfileCountOrderByAggregateInput = {
   pausedAt?: Prisma.SortOrder
   profileChangedAt?: Prisma.SortOrder
   lastExternalEventAt?: Prisma.SortOrder
+  sourceDeletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -1193,6 +1213,7 @@ export type UserProfileMaxOrderByAggregateInput = {
   pausedAt?: Prisma.SortOrder
   profileChangedAt?: Prisma.SortOrder
   lastExternalEventAt?: Prisma.SortOrder
+  sourceDeletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -1238,6 +1259,7 @@ export type UserProfileMinOrderByAggregateInput = {
   pausedAt?: Prisma.SortOrder
   profileChangedAt?: Prisma.SortOrder
   lastExternalEventAt?: Prisma.SortOrder
+  sourceDeletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -1499,6 +1521,7 @@ export type UserProfileCreateWithoutOwnerInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.UserEventCreateNestedManyWithoutUserInput
@@ -1551,6 +1574,7 @@ export type UserProfileUncheckedCreateWithoutOwnerInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
@@ -1632,6 +1656,7 @@ export type UserProfileScalarWhereInput = {
   pausedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   profileChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   lastExternalEventAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  sourceDeletedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"UserProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserProfile"> | Date | string
 }
@@ -1675,6 +1700,7 @@ export type UserProfileCreateWithoutEventsInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
@@ -1728,6 +1754,7 @@ export type UserProfileUncheckedCreateWithoutEventsInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   segmentHistory?: Prisma.SegmentHistoryUncheckedCreateNestedManyWithoutUserInput
@@ -1793,6 +1820,7 @@ export type UserProfileUpdateWithoutEventsInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
@@ -1846,6 +1874,7 @@ export type UserProfileUncheckedUpdateWithoutEventsInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   segmentHistory?: Prisma.SegmentHistoryUncheckedUpdateManyWithoutUserNestedInput
@@ -1895,6 +1924,7 @@ export type UserProfileCreateWithoutSegmentHistoryInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
@@ -1948,6 +1978,7 @@ export type UserProfileUncheckedCreateWithoutSegmentHistoryInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
@@ -2013,6 +2044,7 @@ export type UserProfileUpdateWithoutSegmentHistoryInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
@@ -2066,6 +2098,7 @@ export type UserProfileUncheckedUpdateWithoutSegmentHistoryInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
@@ -2115,6 +2148,7 @@ export type UserProfileCreateWithoutSegmentOverridesInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
@@ -2168,6 +2202,7 @@ export type UserProfileUncheckedCreateWithoutSegmentOverridesInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
@@ -2233,6 +2268,7 @@ export type UserProfileUpdateWithoutSegmentOverridesInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
@@ -2286,6 +2322,7 @@ export type UserProfileUncheckedUpdateWithoutSegmentOverridesInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
@@ -2335,6 +2372,7 @@ export type UserProfileCreateWithoutNotesInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
@@ -2388,6 +2426,7 @@ export type UserProfileUncheckedCreateWithoutNotesInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
@@ -2453,6 +2492,7 @@ export type UserProfileUpdateWithoutNotesInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
@@ -2506,6 +2546,7 @@ export type UserProfileUncheckedUpdateWithoutNotesInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
@@ -2555,6 +2596,7 @@ export type UserProfileCreateWithoutLocationRuleInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
@@ -2607,6 +2649,7 @@ export type UserProfileUncheckedCreateWithoutLocationRuleInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
@@ -2683,6 +2726,7 @@ export type UserProfileCreateWithoutTasksInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
@@ -2736,6 +2780,7 @@ export type UserProfileUncheckedCreateWithoutTasksInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
@@ -2801,6 +2846,7 @@ export type UserProfileUpdateWithoutTasksInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
@@ -2854,6 +2900,7 @@ export type UserProfileUncheckedUpdateWithoutTasksInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
@@ -2903,6 +2950,7 @@ export type UserProfileCreateWithoutMailThreadsInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
@@ -2956,6 +3004,7 @@ export type UserProfileUncheckedCreateWithoutMailThreadsInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
@@ -3021,6 +3070,7 @@ export type UserProfileUpdateWithoutMailThreadsInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
@@ -3074,6 +3124,7 @@ export type UserProfileUncheckedUpdateWithoutMailThreadsInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
@@ -3123,6 +3174,7 @@ export type UserProfileCreateWithoutMailMessagesInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
@@ -3176,6 +3228,7 @@ export type UserProfileUncheckedCreateWithoutMailMessagesInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
@@ -3241,6 +3294,7 @@ export type UserProfileUpdateWithoutMailMessagesInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
@@ -3294,6 +3348,7 @@ export type UserProfileUncheckedUpdateWithoutMailMessagesInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
@@ -3344,6 +3399,7 @@ export type UserProfileCreateManyOwnerInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3387,6 +3443,7 @@ export type UserProfileUpdateWithoutOwnerInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
@@ -3439,6 +3496,7 @@ export type UserProfileUncheckedUpdateWithoutOwnerInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
@@ -3490,6 +3548,7 @@ export type UserProfileUncheckedUpdateManyWithoutOwnerInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3534,6 +3593,7 @@ export type UserProfileCreateManyLocationRuleInput = {
   pausedAt?: Date | string | null
   profileChangedAt?: Date | string | null
   lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3577,6 +3637,7 @@ export type UserProfileUpdateWithoutLocationRuleInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
@@ -3629,6 +3690,7 @@ export type UserProfileUncheckedUpdateWithoutLocationRuleInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
@@ -3680,6 +3742,7 @@ export type UserProfileUncheckedUpdateManyWithoutLocationRuleInput = {
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3810,6 +3873,7 @@ export type UserProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   pausedAt?: boolean
   profileChangedAt?: boolean
   lastExternalEventAt?: boolean
+  sourceDeletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
@@ -3865,6 +3929,7 @@ export type UserProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   pausedAt?: boolean
   profileChangedAt?: boolean
   lastExternalEventAt?: boolean
+  sourceDeletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
@@ -3912,6 +3977,7 @@ export type UserProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   pausedAt?: boolean
   profileChangedAt?: boolean
   lastExternalEventAt?: boolean
+  sourceDeletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
@@ -3959,11 +4025,12 @@ export type UserProfileSelectScalar = {
   pausedAt?: boolean
   profileChangedAt?: boolean
   lastExternalEventAt?: boolean
+  sourceDeletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "externalUserId" | "email" | "emailNormalized" | "displayName" | "registeredAt" | "registrationIpEnc" | "registrationIpHash" | "countryCode" | "region" | "ipCountryCode" | "ipRegion" | "locationSource" | "locationRuleId" | "locationEvaluatedAt" | "language" | "timezone" | "source" | "checkoutStartedAt" | "checkoutChangedAt" | "paymentStatus" | "firstPaidAt" | "totalPaidMinor" | "firstCallAt" | "lastCallAt" | "successfulCallCount" | "balanceMinor" | "balanceCurrency" | "balanceUsdMinor" | "balanceChangedAt" | "anomalyActive" | "anomalyChangedAt" | "currentSegment" | "segmentRuleVersion" | "ownerId" | "reasonLabel" | "unsubscribedAt" | "pausedAt" | "profileChangedAt" | "lastExternalEventAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProfile"]>
+export type UserProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "externalUserId" | "email" | "emailNormalized" | "displayName" | "registeredAt" | "registrationIpEnc" | "registrationIpHash" | "countryCode" | "region" | "ipCountryCode" | "ipRegion" | "locationSource" | "locationRuleId" | "locationEvaluatedAt" | "language" | "timezone" | "source" | "checkoutStartedAt" | "checkoutChangedAt" | "paymentStatus" | "firstPaidAt" | "totalPaidMinor" | "firstCallAt" | "lastCallAt" | "successfulCallCount" | "balanceMinor" | "balanceCurrency" | "balanceUsdMinor" | "balanceChangedAt" | "anomalyActive" | "anomalyChangedAt" | "currentSegment" | "segmentRuleVersion" | "ownerId" | "reasonLabel" | "unsubscribedAt" | "pausedAt" | "profileChangedAt" | "lastExternalEventAt" | "sourceDeletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProfile"]>
 export type UserProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
   events?: boolean | Prisma.UserProfile$eventsArgs<ExtArgs>
@@ -4039,6 +4106,7 @@ export type $UserProfilePayload<ExtArgs extends runtime.Types.Extensions.Interna
     pausedAt: Date | null
     profileChangedAt: Date | null
     lastExternalEventAt: Date | null
+    sourceDeletedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["userProfile"]>
@@ -4513,6 +4581,7 @@ export interface UserProfileFieldRefs {
   readonly pausedAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
   readonly profileChangedAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
   readonly lastExternalEventAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
+  readonly sourceDeletedAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
 }

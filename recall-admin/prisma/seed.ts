@@ -18,7 +18,10 @@ const primaryAdminEmail = requireSeedValue(
 ).toLowerCase();
 
 const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString })
+  adapter: new PrismaPg(
+    { connectionString },
+    { schema: "recall" }
+  )
 });
 
 const defaultLocationRules = [

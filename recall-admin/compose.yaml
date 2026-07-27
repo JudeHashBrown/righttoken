@@ -1,7 +1,7 @@
 name: righttoken-recall-local
 
 x-recall-environment: &recall-environment
-  DATABASE_URL: postgresql://righttoken:righttoken@recall-db:5432/righttoken_recall
+  DATABASE_URL: postgresql://righttoken:righttoken@recall-db:5432/righttoken_recall?schema=recall
   JOB_DATABASE_URL: postgresql://righttoken:righttoken@recall-db:5432/righttoken_recall
   SESSION_COOKIE_SECRET: ${SESSION_COOKIE_SECRET:-development-session-cookie-secret-only}
   APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=}
@@ -10,8 +10,7 @@ x-recall-environment: &recall-environment
   DEPLOYMENT_ENV: local
   INTERNAL_API_SECRET_CURRENT: ${INTERNAL_API_SECRET_CURRENT:-development-only-internal-secret-32-chars}
   INTERNAL_API_SECRET_PREVIOUS: ${INTERNAL_API_SECRET_PREVIOUS:-}
-  RIGHTTOKEN_API_BASE_URL: ${RIGHTTOKEN_API_BASE_URL:-}
-  RIGHTTOKEN_API_TOKEN: ${RIGHTTOKEN_API_TOKEN:-}
+  RIGHTTOKEN_SOURCE_MODE: ${RIGHTTOKEN_SOURCE_MODE:-simulator}
   RECONCILE_ENABLED: ${RECONCILE_ENABLED:-false}
   RECONCILE_INTERVAL_MINUTES: ${RECONCILE_INTERVAL_MINUTES:-15}
   FULL_RECONCILE_CRON: ${FULL_RECONCILE_CRON:-0 2 * * *}

@@ -129,22 +129,24 @@ describe("parseServerEnv", () => {
     ).toThrow("AUTH_MODE=development is forbidden in production");
   });
 
-  it("requires a complete RightToken source when reconciliation is enabled", () => {
+  it("rejects the removed HTTP source mode", () => {
     expect(() =>
       parseServerEnv({
         ...baseEnv,
-        RECONCILE_ENABLED: "true"
+        RIGHTTOKEN_SOURCE_MODE: "http"
       })
     ).toThrow();
+  });
 
+  it("accepts database reconciliation without HTTP credentials", () => {
     const env = parseServerEnv({
       ...baseEnv,
       RECONCILE_ENABLED: "true",
-      RIGHTTOKEN_API_BASE_URL: "https://righttoken.ai",
-      RIGHTTOKEN_API_TOKEN: "t".repeat(32)
+      RIGHTTOKEN_SOURCE_MODE: "database"
     });
 
     expect(env.RECONCILE_ENABLED).toBe(true);
+    expect(env.RIGHTTOKEN_SOURCE_MODE).toBe("database");
   });
 
   it("parses explicit false flags without Boolean string coercion", () => {
@@ -178,7 +180,7 @@ describe("parseServerEnv", () => {
     for (const name of [
       "RECALL_DATABASE_URL",
       "RECALL_JOB_DATABASE_URL",
-      "RECALL_POSTGRES_PASSWORD",
+      "RECALL_RIGHTTOKEN_NETWORK_NAME",
       "RECALL_SESSION_COOKIE_SECRET",
       "RECALL_APP_ENCRYPTION_KEY",
       "RECALL_APP_URL",
@@ -186,8 +188,6 @@ describe("parseServerEnv", () => {
       "RECALL_INTERNAL_API_SECRET_CURRENT",
       "RECALL_RIGHTTOKEN_SSO_SECRET",
       "RECALL_RIGHTTOKEN_ADMIN_URL",
-      "RECALL_RIGHTTOKEN_API_BASE_URL",
-      "RECALL_RIGHTTOKEN_API_TOKEN",
       "RECALL_RECONCILE_ENABLED",
       "RECALL_GEOIP_MMDB_PATH",
       "RECALL_GEOIP_RIR_PATH"
