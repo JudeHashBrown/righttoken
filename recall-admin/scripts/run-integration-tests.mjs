@@ -82,6 +82,7 @@ async function prepareTestDatabase(databaseUrl) {
   const testDatabase = new Client({ connectionString: databaseUrl });
   await testDatabase.connect();
   try {
+    await testDatabase.query("DROP SCHEMA IF EXISTS recall CASCADE");
     await testDatabase.query("DROP SCHEMA IF EXISTS public CASCADE");
     await testDatabase.query("CREATE SCHEMA public");
   } finally {

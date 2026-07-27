@@ -47,7 +47,7 @@ describe("notification domain schema", () => {
     });
     await prisma.$executeRaw(
       Prisma.sql`
-        UPDATE "Member"
+        UPDATE recall."Member"
         SET "wecomUserId" = ${wecomUserId}
         WHERE "id" = ${memberId}
       `
@@ -58,7 +58,7 @@ describe("notification domain schema", () => {
     >(
       Prisma.sql`
         SELECT "wecomUserId"
-        FROM "Member"
+        FROM recall."Member"
         WHERE "id" = ${memberId}
       `
     );
@@ -69,7 +69,7 @@ describe("notification domain schema", () => {
       intentIds.push(intentId);
       await prisma.$executeRaw(
         Prisma.sql`
-          INSERT INTO "NotificationIntent" (
+          INSERT INTO recall."NotificationIntent" (
             "id",
             "channel",
             "recipient",
@@ -79,7 +79,7 @@ describe("notification domain schema", () => {
           )
           VALUES (
             ${intentId},
-            ${channel}::"NotificationChannel",
+            ${channel}::recall."NotificationChannel",
             ${wecomUserId},
             '{"title":"test","summary":"test","taskUrl":"http://127.0.0.1:3000/tasks/test"}'::jsonb,
             NOW(),

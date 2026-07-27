@@ -55,6 +55,7 @@ jobs:
       DEPLOYMENT_ENV: local
       INTERNAL_API_SECRET_CURRENT: ci-internal-api-secret-at-least-32
       INTERNAL_API_SECRET_PREVIOUS: ""
+      SEED_PRIMARY_ADMIN_EMAIL: ci-primary-admin@example.com
       RECONCILE_ENABLED: "false"
       NODE_ENV: test
     steps:

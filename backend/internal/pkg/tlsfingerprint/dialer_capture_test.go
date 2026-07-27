@@ -38,14 +38,14 @@ type CapturedFingerprint struct {
 // TestDialerAgainstCaptureServer connects to the tls-fingerprint-web capture server
 // and verifies that the dialer's TLS fingerprint matches the configured Profile.
 //
-// Default capture server: https://tls.sub2api.org:8090
-// Override with env: TLSFINGERPRINT_CAPTURE_URL=https://localhost:8443
+// Set TLSFINGERPRINT_CAPTURE_URL to a reachable capture server.
 //
-// Run: go test -v -run TestDialerAgainstCaptureServer ./internal/pkg/tlsfingerprint/...
+// Run: TLSFINGERPRINT_CAPTURE_URL=https://localhost:8443 \
+// go test -v -run TestDialerAgainstCaptureServer ./internal/pkg/tlsfingerprint/...
 func TestDialerAgainstCaptureServer(t *testing.T) {
 	captureURL := os.Getenv("TLSFINGERPRINT_CAPTURE_URL")
 	if captureURL == "" {
-		captureURL = "https://tls.sub2api.org:8090"
+		t.Skip("TLSFINGERPRINT_CAPTURE_URL is not configured")
 	}
 
 	tests := []struct {

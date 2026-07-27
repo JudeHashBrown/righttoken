@@ -72,7 +72,12 @@ func TestRecallSSOHandlerAccess(t *testing.T) {
 	router.ServeHTTP(recorder, request)
 
 	require.Equal(t, http.StatusOK, recorder.Code)
-	require.Equal(t, true, decodeRecallSSOResponse(t, recorder)["data"].(map[string]any)["allowed"])
+	body := decodeRecallSSOResponse(t, recorder)
+	data, ok := body["data"].(map[string]any)
+	require.True(t, ok)
+	allowed, ok := data["allowed"].(bool)
+	require.True(t, ok)
+	require.True(t, allowed)
 }
 
 func TestRecallSSOHandlerStartReturnsLoginURL(t *testing.T) {
@@ -89,10 +94,15 @@ func TestRecallSSOHandlerStartReturnsLoginURL(t *testing.T) {
 	router.ServeHTTP(recorder, request)
 
 	require.Equal(t, http.StatusOK, recorder.Code)
+	body := decodeRecallSSOResponse(t, recorder)
+	data, ok := body["data"].(map[string]any)
+	require.True(t, ok)
+	loginURL, ok := data["url"].(string)
+	require.True(t, ok)
 	require.Equal(
 		t,
 		"https://recall.righttoken.ai/api/auth/righttoken/callback?ticket=redacted",
-		decodeRecallSSOResponse(t, recorder)["data"].(map[string]any)["url"],
+		loginURL,
 	)
 }
 

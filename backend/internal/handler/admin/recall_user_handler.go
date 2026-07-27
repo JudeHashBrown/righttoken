@@ -74,7 +74,7 @@ func NewRecallUserHandler(db *sql.DB) *RecallUserHandler {
 	return &RecallUserHandler{store: &sqlRecallUserStore{db: db}}
 }
 
-func newRecallUserHandlerWithStore(store recallUserStore) *RecallUserHandler {
+func newRecallUserHandlerWithStore(store recallUserStore) *RecallUserHandler { //nolint:unused // Used by unit-tagged tests.
 	return &RecallUserHandler{store: store}
 }
 
@@ -346,7 +346,9 @@ func (s *sqlRecallUserStore) ListRecallUsers(
 	if err != nil {
 		return nil, fmt.Errorf("query recall users: %w", err)
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	users := make([]recallUserSnapshot, 0, min(limit, maxRecallUserLimit+1))
 	for rows.Next() {
@@ -412,6 +414,6 @@ func nullTimePointer(value sql.NullTime) *time.Time {
 }
 
 // minorUnits is kept separate for unit testing decimal boundary behavior.
-func minorUnits(value float64) int64 {
+func minorUnits(value float64) int64 { //nolint:unused // Used by unit-tagged tests.
 	return int64(math.Round(value * 100))
 }

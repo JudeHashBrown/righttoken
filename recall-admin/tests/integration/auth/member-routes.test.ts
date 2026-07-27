@@ -6,6 +6,7 @@ import { NextRequest } from "next/server";
 import { POST as grantMemberAccess } from "@/app/api/members/access/route";
 import { DELETE as revokeMemberAccess } from "@/app/api/members/[id]/access/route";
 import { POST as transferPrimary } from "@/app/api/members/primary-transfer/route";
+import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import {
   createSession,
@@ -19,12 +20,32 @@ describe("privileged member routes", () => {
   const registeredEmail = `route-member-${suffix}@example.test`;
   let currentPrimaryId: string;
   let targetAdminId: string;
-  let registeredUserId: string;
+  let registeredUserProfileId: string;
+  let registeredRightTokenUserId: string;
   let sessionToken: string;
   let grantedMemberId: string;
   let grantedSessionToken: string;
 
   beforeAll(async () => {
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS public.users (
+        id BIGSERIAL PRIMARY KEY,
+        email VARCHAR(255) NOT NULL,
+        username VARCHAR(100) NOT NULL DEFAULT '',
+        deleted_at TIMESTAMPTZ,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    const [registeredUser] = await prisma.$queryRaw<
+      Array<{ externalUserId: string }>
+    >(
+      Prisma.sql`
+        INSERT INTO public.users (email, username)
+        VALUES (${registeredEmail}, 'Registered Route User')
+        RETURNING id::text AS "externalUserId"
+      `
+    );
+    registeredRightTokenUserId = registeredUser.externalUserId;
     currentPrimaryId = (
       await prisma.member.findFirstOrThrow({
         where: { role: "PRIMARY_ADMIN" }
@@ -40,10 +61,10 @@ describe("privileged member routes", () => {
         }
       })
     ).id;
-    registeredUserId = (
+    registeredUserProfileId = (
       await prisma.userProfile.create({
         data: {
-          externalUserId: `righttoken-route-${suffix}`,
+          externalUserId: registeredRightTokenUserId,
           email: registeredEmail,
           emailNormalized: registeredEmail,
           displayName: "Registered Route User",
@@ -86,8 +107,14 @@ describe("privileged member routes", () => {
       });
     }
     await prisma.userProfile.deleteMany({
-      where: { id: registeredUserId }
+      where: { id: registeredUserProfileId }
     });
+    await prisma.$executeRaw(
+      Prisma.sql`
+        DELETE FROM public.users
+        WHERE id::text = ${registeredRightTokenUserId}
+      `
+    );
     await prisma.member.delete({ where: { id: targetAdminId } });
     await prisma.$disconnect();
   });
@@ -118,7 +145,7 @@ describe("privileged member routes", () => {
     };
     grantedMemberId = result.member.id;
     expect(result.member).toMatchObject({
-      rightTokenUserId: `righttoken-route-${suffix}`,
+      rightTokenUserId: registeredRightTokenUserId,
       role: "OPERATOR"
     });
 
@@ -143,12 +170,12 @@ describe("privileged member routes", () => {
     const grantedSession = await createSession(grantedMemberId);
     grantedSessionToken = grantedSession.token;
     await prisma.userProfile.update({
-      where: { id: registeredUserId },
+      where: { id: registeredUserProfileId },
       data: { ownerId: grantedMemberId }
     });
     const task = await prisma.recallTask.create({
       data: {
-        userId: registeredUserId,
+        userId: registeredUserProfileId,
         origin: "MANUAL",
         triggerKey: `member-revoke-${suffix}`,
         ruleVersion: 1,

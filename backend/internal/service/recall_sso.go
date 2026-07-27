@@ -103,7 +103,9 @@ func (s *RecallSSOService) CheckAccess(
 	if err != nil {
 		return false, fmt.Errorf("check recall access: %w", err)
 	}
-	defer response.Body.Close()
+	defer func() {
+		_ = response.Body.Close()
+	}()
 	if response.StatusCode != http.StatusOK {
 		_, _ = io.Copy(io.Discard, io.LimitReader(response.Body, 4<<10))
 		return false, fmt.Errorf("check recall access: status %d", response.StatusCode)
