@@ -13,6 +13,8 @@ export type OutboundMailboxMessage = {
   to: string[];
   subject: string;
   text: string;
+  inReplyTo?: string;
+  references?: string[];
 };
 
 export interface MailboxAdapter {

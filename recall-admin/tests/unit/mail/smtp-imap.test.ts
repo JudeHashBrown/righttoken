@@ -74,4 +74,41 @@ describe("SMTP/IMAP mailbox adapter", () => {
       socketTimeout: 10_000
     });
   });
+
+  it("preserves standard thread headers when replying", async () => {
+    const sendMail = vi.fn().mockResolvedValue({
+      messageId: "<reply@example.test>"
+    });
+    const config = namecheapMailboxConfig({
+      emailAddress: "support@righttoken.test",
+      displayName: "RightToken 客服",
+      username: "support@righttoken.test",
+      password: "development-only-password"
+    });
+
+    await sendSmtpMessage(
+      config,
+      {
+        to: ["person@example.test"],
+        subject: "Re: 支付协助",
+        text: "我们已经收到你的问题。",
+        inReplyTo: "<inbound@example.test>",
+        references: [
+          "<outbound@example.test>",
+          "<inbound@example.test>"
+        ]
+      },
+      vi.fn().mockReturnValue({ sendMail })
+    );
+
+    expect(sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        inReplyTo: "<inbound@example.test>",
+        references: [
+          "<outbound@example.test>",
+          "<inbound@example.test>"
+        ]
+      })
+    );
+  });
 });

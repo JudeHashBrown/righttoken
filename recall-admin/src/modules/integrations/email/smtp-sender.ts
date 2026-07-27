@@ -8,6 +8,8 @@ type Transport = {
     to: string[];
     subject: string;
     text: string;
+    inReplyTo?: string;
+    references?: string[];
   }): Promise<{ messageId?: string }>;
 };
 
@@ -45,7 +47,13 @@ export async function sendSmtpMessage(
     },
     to: message.to,
     subject: message.subject,
-    text: message.text
+    text: message.text,
+    ...(message.inReplyTo
+      ? { inReplyTo: message.inReplyTo }
+      : {}),
+    ...(message.references?.length
+      ? { references: message.references }
+      : {})
   });
   if (!result.messageId) {
     throw new Error("SMTP_PROVIDER_MESSAGE_ID_MISSING");
