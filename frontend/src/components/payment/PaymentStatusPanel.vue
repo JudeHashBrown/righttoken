@@ -70,14 +70,39 @@
       <div class="card p-6">
         <div class="flex flex-col items-center space-y-4">
           <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ scanTitle }}</p>
+          <div v-if="isCryptomus && cryptoAmount" class="text-center">
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ t('payment.qr.exactCryptoAmount') }}</p>
+            <button
+              type="button"
+              class="mt-1 text-3xl font-bold text-emerald-600 dark:text-emerald-400"
+              @click="copyText(cryptoAmount)"
+            >
+              {{ cryptoAmount }} {{ cryptoCode || 'USDT' }}
+            </button>
+          </div>
           <div :class="['relative rounded-lg border-2 p-4', qrBorderClass]">
             <canvas ref="qrCanvas" class="mx-auto"></canvas>
             <!-- Brand logo overlay -->
             <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
               <span :class="['rounded-full p-2 shadow ring-2 ring-white', qrLogoBgClass]">
-                <img :src="isAlipay ? alipayIcon : wxpayIcon" alt="" class="h-5 w-5 brightness-0 invert" />
+                <img :src="qrBrandIcon" alt="" class="h-5 w-5 brightness-0 invert" />
               </span>
             </div>
+          </div>
+          <div v-if="isCryptomus && payAddress" class="w-full">
+            <p class="mb-1 text-sm text-gray-500 dark:text-gray-400">
+              {{ t('payment.qr.walletAddress') }} ({{ networkLabel }})
+            </p>
+            <button
+              type="button"
+              class="w-full break-all rounded-lg border border-gray-200 bg-gray-50 p-3 font-mono text-sm text-gray-900 dark:border-dark-600 dark:bg-dark-800 dark:text-white"
+              @click="copyText(payAddress)"
+            >
+              {{ payAddress }}
+            </button>
+            <p class="mt-2 text-center text-xs font-medium text-red-500">
+              {{ t('payment.qr.cryptoNetworkWarning', { network: networkLabel }) }}
+            </p>
           </div>
           <p v-if="scanHint" class="text-center text-sm text-gray-500 dark:text-gray-400">{{ scanHint }}</p>
         </div>
@@ -127,6 +152,7 @@ import Icon from '@/components/icons/Icon.vue'
 import QRCode from 'qrcode'
 import alipayIcon from '@/assets/icons/alipay.svg'
 import wxpayIcon from '@/assets/icons/wxpay.svg'
+import cryptomusIcon from '@/assets/icons/cryptomus.svg'
 
 const props = defineProps<{
   orderId: number
@@ -134,6 +160,10 @@ const props = defineProps<{
   expiresAt: string
   paymentType: string
   payUrl?: string
+  payAddress?: string
+  cryptoAmount?: string
+  cryptoCode?: string
+  network?: string
   orderType?: string
 }>()
 
@@ -157,30 +187,53 @@ let countdownTimer: ReturnType<typeof setInterval> | null = null
 
 const isAlipay = computed(() => props.paymentType.includes('alipay'))
 const isWxpay = computed(() => props.paymentType.includes('wxpay'))
+const isCryptomus = computed(() => props.paymentType === 'cryptomus')
+const qrBrandIcon = computed(() => {
+  if (isAlipay.value) return alipayIcon
+  if (isWxpay.value) return wxpayIcon
+  return cryptomusIcon
+})
+const networkLabel = computed(() =>
+  props.network?.toLowerCase() === 'tron' ? 'TRC20' : (props.network || 'TRC20').toUpperCase()
+)
 
 const qrBorderClass = computed(() => {
   if (isAlipay.value) return 'border-[#00AEEF] bg-blue-50 dark:border-[#00AEEF]/70 dark:bg-blue-950/20'
   if (isWxpay.value) return 'border-[#2BB741] bg-green-50 dark:border-[#2BB741]/70 dark:bg-green-950/20'
+  if (isCryptomus.value) return 'border-emerald-500 bg-emerald-50 dark:border-emerald-500/70 dark:bg-emerald-950/20'
   return 'border-gray-200 bg-white dark:border-dark-600 dark:bg-dark-800'
 })
 
 const qrLogoBgClass = computed(() => {
   if (isAlipay.value) return 'bg-[#00AEEF]'
   if (isWxpay.value) return 'bg-[#2BB741]'
+  if (isCryptomus.value) return 'bg-emerald-500'
   return 'bg-gray-400'
 })
 
 const scanTitle = computed(() => {
   if (isAlipay.value) return t('payment.qr.scanAlipay')
   if (isWxpay.value) return t('payment.qr.scanWxpay')
+  if (isCryptomus.value) return t('payment.qr.scanUSDT')
   return t('payment.qr.scanToPay')
 })
 
 const scanHint = computed(() => {
   if (isAlipay.value) return t('payment.qr.scanAlipayHint')
   if (isWxpay.value) return t('payment.qr.scanWxpayHint')
+  if (isCryptomus.value) return t('payment.qr.scanUSDTHint')
   return ''
 })
+
+async function copyText(value: string) {
+  if (!value) return
+  try {
+    await navigator.clipboard.writeText(value)
+    appStore.showSuccess(t('common.copied'))
+  } catch {
+    appStore.showError(t('common.error'))
+  }
+}
 
 const countdownDisplay = computed(() => {
   const m = Math.floor(remainingSeconds.value / 60)

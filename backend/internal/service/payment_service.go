@@ -82,6 +82,10 @@ type CreateOrderResponse struct {
 	PayURL       string    `json:"pay_url,omitempty"`
 	QRCode       string    `json:"qr_code,omitempty"`
 	ClientSecret string    `json:"client_secret,omitempty"`
+	PayAddress   string    `json:"pay_address,omitempty"`
+	CryptoAmount string    `json:"crypto_amount,omitempty"`
+	CryptoCode   string    `json:"crypto_code,omitempty"`
+	Network      string    `json:"network,omitempty"`
 	ExpiresAt    time.Time `json:"expires_at"`
 	PaymentMode  string    `json:"payment_mode,omitempty"`
 }

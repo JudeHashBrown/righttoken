@@ -122,7 +122,15 @@ func (s *PaymentService) cancelCore(ctx context.Context, o *dbent.PaymentOrder, 
 			return checkPaidResultAlreadyPaid, nil
 		}
 		if result == checkPaidResultCheckFailed {
-			return "", fmt.Errorf("upstream payment status check or cancellation failed")
+			// Cancellation is best-effort upstream. Keep the local order
+			// cancellable when a provider query/close endpoint is temporarily
+			// unavailable. A later successful webhook can safely recover a
+			// CANCELLED order to PAID (see paymentSuccessRecoverableStatuses).
+			slog.Warn("upstream payment status check or cancellation failed; cancelling local order",
+				"orderID", o.ID,
+				"paymentType", o.PaymentType,
+			)
+			ad += "; upstream status unverified"
 		}
 	}
 	c, err := s.entClient.PaymentOrder.Update().Where(paymentorder.IDEQ(o.ID), paymentorder.StatusEQ(OrderStatusPending)).SetStatus(fs).Save(ctx)
@@ -162,7 +170,7 @@ func (s *PaymentService) checkPaid(ctx context.Context, o *dbent.PaymentOrder, c
 		slog.Warn("query upstream failed", "orderID", o.ID, "error", err)
 		return checkPaidResultCheckFailed
 	}
-	if resp.Status == payment.ProviderStatusPaid {
+	if resp.Status == payment.ProviderStatusPaid || resp.Status == payment.ProviderStatusSuccess {
 		if err := s.HandlePaymentNotification(ctx, &payment.PaymentNotification{TradeNo: o.PaymentTradeNo, OrderID: o.OutTradeNo, Amount: resp.Amount, Status: payment.ProviderStatusSuccess}, prov.ProviderKey()); err != nil {
 			slog.Error("fulfillment failed during checkPaid", "orderID", o.ID, "error", err)
 			// Still return already_paid — order was paid, fulfillment can be retried

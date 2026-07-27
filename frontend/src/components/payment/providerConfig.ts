@@ -31,13 +31,14 @@ export const PROVIDER_SUPPORTED_TYPES: Record<string, string[]> = {
   alipay: ['alipay'],
   wxpay: ['wxpay'],
   stripe: ['card', 'alipay', 'wxpay', 'link'],
+  cryptomus: ['cryptomus'],
 }
 
 /** Available payment modes for EasyPay providers. */
 export const EASYPAY_PAYMENT_MODES = ['qrcode', 'popup'] as const
 
 /** Fixed display order for user-facing payment methods */
-export const METHOD_ORDER = ['alipay', 'alipay_direct', 'wxpay', 'wxpay_direct', 'stripe'] as const
+export const METHOD_ORDER = ['cryptomus', 'alipay', 'alipay_direct', 'wxpay', 'wxpay_direct', 'stripe'] as const
 
 /** Payment mode constants */
 export const PAYMENT_MODE_QRCODE = 'qrcode'
@@ -55,6 +56,7 @@ export const WEBHOOK_PATHS: Record<string, string> = {
   alipay: '/api/v1/payment/webhook/alipay',
   wxpay: '/api/v1/payment/webhook/wxpay',
   stripe: '/api/v1/payment/webhook/stripe',
+  cryptomus: '/api/v1/payment/webhook/cryptomus',
 }
 
 export const RETURN_PATH = '/payment/result'
@@ -64,6 +66,7 @@ export const PROVIDER_CALLBACK_PATHS: Record<string, CallbackPaths> = {
   easypay: { notifyUrl: WEBHOOK_PATHS.easypay, returnUrl: RETURN_PATH },
   alipay: { notifyUrl: WEBHOOK_PATHS.alipay, returnUrl: RETURN_PATH },
   wxpay: { notifyUrl: WEBHOOK_PATHS.wxpay },
+  cryptomus: { notifyUrl: WEBHOOK_PATHS.cryptomus, returnUrl: RETURN_PATH },
   // stripe: no callback URL config needed (webhook is separate)
 }
 
@@ -94,6 +97,10 @@ export const PROVIDER_CONFIG_FIELDS: Record<string, ConfigFieldDef[]> = {
     { key: 'secretKey', label: '', sensitive: true },
     { key: 'publishableKey', label: '', sensitive: false },
     { key: 'webhookSecret', label: '', sensitive: true },
+  ],
+  cryptomus: [
+    { key: 'merchantId', label: '', sensitive: false },
+    { key: 'paymentApiKey', label: '', sensitive: true },
   ],
 }
 

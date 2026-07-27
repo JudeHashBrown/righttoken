@@ -17,6 +17,7 @@ const (
 	TypeCard         PaymentType = "card"
 	TypeLink         PaymentType = "link"
 	TypeEasyPay      PaymentType = "easypay"
+	TypeCryptomus    PaymentType = "cryptomus"
 )
 
 // Order status constants shared across payment and service layers.
@@ -112,6 +113,10 @@ type CreatePaymentResponse struct {
 	PayURL       string // H5 payment URL (alipay/wxpay)
 	QRCode       string // QR code content for scanning
 	ClientSecret string // Stripe PaymentIntent client secret
+	PayAddress   string // Cryptocurrency payment address
+	CryptoAmount string // Exact cryptocurrency amount expected
+	CryptoCode   string // Cryptocurrency code, e.g. USDT
+	Network      string // Cryptocurrency network, e.g. tron
 }
 
 // QueryOrderResponse describes the payment status from the upstream provider.
@@ -124,11 +129,15 @@ type QueryOrderResponse struct {
 
 // PaymentNotification is the parsed result of a webhook/notify callback.
 type PaymentNotification struct {
-	TradeNo string
-	OrderID string
-	Amount  float64
-	Status  string // "success" or "failed"
-	RawData string // Raw notification body for audit
+	TradeNo            string
+	OrderID            string
+	Amount             float64
+	Status             string // "success" or "failed"
+	FailureCode        string
+	DeclineCode        string
+	NetworkDeclineCode string
+	FailureMessage     string
+	RawData            string // Raw notification body for audit
 }
 
 // RefundRequest contains the parameters for requesting a refund.

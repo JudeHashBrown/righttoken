@@ -19,6 +19,12 @@ import (
 // --- Payment Notification & Fulfillment ---
 
 func (s *PaymentService) HandlePaymentNotification(ctx context.Context, n *payment.PaymentNotification, pk string) error {
+	if n == nil {
+		return nil
+	}
+	if n.Status == payment.ProviderStatusFailed {
+		return s.handlePaymentFailure(ctx, n, pk)
+	}
 	if n.Status != payment.NotificationStatusSuccess {
 		return nil
 	}
@@ -33,6 +39,63 @@ func (s *PaymentService) HandlePaymentNotification(ctx context.Context, n *payme
 		return fmt.Errorf("order not found for out_trade_no: %s", n.OrderID)
 	}
 	return s.confirmPayment(ctx, order.ID, n.TradeNo, n.Amount, pk)
+}
+
+func (s *PaymentService) handlePaymentFailure(ctx context.Context, n *payment.PaymentNotification, pk string) error {
+	order, err := s.entClient.PaymentOrder.Query().Where(paymentorder.OutTradeNo(n.OrderID)).Only(ctx)
+	if err != nil {
+		return fmt.Errorf("order not found for failed payment out_trade_no: %s", n.OrderID)
+	}
+
+	reason := paymentFailureReason(n)
+	now := time.Now()
+	update := s.entClient.PaymentOrder.Update().
+		Where(paymentorder.IDEQ(order.ID), paymentorder.StatusEQ(OrderStatusPending)).
+		SetStatus(OrderStatusFailed).
+		SetFailedAt(now).
+		SetFailedReason(reason)
+	if n.TradeNo != "" && order.PaymentTradeNo == "" {
+		update.SetPaymentTradeNo(n.TradeNo)
+	}
+	updated, err := update.Save(ctx)
+	if err != nil {
+		return fmt.Errorf("mark payment order failed: %w", err)
+	}
+	if updated == 0 {
+		return nil
+	}
+
+	s.writeAuditLog(ctx, order.ID, "PAYMENT_FAILED", pk, map[string]any{
+		"tradeNo":            n.TradeNo,
+		"failureCode":        n.FailureCode,
+		"declineCode":        n.DeclineCode,
+		"networkDeclineCode": n.NetworkDeclineCode,
+		"failureMessage":     n.FailureMessage,
+	})
+	return nil
+}
+
+func paymentFailureReason(n *payment.PaymentNotification) string {
+	if n == nil {
+		return "payment failed"
+	}
+	parts := make([]string, 0, 4)
+	if n.NetworkDeclineCode != "" {
+		parts = append(parts, "network_decline_code="+n.NetworkDeclineCode)
+	}
+	if n.DeclineCode != "" {
+		parts = append(parts, "decline_code="+n.DeclineCode)
+	}
+	if n.FailureCode != "" {
+		parts = append(parts, "code="+n.FailureCode)
+	}
+	if n.FailureMessage != "" {
+		parts = append(parts, "message="+n.FailureMessage)
+	}
+	if len(parts) == 0 {
+		return "payment failed"
+	}
+	return strings.Join(parts, "; ")
 }
 
 func (s *PaymentService) confirmPayment(ctx context.Context, oid int64, tradeNo string, paid float64, pk string) error {
@@ -121,7 +184,7 @@ func (s *PaymentService) alreadyProcessed(ctx context.Context, o *dbent.PaymentO
 }
 
 func paymentSuccessRecoverableStatuses() []string {
-	return []string{OrderStatusPending, OrderStatusCancelled, OrderStatusExpired}
+	return []string{OrderStatusPending, OrderStatusCancelled, OrderStatusExpired, OrderStatusFailed}
 }
 
 func (s *PaymentService) executeFulfillment(ctx context.Context, oid int64) error {

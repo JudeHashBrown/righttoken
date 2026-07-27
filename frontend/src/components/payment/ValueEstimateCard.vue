@@ -5,7 +5,7 @@
     <div class="mb-4 flex items-center gap-2">
       <span class="text-lg leading-none">💡</span>
       <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
-        {{ t('payment.valueEstimate.title', { amount: amount }) }}
+        {{ t('payment.valueEstimate.title', { amount: displayAmount }) }}
       </h3>
     </div>
 
@@ -55,12 +55,19 @@ const props = defineProps<{
   amount: number   // CNY amount entered by user
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // Constants (kept here for transparency / easy tuning).
 // We assume a 4:1 input:output ratio and that ~50% of input hits prompt
 // cache (their actual cache hit rate runs ~79%, so 50% is conservative).
 const FX_CNY_TO_USD = 7
+const displayAmount = computed(() => {
+  const code = locale.value.toLowerCase()
+  if (code.startsWith('en') || code.startsWith('ru')) {
+    return (props.amount / FX_CNY_TO_USD).toFixed(2)
+  }
+  return props.amount
+})
 // Claude Opus 4 (5折): cache_read $0.50/M, fresh input $2.50/M, output $12.50/M
 // Effective input = 0.5×$0.50 + 0.5×$2.50 = $1.50/M
 // 4:1 blend = (4×1.5 + 12.5)/5 = $3.70/M

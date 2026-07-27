@@ -20,9 +20,9 @@
         @click="method.available && emit('select', method.type)"
       >
         <span class="flex items-center gap-2">
-          <img :src="methodIcon(method.type)" :alt="t(`payment.methods.${method.type}`)" class="h-7 w-7" />
+          <img :src="methodIcon(method.type)" :alt="methodLabel(method.type)" class="h-7 w-7" />
           <span class="flex flex-col items-start leading-none">
-            <span class="text-base font-semibold">{{ t(`payment.methods.${method.type}`) }}</span>
+            <span class="text-base font-semibold">{{ methodLabel(method.type) }}</span>
             <span
               v-if="methodHint(method.type)"
               class="mt-1 text-[10px] tracking-wide text-gray-500 dark:text-dark-400"
@@ -49,6 +49,7 @@ import { METHOD_ORDER } from './providerConfig'
 import alipayIcon from '@/assets/icons/alipay.svg'
 import wxpayIcon from '@/assets/icons/wxpay.svg'
 import stripeIcon from '@/assets/icons/stripe.svg'
+import cryptomusIcon from '@/assets/icons/cryptomus.svg'
 
 export interface PaymentMethodOption {
   type: string
@@ -71,6 +72,7 @@ const METHOD_ICONS: Record<string, string> = {
   alipay: alipayIcon,
   wxpay: wxpayIcon,
   stripe: stripeIcon,
+  cryptomus: cryptomusIcon,
 }
 
 const sortedMethods = computed(() => {
@@ -88,14 +90,26 @@ function methodIcon(type: string): string {
   return METHOD_ICONS[type] || alipayIcon
 }
 
+function methodLabel(type: string): string {
+  // Keep the payment page usable if a stale/lazy locale chunk is temporarily
+  // served while the application has already loaded the new payment method.
+  if (type === 'cryptomus') return 'USDT (TRC20)'
+  const key = `payment.methods.${type}`
+  const translated = t(key)
+  return translated === key ? type : translated
+}
+
 function methodHint(type: string): string {
-  return type === 'stripe' ? t('payment.methodHints.stripe') : ''
+  if (type === 'stripe') return t('payment.methodHints.stripe')
+  if (type === 'cryptomus') return t('payment.methodHints.cryptomus')
+  return ''
 }
 
 function methodSelectedClass(type: string): string {
   if (type.includes('alipay')) return 'border-[#02A9F1] bg-blue-50 text-gray-900 shadow-sm dark:bg-blue-950 dark:text-gray-100'
   if (type.includes('wxpay')) return 'border-[#09BB07] bg-green-50 text-gray-900 shadow-sm dark:bg-green-950 dark:text-gray-100'
   if (type === 'stripe') return 'border-[#676BE5] bg-indigo-50 text-gray-900 shadow-sm dark:bg-indigo-950 dark:text-gray-100'
+  if (type === 'cryptomus') return 'border-emerald-500 bg-emerald-50 text-gray-900 shadow-sm dark:bg-emerald-950 dark:text-gray-100'
   return 'border-primary-500 bg-primary-50 text-gray-900 shadow-sm dark:bg-primary-950 dark:text-gray-100'
 }
 </script>

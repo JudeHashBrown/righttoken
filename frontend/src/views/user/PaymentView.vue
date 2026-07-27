@@ -20,6 +20,10 @@
             :expires-at="paymentState.expiresAt"
             :payment-type="paymentState.paymentType"
             :pay-url="paymentState.payUrl"
+            :pay-address="paymentState.payAddress"
+            :crypto-amount="paymentState.cryptoAmount"
+            :crypto-code="paymentState.cryptoCode"
+            :network="paymentState.network"
             :order-type="paymentState.orderType"
             @done="onPaymentDone"
             @success="onPaymentSuccess"
@@ -45,7 +49,7 @@
             <div class="card p-5">
               <p class="text-xs font-medium text-gray-400 dark:text-gray-500">{{ t('payment.rechargeAccount') }}</p>
               <p class="mt-1 text-base font-semibold text-gray-900 dark:text-white">{{ user?.username || '' }}</p>
-              <p class="mt-0.5 text-sm font-medium text-green-600 dark:text-green-400">{{ t('payment.currentBalance') }}: {{ user?.balance?.toFixed(2) || '0.00' }}</p>
+              <p class="mt-0.5 text-sm font-medium text-green-600 dark:text-green-400">{{ t('payment.currentBalance') }}: ${{ user?.balance?.toFixed(2) || '0.00' }}</p>
             </div>
             <div v-if="enabledMethods.length === 0" class="card py-16 text-center">
               <p class="text-gray-500 dark:text-gray-400">{{ t('payment.notAvailable') }}</p>
@@ -67,6 +71,7 @@
                 :amounts="[10, 20, 50, 100, 200, 500, 1000, 2000, 5000]"
                 :min="globalMinAmount"
                 :max="globalMaxAmount"
+                :currency-symbol="currencySymbol"
               />
               <p v-if="amountError" class="mt-2 text-xs text-amber-600 dark:text-amber-300">{{ amountError }}</p>
               <p v-if="firstRechargeEligible && validAmount > 0" class="mt-2 text-xs font-medium text-orange-600 dark:text-orange-400">
@@ -76,7 +81,7 @@
                 }) }}
               </p>
             </div>
-            <ValueEstimateCard v-if="validAmount > 0" :amount="validAmount" />
+            <ValueEstimateCard v-if="validAmount > 0" :amount="orderAmountCNY" />
             <div v-if="enabledMethods.length >= 1" class="card p-6">
               <PaymentMethodSelector
                 :methods="methodOptions"
@@ -88,15 +93,15 @@
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between">
                   <span class="text-gray-500 dark:text-gray-400">{{ t('payment.amountLabel') }}</span>
-                  <span class="text-gray-900 dark:text-white">${{ validAmount.toFixed(2) }}</span>
+                  <span class="text-gray-900 dark:text-white">{{ currencySymbol }}{{ validAmount.toFixed(2) }}</span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-500 dark:text-gray-400">{{ t('payment.fee') }} ({{ feeRate }}%)</span>
-                  <span class="text-gray-900 dark:text-white">${{ feeAmount.toFixed(2) }}</span>
+                  <span class="text-gray-900 dark:text-white">{{ currencySymbol }}{{ feeAmount.toFixed(2) }}</span>
                 </div>
                 <div class="flex justify-between border-t border-gray-200 pt-2 dark:border-dark-600">
                   <span class="font-medium text-gray-700 dark:text-gray-300">{{ t('payment.actualPay') }}</span>
-                  <span class="text-lg font-bold text-primary-600 dark:text-primary-400">${{ totalAmount.toFixed(2) }}</span>
+                  <span class="text-lg font-bold text-primary-600 dark:text-primary-400">{{ currencySymbol }}{{ totalAmount.toFixed(2) }}</span>
                 </div>
               </div>
             </div>
@@ -105,7 +110,7 @@
                 <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
                 {{ t('common.processing') }}
               </span>
-              <span v-else>{{ t('payment.createOrder') }} ¥{{ (feeRate > 0 && validAmount > 0 ? totalAmount : validAmount).toFixed(2) }}</span>
+              <span v-else>{{ t('payment.createOrder') }} {{ currencySymbol }}{{ (feeRate > 0 && validAmount > 0 ? totalAmount : validAmount).toFixed(2) }}</span>
             </button>
             <div v-if="errorMessage" class="rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800/50 dark:bg-red-900/20">
               <p class="text-sm text-red-700 dark:text-red-400">{{ errorMessage }}</p>
@@ -127,9 +132,9 @@
                 <!-- Price -->
                 <div class="flex items-baseline gap-2">
                   <span v-if="selectedPlan.original_price" class="text-sm text-gray-400 line-through dark:text-gray-500">
-                    ¥{{ selectedPlan.original_price }}
+                    {{ currencySymbol }}{{ displayCNY(selectedPlan.original_price) }}
                   </span>
-                  <span :class="['text-3xl font-bold', planTextClass]">¥{{ selectedPlan.price }}</span>
+                  <span :class="['text-3xl font-bold', planTextClass]">{{ currencySymbol }}{{ displayCNY(selectedPlan.price) }}</span>
                   <span class="text-sm text-gray-500 dark:text-gray-400">/ {{ planValiditySuffix }}</span>
                 </div>
                 <!-- Description -->
@@ -140,15 +145,15 @@
                 <div class="mt-3 grid grid-cols-2 gap-3">
                   <div v-if="selectedPlan.daily_limit_usd != null">
                     <span class="text-xs text-gray-400 dark:text-gray-500">{{ t('payment.planCard.dailyLimit') }}</span>
-                    <div class="text-lg font-semibold text-gray-800 dark:text-gray-200">¥{{ toCNY(selectedPlan.daily_limit_usd) }}</div>
+                    <div class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ quotaDisplay(selectedPlan.daily_limit_usd) }}</div>
                   </div>
                   <div v-if="selectedPlan.weekly_limit_usd != null">
                     <span class="text-xs text-gray-400 dark:text-gray-500">{{ t('payment.planCard.weeklyLimit') }}</span>
-                    <div class="text-lg font-semibold text-gray-800 dark:text-gray-200">¥{{ toCNY(selectedPlan.weekly_limit_usd) }}</div>
+                    <div class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ quotaDisplay(selectedPlan.weekly_limit_usd) }}</div>
                   </div>
                   <div v-if="selectedPlan.monthly_limit_usd != null">
                     <span class="text-xs text-gray-400 dark:text-gray-500">{{ t('payment.planCard.monthlyLimit') }}</span>
-                    <div class="text-lg font-semibold text-gray-800 dark:text-gray-200">¥{{ toCNY(selectedPlan.monthly_limit_usd) }}</div>
+                    <div class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ quotaDisplay(selectedPlan.monthly_limit_usd) }}</div>
                   </div>
                   <div v-if="selectedPlan.daily_limit_usd == null && selectedPlan.weekly_limit_usd == null && selectedPlan.monthly_limit_usd == null">
                     <span class="text-xs text-gray-400 dark:text-gray-500">{{ t('payment.planCard.quota') }}</span>
@@ -167,15 +172,15 @@
                 <div class="space-y-2 text-sm">
                   <div class="flex justify-between">
                     <span class="text-gray-500 dark:text-gray-400">{{ t('payment.amountLabel') }}</span>
-                    <span class="text-gray-900 dark:text-white">¥{{ selectedPlan.price.toFixed(2) }}</span>
+                    <span class="text-gray-900 dark:text-white">{{ currencySymbol }}{{ displayCNY(selectedPlan.price) }}</span>
                   </div>
                   <div class="flex justify-between">
                     <span class="text-gray-500 dark:text-gray-400">{{ t('payment.fee') }} ({{ feeRate }}%)</span>
-                    <span class="text-gray-900 dark:text-white">¥{{ subFeeAmount.toFixed(2) }}</span>
+                    <span class="text-gray-900 dark:text-white">{{ currencySymbol }}{{ subFeeAmount.toFixed(2) }}</span>
                   </div>
                   <div class="flex justify-between border-t border-gray-200 pt-2 dark:border-dark-600">
                     <span class="font-medium text-gray-700 dark:text-gray-300">{{ t('payment.actualPay') }}</span>
-                    <span class="text-lg font-bold text-primary-600 dark:text-primary-400">¥{{ subTotalAmount.toFixed(2) }}</span>
+                    <span class="text-lg font-bold text-primary-600 dark:text-primary-400">{{ currencySymbol }}{{ subTotalAmount.toFixed(2) }}</span>
                   </div>
                 </div>
               </div>
@@ -184,7 +189,7 @@
                   <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
                   {{ t('common.processing') }}
                 </span>
-                <span v-else>{{ t('payment.createOrder') }} ¥{{ (feeRate > 0 ? subTotalAmount : selectedPlan.price).toFixed(2) }}</span>
+                <span v-else>{{ t('payment.createOrder') }} {{ currencySymbol }}{{ (feeRate > 0 ? subTotalAmount : displayCNY(selectedPlan.price)).toFixed(2) }}</span>
               </button>
               <button class="btn btn-secondary w-full" @click="selectedPlan = null">{{ t('common.cancel') }}</button>
               <div v-if="errorMessage" class="rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800/50 dark:bg-red-900/20">
@@ -288,7 +293,7 @@ import StripePaymentInline from '@/components/payment/StripePaymentInline.vue'
 import Icon from '@/components/icons/Icon.vue'
 import type { PaymentMethodOption } from '@/components/payment/PaymentMethodSelector.vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
 const authStore = useAuthStore()
 
@@ -297,6 +302,23 @@ const FX_USD_TO_CNY = 7.0
 function toCNY(usd: number | null | undefined): string {
   if (usd == null || isNaN(Number(usd))) return ''
   return String(Math.round(Number(usd) * FX_USD_TO_CNY))
+}
+
+const localeCode = computed(() => locale.value.toLowerCase())
+const isRussian = computed(() => localeCode.value.startsWith('ru'))
+const isEnglish = computed(() => localeCode.value.startsWith('en'))
+const isDollarLocale = computed(() => isRussian.value || isEnglish.value)
+const currencySymbol = computed(() => isDollarLocale.value ? '$' : '¥')
+function displayCNY(cny: number | null | undefined): number {
+  const value = Number(cny || 0)
+  return isDollarLocale.value ? Math.round((value / FX_USD_TO_CNY) * 100) / 100 : value
+}
+function displayToCNY(displayAmount: number): number {
+  return isDollarLocale.value ? Math.round(displayAmount * FX_USD_TO_CNY * 100) / 100 : displayAmount
+}
+function quotaDisplay(usd: number | null | undefined): string {
+  if (usd == null) return ''
+  return isDollarLocale.value ? `$${Number(usd)}` : `¥${toCNY(usd)}`
 }
 
 const paymentStore = usePaymentStore()
@@ -327,11 +349,16 @@ const previewImage = ref('')
 
 // Payment phase: 'select' → 'paying' (QR/redirect) or 'stripe' (inline Stripe)
 const paymentPhase = ref<'select' | 'paying' | 'stripe'>('select')
-const paymentState = ref({ orderId: 0, qrCode: '', expiresAt: '', paymentType: '', payUrl: '', clientSecret: '', payAmount: 0, orderType: '' })
+const emptyPaymentState = () => ({
+  orderId: 0, qrCode: '', expiresAt: '', paymentType: '', payUrl: '',
+  clientSecret: '', payAmount: 0, payAddress: '', cryptoAmount: '',
+  cryptoCode: '', network: '', orderType: '',
+})
+const paymentState = ref(emptyPaymentState())
 
 function resetPayment() {
   paymentPhase.value = 'select'
-  paymentState.value = { orderId: 0, qrCode: '', expiresAt: '', paymentType: '', payUrl: '', clientSecret: '', payAmount: 0, orderType: '' }
+  paymentState.value = emptyPaymentState()
 }
 
 function onPaymentDone() {
@@ -377,8 +404,13 @@ const tabs = computed(() => {
   return result
 })
 
-const enabledMethods = computed(() => Object.keys(checkout.value.methods))
+const enabledMethods = computed(() =>
+  Object.keys(checkout.value.methods).filter(type =>
+    isRussian.value ? type === 'cryptomus' : (isEnglish.value || type !== 'cryptomus'),
+  ),
+)
 const validAmount = computed(() => amount.value ?? 0)
+const orderAmountCNY = computed(() => displayToCNY(validAmount.value))
 
 // Adaptive grid: center single card, 2-col for 2 plans, 3-col for 3+
 const planGridClass = computed(() => {
@@ -390,16 +422,17 @@ const planGridClass = computed(() => {
 // Check if an amount fits a method's [min, max]. 0 = no limit.
 function amountFitsMethod(amt: number, methodType: string): boolean {
   if (amt <= 0) return true
+  const orderAmount = displayToCNY(amt)
   const ml = checkout.value.methods[methodType]
   if (!ml) return false
-  if (ml.single_min > 0 && amt < ml.single_min) return false
-  if (ml.single_max > 0 && amt > ml.single_max) return false
+  if (ml.single_min > 0 && orderAmount < ml.single_min) return false
+  if (ml.single_max > 0 && orderAmount > ml.single_max) return false
   return true
 }
 
 // Global range for AmountInput (union of all methods, precomputed by backend)
-const globalMinAmount = computed(() => checkout.value.global_min)
-const globalMaxAmount = computed(() => checkout.value.global_max)
+const globalMinAmount = computed(() => displayCNY(checkout.value.global_min))
+const globalMaxAmount = computed(() => displayCNY(checkout.value.global_max))
 
 // Selected method's limits (for validation and error messages)
 const selectedLimit = computed(() => checkout.value.methods[selectedMethod.value])
@@ -436,8 +469,8 @@ const amountError = computed(() => {
   // Selected method can't handle this amount (but others can)
   const ml = selectedLimit.value
   if (ml) {
-    if (ml.single_min > 0 && validAmount.value < ml.single_min) return t('payment.amountTooLow', { min: ml.single_min })
-    if (ml.single_max > 0 && validAmount.value > ml.single_max) return t('payment.amountTooHigh', { max: ml.single_max })
+    if (ml.single_min > 0 && orderAmountCNY.value < ml.single_min) return t('payment.amountTooLow', { min: displayCNY(ml.single_min) })
+    if (ml.single_max > 0 && orderAmountCNY.value > ml.single_max) return t('payment.amountTooHigh', { max: displayCNY(ml.single_max) })
   }
   return ''
 })
@@ -450,7 +483,7 @@ const canSubmit = computed(() =>
 
 // Subscription-specific: method options based on plan price
 const subMethodOptions = computed<PaymentMethodOption[]>(() => {
-  const planPrice = selectedPlan.value?.price ?? 0
+  const planPrice = displayCNY(selectedPlan.value?.price)
   return enabledMethods.value.map((type) => {
     const ml = checkout.value.methods[type]
     return {
@@ -462,20 +495,20 @@ const subMethodOptions = computed<PaymentMethodOption[]>(() => {
 })
 
 const subFeeAmount = computed(() => {
-  const price = selectedPlan.value?.price ?? 0
+  const price = displayCNY(selectedPlan.value?.price)
   if (feeRate.value <= 0 || price <= 0) return 0
   return Math.ceil(((price * feeRate.value) / 100) * 100) / 100
 })
 
 const subTotalAmount = computed(() => {
-  const price = selectedPlan.value?.price ?? 0
+  const price = displayCNY(selectedPlan.value?.price)
   if (feeRate.value <= 0 || price <= 0) return price
   return Math.round((price + subFeeAmount.value) * 100) / 100
 })
 
 const canSubmitSubscription = computed(() =>
   selectedPlan.value !== null
-    && amountFitsMethod(selectedPlan.value.price, selectedMethod.value)
+    && amountFitsMethod(displayCNY(selectedPlan.value.price), selectedMethod.value)
     && selectedLimit.value?.available !== false
 )
 
@@ -486,6 +519,13 @@ watch(() => [validAmount.value, selectedMethod.value] as const, ([amt, method]) 
   if (available) selectedMethod.value = available
 })
 
+// Locale changes alter the visible payment methods. Never leave a hidden method selected.
+watch(enabledMethods, (methods) => {
+  if (!methods.includes(selectedMethod.value)) {
+    selectedMethod.value = methods[0] || ''
+  }
+})
+
 // Payment button class: follows selected payment method color
 const paymentButtonClass = computed(() => {
   const m = selectedMethod.value
@@ -493,6 +533,7 @@ const paymentButtonClass = computed(() => {
   if (m.includes('alipay')) return 'btn-alipay'
   if (m.includes('wxpay')) return 'btn-wxpay'
   if (m === 'stripe') return 'btn-stripe'
+  if (m === 'cryptomus') return 'bg-emerald-600 text-white hover:bg-emerald-700'
   return 'btn-primary'
 })
 
@@ -535,7 +576,7 @@ function closeRenewalModal() {
 
 async function handleSubmitRecharge() {
   if (!canSubmit.value || submitting.value) return
-  await createOrder(validAmount.value, 'balance')
+  await createOrder(orderAmountCNY.value, 'balance')
 }
 
 async function confirmSubscribe() {
@@ -565,15 +606,17 @@ async function createOrder(orderAmount: number, orderType: string, planId?: numb
         orderId: result.order_id, qrCode: '', expiresAt: result.expires_at || '',
         paymentType: selectedMethod.value, payUrl: '',
         clientSecret: result.client_secret, payAmount: result.pay_amount,
+        payAddress: '', cryptoAmount: '', cryptoCode: '', network: '',
         orderType,
       }
       paymentPhase.value = 'stripe'
-    } else if (isMobileDevice() && result.pay_url) {
+    } else if (isMobileDevice() && result.pay_url && selectedMethod.value !== 'cryptomus') {
       // Mobile + pay_url: redirect directly instead of QR/popup (mobile browsers block popups)
       paymentState.value = {
         orderId: result.order_id, qrCode: '', expiresAt: result.expires_at || '',
         paymentType: selectedMethod.value, payUrl: result.pay_url,
         clientSecret: '', payAmount: 0,
+        payAddress: '', cryptoAmount: '', cryptoCode: '', network: '',
         orderType,
       }
       paymentPhase.value = 'paying'
@@ -585,6 +628,8 @@ async function createOrder(orderAmount: number, orderType: string, planId?: numb
         orderId: result.order_id, qrCode: result.qr_code,
         expiresAt: result.expires_at || '', paymentType: selectedMethod.value, payUrl: '',
         clientSecret: '', payAmount: 0,
+        payAddress: result.pay_address || '', cryptoAmount: result.crypto_amount || '',
+        cryptoCode: result.crypto_code || '', network: result.network || '',
         orderType,
       }
       paymentPhase.value = 'paying'
@@ -595,6 +640,7 @@ async function createOrder(orderAmount: number, orderType: string, planId?: numb
         orderId: result.order_id, qrCode: '', expiresAt: result.expires_at || '',
         paymentType: selectedMethod.value, payUrl: result.pay_url,
         clientSecret: '', payAmount: 0,
+        payAddress: '', cryptoAmount: '', cryptoCode: '', network: '',
         orderType,
       }
       paymentPhase.value = 'paying'

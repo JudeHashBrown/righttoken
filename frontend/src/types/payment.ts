@@ -18,7 +18,7 @@ export type OrderStatus =
   | 'REFUNDED'
   | 'REFUND_FAILED'
 
-export type PaymentType = 'alipay' | 'wxpay' | 'alipay_direct' | 'wxpay_direct' | 'stripe' | 'easypay'
+export type PaymentType = 'alipay' | 'wxpay' | 'alipay_direct' | 'wxpay_direct' | 'stripe' | 'easypay' | 'cryptomus'
 
 export type OrderType = 'balance' | 'subscription'
 
@@ -156,6 +156,10 @@ export interface CreateOrderResult {
   pay_url?: string
   qr_code?: string
   client_secret?: string
+  pay_address?: string
+  crypto_amount?: string
+  crypto_code?: string
+  network?: string
   pay_amount: number
   expires_at: string
   payment_mode?: string

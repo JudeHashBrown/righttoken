@@ -737,6 +737,9 @@ const modelStats = computed<any[]>(() => resultData.value?.model_stats || [])
 const FX_USD_TO_CNY = 7.0
 function usd(value: number | null | undefined): string {
   if (value == null || value < 0) return '-'
+  if (/^(ru|en)/.test(locale.value.toLowerCase())) {
+    return '$' + Number(value).toFixed(2)
+  }
   return '¥' + (Number(value) * FX_USD_TO_CNY).toFixed(2)
 }
 

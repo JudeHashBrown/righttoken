@@ -5,7 +5,7 @@
     >
       <!-- Amount + Order ID -->
       <div v-if="amount" class="text-center">
-        <p class="text-3xl font-bold" :style="{ color: methodColor }">¥{{ amount }}</p>
+        <p class="text-3xl font-bold" :style="{ color: methodColor }">{{ displayAmount }}</p>
         <p v-if="orderId" class="mt-1 text-sm text-gray-500 dark:text-slate-400">
           {{ t('payment.orders.orderId') }}: {{ orderId }}
         </p>
@@ -69,12 +69,18 @@ const METHOD_COLORS: Record<string, string> = {
 }
 const DEFAULT_METHOD_COLOR = '#635bff'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
 
 const orderId = String(route.query.order_id || '')
 const method = String(route.query.method || 'alipay')
 const amount = String(route.query.amount || '')
+const displayAmount = computed(() => {
+  const value = Number(amount || 0)
+  return /^(ru|en)/.test(locale.value.toLowerCase())
+    ? `$${(value / 7).toFixed(2)}`
+    : `¥${amount}`
+})
 
 const methodColor = computed(() => METHOD_COLORS[method] || DEFAULT_METHOD_COLOR)
 

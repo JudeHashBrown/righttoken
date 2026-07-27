@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"strings"
 	"sync"
 
@@ -17,6 +18,7 @@ const (
 	stripeCurrency            = "cny"
 	stripeEventPaymentSuccess = "payment_intent.succeeded"
 	stripeEventPaymentFailed  = "payment_intent.payment_failed"
+	stripeEventChargeFailed   = "charge.failed"
 )
 
 // Stripe implements the payment.CancelableProvider interface for Stripe payments.
@@ -131,6 +133,10 @@ func (s *Stripe) QueryOrder(ctx context.Context, tradeNo string) (*payment.Query
 		status = payment.ProviderStatusPaid
 	case stripe.PaymentIntentStatusCanceled:
 		status = payment.ProviderStatusFailed
+	case stripe.PaymentIntentStatusRequiresPaymentMethod:
+		if pi.LastPaymentError != nil {
+			status = payment.ProviderStatusFailed
+		}
 	}
 
 	return &payment.QueryOrderResponse{
@@ -164,6 +170,9 @@ func (s *Stripe) VerifyNotification(_ context.Context, rawBody string, headers m
 		return parseStripePaymentIntent(&event, payment.ProviderStatusSuccess, rawBody)
 	case stripeEventPaymentFailed:
 		return parseStripePaymentIntent(&event, payment.ProviderStatusFailed, rawBody)
+	case stripeEventChargeFailed:
+		logStripeChargeFailure(&event)
+		return nil, nil
 	}
 
 	return nil, nil
@@ -174,13 +183,63 @@ func parseStripePaymentIntent(event *stripe.Event, status string, rawBody string
 	if err := json.Unmarshal(event.Data.Raw, &pi); err != nil {
 		return nil, fmt.Errorf("stripe parse payment_intent: %w", err)
 	}
-	return &payment.PaymentNotification{
+	notification := &payment.PaymentNotification{
 		TradeNo: pi.ID,
 		OrderID: pi.Metadata["orderId"],
 		Amount:  payment.FenToYuan(pi.Amount),
 		Status:  status,
 		RawData: rawBody,
-	}, nil
+	}
+	if pi.LastPaymentError != nil {
+		notification.FailureCode = string(pi.LastPaymentError.Code)
+		notification.DeclineCode = string(pi.LastPaymentError.DeclineCode)
+		notification.FailureMessage = pi.LastPaymentError.Msg
+	}
+
+	// stripe-go doesn't currently expose network_decline_code on stripe.Error,
+	// so retain it from the raw webhook payload.
+	var rawFailure struct {
+		LastPaymentError *struct {
+			NetworkDeclineCode string `json:"network_decline_code"`
+		} `json:"last_payment_error"`
+	}
+	if err := json.Unmarshal(event.Data.Raw, &rawFailure); err == nil && rawFailure.LastPaymentError != nil {
+		notification.NetworkDeclineCode = rawFailure.LastPaymentError.NetworkDeclineCode
+	}
+	return notification, nil
+}
+
+// logStripeChargeFailure records diagnostic details only. The corresponding
+// payment_intent.payment_failed event owns the order state transition.
+func logStripeChargeFailure(event *stripe.Event) {
+	var charge stripe.Charge
+	if event == nil || event.Data == nil {
+		return
+	}
+	if err := json.Unmarshal(event.Data.Raw, &charge); err != nil {
+		slog.Warn("[Stripe Webhook] parse charge.failed", "eventID", event.ID, "error", err)
+		return
+	}
+	paymentIntentID := ""
+	if charge.PaymentIntent != nil {
+		paymentIntentID = charge.PaymentIntent.ID
+	}
+	networkDeclineCode := ""
+	declineReason := ""
+	if charge.Outcome != nil {
+		networkDeclineCode = charge.Outcome.NetworkDeclineCode
+		declineReason = string(charge.Outcome.Reason)
+	}
+	slog.Warn("[Stripe Webhook] charge failed",
+		"eventID", event.ID,
+		"chargeID", charge.ID,
+		"paymentIntentID", paymentIntentID,
+		"orderID", charge.Metadata["orderId"],
+		"failureCode", charge.FailureCode,
+		"failureMessage", charge.FailureMessage,
+		"networkDeclineCode", networkDeclineCode,
+		"declineReason", declineReason,
+	)
 }
 
 // Refund creates a Stripe refund.

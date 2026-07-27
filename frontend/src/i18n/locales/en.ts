@@ -151,11 +151,11 @@ export default {
           output: 'Output',
           official: 'Official price'
         },
-        unit: 'USD per million tokens (paid in CNY at ¥7 = $1)',
+        unit: 'USD per million tokens',
         cta: 'Top Up Now'
       },
       example: {
-        title: 'What ¥100 buys you (output only, reference)',
+        title: 'What about $14 buys you (output only, reference)',
         subtitle: 'Actual consumption depends on conversation length, prompt complexity, and model settings',
         models: {
           gpt5: {
@@ -202,7 +202,7 @@ export default {
         openai: {
           title: 'OpenAI Flagship Monthly',
           badge: 'Top Tier',
-          price: '¥199',
+          price: '$28.43',
           priceUnit: '/ month',
           tagline: 'Subscription-grade GPT-5 / Codex — no token math',
           features: [
@@ -217,7 +217,7 @@ export default {
         gemini: {
           title: 'Gemini Flagship Monthly',
           badge: 'Best Value',
-          price: '¥99',
+          price: '$14.14',
           priceUnit: '/ month',
           tagline: 'Gemini 2.5 Pro / Flash / 3.0 — unlimited usage',
           features: [
@@ -5107,6 +5107,7 @@ export default {
         providerAlipay: 'Alipay (Direct)',
         providerWxpay: 'WeChat Pay (Direct)',
         providerStripe: 'Stripe',
+        providerCryptomus: 'Cryptomus',
         typeDisabled: 'type disabled',
         enableTypesFirst: 'Enable at least one payment type above first',
         easypayRedirect: 'Redirect',
@@ -5130,6 +5131,8 @@ export default {
         field_secretKey: 'Secret Key',
         field_publishableKey: 'Publishable Key',
         field_webhookSecret: 'Webhook Secret',
+        field_merchantId: 'Merchant ID',
+        field_paymentApiKey: 'Payment API Key',
         field_cid: 'Channel ID',
         field_cidAlipay: 'Alipay Channel ID',
         field_cidWxpay: 'WeChat Channel ID',
@@ -5869,7 +5872,7 @@ export default {
     actualPay: 'Actual Payment',
     createOrder: 'Confirm Payment',
     valueEstimate: {
-      title: '¥{amount} roughly gets you',
+      title: '${amount} roughly gets you',
       unitTokens: 'total tokens (input + output)',
       unitArticles: 'medium articles (~1000 chars)',
       unitCodeLines: 'code edits',
@@ -5888,6 +5891,7 @@ export default {
       alipay: 'Alipay',
       wxpay: 'WeChat Pay',
       stripe: 'WeChat Pay / Cards',
+      cryptomus: 'USDT (TRC20)',
       card: 'Card',
       link: 'Link',
       alipay_direct: 'Alipay (Direct)',
@@ -5895,6 +5899,7 @@ export default {
     },
     methodHints: {
       stripe: 'Securely processed by Stripe',
+      cryptomus: 'USD-denominated payment via Cryptomus',
     },
     status: {
       pending: 'Pending',
@@ -5916,6 +5921,11 @@ export default {
       scanWxpay: 'WeChat QR Payment',
       scanAlipayHint: 'Open Alipay on your phone and scan the QR code to pay',
       scanWxpayHint: 'Open WeChat on your phone and scan the QR code to pay',
+      scanUSDT: 'Pay with USDT',
+      scanUSDTHint: 'Scan the QR code or copy the address. Send the exact amount shown above.',
+      exactCryptoAmount: 'Exact amount to send (tap to copy)',
+      walletAddress: 'Receiving address',
+      cryptoNetworkWarning: 'Only send USDT using the {network} network. Other networks may permanently lose funds.',
       payInNewWindow: 'Complete Payment in New Window',
       payInNewWindowHint: 'The payment page has opened in a new window. Please complete the payment there and return to this page.',
       openPayWindow: 'Reopen Payment Page',
@@ -5955,7 +5965,7 @@ export default {
     firstRechargeBonus: {
       title: 'First recharge bonus +{percent}%',
       subtitle: 'Users registered via invite code receive an extra +{percent}% on their first recharge (one-time only)',
-      amountHint: 'You pay ¥{paid} and receive about ¥{received} in balance (+{percent}% first-recharge bonus applied)',
+      amountHint: 'You pay ${paid} and receive about ${received} in balance (+{percent}% first-recharge bonus applied)',
     },
     activeSubscription: 'Active Subscription',
     noActiveSubscription: 'No active subscription',

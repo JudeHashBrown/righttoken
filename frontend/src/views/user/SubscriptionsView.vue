@@ -101,9 +101,8 @@
                   {{ t('userSubscriptions.daily') }}
                 </span>
                 <span class="text-sm text-gray-500 dark:text-dark-400">
-                  ¥{{ toCNY(subscription.daily_usage_usd || 0) }} / ¥{{
-                    toCNY(subscription.group.daily_limit_usd)
-                  }}
+                  {{ formatMoney(subscription.daily_usage_usd || 0) }} /
+                  {{ formatMoney(subscription.group.daily_limit_usd) }}
                 </span>
               </div>
               <div class="relative h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-dark-600">
@@ -142,9 +141,8 @@
                   {{ t('userSubscriptions.weekly') }}
                 </span>
                 <span class="text-sm text-gray-500 dark:text-dark-400">
-                  ¥{{ toCNY(subscription.weekly_usage_usd || 0) }} / ¥{{
-                    toCNY(subscription.group.weekly_limit_usd)
-                  }}
+                  {{ formatMoney(subscription.weekly_usage_usd || 0) }} /
+                  {{ formatMoney(subscription.group.weekly_limit_usd) }}
                 </span>
               </div>
               <div class="relative h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-dark-600">
@@ -183,9 +181,8 @@
                   {{ t('userSubscriptions.monthly') }}
                 </span>
                 <span class="text-sm text-gray-500 dark:text-dark-400">
-                  ¥{{ toCNY(subscription.monthly_usage_usd || 0) }} / ¥{{
-                    toCNY(subscription.group.monthly_limit_usd)
-                  }}
+                  {{ formatMoney(subscription.monthly_usage_usd || 0) }} /
+                  {{ formatMoney(subscription.group.monthly_limit_usd) }}
                 </span>
               </div>
               <div class="relative h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-dark-600">
@@ -267,15 +264,19 @@ function platformAccentDotClass(p: string): string {
   }
 }
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const router = useRouter()
 const appStore = useAppStore()
 
 // FX rate locked at 7.0 (matches backend payment_fulfillment.go: USD = CNY / 7.0)
 const FX_USD_TO_CNY = 7.0
-function toCNY(usd: number | null | undefined): string {
+function formatMoney(usd: number | null | undefined): string {
   if (usd == null || isNaN(Number(usd))) return ''
-  return String(Math.round(Number(usd) * FX_USD_TO_CNY))
+  const value = Number(usd)
+  if (/^(ru|en)/.test(locale.value.toLowerCase())) {
+    return `$${value.toFixed(2)}`
+  }
+  return `¥${Math.round(value * FX_USD_TO_CNY)}`
 }
 
 

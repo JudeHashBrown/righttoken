@@ -143,11 +143,11 @@ export default {
           output: 'Выходные',
           official: 'Официальная цена'
         },
-        unit: 'USD за миллион токенов (оплата в CNY по курсу ¥7 = $1)',
+        unit: 'USD за миллион токенов',
         cta: 'Пополнить'
       },
       example: {
-        title: 'Что даёт ¥100 (только выходные токены, ориентир)',
+        title: 'Что даёт около $14 (только выходные токены, ориентир)',
         subtitle: 'Реальное потребление зависит от длины диалога, сложности промпта и настроек модели',
         models: {
           gpt5: {
@@ -194,7 +194,7 @@ export default {
         openai: {
           title: 'OpenAI Flagship — месяц',
           badge: 'Топ',
-          price: '¥199',
+          price: '$28.43',
           priceUnit: '/ месяц',
           tagline: 'GPT‑5 / Codex по подписке — без расчёта токенов',
           features: [
@@ -209,7 +209,7 @@ export default {
         gemini: {
           title: 'Gemini Flagship — месяц',
           badge: 'Лучшая цена',
-          price: '¥99',
+          price: '$14.14',
           priceUnit: '/ месяц',
           tagline: 'Gemini 2.5 Pro / Flash / 3.0 — без лимита',
           features: [
@@ -1424,13 +1424,15 @@ export default {
       alipay: 'Alipay',
       wxpay: 'WeChat Pay',
       stripe: 'WeChat Pay / карты',
+      cryptomus: 'USDT (TRC20)',
       card: 'Банковская карта',
       link: 'Link',
       alipay_direct: 'Alipay (прямой)',
       wxpay_direct: 'WeChat Pay (прямой)'
     },
     methodHints: {
-      stripe: 'Безопасная обработка через Stripe'
+      stripe: 'Безопасная обработка через Stripe',
+      cryptomus: 'Оплата в долларах через Cryptomus'
     },
     status: {
       pending: 'Ожидает оплаты',
@@ -1452,6 +1454,11 @@ export default {
       scanWxpay: 'Оплата WeChat по QR',
       scanAlipayHint: 'Откройте Alipay на телефоне и отсканируйте QR',
       scanWxpayHint: 'Откройте WeChat на телефоне и отсканируйте QR',
+      scanUSDT: 'Оплата USDT',
+      scanUSDTHint: 'Отсканируйте QR-код или скопируйте адрес. Отправьте точную сумму.',
+      exactCryptoAmount: 'Точная сумма перевода (нажмите, чтобы скопировать)',
+      walletAddress: 'Адрес для оплаты',
+      cryptoNetworkWarning: 'Отправляйте USDT только через сеть {network}. Перевод через другую сеть может быть безвозвратно утерян.',
       payInNewWindow: 'Оплатите в новом окне',
       payInNewWindowHint: 'Оплата открыта в новом окне. Завершите оплату и вернитесь.',
       openPayWindow: 'Открыть окно оплаты снова',
@@ -1491,7 +1498,7 @@ export default {
     firstRechargeBonus: {
       title: 'Бонус за первое пополнение +{percent}%',
       subtitle: 'Пользователи, зарегистрированные по инвайт‑коду, получают +{percent}% к первому пополнению (только один раз)',
-      amountHint: 'Пополнение ¥{paid}, начислено ~¥{received} (включая +{percent}% бонус)'
+      amountHint: 'Пополнение ${paid}, начислено ~${received} (включая +{percent}% бонус)'
     },
     activeSubscription: 'Активная подписка',
     noActiveSubscription: 'Нет активной подписки',

@@ -184,7 +184,7 @@ import Icon from '@/components/icons/Icon.vue'
 import { useSubscriptionStore } from '@/stores'
 import type { UserSubscription } from '@/types'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const subscriptionStore = useSubscriptionStore()
 
@@ -254,6 +254,11 @@ function getProgressWidth(used: number | undefined, limit: number | null | undef
 // FX rate locked at 7.0 (matches backend payment_fulfillment.go: USD = CNY / 7.0)
 const FX_USD_TO_CNY = 7.0
 function formatUsage(used: number | undefined, limit: number | null | undefined): string {
+  if (/^(ru|en)/.test(locale.value.toLowerCase())) {
+    const usedUSD = (used || 0).toFixed(2)
+    const limitUSD = limit != null ? limit.toFixed(2) : null
+    return limitUSD == null ? `$${usedUSD}/∞` : `$${usedUSD}/$${limitUSD}`
+  }
   const usedCNY = Math.round((used || 0) * FX_USD_TO_CNY)
   const limitCNY = limit != null ? Math.round(limit * FX_USD_TO_CNY) : null
   return limitCNY == null ? `¥${usedCNY}/∞` : `¥${usedCNY}/¥${limitCNY}`

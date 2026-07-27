@@ -210,11 +210,19 @@ func (e *EasyPay) VerifyNotification(_ context.Context, rawBody string, _ map[st
 }
 
 func (e *EasyPay) Refund(ctx context.Context, req payment.RefundRequest) (*payment.RefundResponse, error) {
+	if strings.TrimSpace(req.OrderID) == "" {
+		return nil, fmt.Errorf("easypay refund: missing out_trade_no")
+	}
+	// ZPay documents trade_no and out_trade_no as alternative order
+	// identifiers. Send only the merchant order number that we originally
+	// supplied when creating the payment. Sending both can make some ZPay
+	// channels prefer trade_no and incorrectly report that the order does not
+	// exist.
 	params := map[string]string{
 		"pid": e.config["pid"], "key": e.config["pkey"],
-		"trade_no": req.TradeNo, "out_trade_no": req.OrderID, "money": req.Amount,
+		"out_trade_no": req.OrderID, "money": req.Amount,
 	}
-	body, err := e.post(ctx, e.config["apiBase"]+"/api.php?act=refund", params)
+	body, err := e.post(ctx, strings.TrimRight(e.config["apiBase"], "/")+"/api.php?act=refund", params)
 	if err != nil {
 		return nil, fmt.Errorf("easypay refund: %w", err)
 	}

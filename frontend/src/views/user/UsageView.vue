@@ -507,13 +507,16 @@ import { formatTokenPricePerMillion } from '@/utils/usagePricing'
 import { getUsageServiceTierLabel } from '@/utils/usageServiceTier'
 import { resolveUsageRequestType } from '@/utils/usageRequestType'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // FX rate locked at 7.0 (matches backend payment_fulfillment.go: USD = CNY / 7.0)
 const FX_USD_TO_CNY = 7.0
 function toCNY(usd: number | null | undefined, digits = 2): string {
-  if (usd == null || isNaN(Number(usd))) return '¥0.00'
-  return '¥' + (Number(usd) * FX_USD_TO_CNY).toFixed(digits)
+  const value = usd == null || isNaN(Number(usd)) ? 0 : Number(usd)
+  if (/^(ru|en)/.test(locale.value.toLowerCase())) {
+    return '$' + value.toFixed(digits)
+  }
+  return '¥' + (value * FX_USD_TO_CNY).toFixed(digits)
 }
 const appStore = useAppStore()
 

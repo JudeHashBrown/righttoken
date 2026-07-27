@@ -7,6 +7,7 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/Wei-Shaw/sub2api/internal/payment"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,8 +18,26 @@ func TestPaymentSuccessRecoverableStatuses(t *testing.T) {
 	assert.True(t, slices.Contains(statuses, OrderStatusPending))
 	assert.True(t, slices.Contains(statuses, OrderStatusCancelled))
 	assert.True(t, slices.Contains(statuses, OrderStatusExpired), "verified late payments must recover expired orders")
+	assert.True(t, slices.Contains(statuses, OrderStatusFailed), "a later successful retry must recover a declined payment")
 	assert.False(t, slices.Contains(statuses, OrderStatusCompleted))
 	assert.False(t, slices.Contains(statuses, OrderStatusRefunded))
+}
+
+func TestPaymentFailureReason(t *testing.T) {
+	t.Parallel()
+
+	got := paymentFailureReason(&payment.PaymentNotification{
+		FailureCode:        "payment_method_provider_decline",
+		DeclineCode:        "partner_generic_decline",
+		NetworkDeclineCode: "REQUEST_BLOCKED",
+		FailureMessage:     "The payment provider has declined the payment.",
+	})
+	assert.Equal(t,
+		"network_decline_code=REQUEST_BLOCKED; decline_code=partner_generic_decline; code=payment_method_provider_decline; message=The payment provider has declined the payment.",
+		got,
+	)
+	assert.Equal(t, "payment failed", paymentFailureReason(nil))
+	assert.Equal(t, "payment failed", paymentFailureReason(&payment.PaymentNotification{}))
 }
 
 // ---------------------------------------------------------------------------
