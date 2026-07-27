@@ -2,17 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, Menu } from "lucide-react";
+import { ArrowLeft, Bell, Menu } from "lucide-react";
 import styles from "./app-header.module.css";
 
 type AppHeaderProps = {
   memberName: string;
   urgentCount: number;
+  mainSiteUrl: string;
 };
 
 export function AppHeader({
   memberName,
-  urgentCount
+  urgentCount,
+  mainSiteUrl
 }: AppHeaderProps): React.JSX.Element {
   const pathname = usePathname();
   const workspaceLabel =
@@ -44,6 +46,19 @@ export function AppHeader({
       </p>
 
       <div className={styles.actions}>
+        <a
+          className={styles.mainSiteLink}
+          href={mainSiteUrl}
+          aria-label="返回主站"
+          title="返回主站"
+        >
+          <ArrowLeft
+            aria-hidden="true"
+            size={17}
+            strokeWidth={1.9}
+          />
+          <span className={styles.mainSiteLabel}>返回主站</span>
+        </a>
         <Link
           className={styles.notification}
           href="/tasks?priority=URGENT"

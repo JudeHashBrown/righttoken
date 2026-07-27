@@ -11,6 +11,8 @@ vi.mock("next/navigation", () => ({
   usePathname: () => pathname
 }));
 
+const mainSiteUrl = "https://righttoken.ai/dashboard";
+
 describe("AppHeader", () => {
   afterEach(() => {
     pathname = "/dashboard";
@@ -33,13 +35,25 @@ describe("AppHeader", () => {
   ])("shows the current workspace for %s", (route, label) => {
     pathname = route;
 
-    render(<AppHeader memberName="林小雨" urgentCount={2} />);
+    render(
+      <AppHeader
+        memberName="林小雨"
+        urgentCount={2}
+        mainSiteUrl={mainSiteUrl}
+      />
+    );
 
     expect(screen.getByText(label)).toBeInTheDocument();
   });
 
   it("does not expose standalone logout controls", () => {
-    render(<AppHeader memberName="林小雨" urgentCount={0} />);
+    render(
+      <AppHeader
+        memberName="林小雨"
+        urgentCount={0}
+        mainSiteUrl={mainSiteUrl}
+      />
+    );
 
     expect(
       screen.queryByRole("button", { name: "退出" })
@@ -47,5 +61,22 @@ describe("AppHeader", () => {
     expect(
       screen.queryByText("退出")
     ).not.toBeInTheDocument();
+  });
+
+  it("returns to the configured RightToken dashboard in the same tab", () => {
+    render(
+      <AppHeader
+        memberName="主管理员"
+        urgentCount={0}
+        mainSiteUrl={mainSiteUrl}
+      />
+    );
+
+    const returnLink = screen.getByRole("link", {
+      name: "返回主站"
+    });
+
+    expect(returnLink).toHaveAttribute("href", mainSiteUrl);
+    expect(returnLink).not.toHaveAttribute("target");
   });
 });

@@ -32,6 +32,32 @@
   gap: 13px;
 }
 
+.mainSiteLink {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #d9deea;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #4c566f;
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1;
+  text-decoration: none;
+  transition:
+    background-color 180ms ease-out,
+    border-color 180ms ease-out,
+    color 180ms ease-out;
+}
+
+.mainSiteLink:hover {
+  border-color: #c8cedc;
+  background: #f7f8fb;
+  color: #273149;
+}
+
 .notification {
   position: relative;
   display: grid;
@@ -94,6 +120,7 @@
 }
 
 .notification:focus-visible,
+.mainSiteLink:focus-visible,
 .logout:focus-visible {
   outline: 3px solid rgb(102 117 232 / 22%);
   outline-offset: 2px;
@@ -115,8 +142,16 @@
 
   .context,
   .memberName,
-  .logout span {
+  .logout span,
+  .mainSiteLabel {
     display: none;
+  }
+
+  .mainSiteLink {
+    width: 36px;
+    min-height: 36px;
+    justify-content: center;
+    padding: 0;
   }
 
   .mobileBrand {
