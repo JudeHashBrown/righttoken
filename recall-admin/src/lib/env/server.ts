@@ -77,6 +77,7 @@ const serverEnvSchema = z
       z.string().min(32).optional()
     ),
     RIGHTTOKEN_ADMIN_URL: optionalUrl,
+    RIGHTTOKEN_DASHBOARD_URL: optionalUrl,
     RIGHTTOKEN_ROLE_MAP: optionalString,
     RIGHTTOKEN_SOURCE_MODE: z
       .enum(["database", "simulator"])

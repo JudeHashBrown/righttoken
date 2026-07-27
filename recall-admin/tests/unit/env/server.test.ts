@@ -60,6 +60,17 @@ describe("parseServerEnv", () => {
     expect(env.INTERNAL_API_SECRET_PREVIOUS).toBe("p".repeat(32));
   });
 
+  it("accepts an explicit RightToken dashboard URL", () => {
+    const env = parseServerEnv({
+      ...baseEnv,
+      RIGHTTOKEN_DASHBOARD_URL: "https://righttoken.ai/dashboard"
+    });
+
+    expect(env.RIGHTTOKEN_DASHBOARD_URL).toBe(
+      "https://righttoken.ai/dashboard"
+    );
+  });
+
   it("accepts optional GeoIP HTTP provider settings", () => {
     const env = parseServerEnv({
       ...baseEnv,
@@ -188,6 +199,7 @@ describe("parseServerEnv", () => {
       "RECALL_INTERNAL_API_SECRET_CURRENT",
       "RECALL_RIGHTTOKEN_SSO_SECRET",
       "RECALL_RIGHTTOKEN_ADMIN_URL",
+      "RECALL_RIGHTTOKEN_DASHBOARD_URL",
       "RECALL_RECONCILE_ENABLED",
       "RECALL_GEOIP_MMDB_PATH",
       "RECALL_GEOIP_RIR_PATH"

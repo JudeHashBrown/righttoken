@@ -72,9 +72,14 @@ RECALL_APP_URL=https://recall.righttoken.ai
 RECALL_RIGHTTOKEN_ISSUER=https://righttoken.ai
 RECALL_RIGHTTOKEN_AUDIENCE=righttoken-recall
 RECALL_RIGHTTOKEN_ADMIN_URL=https://righttoken.ai/user-operations
+RECALL_RIGHTTOKEN_DASHBOARD_URL=https://righttoken.ai/dashboard
 RECALL_RIGHTTOKEN_SSO_SECRET=<与主站 RECALL_SSO_SSO_SECRET 完全相同>
 RECALL_SSO_BASE_URL=https://recall.righttoken.ai
 ```
+
+`RECALL_RIGHTTOKEN_ADMIN_URL` 用于未登录用户进入主站授权流程；
+`RECALL_RIGHTTOKEN_DASHBOARD_URL` 专门用于运营后台顶部的“返回主站”入口，
+两者用途不同，不应复用。
 
 另外分别生成：
 
