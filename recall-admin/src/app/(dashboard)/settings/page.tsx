@@ -4,6 +4,9 @@ import { MailboxActions } from "@/components/settings/mailbox-actions";
 import { WecomSettingsForm } from "@/components/settings/wecom-settings-form";
 import { requireAdministrator } from "@/modules/admin/page-access";
 import { getSettingsWorkspaceOverview } from "@/modules/admin/workspace-queries";
+import {
+  mailSyncStatusText
+} from "@/modules/mail/sync-error";
 
 export default async function SettingsPage(): Promise<React.JSX.Element> {
   await requireAdministrator("/settings");
@@ -100,7 +103,9 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
                     {mailbox.emailAddress}
                     {" · "}
                     {mailbox.lastErrorCode
-                      ? `错误：${mailbox.lastErrorCode}`
+                      ? mailSyncStatusText(
+                          mailbox.lastErrorCode
+                        )
                       : mailbox.lastSuccessAt
                         ? "最近连接正常"
                         : "尚未测试连接"}

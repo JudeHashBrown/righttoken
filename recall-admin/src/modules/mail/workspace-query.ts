@@ -8,6 +8,9 @@ import { prisma } from "@/lib/db/prisma";
 import type {
   MailWorkspaceFilter
 } from "@/modules/mail/workspace-filter";
+import {
+  mailSyncStatusText
+} from "@/modules/mail/sync-error";
 
 const openStatuses: TaskStatus[] = [
   "UNASSIGNED",
@@ -302,9 +305,11 @@ async function listItems(
       title: mailbox.name,
       subtitle: mailbox.emailAddress,
       preview:
-        mailbox.lastErrorCode ||
+        (mailbox.lastErrorCode
+          ? mailSyncStatusText(mailbox.lastErrorCode)
+          : null) ||
         (mailbox.lastSyncedAt
-          ? "最近同步成功"
+          ? "同步正常"
           : "尚未运行同步"),
       occurredAt: iso(mailbox.lastSyncedAt),
       status: mailbox.enabled ? "已启用" : "未启用"
@@ -425,6 +430,42 @@ async function selectedItem(
   viewer: WorkspaceViewer,
   filter: MailWorkspaceFilter
 ) {
+  if (
+    (filter.view === "mailboxes" ||
+      filter.view === "sync") &&
+    filter.selectedId
+  ) {
+    const mailbox = await prisma.mailbox.findUnique({
+      where: { id: filter.selectedId },
+      select: {
+        id: true,
+        name: true,
+        emailAddress: true,
+        enabled: true,
+        lastTestedAt: true,
+        lastSuccessAt: true,
+        lastSyncedAt: true,
+        lastErrorCode: true
+      }
+    });
+    return mailbox
+      ? {
+          kind: "mailbox" as const,
+          mailbox: {
+            id: mailbox.id,
+            name: mailbox.name,
+            emailAddress: mailbox.emailAddress,
+            enabled: mailbox.enabled,
+            statusText: mailSyncStatusText(
+              mailbox.lastErrorCode
+            ),
+            lastTestedAt: iso(mailbox.lastTestedAt),
+            lastSuccessAt: iso(mailbox.lastSuccessAt),
+            lastSyncedAt: iso(mailbox.lastSyncedAt)
+          }
+        }
+      : null;
+  }
   if (filter.view === "unmatched" && filter.selectedId) {
     const message = await prisma.mailMessage.findFirst({
       where: {
