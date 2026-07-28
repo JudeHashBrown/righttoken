@@ -51,14 +51,142 @@ SELECT
   MAX(created_at) AS last_successful_usage_at
 FROM usage_logs;
 
+-- Strict F-group anomaly state:
+-- final failures only, user-side errors excluded, 3 failures / 50% trigger,
+-- 3 consecutive successes recover, and no active state may outlive 24 hours.
+WITH final_request_events AS (
+  SELECT
+    ul.user_id,
+    ul.created_at,
+    ul.id AS event_id,
+    0 AS source_order,
+    false AS failed
+  FROM usage_logs ul
+  WHERE ul.created_at >= NOW() - INTERVAL '24 hours 30 minutes'
+
+  UNION ALL
+
+  SELECT
+    error_log.user_id,
+    error_log.created_at,
+    error_log.id AS event_id,
+    1 AS source_order,
+    true AS failed
+  FROM ops_error_logs error_log
+  WHERE error_log.user_id IS NOT NULL
+    AND error_log.created_at >= NOW() - INTERVAL '24 hours 30 minutes'
+    AND error_log.status_code >= 400
+    AND COALESCE(error_log.is_business_limited, false) = false
+    AND COALESCE(error_log.error_owner, 'platform') <> 'client'
+    AND COALESCE(error_log.error_phase, 'internal') NOT IN ('request', 'auth')
+    AND COALESCE(error_log.error_type, '') NOT IN (
+      'invalid_request_error',
+      'authentication_error',
+      'billing_error',
+      'subscription_error'
+    )
+),
+request_event_transitions AS (
+  SELECT
+    event.*,
+    CASE
+      WHEN LAG(event.failed) OVER (
+        PARTITION BY event.user_id
+        ORDER BY event.created_at, event.source_order, event.event_id
+      ) IS DISTINCT FROM event.failed
+      THEN 1
+      ELSE 0
+    END AS starts_new_run
+  FROM final_request_events event
+),
+request_event_windows AS (
+  SELECT
+    event.*,
+    SUM(event.starts_new_run) OVER (
+      PARTITION BY event.user_id
+      ORDER BY event.created_at, event.source_order, event.event_id
+      ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS run_id,
+    COUNT(*) OVER (
+      PARTITION BY event.user_id
+      ORDER BY event.created_at
+      RANGE BETWEEN INTERVAL '30 minutes' PRECEDING AND CURRENT ROW
+    ) AS request_count,
+    COUNT(*) FILTER (WHERE event.failed) OVER (
+      PARTITION BY event.user_id
+      ORDER BY event.created_at
+      RANGE BETWEEN INTERVAL '30 minutes' PRECEDING AND CURRENT ROW
+    ) AS failure_count
+  FROM request_event_transitions event
+),
+request_event_metrics AS (
+  SELECT
+    event.*,
+    CASE
+      WHEN event.failed THEN COUNT(*) OVER (
+        PARTITION BY event.user_id, event.run_id
+        ORDER BY event.created_at, event.source_order, event.event_id
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+      )
+      ELSE 0
+    END AS consecutive_failures,
+    CASE
+      WHEN NOT event.failed THEN COUNT(*) OVER (
+        PARTITION BY event.user_id, event.run_id
+        ORDER BY event.created_at, event.source_order, event.event_id
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+      )
+      ELSE 0
+    END AS consecutive_successes
+  FROM request_event_windows event
+),
+request_state_markers AS (
+  SELECT
+    event.user_id,
+    event.created_at,
+    event.source_order,
+    event.event_id,
+    CASE
+      WHEN event.failed
+        AND (
+          event.consecutive_failures >= 3
+          OR (
+            event.request_count >= 3
+            AND event.failure_count * 2 >= event.request_count
+          )
+        )
+      THEN true
+      WHEN NOT event.failed
+        AND event.consecutive_successes >= 3
+      THEN false
+      ELSE NULL
+    END AS anomaly_active
+  FROM request_event_metrics event
+  WHERE event.created_at >= NOW() - INTERVAL '24 hours'
+),
+latest_anomaly_state AS (
+  SELECT DISTINCT ON (marker.user_id)
+    marker.user_id,
+    marker.anomaly_active,
+    marker.created_at AS anomaly_changed_at
+  FROM request_state_markers marker
+  WHERE marker.anomaly_active IS NOT NULL
+  ORDER BY
+    marker.user_id,
+    marker.created_at DESC,
+    marker.source_order DESC,
+    marker.event_id DESC
+)
 SELECT
   COUNT(*) FILTER (
-    WHERE user_id IS NOT NULL
-      AND COALESCE(resolved, false) = false
-      AND COALESCE(is_business_limited, false) = false
-      AND severity IN ('P0', 'P1')
-  ) AS active_recall_anomalies
-FROM ops_error_logs;
+    WHERE anomaly_active
+      AND anomaly_changed_at >= NOW() - INTERVAL '24 hours'
+  ) AS active_recall_anomalies,
+  COUNT(*) FILTER (
+    WHERE anomaly_active
+      AND anomaly_changed_at < NOW() - INTERVAL '24 hours'
+  ) AS expired_but_active
+FROM latest_anomaly_state;
 
 -- PII-free sample for field-level review. A payment order is created when the
 -- user enters the checkout/order flow, so MIN(created_at) is checkoutStartedAt.
