@@ -47,6 +47,34 @@ describe("RightToken database adapter", () => {
     expect(query.mock.calls[0]?.[0]).toContain(
       "event.consecutive_successes >= 3"
     );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "event.consecutive_failures >= 3"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "event.failure_count * 2 >= event.request_count"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "error_log.status_code >= 400"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "COALESCE(error_log.is_business_limited, false) = false"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "COALESCE(error_log.error_owner, 'platform') <> 'client'"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "'invalid_request_error'"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "'authentication_error'"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain("'billing_error'");
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "'subscription_error'"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "NOW() - INTERVAL '24 hours'"
+    );
     expect(query.mock.calls[0]?.[0]).not.toContain(
       "COALESCE(error_log.resolved, false) = false"
     );

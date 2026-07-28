@@ -235,6 +235,13 @@ func TestRecallStrictAnomalyLifecycleAgainstMigratedPostgres(t *testing.T) {
 					errorType:  "rate_limit_error",
 					errorOwner: "client",
 				},
+				{
+					offset:     4 * time.Minute,
+					statusCode: 403,
+					errorPhase: "subscription",
+					errorType:  "subscription_error",
+					errorOwner: "platform",
+				},
 			},
 			wantActive: false,
 		},
