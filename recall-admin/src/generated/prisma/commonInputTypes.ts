@@ -491,6 +491,23 @@ export type EnumMailMessageStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumMailMessageStatusFilter<$PrismaModel>
 }
 
+export type EnumMailAssetDispositionFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailAssetDisposition | Prisma.EnumMailAssetDispositionFieldRefInput<$PrismaModel>
+  in?: $Enums.MailAssetDisposition[] | Prisma.ListEnumMailAssetDispositionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailAssetDisposition[] | Prisma.ListEnumMailAssetDispositionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailAssetDispositionFilter<$PrismaModel> | $Enums.MailAssetDisposition
+}
+
+export type EnumMailAssetDispositionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailAssetDisposition | Prisma.EnumMailAssetDispositionFieldRefInput<$PrismaModel>
+  in?: $Enums.MailAssetDisposition[] | Prisma.ListEnumMailAssetDispositionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailAssetDisposition[] | Prisma.ListEnumMailAssetDispositionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailAssetDispositionWithAggregatesFilter<$PrismaModel> | $Enums.MailAssetDisposition
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMailAssetDispositionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMailAssetDispositionFilter<$PrismaModel>
+}
+
 export type EnumNotificationChannelFilter<$PrismaModel = never> = {
   equals?: $Enums.NotificationChannel | Prisma.EnumNotificationChannelFieldRefInput<$PrismaModel>
   in?: $Enums.NotificationChannel[] | Prisma.ListEnumNotificationChannelFieldRefInput<$PrismaModel>
@@ -959,6 +976,23 @@ export type NestedEnumMailMessageStatusWithAggregatesFilter<$PrismaModel = never
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumMailMessageStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumMailMessageStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumMailAssetDispositionFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailAssetDisposition | Prisma.EnumMailAssetDispositionFieldRefInput<$PrismaModel>
+  in?: $Enums.MailAssetDisposition[] | Prisma.ListEnumMailAssetDispositionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailAssetDisposition[] | Prisma.ListEnumMailAssetDispositionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailAssetDispositionFilter<$PrismaModel> | $Enums.MailAssetDisposition
+}
+
+export type NestedEnumMailAssetDispositionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailAssetDisposition | Prisma.EnumMailAssetDispositionFieldRefInput<$PrismaModel>
+  in?: $Enums.MailAssetDisposition[] | Prisma.ListEnumMailAssetDispositionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailAssetDisposition[] | Prisma.ListEnumMailAssetDispositionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailAssetDispositionWithAggregatesFilter<$PrismaModel> | $Enums.MailAssetDisposition
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMailAssetDispositionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMailAssetDispositionFilter<$PrismaModel>
 }
 
 export type NestedEnumNotificationChannelFilter<$PrismaModel = never> = {

@@ -42,6 +42,7 @@ export type MailTemplateMinAggregateOutputType = {
   locale: string | null
   subject: string | null
   bodyText: string | null
+  bodyHtml: string | null
   segment: $Enums.SegmentCode | null
   active: boolean | null
   createdById: string | null
@@ -59,6 +60,7 @@ export type MailTemplateMaxAggregateOutputType = {
   locale: string | null
   subject: string | null
   bodyText: string | null
+  bodyHtml: string | null
   segment: $Enums.SegmentCode | null
   active: boolean | null
   createdById: string | null
@@ -76,6 +78,7 @@ export type MailTemplateCountAggregateOutputType = {
   locale: number
   subject: number
   bodyText: number
+  bodyHtml: number
   segment: number
   active: number
   createdById: number
@@ -103,6 +106,7 @@ export type MailTemplateMinAggregateInputType = {
   locale?: true
   subject?: true
   bodyText?: true
+  bodyHtml?: true
   segment?: true
   active?: true
   createdById?: true
@@ -120,6 +124,7 @@ export type MailTemplateMaxAggregateInputType = {
   locale?: true
   subject?: true
   bodyText?: true
+  bodyHtml?: true
   segment?: true
   active?: true
   createdById?: true
@@ -137,6 +142,7 @@ export type MailTemplateCountAggregateInputType = {
   locale?: true
   subject?: true
   bodyText?: true
+  bodyHtml?: true
   segment?: true
   active?: true
   createdById?: true
@@ -241,6 +247,7 @@ export type MailTemplateGroupByOutputType = {
   locale: string
   subject: string
   bodyText: string
+  bodyHtml: string | null
   segment: $Enums.SegmentCode | null
   active: boolean
   createdById: string
@@ -281,6 +288,7 @@ export type MailTemplateWhereInput = {
   locale?: Prisma.StringFilter<"MailTemplate"> | string
   subject?: Prisma.StringFilter<"MailTemplate"> | string
   bodyText?: Prisma.StringFilter<"MailTemplate"> | string
+  bodyHtml?: Prisma.StringNullableFilter<"MailTemplate"> | string | null
   segment?: Prisma.EnumSegmentCodeNullableFilter<"MailTemplate"> | $Enums.SegmentCode | null
   active?: Prisma.BoolFilter<"MailTemplate"> | boolean
   createdById?: Prisma.StringFilter<"MailTemplate"> | string
@@ -288,6 +296,7 @@ export type MailTemplateWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"MailTemplate"> | Date | string
   archivedAt?: Prisma.DateTimeNullableFilter<"MailTemplate"> | Date | string | null
   archivedById?: Prisma.StringNullableFilter<"MailTemplate"> | string | null
+  assets?: Prisma.MailTemplateAssetListRelationFilter
 }
 
 export type MailTemplateOrderByWithRelationInput = {
@@ -298,6 +307,7 @@ export type MailTemplateOrderByWithRelationInput = {
   locale?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
+  bodyHtml?: Prisma.SortOrderInput | Prisma.SortOrder
   segment?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -305,6 +315,7 @@ export type MailTemplateOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   archivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   archivedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  assets?: Prisma.MailTemplateAssetOrderByRelationAggregateInput
 }
 
 export type MailTemplateWhereUniqueInput = Prisma.AtLeast<{
@@ -319,6 +330,7 @@ export type MailTemplateWhereUniqueInput = Prisma.AtLeast<{
   locale?: Prisma.StringFilter<"MailTemplate"> | string
   subject?: Prisma.StringFilter<"MailTemplate"> | string
   bodyText?: Prisma.StringFilter<"MailTemplate"> | string
+  bodyHtml?: Prisma.StringNullableFilter<"MailTemplate"> | string | null
   segment?: Prisma.EnumSegmentCodeNullableFilter<"MailTemplate"> | $Enums.SegmentCode | null
   active?: Prisma.BoolFilter<"MailTemplate"> | boolean
   createdById?: Prisma.StringFilter<"MailTemplate"> | string
@@ -326,6 +338,7 @@ export type MailTemplateWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"MailTemplate"> | Date | string
   archivedAt?: Prisma.DateTimeNullableFilter<"MailTemplate"> | Date | string | null
   archivedById?: Prisma.StringNullableFilter<"MailTemplate"> | string | null
+  assets?: Prisma.MailTemplateAssetListRelationFilter
 }, "id" | "key_version">
 
 export type MailTemplateOrderByWithAggregationInput = {
@@ -336,6 +349,7 @@ export type MailTemplateOrderByWithAggregationInput = {
   locale?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
+  bodyHtml?: Prisma.SortOrderInput | Prisma.SortOrder
   segment?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -361,6 +375,7 @@ export type MailTemplateScalarWhereWithAggregatesInput = {
   locale?: Prisma.StringWithAggregatesFilter<"MailTemplate"> | string
   subject?: Prisma.StringWithAggregatesFilter<"MailTemplate"> | string
   bodyText?: Prisma.StringWithAggregatesFilter<"MailTemplate"> | string
+  bodyHtml?: Prisma.StringNullableWithAggregatesFilter<"MailTemplate"> | string | null
   segment?: Prisma.EnumSegmentCodeNullableWithAggregatesFilter<"MailTemplate"> | $Enums.SegmentCode | null
   active?: Prisma.BoolWithAggregatesFilter<"MailTemplate"> | boolean
   createdById?: Prisma.StringWithAggregatesFilter<"MailTemplate"> | string
@@ -378,6 +393,7 @@ export type MailTemplateCreateInput = {
   locale?: string
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   segment?: $Enums.SegmentCode | null
   active?: boolean
   createdById: string
@@ -385,6 +401,7 @@ export type MailTemplateCreateInput = {
   updatedAt?: Date | string
   archivedAt?: Date | string | null
   archivedById?: string | null
+  assets?: Prisma.MailTemplateAssetCreateNestedManyWithoutTemplateInput
 }
 
 export type MailTemplateUncheckedCreateInput = {
@@ -395,6 +412,7 @@ export type MailTemplateUncheckedCreateInput = {
   locale?: string
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   segment?: $Enums.SegmentCode | null
   active?: boolean
   createdById: string
@@ -402,6 +420,7 @@ export type MailTemplateUncheckedCreateInput = {
   updatedAt?: Date | string
   archivedAt?: Date | string | null
   archivedById?: string | null
+  assets?: Prisma.MailTemplateAssetUncheckedCreateNestedManyWithoutTemplateInput
 }
 
 export type MailTemplateUpdateInput = {
@@ -412,6 +431,7 @@ export type MailTemplateUpdateInput = {
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -419,6 +439,7 @@ export type MailTemplateUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   archivedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assets?: Prisma.MailTemplateAssetUpdateManyWithoutTemplateNestedInput
 }
 
 export type MailTemplateUncheckedUpdateInput = {
@@ -429,6 +450,7 @@ export type MailTemplateUncheckedUpdateInput = {
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -436,6 +458,7 @@ export type MailTemplateUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   archivedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assets?: Prisma.MailTemplateAssetUncheckedUpdateManyWithoutTemplateNestedInput
 }
 
 export type MailTemplateCreateManyInput = {
@@ -446,6 +469,7 @@ export type MailTemplateCreateManyInput = {
   locale?: string
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   segment?: $Enums.SegmentCode | null
   active?: boolean
   createdById: string
@@ -463,6 +487,7 @@ export type MailTemplateUpdateManyMutationInput = {
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -480,6 +505,7 @@ export type MailTemplateUncheckedUpdateManyInput = {
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -502,6 +528,7 @@ export type MailTemplateCountOrderByAggregateInput = {
   locale?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
+  bodyHtml?: Prisma.SortOrder
   segment?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -523,6 +550,7 @@ export type MailTemplateMaxOrderByAggregateInput = {
   locale?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
+  bodyHtml?: Prisma.SortOrder
   segment?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -540,6 +568,7 @@ export type MailTemplateMinOrderByAggregateInput = {
   locale?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
+  bodyHtml?: Prisma.SortOrder
   segment?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
@@ -553,6 +582,142 @@ export type MailTemplateSumOrderByAggregateInput = {
   version?: Prisma.SortOrder
 }
 
+export type MailTemplateScalarRelationFilter = {
+  is?: Prisma.MailTemplateWhereInput
+  isNot?: Prisma.MailTemplateWhereInput
+}
+
+export type MailTemplateCreateNestedOneWithoutAssetsInput = {
+  create?: Prisma.XOR<Prisma.MailTemplateCreateWithoutAssetsInput, Prisma.MailTemplateUncheckedCreateWithoutAssetsInput>
+  connectOrCreate?: Prisma.MailTemplateCreateOrConnectWithoutAssetsInput
+  connect?: Prisma.MailTemplateWhereUniqueInput
+}
+
+export type MailTemplateUpdateOneRequiredWithoutAssetsNestedInput = {
+  create?: Prisma.XOR<Prisma.MailTemplateCreateWithoutAssetsInput, Prisma.MailTemplateUncheckedCreateWithoutAssetsInput>
+  connectOrCreate?: Prisma.MailTemplateCreateOrConnectWithoutAssetsInput
+  upsert?: Prisma.MailTemplateUpsertWithoutAssetsInput
+  connect?: Prisma.MailTemplateWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MailTemplateUpdateToOneWithWhereWithoutAssetsInput, Prisma.MailTemplateUpdateWithoutAssetsInput>, Prisma.MailTemplateUncheckedUpdateWithoutAssetsInput>
+}
+
+export type MailTemplateCreateWithoutAssetsInput = {
+  id?: string
+  key: string
+  version: number
+  name: string
+  locale?: string
+  subject: string
+  bodyText: string
+  bodyHtml?: string | null
+  segment?: $Enums.SegmentCode | null
+  active?: boolean
+  createdById: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  archivedAt?: Date | string | null
+  archivedById?: string | null
+}
+
+export type MailTemplateUncheckedCreateWithoutAssetsInput = {
+  id?: string
+  key: string
+  version: number
+  name: string
+  locale?: string
+  subject: string
+  bodyText: string
+  bodyHtml?: string | null
+  segment?: $Enums.SegmentCode | null
+  active?: boolean
+  createdById: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  archivedAt?: Date | string | null
+  archivedById?: string | null
+}
+
+export type MailTemplateCreateOrConnectWithoutAssetsInput = {
+  where: Prisma.MailTemplateWhereUniqueInput
+  create: Prisma.XOR<Prisma.MailTemplateCreateWithoutAssetsInput, Prisma.MailTemplateUncheckedCreateWithoutAssetsInput>
+}
+
+export type MailTemplateUpsertWithoutAssetsInput = {
+  update: Prisma.XOR<Prisma.MailTemplateUpdateWithoutAssetsInput, Prisma.MailTemplateUncheckedUpdateWithoutAssetsInput>
+  create: Prisma.XOR<Prisma.MailTemplateCreateWithoutAssetsInput, Prisma.MailTemplateUncheckedCreateWithoutAssetsInput>
+  where?: Prisma.MailTemplateWhereInput
+}
+
+export type MailTemplateUpdateToOneWithWhereWithoutAssetsInput = {
+  where?: Prisma.MailTemplateWhereInput
+  data: Prisma.XOR<Prisma.MailTemplateUpdateWithoutAssetsInput, Prisma.MailTemplateUncheckedUpdateWithoutAssetsInput>
+}
+
+export type MailTemplateUpdateWithoutAssetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type MailTemplateUncheckedUpdateWithoutAssetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+
+/**
+ * Count Type MailTemplateCountOutputType
+ */
+
+export type MailTemplateCountOutputType = {
+  assets: number
+}
+
+export type MailTemplateCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  assets?: boolean | MailTemplateCountOutputTypeCountAssetsArgs
+}
+
+/**
+ * MailTemplateCountOutputType without action
+ */
+export type MailTemplateCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailTemplateCountOutputType
+   */
+  select?: Prisma.MailTemplateCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * MailTemplateCountOutputType without action
+ */
+export type MailTemplateCountOutputTypeCountAssetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MailTemplateAssetWhereInput
+}
 
 
 export type MailTemplateSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -563,6 +728,7 @@ export type MailTemplateSelect<ExtArgs extends runtime.Types.Extensions.Internal
   locale?: boolean
   subject?: boolean
   bodyText?: boolean
+  bodyHtml?: boolean
   segment?: boolean
   active?: boolean
   createdById?: boolean
@@ -570,6 +736,8 @@ export type MailTemplateSelect<ExtArgs extends runtime.Types.Extensions.Internal
   updatedAt?: boolean
   archivedAt?: boolean
   archivedById?: boolean
+  assets?: boolean | Prisma.MailTemplate$assetsArgs<ExtArgs>
+  _count?: boolean | Prisma.MailTemplateCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mailTemplate"]>
 
 export type MailTemplateSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -580,6 +748,7 @@ export type MailTemplateSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   locale?: boolean
   subject?: boolean
   bodyText?: boolean
+  bodyHtml?: boolean
   segment?: boolean
   active?: boolean
   createdById?: boolean
@@ -597,6 +766,7 @@ export type MailTemplateSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   locale?: boolean
   subject?: boolean
   bodyText?: boolean
+  bodyHtml?: boolean
   segment?: boolean
   active?: boolean
   createdById?: boolean
@@ -614,6 +784,7 @@ export type MailTemplateSelectScalar = {
   locale?: boolean
   subject?: boolean
   bodyText?: boolean
+  bodyHtml?: boolean
   segment?: boolean
   active?: boolean
   createdById?: boolean
@@ -623,11 +794,19 @@ export type MailTemplateSelectScalar = {
   archivedById?: boolean
 }
 
-export type MailTemplateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "key" | "version" | "name" | "locale" | "subject" | "bodyText" | "segment" | "active" | "createdById" | "createdAt" | "updatedAt" | "archivedAt" | "archivedById", ExtArgs["result"]["mailTemplate"]>
+export type MailTemplateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "key" | "version" | "name" | "locale" | "subject" | "bodyText" | "bodyHtml" | "segment" | "active" | "createdById" | "createdAt" | "updatedAt" | "archivedAt" | "archivedById", ExtArgs["result"]["mailTemplate"]>
+export type MailTemplateInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  assets?: boolean | Prisma.MailTemplate$assetsArgs<ExtArgs>
+  _count?: boolean | Prisma.MailTemplateCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type MailTemplateIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type MailTemplateIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $MailTemplatePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "MailTemplate"
-  objects: {}
+  objects: {
+    assets: Prisma.$MailTemplateAssetPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     key: string
@@ -636,6 +815,7 @@ export type $MailTemplatePayload<ExtArgs extends runtime.Types.Extensions.Intern
     locale: string
     subject: string
     bodyText: string
+    bodyHtml: string | null
     segment: $Enums.SegmentCode | null
     active: boolean
     createdById: string
@@ -1037,6 +1217,7 @@ readonly fields: MailTemplateFieldRefs;
  */
 export interface Prisma__MailTemplateClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  assets<T extends Prisma.MailTemplate$assetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailTemplate$assetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailTemplateAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1073,6 +1254,7 @@ export interface MailTemplateFieldRefs {
   readonly locale: Prisma.FieldRef<"MailTemplate", 'String'>
   readonly subject: Prisma.FieldRef<"MailTemplate", 'String'>
   readonly bodyText: Prisma.FieldRef<"MailTemplate", 'String'>
+  readonly bodyHtml: Prisma.FieldRef<"MailTemplate", 'String'>
   readonly segment: Prisma.FieldRef<"MailTemplate", 'SegmentCode'>
   readonly active: Prisma.FieldRef<"MailTemplate", 'Boolean'>
   readonly createdById: Prisma.FieldRef<"MailTemplate", 'String'>
@@ -1097,6 +1279,10 @@ export type MailTemplateFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.MailTemplateOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailTemplateInclude<ExtArgs> | null
+  /**
    * Filter, which MailTemplate to fetch.
    */
   where: Prisma.MailTemplateWhereUniqueInput
@@ -1115,6 +1301,10 @@ export type MailTemplateFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exte
    */
   omit?: Prisma.MailTemplateOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailTemplateInclude<ExtArgs> | null
+  /**
    * Filter, which MailTemplate to fetch.
    */
   where: Prisma.MailTemplateWhereUniqueInput
@@ -1132,6 +1322,10 @@ export type MailTemplateFindFirstArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the MailTemplate
    */
   omit?: Prisma.MailTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailTemplateInclude<ExtArgs> | null
   /**
    * Filter, which MailTemplate to fetch.
    */
@@ -1181,6 +1375,10 @@ export type MailTemplateFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.MailTemplateOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailTemplateInclude<ExtArgs> | null
+  /**
    * Filter, which MailTemplate to fetch.
    */
   where?: Prisma.MailTemplateWhereInput
@@ -1228,6 +1426,10 @@ export type MailTemplateFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the MailTemplate
    */
   omit?: Prisma.MailTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailTemplateInclude<ExtArgs> | null
   /**
    * Filter, which MailTemplates to fetch.
    */
@@ -1277,6 +1479,10 @@ export type MailTemplateCreateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.MailTemplateOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailTemplateInclude<ExtArgs> | null
+  /**
    * The data needed to create a MailTemplate.
    */
   data: Prisma.XOR<Prisma.MailTemplateCreateInput, Prisma.MailTemplateUncheckedCreateInput>
@@ -1324,6 +1530,10 @@ export type MailTemplateUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the MailTemplate
    */
   omit?: Prisma.MailTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailTemplateInclude<ExtArgs> | null
   /**
    * The data needed to update a MailTemplate.
    */
@@ -1391,6 +1601,10 @@ export type MailTemplateUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.MailTemplateOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailTemplateInclude<ExtArgs> | null
+  /**
    * The filter to search for the MailTemplate to update in case it exists.
    */
   where: Prisma.MailTemplateWhereUniqueInput
@@ -1417,6 +1631,10 @@ export type MailTemplateDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.MailTemplateOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailTemplateInclude<ExtArgs> | null
+  /**
    * Filter which MailTemplate to delete.
    */
   where: Prisma.MailTemplateWhereUniqueInput
@@ -1437,6 +1655,30 @@ export type MailTemplateDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
+ * MailTemplate.assets
+ */
+export type MailTemplate$assetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailTemplateAsset
+   */
+  select?: Prisma.MailTemplateAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailTemplateAsset
+   */
+  omit?: Prisma.MailTemplateAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailTemplateAssetInclude<ExtArgs> | null
+  where?: Prisma.MailTemplateAssetWhereInput
+  orderBy?: Prisma.MailTemplateAssetOrderByWithRelationInput | Prisma.MailTemplateAssetOrderByWithRelationInput[]
+  cursor?: Prisma.MailTemplateAssetWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MailTemplateAssetScalarFieldEnum | Prisma.MailTemplateAssetScalarFieldEnum[]
+}
+
+/**
  * MailTemplate without action
  */
 export type MailTemplateDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1448,4 +1690,8 @@ export type MailTemplateDefaultArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the MailTemplate
    */
   omit?: Prisma.MailTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailTemplateInclude<ExtArgs> | null
 }

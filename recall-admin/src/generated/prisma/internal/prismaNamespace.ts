@@ -421,6 +421,9 @@ export const ModelName = {
   MailTemplate: 'MailTemplate',
   MailThread: 'MailThread',
   MailMessage: 'MailMessage',
+  MailAsset: 'MailAsset',
+  MailTemplateAsset: 'MailTemplateAsset',
+  MailMessageAsset: 'MailMessageAsset',
   SuppressionEntry: 'SuppressionEntry',
   NotificationIntent: 'NotificationIntent',
   IntegrationCredential: 'IntegrationCredential'
@@ -439,7 +442,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "member" | "ssoTicketRedemption" | "session" | "userProfile" | "userEvent" | "segmentHistory" | "segmentOverride" | "userNote" | "automationRuleVersion" | "segmentRecalculationRun" | "assignmentRule" | "assignmentRecalculationRun" | "locationAttributionRule" | "locationRecalculationRun" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
+    modelProps: "member" | "ssoTicketRedemption" | "session" | "userProfile" | "userEvent" | "segmentHistory" | "segmentOverride" | "userNote" | "automationRuleVersion" | "segmentRecalculationRun" | "assignmentRule" | "assignmentRecalculationRun" | "locationAttributionRule" | "locationRecalculationRun" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "mailAsset" | "mailTemplateAsset" | "mailMessageAsset" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2219,6 +2222,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MailAsset: {
+      payload: Prisma.$MailAssetPayload<ExtArgs>
+      fields: Prisma.MailAssetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MailAssetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailAssetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MailAssetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailAssetPayload>
+        }
+        findFirst: {
+          args: Prisma.MailAssetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailAssetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MailAssetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailAssetPayload>
+        }
+        findMany: {
+          args: Prisma.MailAssetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailAssetPayload>[]
+        }
+        create: {
+          args: Prisma.MailAssetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailAssetPayload>
+        }
+        createMany: {
+          args: Prisma.MailAssetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MailAssetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailAssetPayload>[]
+        }
+        delete: {
+          args: Prisma.MailAssetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailAssetPayload>
+        }
+        update: {
+          args: Prisma.MailAssetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailAssetPayload>
+        }
+        deleteMany: {
+          args: Prisma.MailAssetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MailAssetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MailAssetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailAssetPayload>[]
+        }
+        upsert: {
+          args: Prisma.MailAssetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailAssetPayload>
+        }
+        aggregate: {
+          args: Prisma.MailAssetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMailAsset>
+        }
+        groupBy: {
+          args: Prisma.MailAssetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailAssetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MailAssetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailAssetCountAggregateOutputType> | number
+        }
+      }
+    }
+    MailTemplateAsset: {
+      payload: Prisma.$MailTemplateAssetPayload<ExtArgs>
+      fields: Prisma.MailTemplateAssetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MailTemplateAssetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailTemplateAssetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MailTemplateAssetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailTemplateAssetPayload>
+        }
+        findFirst: {
+          args: Prisma.MailTemplateAssetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailTemplateAssetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MailTemplateAssetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailTemplateAssetPayload>
+        }
+        findMany: {
+          args: Prisma.MailTemplateAssetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailTemplateAssetPayload>[]
+        }
+        create: {
+          args: Prisma.MailTemplateAssetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailTemplateAssetPayload>
+        }
+        createMany: {
+          args: Prisma.MailTemplateAssetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MailTemplateAssetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailTemplateAssetPayload>[]
+        }
+        delete: {
+          args: Prisma.MailTemplateAssetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailTemplateAssetPayload>
+        }
+        update: {
+          args: Prisma.MailTemplateAssetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailTemplateAssetPayload>
+        }
+        deleteMany: {
+          args: Prisma.MailTemplateAssetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MailTemplateAssetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MailTemplateAssetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailTemplateAssetPayload>[]
+        }
+        upsert: {
+          args: Prisma.MailTemplateAssetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailTemplateAssetPayload>
+        }
+        aggregate: {
+          args: Prisma.MailTemplateAssetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMailTemplateAsset>
+        }
+        groupBy: {
+          args: Prisma.MailTemplateAssetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailTemplateAssetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MailTemplateAssetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailTemplateAssetCountAggregateOutputType> | number
+        }
+      }
+    }
+    MailMessageAsset: {
+      payload: Prisma.$MailMessageAssetPayload<ExtArgs>
+      fields: Prisma.MailMessageAssetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MailMessageAssetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailMessageAssetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MailMessageAssetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailMessageAssetPayload>
+        }
+        findFirst: {
+          args: Prisma.MailMessageAssetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailMessageAssetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MailMessageAssetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailMessageAssetPayload>
+        }
+        findMany: {
+          args: Prisma.MailMessageAssetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailMessageAssetPayload>[]
+        }
+        create: {
+          args: Prisma.MailMessageAssetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailMessageAssetPayload>
+        }
+        createMany: {
+          args: Prisma.MailMessageAssetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MailMessageAssetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailMessageAssetPayload>[]
+        }
+        delete: {
+          args: Prisma.MailMessageAssetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailMessageAssetPayload>
+        }
+        update: {
+          args: Prisma.MailMessageAssetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailMessageAssetPayload>
+        }
+        deleteMany: {
+          args: Prisma.MailMessageAssetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MailMessageAssetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MailMessageAssetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailMessageAssetPayload>[]
+        }
+        upsert: {
+          args: Prisma.MailMessageAssetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailMessageAssetPayload>
+        }
+        aggregate: {
+          args: Prisma.MailMessageAssetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMailMessageAsset>
+        }
+        groupBy: {
+          args: Prisma.MailMessageAssetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailMessageAssetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MailMessageAssetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailMessageAssetCountAggregateOutputType> | number
+        }
+      }
+    }
     SuppressionEntry: {
       payload: Prisma.$SuppressionEntryPayload<ExtArgs>
       fields: Prisma.SuppressionEntryFieldRefs
@@ -2856,6 +3081,7 @@ export const MailTemplateScalarFieldEnum = {
   locale: 'locale',
   subject: 'subject',
   bodyText: 'bodyText',
+  bodyHtml: 'bodyHtml',
   segment: 'segment',
   active: 'active',
   createdById: 'createdById',
@@ -2895,6 +3121,7 @@ export const MailMessageScalarFieldEnum = {
   toAddresses: 'toAddresses',
   subject: 'subject',
   bodyText: 'bodyText',
+  bodyHtml: 'bodyHtml',
   templateKey: 'templateKey',
   templateVersion: 'templateVersion',
   reviewedById: 'reviewedById',
@@ -2905,11 +3132,54 @@ export const MailMessageScalarFieldEnum = {
   sentAt: 'sentAt',
   receivedAt: 'receivedAt',
   lastErrorCode: 'lastErrorCode',
+  externalImagesBlocked: 'externalImagesBlocked',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type MailMessageScalarFieldEnum = (typeof MailMessageScalarFieldEnum)[keyof typeof MailMessageScalarFieldEnum]
+
+
+export const MailAssetScalarFieldEnum = {
+  id: 'id',
+  storageKey: 'storageKey',
+  fileName: 'fileName',
+  contentType: 'contentType',
+  byteSize: 'byteSize',
+  sha256: 'sha256',
+  width: 'width',
+  height: 'height',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+} as const
+
+export type MailAssetScalarFieldEnum = (typeof MailAssetScalarFieldEnum)[keyof typeof MailAssetScalarFieldEnum]
+
+
+export const MailTemplateAssetScalarFieldEnum = {
+  id: 'id',
+  templateId: 'templateId',
+  assetId: 'assetId',
+  disposition: 'disposition',
+  cid: 'cid',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type MailTemplateAssetScalarFieldEnum = (typeof MailTemplateAssetScalarFieldEnum)[keyof typeof MailTemplateAssetScalarFieldEnum]
+
+
+export const MailMessageAssetScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  assetId: 'assetId',
+  disposition: 'disposition',
+  cid: 'cid',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type MailMessageAssetScalarFieldEnum = (typeof MailMessageAssetScalarFieldEnum)[keyof typeof MailMessageAssetScalarFieldEnum]
 
 
 export const SuppressionEntryScalarFieldEnum = {
@@ -3218,6 +3488,20 @@ export type ListEnumMailMessageStatusFieldRefInput<$PrismaModel> = FieldRefInput
 
 
 /**
+ * Reference to a field of type 'MailAssetDisposition'
+ */
+export type EnumMailAssetDispositionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailAssetDisposition'>
+    
+
+
+/**
+ * Reference to a field of type 'MailAssetDisposition[]'
+ */
+export type ListEnumMailAssetDispositionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailAssetDisposition[]'>
+    
+
+
+/**
  * Reference to a field of type 'NotificationChannel'
  */
 export type EnumNotificationChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationChannel'>
@@ -3433,6 +3717,9 @@ export type GlobalOmitConfig = {
   mailTemplate?: Prisma.MailTemplateOmit
   mailThread?: Prisma.MailThreadOmit
   mailMessage?: Prisma.MailMessageOmit
+  mailAsset?: Prisma.MailAssetOmit
+  mailTemplateAsset?: Prisma.MailTemplateAssetOmit
+  mailMessageAsset?: Prisma.MailMessageAssetOmit
   suppressionEntry?: Prisma.SuppressionEntryOmit
   notificationIntent?: Prisma.NotificationIntentOmit
   integrationCredential?: Prisma.IntegrationCredentialOmit

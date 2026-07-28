@@ -81,6 +81,14 @@ export const MailMessageStatus = {
 export type MailMessageStatus = (typeof MailMessageStatus)[keyof typeof MailMessageStatus]
 
 
+export const MailAssetDisposition = {
+  INLINE: 'INLINE',
+  ATTACHMENT: 'ATTACHMENT'
+} as const
+
+export type MailAssetDisposition = (typeof MailAssetDisposition)[keyof typeof MailAssetDisposition]
+
+
 export const NotificationChannel = {
   IN_APP: 'IN_APP',
   WECOM_APP: 'WECOM_APP',

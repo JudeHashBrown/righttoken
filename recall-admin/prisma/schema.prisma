@@ -73,6 +73,13 @@ enum MailMessageStatus {
   @@schema("recall")
 }
 
+enum MailAssetDisposition {
+  INLINE
+  ATTACHMENT
+
+  @@schema("recall")
+}
+
 enum NotificationChannel {
   IN_APP
   WECOM_APP
@@ -566,6 +573,7 @@ model MailTemplate {
   locale       String       @default("zh-CN")
   subject      String
   bodyText     String
+  bodyHtml     String?
   segment      SegmentCode?
   active       Boolean      @default(false)
   createdById  String
@@ -573,6 +581,8 @@ model MailTemplate {
   updatedAt    DateTime     @updatedAt
   archivedAt   DateTime?
   archivedById String?
+
+  assets MailTemplateAsset[]
 
   @@unique([key, version])
   @@index([active, archivedAt, segment, locale])
@@ -611,6 +621,7 @@ model MailMessage {
   toAddresses       String[]
   subject           String
   bodyText          String
+  bodyHtml          String?
   templateKey       String?
   templateVersion   Int?
   reviewedById      String?
@@ -621,6 +632,7 @@ model MailMessage {
   sentAt            DateTime?
   receivedAt        DateTime?
   lastErrorCode     String?
+  externalImagesBlocked Boolean @default(false)
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
 
@@ -629,11 +641,67 @@ model MailMessage {
   user      UserProfile? @relation(fields: [userId], references: [id], onDelete: SetNull)
   task      RecallTask?  @relation(fields: [taskId], references: [id], onDelete: SetNull)
   reviewedBy Member?     @relation("MailReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  assets     MailMessageAsset[]
 
   @@index([mailboxId, status, createdAt])
   @@index([threadId, createdAt])
   @@index([userId, createdAt])
   @@index([taskId])
+  @@schema("recall")
+}
+
+model MailAsset {
+  id          String   @id @default(cuid())
+  storageKey  String   @unique
+  fileName    String
+  contentType String
+  byteSize    Int
+  sha256      String
+  width       Int
+  height      Int
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  templateUsages MailTemplateAsset[]
+  messageUsages  MailMessageAsset[]
+
+  @@index([createdById, createdAt])
+  @@schema("recall")
+}
+
+model MailTemplateAsset {
+  id          String               @id @default(cuid())
+  templateId  String
+  assetId     String
+  disposition MailAssetDisposition
+  cid         String?
+  sortOrder   Int                  @default(0)
+  createdAt   DateTime             @default(now())
+
+  template MailTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  asset    MailAsset    @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  @@unique([templateId, assetId, disposition])
+  @@index([assetId])
+  @@index([templateId, sortOrder])
+  @@schema("recall")
+}
+
+model MailMessageAsset {
+  id          String               @id @default(cuid())
+  messageId   String
+  assetId     String
+  disposition MailAssetDisposition
+  cid         String?
+  sortOrder   Int                  @default(0)
+  createdAt   DateTime             @default(now())
+
+  message MailMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  asset   MailAsset   @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  @@unique([messageId, assetId, disposition])
+  @@index([assetId])
+  @@index([messageId, sortOrder])
   @@schema("recall")
 }
 

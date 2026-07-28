@@ -162,6 +162,21 @@ export type MailThread = Prisma.MailThreadModel
  */
 export type MailMessage = Prisma.MailMessageModel
 /**
+ * Model MailAsset
+ * 
+ */
+export type MailAsset = Prisma.MailAssetModel
+/**
+ * Model MailTemplateAsset
+ * 
+ */
+export type MailTemplateAsset = Prisma.MailTemplateAssetModel
+/**
+ * Model MailMessageAsset
+ * 
+ */
+export type MailMessageAsset = Prisma.MailMessageAssetModel
+/**
  * Model SuppressionEntry
  * 
  */

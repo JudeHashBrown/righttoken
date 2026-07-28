@@ -75,6 +75,9 @@ export const ModelName = {
   MailTemplate: 'MailTemplate',
   MailThread: 'MailThread',
   MailMessage: 'MailMessage',
+  MailAsset: 'MailAsset',
+  MailTemplateAsset: 'MailTemplateAsset',
+  MailMessageAsset: 'MailMessageAsset',
   SuppressionEntry: 'SuppressionEntry',
   NotificationIntent: 'NotificationIntent',
   IntegrationCredential: 'IntegrationCredential'
@@ -472,6 +475,7 @@ export const MailTemplateScalarFieldEnum = {
   locale: 'locale',
   subject: 'subject',
   bodyText: 'bodyText',
+  bodyHtml: 'bodyHtml',
   segment: 'segment',
   active: 'active',
   createdById: 'createdById',
@@ -511,6 +515,7 @@ export const MailMessageScalarFieldEnum = {
   toAddresses: 'toAddresses',
   subject: 'subject',
   bodyText: 'bodyText',
+  bodyHtml: 'bodyHtml',
   templateKey: 'templateKey',
   templateVersion: 'templateVersion',
   reviewedById: 'reviewedById',
@@ -521,11 +526,54 @@ export const MailMessageScalarFieldEnum = {
   sentAt: 'sentAt',
   receivedAt: 'receivedAt',
   lastErrorCode: 'lastErrorCode',
+  externalImagesBlocked: 'externalImagesBlocked',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type MailMessageScalarFieldEnum = (typeof MailMessageScalarFieldEnum)[keyof typeof MailMessageScalarFieldEnum]
+
+
+export const MailAssetScalarFieldEnum = {
+  id: 'id',
+  storageKey: 'storageKey',
+  fileName: 'fileName',
+  contentType: 'contentType',
+  byteSize: 'byteSize',
+  sha256: 'sha256',
+  width: 'width',
+  height: 'height',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+} as const
+
+export type MailAssetScalarFieldEnum = (typeof MailAssetScalarFieldEnum)[keyof typeof MailAssetScalarFieldEnum]
+
+
+export const MailTemplateAssetScalarFieldEnum = {
+  id: 'id',
+  templateId: 'templateId',
+  assetId: 'assetId',
+  disposition: 'disposition',
+  cid: 'cid',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type MailTemplateAssetScalarFieldEnum = (typeof MailTemplateAssetScalarFieldEnum)[keyof typeof MailTemplateAssetScalarFieldEnum]
+
+
+export const MailMessageAssetScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  assetId: 'assetId',
+  disposition: 'disposition',
+  cid: 'cid',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type MailMessageAssetScalarFieldEnum = (typeof MailMessageAssetScalarFieldEnum)[keyof typeof MailMessageAssetScalarFieldEnum]
 
 
 export const SuppressionEntryScalarFieldEnum = {

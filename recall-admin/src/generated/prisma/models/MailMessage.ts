@@ -51,6 +51,7 @@ export type MailMessageMinAggregateOutputType = {
   fromAddress: string | null
   subject: string | null
   bodyText: string | null
+  bodyHtml: string | null
   templateKey: string | null
   templateVersion: number | null
   reviewedById: string | null
@@ -61,6 +62,7 @@ export type MailMessageMinAggregateOutputType = {
   sentAt: Date | null
   receivedAt: Date | null
   lastErrorCode: string | null
+  externalImagesBlocked: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -78,6 +80,7 @@ export type MailMessageMaxAggregateOutputType = {
   fromAddress: string | null
   subject: string | null
   bodyText: string | null
+  bodyHtml: string | null
   templateKey: string | null
   templateVersion: number | null
   reviewedById: string | null
@@ -88,6 +91,7 @@ export type MailMessageMaxAggregateOutputType = {
   sentAt: Date | null
   receivedAt: Date | null
   lastErrorCode: string | null
+  externalImagesBlocked: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -107,6 +111,7 @@ export type MailMessageCountAggregateOutputType = {
   toAddresses: number
   subject: number
   bodyText: number
+  bodyHtml: number
   templateKey: number
   templateVersion: number
   reviewedById: number
@@ -117,6 +122,7 @@ export type MailMessageCountAggregateOutputType = {
   sentAt: number
   receivedAt: number
   lastErrorCode: number
+  externalImagesBlocked: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -148,6 +154,7 @@ export type MailMessageMinAggregateInputType = {
   fromAddress?: true
   subject?: true
   bodyText?: true
+  bodyHtml?: true
   templateKey?: true
   templateVersion?: true
   reviewedById?: true
@@ -158,6 +165,7 @@ export type MailMessageMinAggregateInputType = {
   sentAt?: true
   receivedAt?: true
   lastErrorCode?: true
+  externalImagesBlocked?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -175,6 +183,7 @@ export type MailMessageMaxAggregateInputType = {
   fromAddress?: true
   subject?: true
   bodyText?: true
+  bodyHtml?: true
   templateKey?: true
   templateVersion?: true
   reviewedById?: true
@@ -185,6 +194,7 @@ export type MailMessageMaxAggregateInputType = {
   sentAt?: true
   receivedAt?: true
   lastErrorCode?: true
+  externalImagesBlocked?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -204,6 +214,7 @@ export type MailMessageCountAggregateInputType = {
   toAddresses?: true
   subject?: true
   bodyText?: true
+  bodyHtml?: true
   templateKey?: true
   templateVersion?: true
   reviewedById?: true
@@ -214,6 +225,7 @@ export type MailMessageCountAggregateInputType = {
   sentAt?: true
   receivedAt?: true
   lastErrorCode?: true
+  externalImagesBlocked?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -320,6 +332,7 @@ export type MailMessageGroupByOutputType = {
   toAddresses: string[]
   subject: string
   bodyText: string
+  bodyHtml: string | null
   templateKey: string | null
   templateVersion: number | null
   reviewedById: string | null
@@ -330,6 +343,7 @@ export type MailMessageGroupByOutputType = {
   sentAt: Date | null
   receivedAt: Date | null
   lastErrorCode: string | null
+  externalImagesBlocked: boolean
   createdAt: Date
   updatedAt: Date
   _count: MailMessageCountAggregateOutputType | null
@@ -372,6 +386,7 @@ export type MailMessageWhereInput = {
   toAddresses?: Prisma.StringNullableListFilter<"MailMessage">
   subject?: Prisma.StringFilter<"MailMessage"> | string
   bodyText?: Prisma.StringFilter<"MailMessage"> | string
+  bodyHtml?: Prisma.StringNullableFilter<"MailMessage"> | string | null
   templateKey?: Prisma.StringNullableFilter<"MailMessage"> | string | null
   templateVersion?: Prisma.IntNullableFilter<"MailMessage"> | number | null
   reviewedById?: Prisma.StringNullableFilter<"MailMessage"> | string | null
@@ -382,6 +397,7 @@ export type MailMessageWhereInput = {
   sentAt?: Prisma.DateTimeNullableFilter<"MailMessage"> | Date | string | null
   receivedAt?: Prisma.DateTimeNullableFilter<"MailMessage"> | Date | string | null
   lastErrorCode?: Prisma.StringNullableFilter<"MailMessage"> | string | null
+  externalImagesBlocked?: Prisma.BoolFilter<"MailMessage"> | boolean
   createdAt?: Prisma.DateTimeFilter<"MailMessage"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MailMessage"> | Date | string
   mailbox?: Prisma.XOR<Prisma.MailboxScalarRelationFilter, Prisma.MailboxWhereInput>
@@ -389,6 +405,7 @@ export type MailMessageWhereInput = {
   user?: Prisma.XOR<Prisma.UserProfileNullableScalarRelationFilter, Prisma.UserProfileWhereInput> | null
   task?: Prisma.XOR<Prisma.RecallTaskNullableScalarRelationFilter, Prisma.RecallTaskWhereInput> | null
   reviewedBy?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
+  assets?: Prisma.MailMessageAssetListRelationFilter
 }
 
 export type MailMessageOrderByWithRelationInput = {
@@ -406,6 +423,7 @@ export type MailMessageOrderByWithRelationInput = {
   toAddresses?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
+  bodyHtml?: Prisma.SortOrderInput | Prisma.SortOrder
   templateKey?: Prisma.SortOrderInput | Prisma.SortOrder
   templateVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -416,6 +434,7 @@ export type MailMessageOrderByWithRelationInput = {
   sentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   receivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  externalImagesBlocked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   mailbox?: Prisma.MailboxOrderByWithRelationInput
@@ -423,6 +442,7 @@ export type MailMessageOrderByWithRelationInput = {
   user?: Prisma.UserProfileOrderByWithRelationInput
   task?: Prisma.RecallTaskOrderByWithRelationInput
   reviewedBy?: Prisma.MemberOrderByWithRelationInput
+  assets?: Prisma.MailMessageAssetOrderByRelationAggregateInput
 }
 
 export type MailMessageWhereUniqueInput = Prisma.AtLeast<{
@@ -443,6 +463,7 @@ export type MailMessageWhereUniqueInput = Prisma.AtLeast<{
   toAddresses?: Prisma.StringNullableListFilter<"MailMessage">
   subject?: Prisma.StringFilter<"MailMessage"> | string
   bodyText?: Prisma.StringFilter<"MailMessage"> | string
+  bodyHtml?: Prisma.StringNullableFilter<"MailMessage"> | string | null
   templateKey?: Prisma.StringNullableFilter<"MailMessage"> | string | null
   templateVersion?: Prisma.IntNullableFilter<"MailMessage"> | number | null
   reviewedById?: Prisma.StringNullableFilter<"MailMessage"> | string | null
@@ -453,6 +474,7 @@ export type MailMessageWhereUniqueInput = Prisma.AtLeast<{
   sentAt?: Prisma.DateTimeNullableFilter<"MailMessage"> | Date | string | null
   receivedAt?: Prisma.DateTimeNullableFilter<"MailMessage"> | Date | string | null
   lastErrorCode?: Prisma.StringNullableFilter<"MailMessage"> | string | null
+  externalImagesBlocked?: Prisma.BoolFilter<"MailMessage"> | boolean
   createdAt?: Prisma.DateTimeFilter<"MailMessage"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MailMessage"> | Date | string
   mailbox?: Prisma.XOR<Prisma.MailboxScalarRelationFilter, Prisma.MailboxWhereInput>
@@ -460,6 +482,7 @@ export type MailMessageWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserProfileNullableScalarRelationFilter, Prisma.UserProfileWhereInput> | null
   task?: Prisma.XOR<Prisma.RecallTaskNullableScalarRelationFilter, Prisma.RecallTaskWhereInput> | null
   reviewedBy?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
+  assets?: Prisma.MailMessageAssetListRelationFilter
 }, "id" | "providerMessageId">
 
 export type MailMessageOrderByWithAggregationInput = {
@@ -477,6 +500,7 @@ export type MailMessageOrderByWithAggregationInput = {
   toAddresses?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
+  bodyHtml?: Prisma.SortOrderInput | Prisma.SortOrder
   templateKey?: Prisma.SortOrderInput | Prisma.SortOrder
   templateVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -487,6 +511,7 @@ export type MailMessageOrderByWithAggregationInput = {
   sentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   receivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  externalImagesBlocked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.MailMessageCountOrderByAggregateInput
@@ -514,6 +539,7 @@ export type MailMessageScalarWhereWithAggregatesInput = {
   toAddresses?: Prisma.StringNullableListFilter<"MailMessage">
   subject?: Prisma.StringWithAggregatesFilter<"MailMessage"> | string
   bodyText?: Prisma.StringWithAggregatesFilter<"MailMessage"> | string
+  bodyHtml?: Prisma.StringNullableWithAggregatesFilter<"MailMessage"> | string | null
   templateKey?: Prisma.StringNullableWithAggregatesFilter<"MailMessage"> | string | null
   templateVersion?: Prisma.IntNullableWithAggregatesFilter<"MailMessage"> | number | null
   reviewedById?: Prisma.StringNullableWithAggregatesFilter<"MailMessage"> | string | null
@@ -524,6 +550,7 @@ export type MailMessageScalarWhereWithAggregatesInput = {
   sentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"MailMessage"> | Date | string | null
   receivedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"MailMessage"> | Date | string | null
   lastErrorCode?: Prisma.StringNullableWithAggregatesFilter<"MailMessage"> | string | null
+  externalImagesBlocked?: Prisma.BoolWithAggregatesFilter<"MailMessage"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"MailMessage"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"MailMessage"> | Date | string
 }
@@ -539,6 +566,7 @@ export type MailMessageCreateInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   openedAt?: Date | string | null
@@ -548,6 +576,7 @@ export type MailMessageCreateInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   mailbox: Prisma.MailboxCreateNestedOneWithoutMessagesInput
@@ -555,6 +584,7 @@ export type MailMessageCreateInput = {
   user?: Prisma.UserProfileCreateNestedOneWithoutMailMessagesInput
   task?: Prisma.RecallTaskCreateNestedOneWithoutMailMessagesInput
   reviewedBy?: Prisma.MemberCreateNestedOneWithoutReviewedMailMessagesInput
+  assets?: Prisma.MailMessageAssetCreateNestedManyWithoutMessageInput
 }
 
 export type MailMessageUncheckedCreateInput = {
@@ -572,6 +602,7 @@ export type MailMessageUncheckedCreateInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   reviewedById?: string | null
@@ -582,8 +613,10 @@ export type MailMessageUncheckedCreateInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  assets?: Prisma.MailMessageAssetUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MailMessageUpdateInput = {
@@ -597,6 +630,7 @@ export type MailMessageUpdateInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   openedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -606,6 +640,7 @@ export type MailMessageUpdateInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mailbox?: Prisma.MailboxUpdateOneRequiredWithoutMessagesNestedInput
@@ -613,6 +648,7 @@ export type MailMessageUpdateInput = {
   user?: Prisma.UserProfileUpdateOneWithoutMailMessagesNestedInput
   task?: Prisma.RecallTaskUpdateOneWithoutMailMessagesNestedInput
   reviewedBy?: Prisma.MemberUpdateOneWithoutReviewedMailMessagesNestedInput
+  assets?: Prisma.MailMessageAssetUpdateManyWithoutMessageNestedInput
 }
 
 export type MailMessageUncheckedUpdateInput = {
@@ -630,6 +666,7 @@ export type MailMessageUncheckedUpdateInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -640,8 +677,10 @@ export type MailMessageUncheckedUpdateInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assets?: Prisma.MailMessageAssetUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MailMessageCreateManyInput = {
@@ -659,6 +698,7 @@ export type MailMessageCreateManyInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   reviewedById?: string | null
@@ -669,6 +709,7 @@ export type MailMessageCreateManyInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -684,6 +725,7 @@ export type MailMessageUpdateManyMutationInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   openedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -693,6 +735,7 @@ export type MailMessageUpdateManyMutationInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -712,6 +755,7 @@ export type MailMessageUncheckedUpdateManyInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -722,6 +766,7 @@ export type MailMessageUncheckedUpdateManyInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -759,6 +804,7 @@ export type MailMessageCountOrderByAggregateInput = {
   toAddresses?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
+  bodyHtml?: Prisma.SortOrder
   templateKey?: Prisma.SortOrder
   templateVersion?: Prisma.SortOrder
   reviewedById?: Prisma.SortOrder
@@ -769,6 +815,7 @@ export type MailMessageCountOrderByAggregateInput = {
   sentAt?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrder
+  externalImagesBlocked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -792,6 +839,7 @@ export type MailMessageMaxOrderByAggregateInput = {
   fromAddress?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
+  bodyHtml?: Prisma.SortOrder
   templateKey?: Prisma.SortOrder
   templateVersion?: Prisma.SortOrder
   reviewedById?: Prisma.SortOrder
@@ -802,6 +850,7 @@ export type MailMessageMaxOrderByAggregateInput = {
   sentAt?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrder
+  externalImagesBlocked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -819,6 +868,7 @@ export type MailMessageMinOrderByAggregateInput = {
   fromAddress?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
+  bodyHtml?: Prisma.SortOrder
   templateKey?: Prisma.SortOrder
   templateVersion?: Prisma.SortOrder
   reviewedById?: Prisma.SortOrder
@@ -829,6 +879,7 @@ export type MailMessageMinOrderByAggregateInput = {
   sentAt?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrder
+  externalImagesBlocked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -837,6 +888,11 @@ export type MailMessageSumOrderByAggregateInput = {
   templateVersion?: Prisma.SortOrder
   openCount?: Prisma.SortOrder
   clickCount?: Prisma.SortOrder
+}
+
+export type MailMessageScalarRelationFilter = {
+  is?: Prisma.MailMessageWhereInput
+  isNot?: Prisma.MailMessageWhereInput
 }
 
 export type MailMessageCreateNestedManyWithoutReviewedByInput = {
@@ -1075,6 +1131,20 @@ export type MailMessageUpdatetoAddressesInput = {
   push?: string | string[]
 }
 
+export type MailMessageCreateNestedOneWithoutAssetsInput = {
+  create?: Prisma.XOR<Prisma.MailMessageCreateWithoutAssetsInput, Prisma.MailMessageUncheckedCreateWithoutAssetsInput>
+  connectOrCreate?: Prisma.MailMessageCreateOrConnectWithoutAssetsInput
+  connect?: Prisma.MailMessageWhereUniqueInput
+}
+
+export type MailMessageUpdateOneRequiredWithoutAssetsNestedInput = {
+  create?: Prisma.XOR<Prisma.MailMessageCreateWithoutAssetsInput, Prisma.MailMessageUncheckedCreateWithoutAssetsInput>
+  connectOrCreate?: Prisma.MailMessageCreateOrConnectWithoutAssetsInput
+  upsert?: Prisma.MailMessageUpsertWithoutAssetsInput
+  connect?: Prisma.MailMessageWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MailMessageUpdateToOneWithWhereWithoutAssetsInput, Prisma.MailMessageUpdateWithoutAssetsInput>, Prisma.MailMessageUncheckedUpdateWithoutAssetsInput>
+}
+
 export type MailMessageCreateWithoutReviewedByInput = {
   id?: string
   direction: $Enums.MailDirection
@@ -1086,6 +1156,7 @@ export type MailMessageCreateWithoutReviewedByInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   openedAt?: Date | string | null
@@ -1095,12 +1166,14 @@ export type MailMessageCreateWithoutReviewedByInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   mailbox: Prisma.MailboxCreateNestedOneWithoutMessagesInput
   thread?: Prisma.MailThreadCreateNestedOneWithoutMessagesInput
   user?: Prisma.UserProfileCreateNestedOneWithoutMailMessagesInput
   task?: Prisma.RecallTaskCreateNestedOneWithoutMailMessagesInput
+  assets?: Prisma.MailMessageAssetCreateNestedManyWithoutMessageInput
 }
 
 export type MailMessageUncheckedCreateWithoutReviewedByInput = {
@@ -1118,6 +1191,7 @@ export type MailMessageUncheckedCreateWithoutReviewedByInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   openedAt?: Date | string | null
@@ -1127,8 +1201,10 @@ export type MailMessageUncheckedCreateWithoutReviewedByInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  assets?: Prisma.MailMessageAssetUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MailMessageCreateOrConnectWithoutReviewedByInput = {
@@ -1175,6 +1251,7 @@ export type MailMessageScalarWhereInput = {
   toAddresses?: Prisma.StringNullableListFilter<"MailMessage">
   subject?: Prisma.StringFilter<"MailMessage"> | string
   bodyText?: Prisma.StringFilter<"MailMessage"> | string
+  bodyHtml?: Prisma.StringNullableFilter<"MailMessage"> | string | null
   templateKey?: Prisma.StringNullableFilter<"MailMessage"> | string | null
   templateVersion?: Prisma.IntNullableFilter<"MailMessage"> | number | null
   reviewedById?: Prisma.StringNullableFilter<"MailMessage"> | string | null
@@ -1185,6 +1262,7 @@ export type MailMessageScalarWhereInput = {
   sentAt?: Prisma.DateTimeNullableFilter<"MailMessage"> | Date | string | null
   receivedAt?: Prisma.DateTimeNullableFilter<"MailMessage"> | Date | string | null
   lastErrorCode?: Prisma.StringNullableFilter<"MailMessage"> | string | null
+  externalImagesBlocked?: Prisma.BoolFilter<"MailMessage"> | boolean
   createdAt?: Prisma.DateTimeFilter<"MailMessage"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MailMessage"> | Date | string
 }
@@ -1200,6 +1278,7 @@ export type MailMessageCreateWithoutUserInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   openedAt?: Date | string | null
@@ -1209,12 +1288,14 @@ export type MailMessageCreateWithoutUserInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   mailbox: Prisma.MailboxCreateNestedOneWithoutMessagesInput
   thread?: Prisma.MailThreadCreateNestedOneWithoutMessagesInput
   task?: Prisma.RecallTaskCreateNestedOneWithoutMailMessagesInput
   reviewedBy?: Prisma.MemberCreateNestedOneWithoutReviewedMailMessagesInput
+  assets?: Prisma.MailMessageAssetCreateNestedManyWithoutMessageInput
 }
 
 export type MailMessageUncheckedCreateWithoutUserInput = {
@@ -1231,6 +1312,7 @@ export type MailMessageUncheckedCreateWithoutUserInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   reviewedById?: string | null
@@ -1241,8 +1323,10 @@ export type MailMessageUncheckedCreateWithoutUserInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  assets?: Prisma.MailMessageAssetUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MailMessageCreateOrConnectWithoutUserInput = {
@@ -1282,6 +1366,7 @@ export type MailMessageCreateWithoutTaskInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   openedAt?: Date | string | null
@@ -1291,12 +1376,14 @@ export type MailMessageCreateWithoutTaskInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   mailbox: Prisma.MailboxCreateNestedOneWithoutMessagesInput
   thread?: Prisma.MailThreadCreateNestedOneWithoutMessagesInput
   user?: Prisma.UserProfileCreateNestedOneWithoutMailMessagesInput
   reviewedBy?: Prisma.MemberCreateNestedOneWithoutReviewedMailMessagesInput
+  assets?: Prisma.MailMessageAssetCreateNestedManyWithoutMessageInput
 }
 
 export type MailMessageUncheckedCreateWithoutTaskInput = {
@@ -1313,6 +1400,7 @@ export type MailMessageUncheckedCreateWithoutTaskInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   reviewedById?: string | null
@@ -1323,8 +1411,10 @@ export type MailMessageUncheckedCreateWithoutTaskInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  assets?: Prisma.MailMessageAssetUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MailMessageCreateOrConnectWithoutTaskInput = {
@@ -1364,6 +1454,7 @@ export type MailMessageCreateWithoutMailboxInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   openedAt?: Date | string | null
@@ -1373,12 +1464,14 @@ export type MailMessageCreateWithoutMailboxInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   thread?: Prisma.MailThreadCreateNestedOneWithoutMessagesInput
   user?: Prisma.UserProfileCreateNestedOneWithoutMailMessagesInput
   task?: Prisma.RecallTaskCreateNestedOneWithoutMailMessagesInput
   reviewedBy?: Prisma.MemberCreateNestedOneWithoutReviewedMailMessagesInput
+  assets?: Prisma.MailMessageAssetCreateNestedManyWithoutMessageInput
 }
 
 export type MailMessageUncheckedCreateWithoutMailboxInput = {
@@ -1395,6 +1488,7 @@ export type MailMessageUncheckedCreateWithoutMailboxInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   reviewedById?: string | null
@@ -1405,8 +1499,10 @@ export type MailMessageUncheckedCreateWithoutMailboxInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  assets?: Prisma.MailMessageAssetUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MailMessageCreateOrConnectWithoutMailboxInput = {
@@ -1446,6 +1542,7 @@ export type MailMessageCreateWithoutThreadInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   openedAt?: Date | string | null
@@ -1455,12 +1552,14 @@ export type MailMessageCreateWithoutThreadInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   mailbox: Prisma.MailboxCreateNestedOneWithoutMessagesInput
   user?: Prisma.UserProfileCreateNestedOneWithoutMailMessagesInput
   task?: Prisma.RecallTaskCreateNestedOneWithoutMailMessagesInput
   reviewedBy?: Prisma.MemberCreateNestedOneWithoutReviewedMailMessagesInput
+  assets?: Prisma.MailMessageAssetCreateNestedManyWithoutMessageInput
 }
 
 export type MailMessageUncheckedCreateWithoutThreadInput = {
@@ -1477,6 +1576,7 @@ export type MailMessageUncheckedCreateWithoutThreadInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   reviewedById?: string | null
@@ -1487,8 +1587,10 @@ export type MailMessageUncheckedCreateWithoutThreadInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  assets?: Prisma.MailMessageAssetUncheckedCreateNestedManyWithoutMessageInput
 }
 
 export type MailMessageCreateOrConnectWithoutThreadInput = {
@@ -1517,6 +1619,146 @@ export type MailMessageUpdateManyWithWhereWithoutThreadInput = {
   data: Prisma.XOR<Prisma.MailMessageUpdateManyMutationInput, Prisma.MailMessageUncheckedUpdateManyWithoutThreadInput>
 }
 
+export type MailMessageCreateWithoutAssetsInput = {
+  id?: string
+  direction: $Enums.MailDirection
+  status: $Enums.MailMessageStatus
+  providerMessageId?: string | null
+  inReplyTo?: string | null
+  references?: Prisma.MailMessageCreatereferencesInput | string[]
+  fromAddress: string
+  toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
+  subject: string
+  bodyText: string
+  bodyHtml?: string | null
+  templateKey?: string | null
+  templateVersion?: number | null
+  openedAt?: Date | string | null
+  firstClickedAt?: Date | string | null
+  openCount?: number
+  clickCount?: number
+  sentAt?: Date | string | null
+  receivedAt?: Date | string | null
+  lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  mailbox: Prisma.MailboxCreateNestedOneWithoutMessagesInput
+  thread?: Prisma.MailThreadCreateNestedOneWithoutMessagesInput
+  user?: Prisma.UserProfileCreateNestedOneWithoutMailMessagesInput
+  task?: Prisma.RecallTaskCreateNestedOneWithoutMailMessagesInput
+  reviewedBy?: Prisma.MemberCreateNestedOneWithoutReviewedMailMessagesInput
+}
+
+export type MailMessageUncheckedCreateWithoutAssetsInput = {
+  id?: string
+  mailboxId: string
+  threadId?: string | null
+  userId?: string | null
+  taskId?: string | null
+  direction: $Enums.MailDirection
+  status: $Enums.MailMessageStatus
+  providerMessageId?: string | null
+  inReplyTo?: string | null
+  references?: Prisma.MailMessageCreatereferencesInput | string[]
+  fromAddress: string
+  toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
+  subject: string
+  bodyText: string
+  bodyHtml?: string | null
+  templateKey?: string | null
+  templateVersion?: number | null
+  reviewedById?: string | null
+  openedAt?: Date | string | null
+  firstClickedAt?: Date | string | null
+  openCount?: number
+  clickCount?: number
+  sentAt?: Date | string | null
+  receivedAt?: Date | string | null
+  lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type MailMessageCreateOrConnectWithoutAssetsInput = {
+  where: Prisma.MailMessageWhereUniqueInput
+  create: Prisma.XOR<Prisma.MailMessageCreateWithoutAssetsInput, Prisma.MailMessageUncheckedCreateWithoutAssetsInput>
+}
+
+export type MailMessageUpsertWithoutAssetsInput = {
+  update: Prisma.XOR<Prisma.MailMessageUpdateWithoutAssetsInput, Prisma.MailMessageUncheckedUpdateWithoutAssetsInput>
+  create: Prisma.XOR<Prisma.MailMessageCreateWithoutAssetsInput, Prisma.MailMessageUncheckedCreateWithoutAssetsInput>
+  where?: Prisma.MailMessageWhereInput
+}
+
+export type MailMessageUpdateToOneWithWhereWithoutAssetsInput = {
+  where?: Prisma.MailMessageWhereInput
+  data: Prisma.XOR<Prisma.MailMessageUpdateWithoutAssetsInput, Prisma.MailMessageUncheckedUpdateWithoutAssetsInput>
+}
+
+export type MailMessageUpdateWithoutAssetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  direction?: Prisma.EnumMailDirectionFieldUpdateOperationsInput | $Enums.MailDirection
+  status?: Prisma.EnumMailMessageStatusFieldUpdateOperationsInput | $Enums.MailMessageStatus
+  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inReplyTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  references?: Prisma.MailMessageUpdatereferencesInput | string[]
+  fromAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  openedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  firstClickedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  openCount?: Prisma.IntFieldUpdateOperationsInput | number
+  clickCount?: Prisma.IntFieldUpdateOperationsInput | number
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailbox?: Prisma.MailboxUpdateOneRequiredWithoutMessagesNestedInput
+  thread?: Prisma.MailThreadUpdateOneWithoutMessagesNestedInput
+  user?: Prisma.UserProfileUpdateOneWithoutMailMessagesNestedInput
+  task?: Prisma.RecallTaskUpdateOneWithoutMailMessagesNestedInput
+  reviewedBy?: Prisma.MemberUpdateOneWithoutReviewedMailMessagesNestedInput
+}
+
+export type MailMessageUncheckedUpdateWithoutAssetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  mailboxId?: Prisma.StringFieldUpdateOperationsInput | string
+  threadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  direction?: Prisma.EnumMailDirectionFieldUpdateOperationsInput | $Enums.MailDirection
+  status?: Prisma.EnumMailMessageStatusFieldUpdateOperationsInput | $Enums.MailMessageStatus
+  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inReplyTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  references?: Prisma.MailMessageUpdatereferencesInput | string[]
+  fromAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  openedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  firstClickedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  openCount?: Prisma.IntFieldUpdateOperationsInput | number
+  clickCount?: Prisma.IntFieldUpdateOperationsInput | number
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type MailMessageCreateManyReviewedByInput = {
   id?: string
   mailboxId: string
@@ -1532,6 +1774,7 @@ export type MailMessageCreateManyReviewedByInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   openedAt?: Date | string | null
@@ -1541,6 +1784,7 @@ export type MailMessageCreateManyReviewedByInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1556,6 +1800,7 @@ export type MailMessageUpdateWithoutReviewedByInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   openedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1565,12 +1810,14 @@ export type MailMessageUpdateWithoutReviewedByInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mailbox?: Prisma.MailboxUpdateOneRequiredWithoutMessagesNestedInput
   thread?: Prisma.MailThreadUpdateOneWithoutMessagesNestedInput
   user?: Prisma.UserProfileUpdateOneWithoutMailMessagesNestedInput
   task?: Prisma.RecallTaskUpdateOneWithoutMailMessagesNestedInput
+  assets?: Prisma.MailMessageAssetUpdateManyWithoutMessageNestedInput
 }
 
 export type MailMessageUncheckedUpdateWithoutReviewedByInput = {
@@ -1588,6 +1835,7 @@ export type MailMessageUncheckedUpdateWithoutReviewedByInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   openedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1597,8 +1845,10 @@ export type MailMessageUncheckedUpdateWithoutReviewedByInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assets?: Prisma.MailMessageAssetUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MailMessageUncheckedUpdateManyWithoutReviewedByInput = {
@@ -1616,6 +1866,7 @@ export type MailMessageUncheckedUpdateManyWithoutReviewedByInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   openedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1625,6 +1876,7 @@ export type MailMessageUncheckedUpdateManyWithoutReviewedByInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1643,6 +1895,7 @@ export type MailMessageCreateManyUserInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   reviewedById?: string | null
@@ -1653,6 +1906,7 @@ export type MailMessageCreateManyUserInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1668,6 +1922,7 @@ export type MailMessageUpdateWithoutUserInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   openedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1677,12 +1932,14 @@ export type MailMessageUpdateWithoutUserInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mailbox?: Prisma.MailboxUpdateOneRequiredWithoutMessagesNestedInput
   thread?: Prisma.MailThreadUpdateOneWithoutMessagesNestedInput
   task?: Prisma.RecallTaskUpdateOneWithoutMailMessagesNestedInput
   reviewedBy?: Prisma.MemberUpdateOneWithoutReviewedMailMessagesNestedInput
+  assets?: Prisma.MailMessageAssetUpdateManyWithoutMessageNestedInput
 }
 
 export type MailMessageUncheckedUpdateWithoutUserInput = {
@@ -1699,6 +1956,7 @@ export type MailMessageUncheckedUpdateWithoutUserInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1709,8 +1967,10 @@ export type MailMessageUncheckedUpdateWithoutUserInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assets?: Prisma.MailMessageAssetUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MailMessageUncheckedUpdateManyWithoutUserInput = {
@@ -1727,6 +1987,7 @@ export type MailMessageUncheckedUpdateManyWithoutUserInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1737,6 +1998,7 @@ export type MailMessageUncheckedUpdateManyWithoutUserInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1755,6 +2017,7 @@ export type MailMessageCreateManyTaskInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   reviewedById?: string | null
@@ -1765,6 +2028,7 @@ export type MailMessageCreateManyTaskInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1780,6 +2044,7 @@ export type MailMessageUpdateWithoutTaskInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   openedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1789,12 +2054,14 @@ export type MailMessageUpdateWithoutTaskInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mailbox?: Prisma.MailboxUpdateOneRequiredWithoutMessagesNestedInput
   thread?: Prisma.MailThreadUpdateOneWithoutMessagesNestedInput
   user?: Prisma.UserProfileUpdateOneWithoutMailMessagesNestedInput
   reviewedBy?: Prisma.MemberUpdateOneWithoutReviewedMailMessagesNestedInput
+  assets?: Prisma.MailMessageAssetUpdateManyWithoutMessageNestedInput
 }
 
 export type MailMessageUncheckedUpdateWithoutTaskInput = {
@@ -1811,6 +2078,7 @@ export type MailMessageUncheckedUpdateWithoutTaskInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1821,8 +2089,10 @@ export type MailMessageUncheckedUpdateWithoutTaskInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assets?: Prisma.MailMessageAssetUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MailMessageUncheckedUpdateManyWithoutTaskInput = {
@@ -1839,6 +2109,7 @@ export type MailMessageUncheckedUpdateManyWithoutTaskInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1849,6 +2120,7 @@ export type MailMessageUncheckedUpdateManyWithoutTaskInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1867,6 +2139,7 @@ export type MailMessageCreateManyMailboxInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   reviewedById?: string | null
@@ -1877,6 +2150,7 @@ export type MailMessageCreateManyMailboxInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1892,6 +2166,7 @@ export type MailMessageUpdateWithoutMailboxInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   openedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1901,12 +2176,14 @@ export type MailMessageUpdateWithoutMailboxInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   thread?: Prisma.MailThreadUpdateOneWithoutMessagesNestedInput
   user?: Prisma.UserProfileUpdateOneWithoutMailMessagesNestedInput
   task?: Prisma.RecallTaskUpdateOneWithoutMailMessagesNestedInput
   reviewedBy?: Prisma.MemberUpdateOneWithoutReviewedMailMessagesNestedInput
+  assets?: Prisma.MailMessageAssetUpdateManyWithoutMessageNestedInput
 }
 
 export type MailMessageUncheckedUpdateWithoutMailboxInput = {
@@ -1923,6 +2200,7 @@ export type MailMessageUncheckedUpdateWithoutMailboxInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1933,8 +2211,10 @@ export type MailMessageUncheckedUpdateWithoutMailboxInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assets?: Prisma.MailMessageAssetUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MailMessageUncheckedUpdateManyWithoutMailboxInput = {
@@ -1951,6 +2231,7 @@ export type MailMessageUncheckedUpdateManyWithoutMailboxInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1961,6 +2242,7 @@ export type MailMessageUncheckedUpdateManyWithoutMailboxInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1979,6 +2261,7 @@ export type MailMessageCreateManyThreadInput = {
   toAddresses?: Prisma.MailMessageCreatetoAddressesInput | string[]
   subject: string
   bodyText: string
+  bodyHtml?: string | null
   templateKey?: string | null
   templateVersion?: number | null
   reviewedById?: string | null
@@ -1989,6 +2272,7 @@ export type MailMessageCreateManyThreadInput = {
   sentAt?: Date | string | null
   receivedAt?: Date | string | null
   lastErrorCode?: string | null
+  externalImagesBlocked?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2004,6 +2288,7 @@ export type MailMessageUpdateWithoutThreadInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   openedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2013,12 +2298,14 @@ export type MailMessageUpdateWithoutThreadInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mailbox?: Prisma.MailboxUpdateOneRequiredWithoutMessagesNestedInput
   user?: Prisma.UserProfileUpdateOneWithoutMailMessagesNestedInput
   task?: Prisma.RecallTaskUpdateOneWithoutMailMessagesNestedInput
   reviewedBy?: Prisma.MemberUpdateOneWithoutReviewedMailMessagesNestedInput
+  assets?: Prisma.MailMessageAssetUpdateManyWithoutMessageNestedInput
 }
 
 export type MailMessageUncheckedUpdateWithoutThreadInput = {
@@ -2035,6 +2322,7 @@ export type MailMessageUncheckedUpdateWithoutThreadInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2045,8 +2333,10 @@ export type MailMessageUncheckedUpdateWithoutThreadInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assets?: Prisma.MailMessageAssetUncheckedUpdateManyWithoutMessageNestedInput
 }
 
 export type MailMessageUncheckedUpdateManyWithoutThreadInput = {
@@ -2063,6 +2353,7 @@ export type MailMessageUncheckedUpdateManyWithoutThreadInput = {
   toAddresses?: Prisma.MailMessageUpdatetoAddressesInput | string[]
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   templateVersion?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2073,10 +2364,40 @@ export type MailMessageUncheckedUpdateManyWithoutThreadInput = {
   sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   receivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalImagesBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type MailMessageCountOutputType
+ */
+
+export type MailMessageCountOutputType = {
+  assets: number
+}
+
+export type MailMessageCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  assets?: boolean | MailMessageCountOutputTypeCountAssetsArgs
+}
+
+/**
+ * MailMessageCountOutputType without action
+ */
+export type MailMessageCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailMessageCountOutputType
+   */
+  select?: Prisma.MailMessageCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * MailMessageCountOutputType without action
+ */
+export type MailMessageCountOutputTypeCountAssetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MailMessageAssetWhereInput
+}
 
 
 export type MailMessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2094,6 +2415,7 @@ export type MailMessageSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   toAddresses?: boolean
   subject?: boolean
   bodyText?: boolean
+  bodyHtml?: boolean
   templateKey?: boolean
   templateVersion?: boolean
   reviewedById?: boolean
@@ -2104,6 +2426,7 @@ export type MailMessageSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   sentAt?: boolean
   receivedAt?: boolean
   lastErrorCode?: boolean
+  externalImagesBlocked?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   mailbox?: boolean | Prisma.MailboxDefaultArgs<ExtArgs>
@@ -2111,6 +2434,8 @@ export type MailMessageSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   user?: boolean | Prisma.MailMessage$userArgs<ExtArgs>
   task?: boolean | Prisma.MailMessage$taskArgs<ExtArgs>
   reviewedBy?: boolean | Prisma.MailMessage$reviewedByArgs<ExtArgs>
+  assets?: boolean | Prisma.MailMessage$assetsArgs<ExtArgs>
+  _count?: boolean | Prisma.MailMessageCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mailMessage"]>
 
 export type MailMessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2128,6 +2453,7 @@ export type MailMessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   toAddresses?: boolean
   subject?: boolean
   bodyText?: boolean
+  bodyHtml?: boolean
   templateKey?: boolean
   templateVersion?: boolean
   reviewedById?: boolean
@@ -2138,6 +2464,7 @@ export type MailMessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   sentAt?: boolean
   receivedAt?: boolean
   lastErrorCode?: boolean
+  externalImagesBlocked?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   mailbox?: boolean | Prisma.MailboxDefaultArgs<ExtArgs>
@@ -2162,6 +2489,7 @@ export type MailMessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   toAddresses?: boolean
   subject?: boolean
   bodyText?: boolean
+  bodyHtml?: boolean
   templateKey?: boolean
   templateVersion?: boolean
   reviewedById?: boolean
@@ -2172,6 +2500,7 @@ export type MailMessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   sentAt?: boolean
   receivedAt?: boolean
   lastErrorCode?: boolean
+  externalImagesBlocked?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   mailbox?: boolean | Prisma.MailboxDefaultArgs<ExtArgs>
@@ -2196,6 +2525,7 @@ export type MailMessageSelectScalar = {
   toAddresses?: boolean
   subject?: boolean
   bodyText?: boolean
+  bodyHtml?: boolean
   templateKey?: boolean
   templateVersion?: boolean
   reviewedById?: boolean
@@ -2206,17 +2536,20 @@ export type MailMessageSelectScalar = {
   sentAt?: boolean
   receivedAt?: boolean
   lastErrorCode?: boolean
+  externalImagesBlocked?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type MailMessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "mailboxId" | "threadId" | "userId" | "taskId" | "direction" | "status" | "providerMessageId" | "inReplyTo" | "references" | "fromAddress" | "toAddresses" | "subject" | "bodyText" | "templateKey" | "templateVersion" | "reviewedById" | "openedAt" | "firstClickedAt" | "openCount" | "clickCount" | "sentAt" | "receivedAt" | "lastErrorCode" | "createdAt" | "updatedAt", ExtArgs["result"]["mailMessage"]>
+export type MailMessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "mailboxId" | "threadId" | "userId" | "taskId" | "direction" | "status" | "providerMessageId" | "inReplyTo" | "references" | "fromAddress" | "toAddresses" | "subject" | "bodyText" | "bodyHtml" | "templateKey" | "templateVersion" | "reviewedById" | "openedAt" | "firstClickedAt" | "openCount" | "clickCount" | "sentAt" | "receivedAt" | "lastErrorCode" | "externalImagesBlocked" | "createdAt" | "updatedAt", ExtArgs["result"]["mailMessage"]>
 export type MailMessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   mailbox?: boolean | Prisma.MailboxDefaultArgs<ExtArgs>
   thread?: boolean | Prisma.MailMessage$threadArgs<ExtArgs>
   user?: boolean | Prisma.MailMessage$userArgs<ExtArgs>
   task?: boolean | Prisma.MailMessage$taskArgs<ExtArgs>
   reviewedBy?: boolean | Prisma.MailMessage$reviewedByArgs<ExtArgs>
+  assets?: boolean | Prisma.MailMessage$assetsArgs<ExtArgs>
+  _count?: boolean | Prisma.MailMessageCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MailMessageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   mailbox?: boolean | Prisma.MailboxDefaultArgs<ExtArgs>
@@ -2241,6 +2574,7 @@ export type $MailMessagePayload<ExtArgs extends runtime.Types.Extensions.Interna
     user: Prisma.$UserProfilePayload<ExtArgs> | null
     task: Prisma.$RecallTaskPayload<ExtArgs> | null
     reviewedBy: Prisma.$MemberPayload<ExtArgs> | null
+    assets: Prisma.$MailMessageAssetPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2257,6 +2591,7 @@ export type $MailMessagePayload<ExtArgs extends runtime.Types.Extensions.Interna
     toAddresses: string[]
     subject: string
     bodyText: string
+    bodyHtml: string | null
     templateKey: string | null
     templateVersion: number | null
     reviewedById: string | null
@@ -2267,6 +2602,7 @@ export type $MailMessagePayload<ExtArgs extends runtime.Types.Extensions.Interna
     sentAt: Date | null
     receivedAt: Date | null
     lastErrorCode: string | null
+    externalImagesBlocked: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["mailMessage"]>
@@ -2668,6 +3004,7 @@ export interface Prisma__MailMessageClient<T, Null = never, ExtArgs extends runt
   user<T extends Prisma.MailMessage$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailMessage$userArgs<ExtArgs>>): Prisma.Prisma__UserProfileClient<runtime.Types.Result.GetResult<Prisma.$UserProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   task<T extends Prisma.MailMessage$taskArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailMessage$taskArgs<ExtArgs>>): Prisma.Prisma__RecallTaskClient<runtime.Types.Result.GetResult<Prisma.$RecallTaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   reviewedBy<T extends Prisma.MailMessage$reviewedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailMessage$reviewedByArgs<ExtArgs>>): Prisma.Prisma__MemberClient<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  assets<T extends Prisma.MailMessage$assetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailMessage$assetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailMessageAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2711,6 +3048,7 @@ export interface MailMessageFieldRefs {
   readonly toAddresses: Prisma.FieldRef<"MailMessage", 'String[]'>
   readonly subject: Prisma.FieldRef<"MailMessage", 'String'>
   readonly bodyText: Prisma.FieldRef<"MailMessage", 'String'>
+  readonly bodyHtml: Prisma.FieldRef<"MailMessage", 'String'>
   readonly templateKey: Prisma.FieldRef<"MailMessage", 'String'>
   readonly templateVersion: Prisma.FieldRef<"MailMessage", 'Int'>
   readonly reviewedById: Prisma.FieldRef<"MailMessage", 'String'>
@@ -2721,6 +3059,7 @@ export interface MailMessageFieldRefs {
   readonly sentAt: Prisma.FieldRef<"MailMessage", 'DateTime'>
   readonly receivedAt: Prisma.FieldRef<"MailMessage", 'DateTime'>
   readonly lastErrorCode: Prisma.FieldRef<"MailMessage", 'String'>
+  readonly externalImagesBlocked: Prisma.FieldRef<"MailMessage", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"MailMessage", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"MailMessage", 'DateTime'>
 }
@@ -3197,6 +3536,30 @@ export type MailMessage$reviewedByArgs<ExtArgs extends runtime.Types.Extensions.
    */
   include?: Prisma.MemberInclude<ExtArgs> | null
   where?: Prisma.MemberWhereInput
+}
+
+/**
+ * MailMessage.assets
+ */
+export type MailMessage$assetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailMessageAsset
+   */
+  select?: Prisma.MailMessageAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailMessageAsset
+   */
+  omit?: Prisma.MailMessageAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailMessageAssetInclude<ExtArgs> | null
+  where?: Prisma.MailMessageAssetWhereInput
+  orderBy?: Prisma.MailMessageAssetOrderByWithRelationInput | Prisma.MailMessageAssetOrderByWithRelationInput[]
+  cursor?: Prisma.MailMessageAssetWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MailMessageAssetScalarFieldEnum | Prisma.MailMessageAssetScalarFieldEnum[]
 }
 
 /**
