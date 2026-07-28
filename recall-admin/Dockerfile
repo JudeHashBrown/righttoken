@@ -6,7 +6,7 @@ RUN apt-get update \
 FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN --mount=type=cache,target=/root/.npm \
+RUN --mount=type=cache,target=/root/.npm,sharing=locked \
     npm ci --prefer-offline --no-audit
 
 FROM deps AS builder
@@ -20,7 +20,7 @@ RUN npm run build \
 FROM base AS prod-deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN --mount=type=cache,target=/root/.npm \
+RUN --mount=type=cache,target=/root/.npm,sharing=locked \
     npm ci --omit=dev --prefer-offline --no-audit \
     && npm cache clean --force
 
