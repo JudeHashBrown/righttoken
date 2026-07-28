@@ -14,6 +14,10 @@ import {
 import {
   MailTemplateManager
 } from "@/components/mail/mail-template-manager";
+import {
+  MailRichEditor,
+  type MailRichContent
+} from "@/components/mail/mail-rich-editor";
 
 export type MailThreadDetail = {
   id: string;
@@ -95,7 +99,11 @@ export function MailReplyEditor({
   const [subject, setSubject] = useState(
     replySubject(thread.subject)
   );
-  const [bodyText, setBodyText] = useState("");
+  const [content, setContent] = useState<MailRichContent>({
+    bodyHtml: "",
+    bodyText: "",
+    assets: []
+  });
   const [dirty, setDirty] = useState(false);
   const [showTemplateCreator, setShowTemplateCreator] =
     useState(false);
@@ -106,8 +114,8 @@ export function MailReplyEditor({
     (template) => template.id === selectedTemplateId
   );
   const unresolved = useMemo(
-    () => unresolvedVariables(subject, bodyText),
-    [subject, bodyText]
+    () => unresolvedVariables(subject, content.bodyText),
+    [subject, content.bodyText]
   );
   const suppressed = Boolean(thread.user.unsubscribedAt);
   const paused = Boolean(thread.user.pausedAt);
@@ -117,20 +125,28 @@ export function MailReplyEditor({
     suppressed ||
     paused ||
     !subject.trim() ||
-    !bodyText.trim() ||
+    !content.bodyText.trim() ||
     unresolved.length > 0;
 
   function selectTemplate(template: MailTemplateSummary): void {
     setSelectedTemplateId(template.id);
     setSubject(template.subject);
-    setBodyText(template.bodyText);
+    setContent({
+      bodyHtml: template.bodyHtml,
+      bodyText: template.bodyText,
+      assets: template.assets
+    });
     setDirty(false);
     setError(null);
     setSuccess(null);
   }
 
   async function updateTemplate(): Promise<void> {
-    if (!selectedTemplate || !subject.trim() || !bodyText.trim()) {
+    if (
+      !selectedTemplate ||
+      !subject.trim() ||
+      !content.bodyText.trim()
+    ) {
       return;
     }
     setError(null);
@@ -144,7 +160,15 @@ export function MailReplyEditor({
         body: JSON.stringify({
           name: selectedTemplate.name,
           subject,
-          bodyText
+          bodyText: content.bodyText,
+          bodyHtml: content.bodyHtml,
+          assets: content.assets.map(
+            ({ id, disposition, sortOrder }) => ({
+              id,
+              disposition,
+              sortOrder
+            })
+          )
         })
       }
     ).catch(() => null);
@@ -204,7 +228,15 @@ export function MailReplyEditor({
           mailboxId: thread.mailbox.id,
           recipient: thread.user.email,
           subject,
-          bodyText,
+          bodyText: content.bodyText,
+          bodyHtml: content.bodyHtml,
+          assets: content.assets.map(
+            ({ id, disposition, sortOrder }) => ({
+              id,
+              disposition,
+              sortOrder
+            })
+          ),
           templateId: selectedTemplateId
         })
       });
@@ -216,7 +248,15 @@ export function MailReplyEditor({
           RECIPIENT_SUPPRESSED: "该用户已退订，禁止发送邮件。",
           RECIPIENT_PAUSED: "该用户当前已暂停联系。",
           CONTACT_FREQUENCY_LIMIT: "距离上次联系时间过短。",
-          SMTP_SEND_FAILED: "邮箱发送失败，回复草稿已保留。"
+          SMTP_SEND_FAILED: "邮箱发送失败，回复草稿已保留。",
+          MAIL_ASSET_MISSING:
+            "部分图片已失效，请删除后重新上传。",
+          MAIL_ASSET_LIMIT_EXCEEDED:
+            "一封邮件最多添加 10 张图片。",
+          MAIL_ASSET_TOTAL_TOO_LARGE:
+            "图片总大小不能超过 20 MB。",
+          MAIL_INLINE_ASSET_MISMATCH:
+            "正文图片与邮件内容不一致，请重新插入。"
         };
         setError(
           messages[result?.code ?? ""] ??
@@ -255,7 +295,7 @@ export function MailReplyEditor({
       />
       {showTemplateCreator ? (
         <MailTemplateManager
-          initialBody={bodyText}
+          initialBody={content.bodyText}
           initialSubject={subject}
           onClose={() => setShowTemplateCreator(false)}
           onSaved={() => router.refresh()}
@@ -276,20 +316,15 @@ export function MailReplyEditor({
             value={subject}
           />
         </div>
-        <div className={styles.field}>
-          <label htmlFor="reply-body">邮件正文</label>
-          <textarea
-            className={styles.textarea}
-            id="reply-body"
-            onChange={(event) => {
-              setBodyText(event.target.value);
-              setDirty(true);
-            }}
-            required
-            rows={8}
-            value={bodyText}
-          />
-        </div>
+        <MailRichEditor
+          idPrefix="reply"
+          label="邮件正文"
+          onChange={(nextContent) => {
+            setContent(nextContent);
+            setDirty(true);
+          }}
+          value={content}
+        />
         {suppressed ? (
           <p className={styles.error}>
             该用户已退订，禁止发送邮件

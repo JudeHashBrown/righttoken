@@ -6,6 +6,19 @@ import {
   assertMailSendAllowed,
   MailSendBlockedError
 } from "@/modules/mail/send-guard";
+import {
+  resolveOutboundMailAssets,
+  type OutboundAssetReference
+} from "@/modules/mail/outbound-assets";
+import {
+  getMailAssetStorage
+} from "@/modules/mail/assets/storage-factory";
+import type {
+  MailAssetStorage
+} from "@/modules/mail/assets/types";
+import {
+  plainTextToMailHtml
+} from "@/modules/mail/rich-content";
 
 export type ReviewedMailInput = {
   actorId: string;
@@ -14,13 +27,18 @@ export type ReviewedMailInput = {
   recipient: string;
   subject: string;
   bodyText: string;
+  bodyHtml?: string;
+  assets?: OutboundAssetReference[];
   minimumContactIntervalMinutes: number;
   now?: Date;
 };
 
 export async function sendReviewedMail(
   input: ReviewedMailInput,
-  adapter: Pick<MailboxAdapter, "send">
+  adapter: Pick<MailboxAdapter, "send">,
+  dependencies: {
+    storage?: MailAssetStorage;
+  } = {}
 ): Promise<MailMessage> {
   const now = input.now ?? new Date();
   const recipient = input.recipient.trim().toLowerCase();
@@ -121,6 +139,19 @@ export async function sendReviewedMail(
         subject: input.subject.trim()
       }
     }));
+  const richContent = await resolveOutboundMailAssets(
+    {
+      bodyHtml:
+        input.bodyHtml?.trim() ||
+        plainTextToMailHtml(input.bodyText),
+      assets: input.assets ?? []
+    },
+    {
+      database: prisma,
+      storage:
+        dependencies.storage ?? getMailAssetStorage()
+    }
+  );
   const draft = await prisma.mailMessage.create({
     data: {
       mailboxId: mailbox.id,
@@ -134,7 +165,11 @@ export async function sendReviewedMail(
       toAddresses: [recipient],
       subject: input.subject.trim(),
       bodyText: input.bodyText.trim(),
-      reviewedById: actor.id
+      bodyHtml: richContent.bodyHtml,
+      reviewedById: actor.id,
+      assets: {
+        create: richContent.messageAssets
+      }
     }
   });
 
@@ -143,7 +178,9 @@ export async function sendReviewedMail(
     delivery = await adapter.send({
       to: [recipient],
       subject: draft.subject,
-      text: draft.bodyText
+      text: draft.bodyText,
+      html: richContent.html,
+      attachments: richContent.attachments
     });
   } catch {
     await prisma.mailMessage.update({

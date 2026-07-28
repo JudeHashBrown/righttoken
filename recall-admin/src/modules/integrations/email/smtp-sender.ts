@@ -8,6 +8,14 @@ type Transport = {
     to: string[];
     subject: string;
     text: string;
+    html?: string;
+    attachments?: Array<{
+      filename: string;
+      content: Buffer;
+      contentType: string;
+      cid?: string;
+      contentDisposition: "inline" | "attachment";
+    }>;
     inReplyTo?: string;
     references?: string[];
   }): Promise<{ messageId?: string }>;
@@ -48,6 +56,10 @@ export async function sendSmtpMessage(
     to: message.to,
     subject: message.subject,
     text: message.text,
+    ...(message.html ? { html: message.html } : {}),
+    ...(message.attachments?.length
+      ? { attachments: message.attachments }
+      : {}),
     ...(message.inReplyTo
       ? { inReplyTo: message.inReplyTo }
       : {}),

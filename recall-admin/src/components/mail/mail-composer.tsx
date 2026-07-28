@@ -3,6 +3,10 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/components/workspaces/workspace.module.css";
+import {
+  MailRichEditor,
+  type MailRichContent
+} from "@/components/mail/mail-rich-editor";
 
 type ComposerTask = {
   id: string;
@@ -35,6 +39,23 @@ function unresolvedVariables(subject: string, body: string): string[] {
   );
 }
 
+function initialRichContent(value: string): MailRichContent {
+  return {
+    bodyHtml: value
+      .split(/\r?\n/)
+      .map((line) => {
+        const escaped = line
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;");
+        return `<p>${escaped || "<br>"}</p>`;
+      })
+      .join(""),
+    bodyText: value,
+    assets: []
+  };
+}
+
 export function MailComposer({
   tasks,
   mailboxes,
@@ -50,7 +71,9 @@ export function MailComposer({
     mailboxes[0]?.id ?? ""
   );
   const [subject, setSubject] = useState(initialSubject);
-  const [body, setBody] = useState(initialBody);
+  const [content, setContent] = useState<MailRichContent>(() =>
+    initialRichContent(initialBody)
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -66,8 +89,8 @@ export function MailComposer({
     recipientValid &&
     normalizedRecipient !== originalRecipient;
   const unresolved = useMemo(
-    () => unresolvedVariables(subject, body),
-    [subject, body]
+    () => unresolvedVariables(subject, content.bodyText),
+    [subject, content.bodyText]
   );
   const blocked =
     !selectedTask ||
@@ -76,7 +99,7 @@ export function MailComposer({
     selectedTask.suppressed ||
     unresolved.length > 0 ||
     !subject.trim() ||
-    !body.trim();
+    !content.bodyText.trim();
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>
@@ -97,7 +120,15 @@ export function MailComposer({
           mailboxId,
           recipient: normalizedRecipient,
           subject,
-          bodyText: body
+          bodyText: content.bodyText,
+          bodyHtml: content.bodyHtml,
+          assets: content.assets.map(
+            ({ id, disposition, sortOrder }) => ({
+              id,
+              disposition,
+              sortOrder
+            })
+          )
         })
       });
       const result = (await response.json().catch(() => null)) as {
@@ -108,7 +139,15 @@ export function MailComposer({
           RECIPIENT_SUPPRESSED: "该用户已退订，禁止发送。",
           RECIPIENT_PAUSED: "该用户当前已暂停联系。",
           CONTACT_FREQUENCY_LIMIT: "距离上次联系时间过短。",
-          SMTP_SEND_FAILED: "邮箱发送失败，请检查邮箱连接。"
+          SMTP_SEND_FAILED: "邮箱发送失败，请检查邮箱连接。",
+          MAIL_ASSET_MISSING:
+            "部分图片已失效，请删除后重新上传。",
+          MAIL_ASSET_LIMIT_EXCEEDED:
+            "一封邮件最多添加 10 张图片。",
+          MAIL_ASSET_TOTAL_TOO_LARGE:
+            "图片总大小不能超过 20 MB。",
+          MAIL_INLINE_ASSET_MISMATCH:
+            "正文图片与邮件内容不一致，请重新插入。"
         };
         setError(
           messages[result?.code ?? ""] ??
@@ -212,18 +251,12 @@ export function MailComposer({
             disabled={submitting}
           />
         </div>
-        <div className={styles.field}>
-          <label htmlFor="mail-body">邮件正文</label>
-          <textarea
-            className={styles.textarea}
-            id="mail-body"
-            value={body}
-            onChange={(event) => setBody(event.target.value)}
-            rows={8}
-            required
-            disabled={submitting}
-          />
-        </div>
+        <MailRichEditor
+          idPrefix="mail"
+          label="邮件正文"
+          onChange={setContent}
+          value={content}
+        />
 
         {unresolved.length ? (
           <p className={styles.error}>

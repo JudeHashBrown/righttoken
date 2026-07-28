@@ -21,6 +21,7 @@ describe("threaded user mail replies", () => {
   let threadId: string;
   let taskId: string;
   let templateId: string;
+  let assetId: string;
 
   beforeAll(async () => {
     const [operator, otherOperator] = await Promise.all([
@@ -120,6 +121,19 @@ describe("threaded user mail replies", () => {
       }
     });
     taskId = task.id;
+    const asset = await prisma.mailAsset.create({
+      data: {
+        storageKey: `mail-assets/${randomUUID()}.webp`,
+        fileName: "payment-guide.webp",
+        contentType: "image/webp",
+        byteSize: 128,
+        sha256: "d".repeat(64),
+        width: 80,
+        height: 60,
+        createdById: operatorId
+      }
+    });
+    assetId = asset.id;
     const template = await prisma.mailTemplate.create({
       data: {
         key: `payment-help-${randomUUID()}`,
@@ -127,8 +141,19 @@ describe("threaded user mail replies", () => {
         name: "支付协助",
         subject: "Re: RightToken 支付协助",
         bodyText: "我们已经收到你的问题。",
+        bodyHtml:
+          `<p>我们已经收到你的问题。</p>` +
+          `<img data-mail-asset-id="${assetId}" alt="支付说明">`,
         active: true,
-        createdById: operatorId
+        createdById: operatorId,
+        assets: {
+          create: {
+            assetId,
+            disposition: "INLINE",
+            cid: `${assetId}@righttoken`,
+            sortOrder: 0
+          }
+        }
       }
     });
     templateId = template.id;
@@ -146,6 +171,9 @@ describe("threaded user mail replies", () => {
     });
     await prisma.recallTask.deleteMany({ where: { id: taskId } });
     await prisma.mailbox.deleteMany({ where: { id: mailboxId } });
+    await prisma.mailAsset.deleteMany({
+      where: { id: assetId }
+    });
     await prisma.userProfile.deleteMany({ where: { id: userId } });
     await prisma.member.deleteMany({
       where: { id: { in: [operatorId, otherOperatorId] } }
@@ -169,17 +197,43 @@ describe("threaded user mail replies", () => {
         recipient: userEmail,
         subject: "Re: RightToken 支付协助",
         bodyText: "我们已经收到你的问题。",
+        bodyHtml:
+          `<p>我们已经收到你的问题。</p>` +
+          `<img data-mail-asset-id="${assetId}" alt="支付说明">`,
+        assets: [
+          {
+            id: assetId,
+            disposition: "INLINE",
+            sortOrder: 0
+          }
+        ],
         templateId,
         minimumContactIntervalMinutes: 0,
         now: new Date("2026-07-27T11:00:00.000Z")
       },
-      adapter
+      adapter,
+      {
+        storage: {
+          put: vi.fn(),
+          get: vi.fn().mockResolvedValue(Buffer.from("image")),
+          delete: vi.fn(),
+          exists: vi.fn()
+        }
+      }
     );
 
     expect(adapter.send).toHaveBeenCalledWith({
       to: [userEmail],
       subject: "Re: RightToken 支付协助",
       text: "我们已经收到你的问题。",
+      html: expect.stringContaining(`cid:${assetId}@righttoken`),
+      attachments: [
+        expect.objectContaining({
+          filename: "payment-guide.webp",
+          cid: `${assetId}@righttoken`,
+          contentDisposition: "inline"
+        })
+      ],
       inReplyTo: "<latest-inbound@example.test>",
       references: [
         "<original-outbound@example.test>",
@@ -193,6 +247,14 @@ describe("threaded user mail replies", () => {
       templateVersion: 2,
       status: "SENT"
     });
+    await expect(
+      prisma.mailMessageAsset.count({
+        where: {
+          messageId: sent.id,
+          assetId
+        }
+      })
+    ).resolves.toBe(1);
   });
 
   it("blocks an operator from replying to another operator's user", async () => {

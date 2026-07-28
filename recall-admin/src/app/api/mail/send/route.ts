@@ -12,6 +12,9 @@ import {
 } from "@/modules/mail/send-reviewed-mail";
 import { MailSendBlockedError } from "@/modules/mail/send-guard";
 import { mailSendRequestSchema } from "@/modules/mail/send-request-schema";
+import {
+  OutboundMailAssetError
+} from "@/modules/mail/outbound-assets";
 
 export async function POST(
   request: NextRequest
@@ -63,6 +66,12 @@ export async function POST(
       );
     }
     if (error instanceof MailSendBlockedError) {
+      return NextResponse.json(
+        { code: error.code },
+        { status: 409 }
+      );
+    }
+    if (error instanceof OutboundMailAssetError) {
       return NextResponse.json(
         { code: error.code },
         { status: 409 }

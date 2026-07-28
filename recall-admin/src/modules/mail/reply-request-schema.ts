@@ -1,4 +1,7 @@
 import { z } from "zod";
+import {
+  mailAssetReferenceSchema
+} from "@/modules/mail/template-schema";
 
 export const mailReplyRequestSchema = z
   .object({
@@ -13,6 +16,12 @@ export const mailReplyRequestSchema = z
       .max(320),
     subject: z.string().trim().min(1).max(200),
     bodyText: z.string().trim().min(1).max(100_000),
+    bodyHtml: z.string().trim().max(200_000).optional().default(""),
+    assets: z
+      .array(mailAssetReferenceSchema)
+      .max(10)
+      .optional()
+      .default([]),
     templateId: z.string().min(1).nullable()
   })
   .strict();

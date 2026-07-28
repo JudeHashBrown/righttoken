@@ -70,8 +70,22 @@ const templates = [
     locale: "zh-CN",
     subject: "Re: RightToken 支付协助",
     bodyText: "你好，我们可以协助你完成支付。",
-    bodyHtml: "<p>你好，我们可以协助你完成支付。</p>",
-    assets: [],
+    bodyHtml:
+      '<p>你好，我们可以协助你完成支付。</p><img data-mail-asset-id="asset-1" alt="支付说明">',
+    assets: [
+      {
+        id: "asset-1",
+        fileName: "payment-guide.webp",
+        contentType: "image/webp",
+        byteSize: 300,
+        width: 80,
+        height: 60,
+        previewUrl: "/api/mail/assets/asset-1",
+        disposition: "INLINE" as const,
+        cid: "asset-1@righttoken",
+        sortOrder: 0
+      }
+    ],
     active: true
   },
   {
@@ -119,12 +133,18 @@ describe("MailReplyEditor", () => {
     expect(screen.getByLabelText("邮件主题")).toHaveValue(
       "Re: RightToken 支付协助"
     );
-    expect(screen.getByLabelText("邮件正文")).toHaveValue(
+    expect(
+      screen.getByRole("textbox", { name: "邮件正文" })
+    ).toHaveTextContent(
       "你好，我们可以协助你完成支付。"
     );
-    fireEvent.change(screen.getByLabelText("邮件正文"), {
-      target: { value: "你好，我们现在协助你完成支付。" }
+    expect(screen.getByAltText("支付说明")).toBeInTheDocument();
+    const editor = screen.getByRole("textbox", {
+      name: "邮件正文"
     });
+    editor.innerHTML =
+      '<p>你好，我们现在协助你完成支付。</p><img data-mail-asset-id="asset-1" alt="支付说明">';
+    fireEvent.input(editor);
     fireEvent.click(screen.getByRole("button", { name: "发送回复" }));
 
     await waitFor(() => {
@@ -138,6 +158,11 @@ describe("MailReplyEditor", () => {
         })
       );
     });
+    const request = fetchMock.mock.calls.find(
+      ([url]) => url === "/api/mail/reply"
+    )?.[1] as RequestInit;
+    expect(request.body).toContain('"bodyHtml"');
+    expect(request.body).toContain('"asset-1"');
     expect(refresh).toHaveBeenCalled();
   });
 

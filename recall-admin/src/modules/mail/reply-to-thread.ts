@@ -9,6 +9,19 @@ import {
   assertMailSendAllowed,
   MailSendBlockedError
 } from "@/modules/mail/send-guard";
+import {
+  resolveOutboundMailAssets,
+  type OutboundAssetReference
+} from "@/modules/mail/outbound-assets";
+import {
+  getMailAssetStorage
+} from "@/modules/mail/assets/storage-factory";
+import type {
+  MailAssetStorage
+} from "@/modules/mail/assets/types";
+import {
+  plainTextToMailHtml
+} from "@/modules/mail/rich-content";
 
 export type ThreadReplyInput = {
   actorId: string;
@@ -18,6 +31,8 @@ export type ThreadReplyInput = {
   recipient: string;
   subject: string;
   bodyText: string;
+  bodyHtml?: string;
+  assets?: OutboundAssetReference[];
   templateId: string | null;
   minimumContactIntervalMinutes: number;
   now?: Date;
@@ -35,7 +50,10 @@ function uniqueMessageIds(values: Array<string | null>): string[] {
 
 export async function replyToMailThread(
   input: ThreadReplyInput,
-  adapter: Pick<MailboxAdapter, "send">
+  adapter: Pick<MailboxAdapter, "send">,
+  dependencies: {
+    storage?: MailAssetStorage;
+  } = {}
 ): Promise<MailMessage> {
   const now = input.now ?? new Date();
   const recipient = input.recipient.trim().toLowerCase();
@@ -170,6 +188,19 @@ export async function replyToMailThread(
     latest?.inReplyTo ?? null,
     inReplyTo
   ]);
+  const richContent = await resolveOutboundMailAssets(
+    {
+      bodyHtml:
+        input.bodyHtml?.trim() ||
+        plainTextToMailHtml(input.bodyText),
+      assets: input.assets ?? []
+    },
+    {
+      database: prisma,
+      storage:
+        dependencies.storage ?? getMailAssetStorage()
+    }
+  );
   const draft = await prisma.mailMessage.create({
     data: {
       mailboxId: mailbox.id,
@@ -184,9 +215,13 @@ export async function replyToMailThread(
       toAddresses: [recipient],
       subject: input.subject.trim(),
       bodyText: input.bodyText.trim(),
+      bodyHtml: richContent.bodyHtml,
       templateKey: template?.key ?? null,
       templateVersion: template?.version ?? null,
-      reviewedById: actor.id
+      reviewedById: actor.id,
+      assets: {
+        create: richContent.messageAssets
+      }
     }
   });
 
@@ -196,6 +231,8 @@ export async function replyToMailThread(
       to: [recipient],
       subject: draft.subject,
       text: draft.bodyText,
+      html: richContent.html,
+      attachments: richContent.attachments,
       ...(inReplyTo ? { inReplyTo } : {}),
       ...(references.length ? { references } : {})
     });

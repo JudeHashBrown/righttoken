@@ -111,4 +111,58 @@ describe("SMTP/IMAP mailbox adapter", () => {
       })
     );
   });
+
+  it("sends HTML, CID images, and ordinary image attachments", async () => {
+    const sendMail = vi.fn().mockResolvedValue({
+      messageId: "<rich-mail@example.test>"
+    });
+    const config = namecheapMailboxConfig({
+      emailAddress: "support@righttoken.test",
+      displayName: "RightToken 客服",
+      username: "support@righttoken.test",
+      password: "development-only-password"
+    });
+
+    await sendSmtpMessage(
+      config,
+      {
+        to: ["person@example.test"],
+        subject: "图片说明",
+        text: "请查看说明图片。",
+        html: '<p>请查看说明图片。</p><img src="cid:inline@righttoken">',
+        attachments: [
+          {
+            filename: "guide.webp",
+            content: Buffer.from("inline"),
+            contentType: "image/webp",
+            cid: "inline@righttoken",
+            contentDisposition: "inline"
+          },
+          {
+            filename: "receipt.png",
+            content: Buffer.from("attachment"),
+            contentType: "image/png",
+            contentDisposition: "attachment"
+          }
+        ]
+      },
+      vi.fn().mockReturnValue({ sendMail })
+    );
+
+    expect(sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining("cid:inline@righttoken"),
+        attachments: [
+          expect.objectContaining({
+            cid: "inline@righttoken",
+            contentDisposition: "inline"
+          }),
+          expect.objectContaining({
+            filename: "receipt.png",
+            contentDisposition: "attachment"
+          })
+        ]
+      })
+    );
+  });
 });

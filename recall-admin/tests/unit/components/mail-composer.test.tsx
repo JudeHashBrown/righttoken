@@ -103,6 +103,13 @@ describe("MailComposer", () => {
         body: expect.stringContaining('"taskId":"task-1"')
       })
     );
+    const request = fetchMock.mock.calls.find(
+      ([url]) => url === "/api/mail/send"
+    )?.[1] as RequestInit;
+    expect(request.body).toContain(
+      '"bodyHtml":"<p>你好，我们可以协助你。</p>"'
+    );
+    expect(request.body).toContain('"assets":[]');
   });
 
   it("submits an edited recipient and resets it when the task changes", async () => {

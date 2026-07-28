@@ -96,7 +96,9 @@ describe("reviewed user mail", () => {
     expect(adapter.send).toHaveBeenCalledWith({
       to: [expect.stringMatching(/@example\.test$/)],
       subject: "RightToken 首次使用提醒",
-      text: "你好，我们可以协助你完成首次支付。"
+      text: "你好，我们可以协助你完成首次支付。",
+      html: "<p>你好，我们可以协助你完成首次支付。</p>",
+      attachments: []
     });
     expect(sent).toMatchObject({
       status: "SENT",
@@ -143,7 +145,9 @@ describe("reviewed user mail", () => {
     expect(adapter.send).toHaveBeenCalledWith({
       to: [recipient],
       subject: "RightToken 邮箱联调",
-      text: "这是一封人工确认的联调邮件。"
+      text: "这是一封人工确认的联调邮件。",
+      html: "<p>这是一封人工确认的联调邮件。</p>",
+      attachments: []
     });
     expect(sent).toMatchObject({
       taskId,
