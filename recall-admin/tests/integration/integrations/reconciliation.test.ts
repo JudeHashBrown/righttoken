@@ -117,7 +117,8 @@ describe("RightToken user reconciliation", () => {
           balanceMinor: 44,
           balanceCurrency: "EUR",
           balanceUsdMinor: 49,
-          anomalyActive: false
+          anomalyActive: false,
+          anomalyChangedAt: null
         }
       ]),
       scheduler,
@@ -187,7 +188,8 @@ describe("RightToken user reconciliation", () => {
           successfulCallCount: 0,
           lastCallAt: null,
           balanceMinor: 0,
-          anomalyActive: false
+          anomalyActive: false,
+          anomalyChangedAt: null
         }
       ])
     });
@@ -249,7 +251,8 @@ describe("RightToken user reconciliation", () => {
           successfulCallCount: 0,
           lastCallAt: null,
           balanceMinor: 0,
-          anomalyActive: false
+          anomalyActive: false,
+          anomalyChangedAt: null
         }
       ]),
       now: deletedAt
@@ -298,7 +301,8 @@ describe("RightToken user reconciliation", () => {
           successfulCallCount: 0,
           lastCallAt: null,
           balanceMinor: 0,
-          anomalyActive: false
+          anomalyActive: false,
+          anomalyChangedAt: null
         }
       ]),
       now: new Date("2026-07-24T02:00:00.000Z")
