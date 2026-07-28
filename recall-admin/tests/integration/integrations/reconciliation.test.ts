@@ -202,6 +202,69 @@ describe("RightToken user reconciliation", () => {
     expect(stored.balanceMinor).toBe(99_000);
   });
 
+  it("preserves the anomaly trigger time across later profile updates", async () => {
+    const externalUserId = `reconcile-anomaly-time-${randomUUID()}`;
+    externalUserIds.push(externalUserId);
+    const anomalyChangedAt = new Date("2026-07-24T15:53:00.000Z");
+
+    const snapshot = {
+      externalUserId,
+      email: `${externalUserId}@example.test`,
+      displayName: "异常时间测试用户",
+      registeredAt: new Date("2026-07-20T00:00:00.000Z"),
+      updatedAt: new Date("2026-07-24T16:00:00.000Z"),
+      registrationIp: null,
+      countryCode: null,
+      region: null,
+      language: null,
+      timezone: null,
+      source: null,
+      checkoutStartedAt: null,
+      firstPaidAt: new Date("2026-07-20T01:00:00.000Z"),
+      totalPaidMinor: 1_000,
+      successfulCallCount: 5,
+      lastCallAt: new Date("2026-07-24T15:53:00.000Z"),
+      balanceMinor: 1_000,
+      anomalyActive: true,
+      anomalyChangedAt
+    };
+
+    await reconcileRightTokenUsers({
+      adapter: adapter([snapshot]),
+      now: new Date("2026-07-24T16:01:00.000Z")
+    });
+
+    await expect(
+      prisma.userProfile.findUniqueOrThrow({
+        where: { externalUserId }
+      })
+    ).resolves.toMatchObject({
+      anomalyActive: true,
+      anomalyChangedAt
+    });
+
+    await reconcileRightTokenUsers({
+      adapter: adapter([
+        {
+          ...snapshot,
+          displayName: "仅更新资料后的用户",
+          updatedAt: new Date("2026-07-24T16:05:00.000Z")
+        }
+      ]),
+      now: new Date("2026-07-24T16:06:00.000Z")
+    });
+
+    await expect(
+      prisma.userProfile.findUniqueOrThrow({
+        where: { externalUserId }
+      })
+    ).resolves.toMatchObject({
+      displayName: "仅更新资料后的用户",
+      anomalyActive: true,
+      anomalyChangedAt
+    });
+  });
+
   it("tombstones soft-deleted users and cancels their open work", async () => {
     const externalUserId = `reconcile-deleted-${randomUUID()}`;
     externalUserIds.push(externalUserId);
