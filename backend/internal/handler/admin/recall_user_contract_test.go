@@ -66,6 +66,238 @@ func TestRecallUserExportAgainstMigratedPostgres(t *testing.T) {
 	require.Equal(t, "USD", exported.BalanceCurrency)
 	require.Equal(t, int64(1234), exported.BalanceUSDMinor)
 	require.True(t, exported.AnomalyActive)
+	require.Equal(
+		t,
+		fixture.anomalyChangedAt.UTC(),
+		exported.AnomalyChangedAt.UTC(),
+	)
+}
+
+func TestRecallStrictAnomalyLifecycleAgainstMigratedPostgres(t *testing.T) {
+	dsn := os.Getenv("RECALL_CONTRACT_DATABASE_URL")
+	if dsn == "" {
+		t.Skip("RECALL_CONTRACT_DATABASE_URL is not configured")
+	}
+
+	db, err := sql.Open("postgres", dsn)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	t.Cleanup(cancel)
+	require.NoError(t, db.PingContext(ctx))
+	require.NoError(t, repository.ApplyMigrations(ctx, db))
+
+	fixture := insertRecallContractFixture(t, db)
+	t.Cleanup(func() { deleteRecallContractFixture(db, fixture) })
+	anchor := time.Now().UTC().Truncate(time.Second).Add(-10 * time.Minute)
+
+	success := func(offset time.Duration) contractRequestEvent {
+		return contractRequestEvent{offset: offset, success: true}
+	}
+	failure := func(offset time.Duration) contractRequestEvent {
+		return contractRequestEvent{
+			offset:     offset,
+			statusCode: 500,
+			errorPhase: "upstream",
+			errorType:  "upstream_error",
+			errorOwner: "provider",
+		}
+	}
+	durationPointer := func(value time.Duration) *time.Duration {
+		return &value
+	}
+
+	tests := []struct {
+		name              string
+		events            []contractRequestEvent
+		wantActive        bool
+		wantChangedOffset *time.Duration
+	}{
+		{
+			name: "two isolated failures do not trigger",
+			events: []contractRequestEvent{
+				failure(0),
+				failure(time.Minute),
+			},
+			wantActive: false,
+		},
+		{
+			name: "three consecutive failures trigger",
+			events: []contractRequestEvent{
+				failure(0),
+				failure(time.Minute),
+				failure(2 * time.Minute),
+			},
+			wantActive:        true,
+			wantChangedOffset: durationPointer(2 * time.Minute),
+		},
+		{
+			name: "two failures out of three requests trigger",
+			events: []contractRequestEvent{
+				failure(0),
+				success(time.Minute),
+				failure(2 * time.Minute),
+			},
+			wantActive:        true,
+			wantChangedOffset: durationPointer(2 * time.Minute),
+		},
+		{
+			name: "failure rate below fifty percent does not trigger",
+			events: []contractRequestEvent{
+				failure(0),
+				success(time.Minute),
+				success(2 * time.Minute),
+			},
+			wantActive: false,
+		},
+		{
+			name: "three consecutive successes recover",
+			events: []contractRequestEvent{
+				failure(0),
+				failure(time.Minute),
+				failure(2 * time.Minute),
+				success(3 * time.Minute),
+				success(4 * time.Minute),
+				success(5 * time.Minute),
+			},
+			wantActive:        false,
+			wantChangedOffset: durationPointer(5 * time.Minute),
+		},
+		{
+			name: "two successes do not recover",
+			events: []contractRequestEvent{
+				failure(0),
+				failure(time.Minute),
+				failure(2 * time.Minute),
+				success(3 * time.Minute),
+				success(4 * time.Minute),
+			},
+			wantActive:        true,
+			wantChangedOffset: durationPointer(2 * time.Minute),
+		},
+		{
+			name: "recovered upstream attempts do not count",
+			events: []contractRequestEvent{
+				{
+					offset:     0,
+					statusCode: 200,
+					errorPhase: "upstream",
+					errorType:  "upstream_error",
+					errorOwner: "provider",
+				},
+				{
+					offset:     time.Minute,
+					statusCode: 200,
+					errorPhase: "upstream",
+					errorType:  "upstream_error",
+					errorOwner: "provider",
+				},
+				{
+					offset:     2 * time.Minute,
+					statusCode: 200,
+					errorPhase: "upstream",
+					errorType:  "upstream_error",
+					errorOwner: "provider",
+				},
+			},
+			wantActive: false,
+		},
+		{
+			name: "business and client failures do not count",
+			events: []contractRequestEvent{
+				{
+					offset:          0,
+					statusCode:      402,
+					errorPhase:      "request",
+					errorType:       "billing_error",
+					errorOwner:      "client",
+					businessLimited: true,
+				},
+				{
+					offset:     time.Minute,
+					statusCode: 401,
+					errorPhase: "auth",
+					errorType:  "authentication_error",
+					errorOwner: "client",
+				},
+				{
+					offset:     2 * time.Minute,
+					statusCode: 400,
+					errorPhase: "request",
+					errorType:  "invalid_request_error",
+					errorOwner: "client",
+				},
+				{
+					offset:     3 * time.Minute,
+					statusCode: 429,
+					errorPhase: "request",
+					errorType:  "rate_limit_error",
+					errorOwner: "client",
+				},
+			},
+			wantActive: false,
+		},
+		{
+			name: "trigger older than twenty four hours expires",
+			events: []contractRequestEvent{
+				failure(-25 * time.Hour),
+				failure(-25*time.Hour + time.Minute),
+				failure(-25*time.Hour + 2*time.Minute),
+			},
+			wantActive: false,
+		},
+		{
+			name: "new trigger refreshes the lifetime",
+			events: []contractRequestEvent{
+				failure(-23 * time.Hour),
+				failure(-23*time.Hour + time.Minute),
+				failure(-23*time.Hour + 2*time.Minute),
+				failure(0),
+				failure(time.Minute),
+				failure(2 * time.Minute),
+			},
+			wantActive:        true,
+			wantChangedOffset: durationPointer(2 * time.Minute),
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			resetRecallContractEvents(t, db, fixture.userID)
+			insertRecallContractEvents(t, db, fixture, anchor, test.events)
+
+			users, err := (&sqlRecallUserStore{db: db}).ListRecallUsers(
+				ctx,
+				time.Unix(0, 0).UTC(),
+				0,
+				100,
+			)
+			require.NoError(t, err)
+			exported := findRecallSnapshot(t, users, fixture.userID)
+			require.Equal(t, test.wantActive, exported.AnomalyActive)
+			if test.wantChangedOffset == nil {
+				require.Nil(t, exported.AnomalyChangedAt)
+			} else {
+				require.NotNil(t, exported.AnomalyChangedAt)
+				require.Equal(
+					t,
+					anchor.Add(*test.wantChangedOffset),
+					exported.AnomalyChangedAt.UTC(),
+				)
+			}
+		})
+	}
+}
+
+type contractRequestEvent struct {
+	offset          time.Duration
+	success         bool
+	statusCode      int
+	errorPhase      string
+	errorType       string
+	errorOwner      string
+	businessLimited bool
 }
 
 type recallContractFixture struct {
@@ -76,6 +308,67 @@ type recallContractFixture struct {
 	email             string
 	checkoutStartedAt time.Time
 	firstPaidAt       time.Time
+	anomalyChangedAt  time.Time
+}
+
+func resetRecallContractEvents(
+	t *testing.T,
+	db *sql.DB,
+	userID int64,
+) {
+	t.Helper()
+	_, err := db.Exec("DELETE FROM ops_error_logs WHERE user_id = $1", userID)
+	require.NoError(t, err)
+	_, err = db.Exec("DELETE FROM usage_logs WHERE user_id = $1", userID)
+	require.NoError(t, err)
+}
+
+func insertRecallContractEvents(
+	t *testing.T,
+	db *sql.DB,
+	fixture recallContractFixture,
+	anchor time.Time,
+	events []contractRequestEvent,
+) {
+	t.Helper()
+	for _, event := range events {
+		occurredAt := anchor.Add(event.offset)
+		if event.success {
+			_, err := db.Exec(`
+				INSERT INTO usage_logs (
+					user_id, api_key_id, account_id, model, ip_address, created_at
+				)
+				VALUES ($1, $2, $3, 'gpt-5', '198.51.100.9', $4)
+			`, fixture.userID, fixture.apiKeyID, fixture.accountID, occurredAt)
+			require.NoError(t, err)
+			continue
+		}
+		_, err := db.Exec(`
+			INSERT INTO ops_error_logs (
+				user_id, error_phase, error_type, error_owner, severity,
+				status_code, is_business_limited, resolved, created_at
+			)
+			VALUES ($1, $2, $3, $4, 'P1', $5, $6, false, $7)
+		`, fixture.userID, event.errorPhase, event.errorType,
+			event.errorOwner, event.statusCode, event.businessLimited,
+			occurredAt)
+		require.NoError(t, err)
+	}
+}
+
+func findRecallSnapshot(
+	t *testing.T,
+	users []recallUserSnapshot,
+	userID int64,
+) *recallUserSnapshot {
+	t.Helper()
+	for index := range users {
+		if users[index].userID == userID {
+			return &users[index]
+		}
+	}
+	require.FailNow(t, "recall snapshot was not exported")
+	return nil
 }
 
 func insertRecallContractFixture(
@@ -89,6 +382,7 @@ func insertRecallContractFixture(
 		email:             fmt.Sprintf("recall-contract-%d@example.test", now.UnixNano()),
 		checkoutStartedAt: now.Add(-2 * time.Hour),
 		firstPaidAt:       now.Add(-90 * time.Minute),
+		anomalyChangedAt:  now.Add(4 * time.Minute),
 	}
 
 	require.NoError(t, db.QueryRow(`
@@ -142,14 +436,19 @@ func insertRecallContractFixture(
 		require.NoError(t, err)
 	}
 
-	_, err := db.Exec(`
-		INSERT INTO ops_error_logs (
-			user_id, error_phase, error_type, severity, is_business_limited,
-			resolved, created_at
-		)
-		VALUES ($1, 'upstream', 'provider_error', 'P1', false, false, $2)
-	`, fixture.userID, now)
-	require.NoError(t, err)
+	for offset := range 3 {
+		_, err := db.Exec(`
+			INSERT INTO ops_error_logs (
+				user_id, error_phase, error_type, error_owner, severity,
+				status_code, is_business_limited, resolved, created_at
+			)
+			VALUES (
+				$1, 'upstream', 'upstream_error', 'provider', 'P1',
+				500, false, false, $2
+			)
+		`, fixture.userID, now.Add(time.Duration(offset+2)*time.Minute))
+		require.NoError(t, err)
+	}
 
 	return fixture
 }

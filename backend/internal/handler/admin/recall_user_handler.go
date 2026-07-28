@@ -48,6 +48,7 @@ type recallUserSnapshot struct {
 	BalanceCurrency     string     `json:"balanceCurrency"`
 	BalanceUSDMinor     int64      `json:"balanceUsdMinor"`
 	AnomalyActive       bool       `json:"anomalyActive"`
+	AnomalyChangedAt    *time.Time `json:"anomalyChangedAt"`
 
 	userID int64
 }
@@ -260,21 +261,138 @@ first_usage_ip AS (
     WHERE NULLIF(ul.ip_address, '') IS NOT NULL
     ORDER BY ul.user_id, ul.created_at ASC, ul.id ASC
 ),
-anomaly_stats AS (
+final_request_events AS (
+    SELECT
+        ul.user_id,
+        ul.created_at,
+        ul.id AS event_id,
+        0 AS source_order,
+        false AS failed
+    FROM usage_logs ul
+    JOIN changed_user_ids changed ON changed.user_id = ul.user_id
+    WHERE ul.created_at >= NOW() - INTERVAL '24 hours 30 minutes'
+    UNION ALL
     SELECT
         error_log.user_id,
-        BOOL_OR(
-            COALESCE(error_log.resolved, false) = false
-            AND COALESCE(error_log.is_business_limited, false) = false
-            AND error_log.severity IN ('P0', 'P1')
-        ) AS anomaly_active,
-        MAX(COALESCE(error_log.resolved_at, error_log.created_at))
-            AS anomaly_updated_at
+        error_log.created_at,
+        error_log.id AS event_id,
+        1 AS source_order,
+        true AS failed
     FROM ops_error_logs error_log
     JOIN changed_user_ids changed
       ON changed.user_id = error_log.user_id
     WHERE error_log.user_id IS NOT NULL
-    GROUP BY error_log.user_id
+      AND error_log.created_at >= NOW() - INTERVAL '24 hours 30 minutes'
+      AND error_log.status_code >= 400
+      AND COALESCE(error_log.is_business_limited, false) = false
+      AND COALESCE(error_log.error_owner, 'platform') <> 'client'
+      AND COALESCE(error_log.error_phase, 'internal') NOT IN ('request', 'auth')
+      AND COALESCE(error_log.error_type, '') NOT IN (
+          'invalid_request_error',
+          'authentication_error',
+          'billing_error',
+          'subscription_error'
+      )
+),
+request_event_transitions AS (
+    SELECT
+        event.*,
+        CASE
+            WHEN LAG(event.failed) OVER (
+                PARTITION BY event.user_id
+                ORDER BY event.created_at, event.source_order, event.event_id
+            ) IS DISTINCT FROM event.failed
+            THEN 1
+            ELSE 0
+        END AS starts_new_run
+    FROM final_request_events event
+),
+request_event_windows AS (
+    SELECT
+        event.*,
+        SUM(event.starts_new_run) OVER (
+            PARTITION BY event.user_id
+            ORDER BY event.created_at, event.source_order, event.event_id
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS run_id,
+        COUNT(*) OVER (
+            PARTITION BY event.user_id
+            ORDER BY event.created_at
+            RANGE BETWEEN INTERVAL '30 minutes' PRECEDING AND CURRENT ROW
+        ) AS request_count,
+        COUNT(*) FILTER (WHERE event.failed) OVER (
+            PARTITION BY event.user_id
+            ORDER BY event.created_at
+            RANGE BETWEEN INTERVAL '30 minutes' PRECEDING AND CURRENT ROW
+        ) AS failure_count
+    FROM request_event_transitions event
+),
+request_event_metrics AS (
+    SELECT
+        event.*,
+        CASE
+            WHEN event.failed THEN COUNT(*) OVER (
+                PARTITION BY event.user_id, event.run_id
+                ORDER BY event.created_at, event.source_order, event.event_id
+                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+            )
+            ELSE 0
+        END AS consecutive_failures,
+        CASE
+            WHEN NOT event.failed THEN COUNT(*) OVER (
+                PARTITION BY event.user_id, event.run_id
+                ORDER BY event.created_at, event.source_order, event.event_id
+                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+            )
+            ELSE 0
+        END AS consecutive_successes
+    FROM request_event_windows event
+),
+request_state_markers AS (
+    SELECT
+        event.user_id,
+        event.created_at,
+        event.source_order,
+        event.event_id,
+        CASE
+            WHEN event.failed
+              AND (
+                  event.consecutive_failures >= 3
+                  OR (
+                      event.request_count >= 3
+                      AND event.failure_count * 2 >= event.request_count
+                  )
+              )
+            THEN true
+            WHEN NOT event.failed
+              AND event.consecutive_successes >= 3
+            THEN false
+            ELSE NULL
+        END AS anomaly_active
+    FROM request_event_metrics event
+    WHERE event.created_at >= NOW() - INTERVAL '24 hours'
+),
+latest_anomaly_state AS (
+    SELECT DISTINCT ON (marker.user_id)
+        marker.user_id,
+        marker.anomaly_active,
+        marker.created_at AS anomaly_changed_at
+    FROM request_state_markers marker
+    WHERE marker.anomaly_active IS NOT NULL
+    ORDER BY
+        marker.user_id,
+        marker.created_at DESC,
+        marker.source_order DESC,
+        marker.event_id DESC
+),
+anomaly_stats AS (
+    SELECT
+        state.user_id,
+        state.anomaly_active
+          AND state.anomaly_changed_at >= NOW() - INTERVAL '24 hours'
+          AS anomaly_active,
+        state.anomaly_changed_at
+    FROM latest_anomaly_state state
 ),
 snapshots AS (
     SELECT
@@ -286,7 +404,7 @@ snapshots AS (
             u.updated_at,
             COALESCE(ps.payment_updated_at, u.updated_at),
             COALESCE(us.last_call_at, u.updated_at),
-            COALESCE(ans.anomaly_updated_at, u.updated_at)
+            COALESCE(ans.anomaly_changed_at, u.updated_at)
         ) AS effective_updated_at,
         COALESCE(
             NULLIF(u.registration_ip, ''),
@@ -303,7 +421,8 @@ snapshots AS (
         COALESCE(us.successful_call_count, 0)::bigint AS successful_call_count,
         us.last_call_at,
         ROUND(u.balance * 100)::bigint AS balance_minor,
-        COALESCE(ans.anomaly_active, false) AS anomaly_active
+        COALESCE(ans.anomaly_active, false) AS anomaly_active,
+        ans.anomaly_changed_at
     FROM users u
     JOIN changed_user_ids changed ON changed.user_id = u.id
     LEFT JOIN payment_stats ps ON ps.user_id = u.id
@@ -326,7 +445,8 @@ SELECT
     successful_call_count,
     last_call_at,
     balance_minor,
-    anomaly_active
+    anomaly_active,
+    anomaly_changed_at
 FROM snapshots
 WHERE (effective_updated_at, id) > ($1, $2)
 ORDER BY effective_updated_at ASC, id ASC
@@ -358,6 +478,7 @@ func (s *sqlRecallUserStore) ListRecallUsers(
 		var checkoutStartedAt sql.NullTime
 		var firstPaidAt sql.NullTime
 		var lastCallAt sql.NullTime
+		var anomalyChangedAt sql.NullTime
 
 		if err := rows.Scan(
 			&user.userID,
@@ -373,6 +494,7 @@ func (s *sqlRecallUserStore) ListRecallUsers(
 			&lastCallAt,
 			&user.BalanceMinor,
 			&user.AnomalyActive,
+			&anomalyChangedAt,
 		); err != nil {
 			return nil, fmt.Errorf("scan recall user: %w", err)
 		}
@@ -383,6 +505,7 @@ func (s *sqlRecallUserStore) ListRecallUsers(
 		user.CheckoutStartedAt = nullTimePointer(checkoutStartedAt)
 		user.FirstPaidAt = nullTimePointer(firstPaidAt)
 		user.LastCallAt = nullTimePointer(lastCallAt)
+		user.AnomalyChangedAt = nullTimePointer(anomalyChangedAt)
 		user.TotalPaidCurrency = "USD"
 		user.BalanceCurrency = "USD"
 		user.BalanceUSDMinor = user.BalanceMinor

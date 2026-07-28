@@ -22,12 +22,26 @@ func TestRecallUserQueryUsesDocumentedBusinessFacts(t *testing.T) {
 	require.Contains(t, listRecallUsersQuery, "JOIN changed_user_ids")
 	require.Contains(t, listRecallUsersQuery, "FROM usage_logs")
 	require.Contains(t, listRecallUsersQuery, "FROM ops_error_logs")
-	require.Contains(t, listRecallUsersQuery, "COALESCE(error_log.resolved, false) = false")
-	require.Contains(t, listRecallUsersQuery, "error_log.severity IN ('P0', 'P1')")
 	require.Contains(t, listRecallUsersQuery, "po.amount - COALESCE(po.refund_amount, 0)")
 	require.Contains(t, listRecallUsersQuery, "ps.total_paid_cny / 7.0 * 100")
 	require.NotContains(t, listRecallUsersQuery, "pay_amount")
 	require.NotContains(t, strings.ToLower(listRecallUsersQuery), "select *")
+}
+
+func TestRecallUserQueryUsesStrictAnomalyStateMachine(t *testing.T) {
+	require.Contains(t, listRecallUsersQuery, "final_request_events AS")
+	require.Contains(t, listRecallUsersQuery, "error_log.status_code >= 400")
+	require.Contains(t, listRecallUsersQuery, "INTERVAL '30 minutes'")
+	require.Contains(t, listRecallUsersQuery, "event.consecutive_failures >= 3")
+	require.Contains(t, listRecallUsersQuery, "event.failure_count * 2 >= event.request_count")
+	require.Contains(t, listRecallUsersQuery, "event.consecutive_successes >= 3")
+	require.Contains(t, listRecallUsersQuery, "INTERVAL '24 hours'")
+	require.Contains(t, listRecallUsersQuery, "anomaly_changed_at")
+	require.NotContains(
+		t,
+		listRecallUsersQuery,
+		"COALESCE(error_log.resolved, false) = false",
+	)
 }
 
 func TestMinorUnitsRoundsDecimalBoundaries(t *testing.T) {
