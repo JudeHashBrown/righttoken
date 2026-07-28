@@ -24,6 +24,7 @@ export type RightTokenUserSnapshot = {
   balanceCurrency?: string;
   balanceUsdMinor?: number;
   anomalyActive: boolean;
+  anomalyChangedAt: Date | null;
 };
 
 export const rightTokenUserSnapshotSchema = z.object({
@@ -58,7 +59,8 @@ export const rightTokenUserSnapshotSchema = z.object({
     .transform((value) => value.toUpperCase())
     .default("USD"),
   balanceUsdMinor: z.number().int().optional(),
-  anomalyActive: z.boolean()
+  anomalyActive: z.boolean(),
+  anomalyChangedAt: z.coerce.date().nullable()
 }).transform((snapshot) => ({
   ...snapshot,
   balanceUsdMinor:
