@@ -321,8 +321,12 @@ export async function reconcileRightTokenUsers(input: {
       }))
     );
 
-    const pageOutcome = await prisma.$transaction((tx) =>
-      reconcilePage(tx, attributedSnapshots, now)
+    const pageOutcome = await prisma.$transaction(
+      (tx) => reconcilePage(tx, attributedSnapshots, now),
+      {
+        maxWait: 10_000,
+        timeout: 120_000
+      }
     );
     result.inserted += pageOutcome.inserted;
     result.updated += pageOutcome.updated;
