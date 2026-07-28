@@ -10,6 +10,7 @@ export type InboundReplyCandidate = {
 
 export type OutboundReplyCandidate = {
   threadId: string;
+  taskId: string | null;
   providerMessageId: string | null;
   recipientAddress: string;
   mailboxAddress: string;
@@ -18,7 +19,11 @@ export type OutboundReplyCandidate = {
 };
 
 export type ReplyMatch =
-  | { kind: "MATCHED"; threadId: string }
+  | {
+      kind: "MATCHED";
+      threadId: string;
+      taskId: string | null;
+    }
   | {
       kind: "UNMATCHED";
       reason: "NO_MATCH" | "AMBIGUOUS_FALLBACK";
@@ -51,7 +56,11 @@ export function matchInboundReply(
       directIds.has(message.providerMessageId)
   );
   if (direct) {
-    return { kind: "MATCHED", threadId: direct.threadId };
+    return {
+      kind: "MATCHED",
+      threadId: direct.threadId,
+      taskId: direct.taskId
+    };
   }
 
   const earliest = new Date(
@@ -68,7 +77,11 @@ export function matchInboundReply(
       subjectStem(message.subject) === subjectStem(inbound.subject)
   );
   if (fallback.length === 1) {
-    return { kind: "MATCHED", threadId: fallback[0]!.threadId };
+    return {
+      kind: "MATCHED",
+      threadId: fallback[0]!.threadId,
+      taskId: fallback[0]!.taskId
+    };
   }
   return {
     kind: "UNMATCHED",

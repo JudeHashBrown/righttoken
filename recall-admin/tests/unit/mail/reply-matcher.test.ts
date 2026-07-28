@@ -4,6 +4,7 @@ import { matchInboundReply } from "@/modules/mail/reply-matcher";
 const messages = [
   {
     threadId: "thread-1",
+    taskId: "task-1",
     providerMessageId: "<outbound-1@example.test>",
     recipientAddress: "person@example.test",
     mailboxAddress: "support@righttoken.test",
@@ -12,6 +13,7 @@ const messages = [
   },
   {
     threadId: "thread-2",
+    taskId: null,
     providerMessageId: "<outbound-2@example.test>",
     recipientAddress: "other@example.test",
     mailboxAddress: "support@righttoken.test",
@@ -35,7 +37,11 @@ describe("matchInboundReply", () => {
         },
         messages
       )
-    ).toEqual({ kind: "MATCHED", threadId: "thread-1" });
+    ).toEqual({
+      kind: "MATCHED",
+      threadId: "thread-1",
+      taskId: "task-1"
+    });
   });
 
   it("matches a unique sender, mailbox and subject stem within 30 days", () => {
@@ -52,7 +58,11 @@ describe("matchInboundReply", () => {
         },
         messages
       )
-    ).toEqual({ kind: "MATCHED", threadId: "thread-1" });
+    ).toEqual({
+      kind: "MATCHED",
+      threadId: "thread-1",
+      taskId: "task-1"
+    });
   });
 
   it("leaves ambiguous sender and subject matches unmatched", () => {
