@@ -29,13 +29,13 @@ test.beforeAll(async () => {
   sessionToken = randomBytes(32).toString("base64url");
   const now = new Date();
   await pool.query(
-    `INSERT INTO "Member"
+    `INSERT INTO recall."Member"
       ("id", "email", "displayName", "passwordHash", "role", "updatedAt")
      VALUES ($1, $2, 'E2E 管理员', 'not-used-in-this-test', 'ADMIN', $3)`,
     [memberId, `e2e-admin-${randomUUID()}@example.test`, now]
   );
   await pool.query(
-    `INSERT INTO "Session"
+    `INSERT INTO recall."Session"
       ("id", "memberId", "tokenHash", "expiresAt")
      VALUES ($1, $2, $3, $4)`,
     [
@@ -49,7 +49,7 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   if (memberId) {
-    await pool.query(`DELETE FROM "Member" WHERE "id" = $1`, [
+    await pool.query(`DELETE FROM recall."Member" WHERE "id" = $1`, [
       memberId
     ]);
   }
@@ -117,7 +117,7 @@ test("every administrator navigation item opens a real page", async ({
     }
     if (route.path === "/members") {
       await expect(
-        page.getByRole("button", { name: "创建邀请" })
+        page.getByRole("button", { name: "添加成员" })
       ).toBeVisible();
     }
     if (route.path === "/reports") {

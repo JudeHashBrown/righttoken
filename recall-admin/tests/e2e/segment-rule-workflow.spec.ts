@@ -17,13 +17,13 @@ test.beforeAll(async () => {
   sessionToken = randomBytes(32).toString("base64url");
   const now = new Date();
   await pool.query(
-    `INSERT INTO "Member"
+    `INSERT INTO recall."Member"
       ("id", "email", "displayName", "passwordHash", "role", "updatedAt")
      VALUES ($1, $2, '规则 E2E 管理员', 'not-used', 'ADMIN', $3)`,
     [memberId, `segment-e2e-${randomUUID()}@example.test`, now]
   );
   await pool.query(
-    `INSERT INTO "Session"
+    `INSERT INTO recall."Session"
       ("id", "memberId", "tokenHash", "expiresAt")
      VALUES ($1, $2, $3, $4)`,
     [
@@ -37,7 +37,7 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   if (memberId) {
-    await pool.query(`DELETE FROM "Member" WHERE "id" = $1`, [
+    await pool.query(`DELETE FROM recall."Member" WHERE "id" = $1`, [
       memberId
     ]);
   }
@@ -158,7 +158,11 @@ test("administrator previews, publishes and inspects history", async ({
     )
   ).toHaveCount(0);
   await expect(page.getByText("互斥分配逻辑")).toHaveCount(0);
-  await page.getByRole("button", { name: /^A12 人/ }).click();
+  await page
+    .getByRole("group", { name: "用户分组导航" })
+    .getByRole("button")
+    .filter({ hasText: /^A/ })
+    .click();
   await page
     .getByLabel("A 组注释")
     .fill("注册后未支付，需要重点跟进");
