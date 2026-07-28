@@ -17,6 +17,11 @@ import {
 vi.mock("server-only", () => ({}));
 
 describe("scoped mail workspace query", () => {
+  const noCompose = {
+    compose: false,
+    composeUserId: null,
+    composeTaskId: null
+  } as const;
   let adminId: string;
   let operatorId: string;
   let otherOperatorId: string;
@@ -247,7 +252,7 @@ describe("scoped mail workspace query", () => {
   it("limits an operator to their own conversations", async () => {
     const data = await getMailWorkspaceData(
       { id: operatorId, role: "OPERATOR" },
-      { view: "replies", selectedId: null }
+      { view: "replies", selectedId: null, ...noCompose }
     );
 
     expect(data.items.some((item) => item.id === ownThreadId)).toBe(
@@ -260,7 +265,7 @@ describe("scoped mail workspace query", () => {
 
     const pendingData = await getMailWorkspaceData(
       { id: operatorId, role: "OPERATOR" },
-      { view: "pending", selectedId: null }
+      { view: "pending", selectedId: null, ...noCompose }
     );
     expect(pendingData.stats.openReplyTasks).toBe(
       pendingData.items.length
@@ -270,7 +275,11 @@ describe("scoped mail workspace query", () => {
   it("lets an admin see all conversations and full selected body", async () => {
     const data = await getMailWorkspaceData(
       { id: adminId, role: "ADMIN" },
-      { view: "replies", selectedId: ownThreadId }
+      {
+        view: "replies",
+        selectedId: ownThreadId,
+        ...noCompose
+      }
     );
 
     expect(data.items.some((item) => item.id === ownThreadId)).toBe(
@@ -321,7 +330,11 @@ describe("scoped mail workspace query", () => {
 
     const data = await getMailWorkspaceData(
       { id: adminId, role: "ADMIN" },
-      { view: "mailboxes", selectedId: mailboxId }
+      {
+        view: "mailboxes",
+        selectedId: mailboxId,
+        ...noCompose
+      }
     );
 
     expect(
