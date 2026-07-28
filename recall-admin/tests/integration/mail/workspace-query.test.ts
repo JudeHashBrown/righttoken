@@ -167,6 +167,18 @@ describe("scoped mail workspace query", () => {
           status: "TODO",
           assigneeId: otherOperatorId,
           dueAt: new Date("2026-07-27T13:30:00.000Z")
+        },
+        {
+          userId: ownUserId,
+          origin: "EMAIL_REPLY",
+          triggerKey: `workspace-orphan-${randomUUID()}`,
+          ruleVersion: 1,
+          title: "没有独立会话的重复回复任务",
+          reason: "用于验证统计与会话列表保持一致",
+          priority: "IMPORTANT",
+          status: "TODO",
+          assigneeId: operatorId,
+          dueAt: new Date("2026-07-27T14:00:00.000Z")
         }
       ]
     });
@@ -215,6 +227,15 @@ describe("scoped mail workspace query", () => {
     expect(
       data.items.some((item) => item.id === otherThreadId)
     ).toBe(false);
+    expect(data.stats.replyTasks).toBe(data.items.length);
+
+    const pendingData = await getMailWorkspaceData(
+      { id: operatorId, role: "OPERATOR" },
+      { view: "pending", selectedId: null }
+    );
+    expect(pendingData.stats.openReplyTasks).toBe(
+      pendingData.items.length
+    );
   });
 
   it("lets an admin see all conversations and full selected body", async () => {

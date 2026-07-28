@@ -21,9 +21,9 @@ export function MailStatLinks({
   const cards = [
     {
       href: "/mail?view=replies",
-      label: "邮件回复任务",
+      label: "邮件会话",
       value: String(stats.replyTasks),
-      detail: "由用户回复自动创建"
+      detail: "查看用户来信与历史往来"
     },
     {
       href: "/mail?view=pending",

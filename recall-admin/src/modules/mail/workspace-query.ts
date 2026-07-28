@@ -48,6 +48,31 @@ function messageScope(viewer: WorkspaceViewer) {
     : {};
 }
 
+function threadScope(
+  viewer: WorkspaceViewer,
+  pending: boolean
+) {
+  return {
+    user: {
+      ...userScope(viewer),
+      ...(pending
+        ? {
+            tasks: {
+              some: {
+                ...taskScope(viewer),
+                origin: "EMAIL_REPLY" as const,
+                status: { in: openStatuses }
+              }
+            }
+          }
+        : {})
+    },
+    messages: {
+      some: { direction: "INBOUND" as const }
+    }
+  };
+}
+
 function iso(value: Date | null | undefined): string | null {
   return value?.toISOString() ?? null;
 }
@@ -60,7 +85,6 @@ export async function getMailWorkspaceData(
   viewer: WorkspaceViewer,
   filter: MailWorkspaceFilter
 ) {
-  const tasks = taskScope(viewer);
   const users = userScope(viewer);
   const messages = messageScope(viewer);
   const [
@@ -73,15 +97,11 @@ export async function getMailWorkspaceData(
     failedMessages,
     templates
   ] = await Promise.all([
-    prisma.recallTask.count({
-      where: { ...tasks, origin: "EMAIL_REPLY" }
+    prisma.mailThread.count({
+      where: threadScope(viewer, false)
     }),
-    prisma.recallTask.count({
-      where: {
-        ...tasks,
-        origin: "EMAIL_REPLY",
-        status: { in: openStatuses }
-      }
+    prisma.mailThread.count({
+      where: threadScope(viewer, true)
     }),
     prisma.userProfile.count({
       where: {
@@ -317,25 +337,7 @@ async function listItems(
 
   const pending = filter.view === "pending";
   const rows = await prisma.mailThread.findMany({
-    where: {
-      user: {
-        ...users,
-        ...(pending
-          ? {
-              tasks: {
-                some: {
-                  ...taskScope(viewer),
-                  origin: "EMAIL_REPLY",
-                  status: { in: openStatuses }
-                }
-              }
-            }
-          : {})
-      },
-      messages: {
-        some: { direction: "INBOUND" }
-      }
-    },
+    where: threadScope(viewer, pending),
     orderBy: { updatedAt: "desc" },
     take: 100,
     select: {

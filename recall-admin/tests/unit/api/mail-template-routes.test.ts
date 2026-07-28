@@ -135,12 +135,12 @@ describe("mail template routes", () => {
       new mocks.ForbiddenError()
     );
     const { POST } = await import(
-      "@/app/api/mail/templates/[id]/archive/route"
+      "@/app/api/mail/template-versions/[id]/archive/route"
     );
 
     const response = await POST(
       jsonRequest(
-        "http://localhost/api/mail/templates/template-1/archive",
+        "http://localhost/api/mail/template-versions/template-1/archive",
         {}
       ),
       { params: Promise.resolve({ id: "template-1" }) }
