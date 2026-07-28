@@ -6,7 +6,8 @@ import {
 export const mailSendRequestSchema = z
   .object({
     mailboxId: z.string().min(1),
-    taskId: z.string().min(1),
+    userId: z.string().min(1),
+    taskId: z.string().min(1).optional(),
     recipient: z
       .string()
       .trim()

@@ -37,7 +37,7 @@ export async function POST(
     const config = await getMailboxRuntimeConfig(
       parsed.data.mailboxId
     );
-    const message = await sendReviewedMail(
+    const result = await sendReviewedMail(
       {
         actorId: member.id,
         ...parsed.data,
@@ -47,10 +47,11 @@ export async function POST(
     );
     return NextResponse.json({
       message: {
-        id: message.id,
-        status: message.status,
-        sentAt: message.sentAt
-      }
+        id: result.message.id,
+        status: result.message.status,
+        sentAt: result.message.sentAt
+      },
+      taskId: result.taskId
     });
   } catch (error) {
     if (error instanceof UnauthorizedError) {
