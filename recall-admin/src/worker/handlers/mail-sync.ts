@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/db/prisma";
 import { createSmtpImapAdapter } from "@/modules/mail/adapters/smtp-imap";
 import { getMailboxRuntimeConfig } from "@/modules/mail/mailbox-credentials";
+import {
+  classifyMailSyncError
+} from "@/modules/mail/sync-error";
 import { syncMailbox } from "@/modules/mail/sync-mailbox";
 import type { MailboxAdapter } from "@/modules/mail/types";
 
@@ -49,11 +52,17 @@ export async function handleMailSync(
       summary.matched += result.matched;
       summary.unmatched += result.unmatched;
       summary.replyTasksCreated += result.replyTasksCreated;
-    } catch {
+    } catch (error) {
+      const code = classifyMailSyncError(error);
       summary.failed += 1;
+      console.error("mail_sync_failed", {
+        mailboxId: mailbox.id,
+        stage: "scheduled_sync",
+        code
+      });
       await prisma.mailbox.update({
         where: { id: mailbox.id },
-        data: { lastErrorCode: "MAIL_SYNC_FAILED" }
+        data: { lastErrorCode: code }
       });
     }
   }
