@@ -13,6 +13,7 @@
 - 主管理员、管理员和运营人员权限
 - 仅主管理员可导出 CSV
 - 邮件审核发送、SMTP/IMAP 收信、回复匹配和人工归档
+- 公共邮件模板、正文图片、图片附件和来信图片安全预览
 - 企微群机器人脱敏通知、失败重试和死信留痕
 - RightToken 实时事件接口、模拟数据源和定时全量校准
 
@@ -78,6 +79,34 @@ POST /api/internal/righttoken/events
 
 后台 Worker 每两分钟收取邮件、每分钟投递通知、每十五分钟增量校准用户，并在每天 02:00 执行全量校准。未启用对应连接时任务会安全跳过。
 
+### 邮件图片存储
+
+本地开发默认将邮件正文图片和图片附件存放在
+`.data/mail-assets`，数据库只保存文件信息及邮件关联。支持 JPG、
+PNG 和 WebP；单张不超过 5 MB，每封邮件最多 10 张、合计不超过
+20 MB。SVG、GIF 及无法识别的文件会被拒绝。
+
+```env
+MAIL_ASSET_STORAGE=local
+MAIL_ASSET_LOCAL_DIR=.data/mail-assets
+```
+
+生产环境禁止使用本地目录，必须配置私有 S3 或兼容对象存储：
+
+```env
+MAIL_ASSET_STORAGE=s3
+MAIL_ASSET_S3_BUCKET=righttoken-private-mail-assets
+MAIL_ASSET_S3_REGION=ap-southeast-1
+MAIL_ASSET_S3_ENDPOINT=
+MAIL_ASSET_S3_FORCE_PATH_STYLE=false
+MAIL_ASSET_S3_ACCESS_KEY_ID=
+MAIL_ASSET_S3_SECRET_ACCESS_KEY=
+```
+
+对象存储桶不得公开读取。所有预览和下载都通过召回后台的权限接口，
+运营只能访问其负责用户、所领任务或公共模板关联的图片。用户来信中的
+外部网络图片默认不会加载，以免触发邮件追踪像素。
+
 ## 验证
 
 联调测试自动使用并重置独立的 `_test` 数据库，不会修改本地网页当前使用的
@@ -98,6 +127,7 @@ npm run build
 ## 安全说明
 
 - `.env`、生产凭据、真实用户数据、备份和构建产物不会进入版本库。
+- 本地邮件图片目录 `.data/` 不会进入版本库，生产对象存储桶保持私有。
 - 示例数据只使用 `example.test` 地址。
 - 本地开发使用 `AUTH_MODE=development` 和 `DEPLOYMENT_ENV=local`，不提供登录、密码、验证码或二次验证。
 - 正式环境使用 `AUTH_MODE=righttoken`，身份由 RightToken 主站统一提供。

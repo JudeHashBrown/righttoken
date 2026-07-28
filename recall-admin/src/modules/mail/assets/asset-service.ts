@@ -85,13 +85,6 @@ type ReadDependencies = Pick<
   "database" | "storage"
 >;
 
-const defaultCreateDependencies: CreateDependencies = {
-  database: prisma,
-  storage: getMailAssetStorage(),
-  normalize: normalizeMailImage,
-  randomId: randomUUID
-};
-
 function displayFileName(
   original: string,
   extension: string
@@ -108,14 +101,20 @@ export async function createMailAsset(
     actorId: string;
     file: File;
   },
-  dependencies: CreateDependencies = defaultCreateDependencies
+  dependencies?: CreateDependencies
 ): Promise<AssetRecord> {
+  const runtime: CreateDependencies = dependencies ?? {
+    database: prisma,
+    storage: getMailAssetStorage(),
+    normalize: normalizeMailImage,
+    randomId: randomUUID
+  };
   if (!(input.file instanceof File) || input.file.size === 0) {
     throw new MailAssetServiceError("MAIL_ASSET_INVALID_FILE");
   }
   let normalized: NormalizedMailImage;
   try {
-    normalized = await dependencies.normalize({
+    normalized = await runtime.normalize({
       bytes: Buffer.from(await input.file.arrayBuffer()),
       claimedContentType: input.file.type
     });
@@ -125,16 +124,16 @@ export async function createMailAsset(
     }
     throw error;
   }
-  const storageKey = `mail-assets/${dependencies.randomId()}.${
+  const storageKey = `mail-assets/${runtime.randomId()}.${
     normalized.extension
   }`;
-  await dependencies.storage.put(
+  await runtime.storage.put(
     storageKey,
     normalized.bytes,
     normalized.contentType
   );
   try {
-    return await dependencies.database.mailAsset.create({
+    return await runtime.database.mailAsset.create({
       data: {
         storageKey,
         fileName: displayFileName(
@@ -150,7 +149,7 @@ export async function createMailAsset(
       }
     });
   } catch (error) {
-    await dependencies.storage.delete(storageKey).catch(() => undefined);
+    await runtime.storage.delete(storageKey).catch(() => undefined);
     throw error;
   }
 }

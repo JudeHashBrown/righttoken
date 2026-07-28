@@ -52,6 +52,7 @@ export function MailMessageContent({
 }: {
   message: DisplayMessage;
 }): React.JSX.Element {
+  const assets = message.assets ?? [];
   return (
     <>
       <div className={styles.mailMessageBody}>
@@ -61,7 +62,7 @@ export function MailMessageContent({
             dangerouslySetInnerHTML={{
               __html: hydrateMessageHtml(
                 message.bodyHtml,
-                message.assets
+                assets
               )
             }}
           />
@@ -74,7 +75,7 @@ export function MailMessageContent({
           为保护隐私，已拦截邮件中的外部图片
         </p>
       ) : null}
-      <MailAssetList assets={message.assets} />
+      <MailAssetList assets={assets} />
     </>
   );
 }

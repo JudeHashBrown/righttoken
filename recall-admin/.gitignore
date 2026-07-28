@@ -11,5 +11,6 @@ playwright-report/
 test-results/
 backups/
 data/
+.data/
 *.log
 *.tsbuildinfo
