@@ -8,6 +8,17 @@ import { createTaskNotificationIntents } from "@/modules/notifications/notificat
 import {
   replyTriggerKey
 } from "@/modules/mail/reply-task-key";
+import {
+  discardPreparedInboundAssets,
+  prepareInboundMailAssets,
+  type PreparedInboundMessage
+} from "@/modules/mail/inbound-assets";
+import {
+  getMailAssetStorage
+} from "@/modules/mail/assets/storage-factory";
+import type {
+  MailAssetStorage
+} from "@/modules/mail/assets/types";
 
 type SyncResult = {
   received: number;
@@ -19,7 +30,10 @@ type SyncResult = {
 export async function syncMailbox(
   mailboxId: string,
   adapter: Pick<MailboxAdapter, "listMessagesSince">,
-  now = new Date()
+  now = new Date(),
+  dependencies: {
+    storage?: MailAssetStorage;
+  } = {}
 ): Promise<SyncResult> {
   const mailbox = await prisma.mailbox.findUniqueOrThrow({
     where: { id: mailboxId },
@@ -76,6 +90,21 @@ export async function syncMailbox(
       .map((message) => message.providerMessageId)
       .filter((value): value is string => Boolean(value))
   );
+  const storage =
+    dependencies.storage ?? getMailAssetStorage();
+  const newInbound = inbound.filter(
+    (message) => !existingIds.has(message.providerMessageId)
+  );
+  const preparedByProviderId = new Map<
+    string,
+    PreparedInboundMessage
+  >();
+  for (const message of newInbound) {
+    preparedByProviderId.set(
+      message.providerMessageId,
+      await prepareInboundMailAssets(message, { storage })
+    );
+  }
   const outbound: OutboundReplyCandidate[] = outboundRows.flatMap(
     (message) =>
       message.threadId &&
@@ -96,7 +125,9 @@ export async function syncMailbox(
   );
 
   const notificationTaskIds: string[] = [];
-  const result = await prisma.$transaction(async (tx) => {
+  let result: SyncResult;
+  try {
+    result = await prisma.$transaction(async (tx) => {
     const result: SyncResult = {
       received: 0,
       matched: 0,
@@ -107,6 +138,9 @@ export async function syncMailbox(
       if (existingIds.has(message.providerMessageId)) {
         continue;
       }
+      const prepared = preparedByProviderId.get(
+        message.providerMessageId
+      );
       result.received += 1;
       const match = matchInboundReply(
         {
@@ -134,8 +168,23 @@ export async function syncMailbox(
             toAddresses: message.toAddresses,
             subject: message.subject,
             bodyText: message.bodyText,
+            bodyHtml: prepared?.bodyHtml ?? null,
+            externalImagesBlocked:
+              prepared?.externalImagesBlocked ?? false,
             receivedAt: message.receivedAt,
-            lastErrorCode: match.reason
+            lastErrorCode: match.reason,
+            assets: prepared?.assets.length
+              ? {
+                  create: prepared.assets.map(
+                    ({ assetId, disposition, cid, sortOrder }) => ({
+                      assetId,
+                      disposition,
+                      cid,
+                      sortOrder
+                    })
+                  )
+                }
+              : undefined
           }
         });
         continue;
@@ -160,6 +209,21 @@ export async function syncMailbox(
           toAddresses: message.toAddresses,
           subject: message.subject,
           bodyText: message.bodyText,
+          bodyHtml: prepared?.bodyHtml ?? null,
+          externalImagesBlocked:
+            prepared?.externalImagesBlocked ?? false,
+          assets: prepared?.assets.length
+            ? {
+                create: prepared.assets.map(
+                  ({ assetId, disposition, cid, sortOrder }) => ({
+                    assetId,
+                    disposition,
+                    cid,
+                    sortOrder
+                  })
+                )
+              }
+            : undefined,
           receivedAt: message.receivedAt
         }
       });
@@ -189,8 +253,15 @@ export async function syncMailbox(
         lastErrorCode: null
       }
     });
-    return result;
-  });
+      return result;
+    });
+  } catch (error) {
+    await discardPreparedInboundAssets(
+      [...preparedByProviderId.values()],
+      storage
+    );
+    throw error;
+  }
   await Promise.all(
     notificationTaskIds.map((taskId) =>
       createTaskNotificationIntents(taskId, now)

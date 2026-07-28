@@ -6,6 +6,14 @@ export type MailboxMessage = {
   toAddresses: string[];
   subject: string;
   bodyText: string;
+  bodyHtml: string | null;
+  attachments: Array<{
+    fileName: string;
+    contentType: string;
+    content: Buffer;
+    cid: string | null;
+    disposition: "INLINE" | "ATTACHMENT";
+  }>;
   receivedAt: Date;
 };
 

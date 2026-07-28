@@ -440,6 +440,26 @@ async function selectedItem(
         toAddresses: true,
         subject: true,
         bodyText: true,
+        bodyHtml: true,
+        externalImagesBlocked: true,
+        assets: {
+          orderBy: { sortOrder: "asc" },
+          select: {
+            disposition: true,
+            cid: true,
+            sortOrder: true,
+            asset: {
+              select: {
+                id: true,
+                fileName: true,
+                contentType: true,
+                byteSize: true,
+                width: true,
+                height: true
+              }
+            }
+          }
+        },
         receivedAt: true,
         createdAt: true
       }
@@ -449,6 +469,13 @@ async function selectedItem(
           kind: "unmatched" as const,
           message: {
             ...message,
+            assets: message.assets.map((usage) => ({
+              ...usage.asset,
+              disposition: usage.disposition,
+              cid: usage.cid,
+              sortOrder: usage.sortOrder,
+              previewUrl: `/api/mail/assets/${usage.asset.id}`
+            })),
             receivedAt: iso(message.receivedAt),
             createdAt: message.createdAt.toISOString()
           }
@@ -518,6 +545,26 @@ async function selectedItem(
           toAddresses: true,
           subject: true,
           bodyText: true,
+          bodyHtml: true,
+          externalImagesBlocked: true,
+          assets: {
+            orderBy: { sortOrder: "asc" },
+            select: {
+              disposition: true,
+              cid: true,
+              sortOrder: true,
+              asset: {
+                select: {
+                  id: true,
+                  fileName: true,
+                  contentType: true,
+                  byteSize: true,
+                  width: true,
+                  height: true
+                }
+              }
+            }
+          },
           sentAt: true,
           receivedAt: true,
           createdAt: true
@@ -543,6 +590,13 @@ async function selectedItem(
       mailbox: thread.mailbox,
       messages: thread.messages.map((message) => ({
         ...message,
+        assets: message.assets.map((usage) => ({
+          ...usage.asset,
+          disposition: usage.disposition,
+          cid: usage.cid,
+          sortOrder: usage.sortOrder,
+          previewUrl: `/api/mail/assets/${usage.asset.id}`
+        })),
         sentAt: iso(message.sentAt),
         receivedAt: iso(message.receivedAt),
         createdAt: message.createdAt.toISOString()

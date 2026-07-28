@@ -54,6 +54,20 @@ export type MailThreadDetail = {
     toAddresses: readonly string[];
     subject: string;
     bodyText: string;
+    bodyHtml: string | null;
+    externalImagesBlocked: boolean;
+    assets: ReadonlyArray<{
+      id: string;
+      fileName: string;
+      contentType: string;
+      byteSize: number;
+      width: number;
+      height: number;
+      previewUrl: string;
+      disposition: "INLINE" | "ATTACHMENT";
+      cid: string | null;
+      sortOrder: number;
+    }>;
     sentAt: string | null;
     receivedAt: string | null;
     createdAt: string;

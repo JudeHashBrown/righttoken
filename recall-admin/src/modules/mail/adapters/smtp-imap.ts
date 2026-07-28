@@ -70,6 +70,69 @@ function addresses(
   );
 }
 
+type ParsedMailLike = {
+  messageId?: string;
+  inReplyTo?: string;
+  references?: string | string[];
+  from?: AddressObject | AddressObject[];
+  to?: AddressObject | AddressObject[];
+  subject?: string;
+  text?: string;
+  html?: string | false;
+  date?: Date;
+  attachments?: Array<{
+    filename?: string;
+    contentType: string;
+    content: Buffer;
+    cid?: string;
+    contentDisposition?: string;
+  }>;
+};
+
+export function parsedMailToMailboxMessage(
+  parsed: ParsedMailLike,
+  internalDate: Date
+): MailboxMessage | null {
+  const fromAddress = addresses(parsed.from)[0];
+  const providerMessageId = parsed.messageId?.trim();
+  if (!fromAddress || !providerMessageId) {
+    return null;
+  }
+  return {
+    providerMessageId,
+    inReplyTo: parsed.inReplyTo?.trim() ?? null,
+    references: Array.isArray(parsed.references)
+      ? parsed.references
+      : parsed.references
+        ? [parsed.references]
+        : [],
+    fromAddress,
+    toAddresses: addresses(parsed.to),
+    subject: parsed.subject?.trim() || "(无主题)",
+    bodyText: parsed.text?.trim() || "",
+    bodyHtml:
+      typeof parsed.html === "string"
+        ? parsed.html.trim() || null
+        : null,
+    attachments: (parsed.attachments ?? []).map(
+      (attachment, index) => ({
+        fileName:
+          attachment.filename?.trim() ||
+          `image-${index + 1}`,
+        contentType: attachment.contentType,
+        content: attachment.content,
+        cid: attachment.cid?.trim() || null,
+        disposition:
+          attachment.contentDisposition === "inline" ||
+          Boolean(attachment.cid)
+            ? ("INLINE" as const)
+            : ("ATTACHMENT" as const)
+      })
+    ),
+    receivedAt: parsed.date ?? internalDate
+  };
+}
+
 export function createSmtpImapAdapter(
   rawConfig: SmtpImapConfig
 ): MailboxAdapter {
@@ -126,29 +189,15 @@ export function createSmtpImapAdapter(
             skipHtmlToText: true,
             skipTextToHtml: true
           });
-          const fromAddress = addresses(parsed.from)[0];
-          const providerMessageId = parsed.messageId?.trim();
-          if (!fromAddress || !providerMessageId) {
-            continue;
+          const message = parsedMailToMailboxMessage(
+            parsed,
+            item.internalDate instanceof Date
+              ? item.internalDate
+              : new Date(item.internalDate ?? Date.now())
+          );
+          if (message) {
+            messages.push(message);
           }
-          messages.push({
-            providerMessageId,
-            inReplyTo: parsed.inReplyTo?.trim() ?? null,
-            references: Array.isArray(parsed.references)
-              ? parsed.references
-              : parsed.references
-                ? [parsed.references]
-                : [],
-            fromAddress,
-            toAddresses: addresses(parsed.to),
-            subject: parsed.subject?.trim() || "(无主题)",
-            bodyText: parsed.text?.trim() || "",
-            receivedAt:
-              parsed.date ??
-              (item.internalDate instanceof Date
-                ? item.internalDate
-                : new Date(item.internalDate ?? Date.now()))
-          });
         }
         return messages;
       } finally {

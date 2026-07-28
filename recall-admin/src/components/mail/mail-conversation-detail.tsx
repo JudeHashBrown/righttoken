@@ -2,6 +2,29 @@ import styles from "@/components/workspaces/workspace.module.css";
 import type {
   MailThreadDetail
 } from "@/components/mail/mail-reply-editor";
+import {
+  MailAssetList
+} from "@/components/mail/mail-asset-list";
+
+function hydrateMessageHtml(
+  bodyHtml: string,
+  assets: MailThreadDetail["messages"][number]["assets"]
+): string {
+  let html = bodyHtml;
+  for (const asset of assets) {
+    if (
+      asset.disposition !== "INLINE" ||
+      !/^[A-Za-z0-9_-]{1,128}$/.test(asset.id)
+    ) {
+      continue;
+    }
+    html = html.replaceAll(
+      `data-mail-asset-id="${asset.id}"`,
+      `src="${asset.previewUrl}" data-mail-asset-id="${asset.id}"`
+    );
+  }
+  return html;
+}
 
 function dateTime(value: string | null): string {
   if (!value) return "—";
@@ -14,6 +37,46 @@ function dateTime(value: string | null): string {
     hour12: false,
     timeZone: "Asia/Shanghai"
   }).format(new Date(value));
+}
+
+type DisplayMessage = Pick<
+  MailThreadDetail["messages"][number],
+  | "bodyText"
+  | "bodyHtml"
+  | "externalImagesBlocked"
+  | "assets"
+>;
+
+export function MailMessageContent({
+  message
+}: {
+  message: DisplayMessage;
+}): React.JSX.Element {
+  return (
+    <>
+      <div className={styles.mailMessageBody}>
+        {message.bodyHtml ? (
+          <div
+            className={styles.mailMessageRichBody}
+            dangerouslySetInnerHTML={{
+              __html: hydrateMessageHtml(
+                message.bodyHtml,
+                message.assets
+              )
+            }}
+          />
+        ) : (
+          message.bodyText || "（无正文）"
+        )}
+      </div>
+      {message.externalImagesBlocked ? (
+        <p className={styles.mailPrivacyNotice}>
+          为保护隐私，已拦截邮件中的外部图片
+        </p>
+      ) : null}
+      <MailAssetList assets={message.assets} />
+    </>
+  );
 }
 
 export function MailConversationDetail({
@@ -78,9 +141,7 @@ export function MailConversationDetail({
               <p className={styles.mailMessageSubject}>
                 {message.subject}
               </p>
-              <div className={styles.mailMessageBody}>
-                {message.bodyText || "（无正文）"}
-              </div>
+              <MailMessageContent message={message} />
             </li>
           );
         })}

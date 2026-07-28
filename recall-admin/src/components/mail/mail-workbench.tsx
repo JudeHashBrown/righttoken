@@ -2,7 +2,8 @@
 
 import styles from "@/components/workspaces/workspace.module.css";
 import {
-  MailConversationDetail
+  MailConversationDetail,
+  MailMessageContent
 } from "@/components/mail/mail-conversation-detail";
 import {
   MailConversationList
@@ -72,7 +73,9 @@ export function MailWorkbench({
               </time>
             </header>
             <div className={styles.unmatchedBody}>
-              {data.selected.message.bodyText || "（无正文）"}
+              <MailMessageContent
+                message={data.selected.message}
+              />
             </div>
             <UnmatchedMessageAssignment
               messageId={data.selected.message.id}

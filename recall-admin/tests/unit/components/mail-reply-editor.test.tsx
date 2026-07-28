@@ -54,6 +54,9 @@ const thread = {
       toAddresses: ["support@righttoken.test"],
       subject: "Re: RightToken 支付协助",
       bodyText: "我需要支付方面的帮助。",
+      bodyHtml: "<p>我需要支付方面的帮助。</p>",
+      externalImagesBlocked: false,
+      assets: [],
       sentAt: null,
       receivedAt: "2026-07-27T09:00:00.000Z",
       createdAt: "2026-07-27T09:00:00.000Z"

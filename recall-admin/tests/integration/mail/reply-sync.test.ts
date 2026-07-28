@@ -2,6 +2,7 @@ import "dotenv/config";
 
 import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import sharp from "sharp";
 import { prisma } from "@/lib/db/prisma";
 import { syncMailbox } from "@/modules/mail/sync-mailbox";
 
@@ -9,6 +10,7 @@ describe("mailbox reply synchronization", () => {
   let userId: string;
   let mailboxId: string;
   let threadId: string;
+  const storedKeys: string[] = [];
 
   beforeAll(async () => {
     const email = `reply-user-${randomUUID()}@example.test`;
@@ -60,6 +62,9 @@ describe("mailbox reply synchronization", () => {
 
   afterAll(async () => {
     await prisma.mailbox.deleteMany({ where: { id: mailboxId } });
+    await prisma.mailAsset.deleteMany({
+      where: { storageKey: { in: storedKeys } }
+    });
     await prisma.recallTask.deleteMany({
       where: { userId, origin: "EMAIL_REPLY" }
     });
@@ -69,6 +74,16 @@ describe("mailbox reply synchronization", () => {
 
   it("stores a matched reply and creates one important four-hour task", async () => {
     const receivedAt = new Date("2026-07-24T08:00:00.000Z");
+    const image = await sharp({
+      create: {
+        width: 2,
+        height: 2,
+        channels: 4,
+        background: "#5a69df"
+      }
+    })
+      .png()
+      .toBuffer();
     const adapter = {
       testConnection: vi.fn(),
       send: vi.fn(),
@@ -93,6 +108,17 @@ describe("mailbox reply synchronization", () => {
           ],
           subject: "Re: RightToken 支付协助",
           bodyText: "我需要帮助。",
+          bodyHtml:
+            '<p>我需要帮助。</p><img src="cid:proof@example.test"><img src="https://tracker.example.test/pixel.gif">',
+          attachments: [
+            {
+              fileName: "proof.png",
+              contentType: "image/png",
+              content: image,
+              cid: "proof@example.test",
+              disposition: "INLINE"
+            }
+          ],
           receivedAt
         }
       ])
@@ -101,7 +127,17 @@ describe("mailbox reply synchronization", () => {
     const result = await syncMailbox(
       mailboxId,
       adapter,
-      new Date("2026-07-24T08:01:00.000Z")
+      new Date("2026-07-24T08:01:00.000Z"),
+      {
+        storage: {
+          put: vi.fn(async (key: string) => {
+            storedKeys.push(key);
+          }),
+          get: vi.fn(),
+          delete: vi.fn(),
+          exists: vi.fn()
+        }
+      }
     );
 
     expect(result).toEqual({
@@ -110,18 +146,37 @@ describe("mailbox reply synchronization", () => {
       unmatched: 0,
       replyTasksCreated: 1
     });
-    expect(
-      await prisma.mailMessage.findUnique({
-        where: {
-          providerMessageId: "<inbound-sync@example.test>"
+    const storedMessage = await prisma.mailMessage.findUnique({
+      where: {
+        providerMessageId: "<inbound-sync@example.test>"
+      },
+      include: {
+        assets: {
+          include: { asset: true }
         }
-      })
-    ).toMatchObject({
+      }
+    });
+    expect(storedMessage).toMatchObject({
       threadId,
       userId,
       status: "RECEIVED",
-      bodyText: "我需要帮助。"
+      bodyText: "我需要帮助。",
+      bodyHtml: expect.stringContaining("data-mail-asset-id"),
+      externalImagesBlocked: true,
+      assets: [
+        {
+          disposition: "INLINE",
+          cid: "proof@example.test",
+          asset: {
+            fileName: "proof.png",
+            contentType: "image/png"
+          }
+        }
+      ]
     });
+    expect(storedMessage?.bodyHtml).not.toContain(
+      "tracker.example.test"
+    );
     expect(
       await prisma.recallTask.findFirst({
         where: { userId, origin: "EMAIL_REPLY" }

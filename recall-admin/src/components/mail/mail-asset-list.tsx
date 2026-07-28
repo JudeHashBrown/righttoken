@@ -15,8 +15,8 @@ export function MailAssetList({
   assets,
   onRemove
 }: {
-  assets: MailEditorAsset[];
-  onRemove(assetId: string): void;
+  assets: ReadonlyArray<MailEditorAsset>;
+  onRemove?(assetId: string): void;
 }): React.JSX.Element | null {
   const attachments = assets.filter(
     (asset) => asset.disposition === "ATTACHMENT"
@@ -30,7 +30,7 @@ export function MailAssetList({
       {attachments.map((asset) => (
         <div className={styles.mailAttachmentItem} key={asset.id}>
           <a
-            href={asset.previewUrl}
+            href={`${asset.previewUrl}?download=1`}
             rel="noreferrer"
             target="_blank"
           >
@@ -40,14 +40,16 @@ export function MailAssetList({
               <small>{fileSize(asset.byteSize)}</small>
             </span>
           </a>
-          <button
-            aria-label={`删除附件 ${asset.fileName}`}
-            className={styles.iconButton}
-            onClick={() => onRemove(asset.id)}
-            type="button"
-          >
-            <Trash2 aria-hidden="true" size={16} />
-          </button>
+          {onRemove ? (
+            <button
+              aria-label={`删除附件 ${asset.fileName}`}
+              className={styles.iconButton}
+              onClick={() => onRemove(asset.id)}
+              type="button"
+            >
+              <Trash2 aria-hidden="true" size={16} />
+            </button>
+          ) : null}
         </div>
       ))}
     </div>

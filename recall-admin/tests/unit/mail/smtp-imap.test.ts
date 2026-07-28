@@ -1,11 +1,71 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   namecheapMailboxConfig,
+  parsedMailToMailboxMessage,
   smtpImapConfigSchema
 } from "@/modules/mail/adapters/smtp-imap";
 import { sendSmtpMessage } from "@/modules/integrations/email/smtp-sender";
 
 describe("SMTP/IMAP mailbox adapter", () => {
+  it("keeps incoming HTML and image attachments for safe ingestion", () => {
+    expect(
+      parsedMailToMailboxMessage(
+        {
+          messageId: "<incoming-rich@example.test>",
+          inReplyTo: "<outbound@example.test>",
+          references: ["<outbound@example.test>"],
+          from: {
+            value: [
+              {
+                address: "person@example.test",
+                name: "Person"
+              }
+            ],
+            text: "Person <person@example.test>",
+            html: ""
+          },
+          to: {
+            value: [
+              {
+                address: "support@righttoken.test",
+                name: "Support"
+              }
+            ],
+            text: "support@righttoken.test",
+            html: ""
+          },
+          subject: "带图片的来信",
+          text: "请查看截图。",
+          html:
+            '<p>请查看截图。</p><img src="cid:screenshot@example.test">',
+          date: new Date("2026-07-28T08:00:00.000Z"),
+          attachments: [
+            {
+              filename: "screenshot.png",
+              contentType: "image/png",
+              content: Buffer.from("image"),
+              cid: "screenshot@example.test",
+              contentDisposition: "inline"
+            }
+          ]
+        },
+        new Date("2026-07-28T08:01:00.000Z")
+      )
+    ).toMatchObject({
+      providerMessageId: "<incoming-rich@example.test>",
+      bodyHtml:
+        '<p>请查看截图。</p><img src="cid:screenshot@example.test">',
+      attachments: [
+        {
+          fileName: "screenshot.png",
+          contentType: "image/png",
+          cid: "screenshot@example.test",
+          disposition: "INLINE"
+        }
+      ]
+    });
+  });
+
   it("uses Namecheap Private Email SSL defaults", () => {
     expect(
       namecheapMailboxConfig({
