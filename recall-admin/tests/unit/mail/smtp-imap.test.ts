@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  collectFetchedMessages,
   namecheapMailboxConfig,
   parsedMailToMailboxMessage,
   smtpImapConfigSchema
@@ -7,6 +8,53 @@ import {
 import { sendSmtpMessage } from "@/modules/integrations/email/smtp-sender";
 
 describe("SMTP/IMAP mailbox adapter", () => {
+  it("continues after one malformed fetched message without logging its content", async () => {
+    const onParseFailure = vi.fn();
+    const parseMessage = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("secret raw message"))
+      .mockResolvedValueOnce({
+        providerMessageId: "<valid@example.test>",
+        inReplyTo: null,
+        references: [],
+        fromAddress: "person@example.test",
+        toAddresses: ["support@righttoken.test"],
+        subject: "有效邮件",
+        bodyText: "有效正文",
+        bodyHtml: null,
+        attachments: [],
+        receivedAt: new Date("2026-07-28T08:00:00.000Z")
+      });
+
+    await expect(
+      collectFetchedMessages(
+        [
+          {
+            source: Buffer.from("secret raw message"),
+            internalDate: new Date("2026-07-28T07:59:00.000Z")
+          },
+          {
+            source: Buffer.from("valid source"),
+            internalDate: new Date("2026-07-28T08:00:00.000Z")
+          }
+        ],
+        parseMessage,
+        onParseFailure
+      )
+    ).resolves.toEqual([
+      expect.objectContaining({
+        providerMessageId: "<valid@example.test>"
+      })
+    ]);
+    expect(onParseFailure).toHaveBeenCalledWith({
+      stage: "message_parse",
+      code: "IMAP_MESSAGE_PARSE_FAILED"
+    });
+    expect(JSON.stringify(onParseFailure.mock.calls)).not.toContain(
+      "secret raw message"
+    );
+  });
+
   it("keeps incoming HTML and image attachments for safe ingestion", () => {
     expect(
       parsedMailToMailboxMessage(

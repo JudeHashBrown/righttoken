@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { prisma } from "@/lib/db/prisma";
 import { assertSameOrigin } from "@/modules/auth/csrf";
 import {
   ForbiddenError,
@@ -8,6 +9,9 @@ import {
 } from "@/modules/auth/guards";
 import { createSmtpImapAdapter } from "@/modules/mail/adapters/smtp-imap";
 import { getMailboxRuntimeConfig } from "@/modules/mail/mailbox-credentials";
+import {
+  classifyMailSyncError
+} from "@/modules/mail/sync-error";
 import { syncMailbox } from "@/modules/mail/sync-mailbox";
 
 const syncSchema = z
@@ -17,6 +21,7 @@ const syncSchema = z
 export async function POST(
   request: NextRequest
 ): Promise<NextResponse> {
+  let mailboxId: string | null = null;
   try {
     assertSameOrigin(request);
     await requireRequestPermission(request, "integrations:manage");
@@ -29,12 +34,13 @@ export async function POST(
         { status: 400 }
       );
     }
+    mailboxId = parsed.data.mailboxId;
     const config = await getMailboxRuntimeConfig(
-      parsed.data.mailboxId
+      mailboxId
     );
     return NextResponse.json(
       await syncMailbox(
-        parsed.data.mailboxId,
+        mailboxId,
         createSmtpImapAdapter(config)
       )
     );
@@ -51,9 +57,20 @@ export async function POST(
         { status: 403 }
       );
     }
-    return NextResponse.json(
-      { code: "MAIL_SYNC_FAILED" },
-      { status: 502 }
-    );
+    const code = classifyMailSyncError(error);
+    if (mailboxId) {
+      await prisma.mailbox
+        .update({
+          where: { id: mailboxId },
+          data: { lastErrorCode: code }
+        })
+        .catch(() => undefined);
+      console.error("mail_sync_failed", {
+        mailboxId,
+        stage: "manual_sync",
+        code
+      });
+    }
+    return NextResponse.json({ code }, { status: 502 });
   }
 }
