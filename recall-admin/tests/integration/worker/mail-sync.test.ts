@@ -45,7 +45,8 @@ describe("mail sync worker", () => {
       received: 0,
       matched: 0,
       unmatched: 0,
-      replyTasksCreated: 0
+      replyTasksCreated: 0,
+      replyTasksReopened: 0
     });
     expect(
       await prisma.mailbox.findUniqueOrThrow({

@@ -10,9 +10,20 @@ describe("mailbox reply synchronization", () => {
   let userId: string;
   let mailboxId: string;
   let threadId: string;
+  let memberId: string;
+  let waitingTaskId: string;
   const storedKeys: string[] = [];
 
   beforeAll(async () => {
+    const member = await prisma.member.create({
+      data: {
+        email: `reply-operator-${randomUUID()}@example.test`,
+        displayName: "Reply Operator",
+        passwordHash: "not-used",
+        role: "OPERATOR"
+      }
+    });
+    memberId = member.id;
     const email = `reply-user-${randomUUID()}@example.test`;
     const user = await prisma.userProfile.create({
       data: {
@@ -20,7 +31,8 @@ describe("mailbox reply synchronization", () => {
         email,
         emailNormalized: email,
         registeredAt: new Date("2026-07-20T08:00:00.000Z"),
-        currentSegment: "B"
+        currentSegment: "B",
+        ownerId: memberId
       }
     });
     userId = user.id;
@@ -42,11 +54,28 @@ describe("mailbox reply synchronization", () => {
       }
     });
     threadId = thread.id;
+    const waitingTask = await prisma.recallTask.create({
+      data: {
+        userId,
+        origin: "MANUAL",
+        triggerKey: `waiting-reply-${randomUUID()}`,
+        ruleVersion: 1,
+        title: "等待用户回复",
+        reason: "邮件回复闭环测试",
+        priority: "NORMAL",
+        status: "WAITING_USER",
+        assigneeId: memberId,
+        dueAt: new Date("2026-07-25T08:00:00.000Z"),
+        startedAt: new Date("2026-07-24T07:20:00.000Z")
+      }
+    });
+    waitingTaskId = waitingTask.id;
     await prisma.mailMessage.create({
       data: {
         mailboxId,
         threadId,
         userId,
+        taskId: waitingTaskId,
         direction: "OUTBOUND",
         status: "SENT",
         providerMessageId: "<outbound-sync@example.test>",
@@ -66,13 +95,14 @@ describe("mailbox reply synchronization", () => {
       where: { storageKey: { in: storedKeys } }
     });
     await prisma.recallTask.deleteMany({
-      where: { userId, origin: "EMAIL_REPLY" }
+      where: { userId }
     });
     await prisma.userProfile.deleteMany({ where: { id: userId } });
+    await prisma.member.deleteMany({ where: { id: memberId } });
     await prisma.$disconnect();
   });
 
-  it("stores a matched reply and creates one important four-hour task", async () => {
+  it("stores a matched reply and reopens the original waiting task", async () => {
     const receivedAt = new Date("2026-07-24T08:00:00.000Z");
     const image = await sharp({
       create: {
@@ -144,7 +174,8 @@ describe("mailbox reply synchronization", () => {
       received: 1,
       matched: 1,
       unmatched: 0,
-      replyTasksCreated: 1
+      replyTasksCreated: 0,
+      replyTasksReopened: 1
     });
     const storedMessage = await prisma.mailMessage.findUnique({
       where: {
@@ -177,14 +208,21 @@ describe("mailbox reply synchronization", () => {
     expect(storedMessage?.bodyHtml).not.toContain(
       "tracker.example.test"
     );
-    expect(
-      await prisma.recallTask.findFirst({
-        where: { userId, origin: "EMAIL_REPLY" }
+    await expect(
+      prisma.recallTask.findUniqueOrThrow({
+        where: { id: waitingTaskId }
       })
-    ).toMatchObject({
-      priority: "IMPORTANT",
-      status: "UNASSIGNED",
-      dueAt: new Date("2026-07-24T12:00:00.000Z")
+    ).resolves.toMatchObject({
+      status: "IN_PROGRESS",
+      assigneeId: memberId
     });
+    await expect(
+      prisma.taskActivity.findFirstOrThrow({
+        where: {
+          taskId: waitingTaskId,
+          action: "task.user_replied"
+        }
+      })
+    ).resolves.toBeTruthy();
   });
 });

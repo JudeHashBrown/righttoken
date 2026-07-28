@@ -25,6 +25,7 @@ type SyncResult = {
   matched: number;
   unmatched: number;
   replyTasksCreated: number;
+  replyTasksReopened: number;
 };
 
 export async function syncMailbox(
@@ -49,7 +50,8 @@ export async function syncMailbox(
       received: 0,
       matched: 0,
       unmatched: 0,
-      replyTasksCreated: 0
+      replyTasksCreated: 0,
+      replyTasksReopened: 0
     };
   }
   const since = mailbox.lastSyncedAt
@@ -77,6 +79,7 @@ export async function syncMailbox(
       },
       select: {
         threadId: true,
+        taskId: true,
         providerMessageId: true,
         toAddresses: true,
         fromAddress: true,
@@ -114,6 +117,7 @@ export async function syncMailbox(
         ? [
             {
               threadId: message.threadId,
+              taskId: message.taskId,
               providerMessageId: message.providerMessageId,
               recipientAddress: message.toAddresses[0],
               mailboxAddress: message.fromAddress,
@@ -132,7 +136,8 @@ export async function syncMailbox(
       received: 0,
       matched: 0,
       unmatched: 0,
-      replyTasksCreated: 0
+      replyTasksCreated: 0,
+      replyTasksReopened: 0
     };
     for (const message of inbound) {
       if (existingIds.has(message.providerMessageId)) {
@@ -227,23 +232,57 @@ export async function syncMailbox(
           receivedAt: message.receivedAt
         }
       });
-      const created = await tx.recallTask.create({
-        data: {
-          userId: thread.userId,
-          origin: "EMAIL_REPLY",
-          triggerKey: replyTriggerKey(message.providerMessageId),
-          ruleVersion: 1,
-          title: `用户邮件回复：${message.subject}`.slice(0, 200),
-          reason: "用户回复了运营邮件，需要人工处理",
-          priority: "IMPORTANT",
-          status: "UNASSIGNED",
-          dueAt: new Date(
-            message.receivedAt.getTime() + 4 * 60 * 60 * 1000
-          )
-        }
-      });
-      notificationTaskIds.push(created.id);
-      result.replyTasksCreated += 1;
+      const waitingTask = match.taskId
+        ? await tx.recallTask.findFirst({
+            where: {
+              id: match.taskId,
+              userId: thread.userId,
+              status: "WAITING_USER"
+            },
+            select: { id: true }
+          })
+        : null;
+      if (waitingTask) {
+        await tx.recallTask.update({
+          where: { id: waitingTask.id },
+          data: { status: "IN_PROGRESS" }
+        });
+        await tx.taskActivity.create({
+          data: {
+            taskId: waitingTask.id,
+            action: "task.user_replied",
+            detail: {
+              providerMessageId: message.providerMessageId
+            }
+          }
+        });
+        notificationTaskIds.push(waitingTask.id);
+        result.replyTasksReopened += 1;
+      } else {
+        const created = await tx.recallTask.create({
+          data: {
+            userId: thread.userId,
+            origin: "EMAIL_REPLY",
+            triggerKey: replyTriggerKey(
+              message.providerMessageId
+            ),
+            ruleVersion: 1,
+            title: `用户邮件回复：${message.subject}`.slice(
+              0,
+              200
+            ),
+            reason: "用户回复了运营邮件，需要人工处理",
+            priority: "IMPORTANT",
+            status: "UNASSIGNED",
+            dueAt: new Date(
+              message.receivedAt.getTime() +
+                4 * 60 * 60 * 1000
+            )
+          }
+        });
+        notificationTaskIds.push(created.id);
+        result.replyTasksCreated += 1;
+      }
     }
     await tx.mailbox.update({
       where: { id: mailboxId },
