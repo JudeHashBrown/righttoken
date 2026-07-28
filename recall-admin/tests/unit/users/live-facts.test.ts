@@ -21,7 +21,8 @@ const liveFacts: RightTokenUserFacts = {
   balanceMinor: 350,
   balanceCurrency: "USD",
   balanceUsdMinor: 350,
-  anomalyActive: false
+  anomalyActive: false,
+  anomalyChangedAt: new Date("2026-07-26T12:00:00.000Z")
 };
 
 describe("managed users with live RightToken facts", () => {
@@ -58,6 +59,7 @@ describe("managed users with live RightToken facts", () => {
       successfulCallCount: 8,
       balanceMinor: 350,
       anomalyActive: false,
+      anomalyChangedAt: liveFacts.anomalyChangedAt,
       registrationIp: "203.0.113.42"
     });
     expect(merged.updatedAt).toEqual(liveFacts.updatedAt);
