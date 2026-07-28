@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/components/workspaces/workspace.module.css";
+import {
+  mailSyncStatusText
+} from "@/modules/mail/sync-error";
 
 export function MailboxActions({
   mailboxId
@@ -24,7 +27,10 @@ export function MailboxActions({
         { method: "POST" }
       );
       if (!response.ok) {
-        setError("邮箱连接失败，请检查服务器、账号和密码。");
+        const result = (await response.json().catch(() => null)) as {
+          code?: string;
+        } | null;
+        setError(mailSyncStatusText(result?.code ?? null));
         return;
       }
       setMessage("邮箱连接正常");
@@ -47,11 +53,12 @@ export function MailboxActions({
         body: JSON.stringify({ mailboxId })
       });
       const result = (await response.json().catch(() => null)) as {
+        code?: string;
         received?: number;
         matched?: number;
       } | null;
       if (!response.ok) {
-        setError("邮箱同步失败，请先测试连接。");
+        setError(mailSyncStatusText(result?.code ?? null));
         return;
       }
       setMessage(

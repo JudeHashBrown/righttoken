@@ -1022,6 +1022,32 @@
   min-width: 0;
 }
 
+.mailboxStatusDetail {
+  display: grid;
+  gap: 20px;
+  padding: 24px;
+}
+
+.mailboxHealth {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid #e1e5ee;
+  border-radius: 14px;
+  background: #f7f8fc;
+}
+
+.mailboxHealth span {
+  color: #737d93;
+}
+
+.mailboxHealth strong {
+  color: #202a40;
+  text-align: right;
+}
+
 .mailDetailHeader {
   display: flex;
   min-height: 78px;

@@ -12,6 +12,9 @@ import {
   MailReplyEditor
 } from "@/components/mail/mail-reply-editor";
 import {
+  MailboxStatusDetail
+} from "@/components/mail/mailbox-status-detail";
+import {
   UnmatchedMessageAssignment
 } from "@/components/mail/unmatched-message-assignment";
 import type {
@@ -53,6 +56,10 @@ export function MailWorkbench({
               thread={data.selected.thread}
             />
           </>
+        ) : data.selected?.kind === "mailbox" ? (
+          <MailboxStatusDetail
+            mailbox={data.selected.mailbox}
+          />
         ) : data.selected?.kind === "unmatched" ? (
           <>
             <header className={styles.mailDetailHeader}>

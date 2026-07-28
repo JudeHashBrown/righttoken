@@ -309,4 +309,31 @@ describe("scoped mail workspace query", () => {
       )
     ).toHaveLength(1);
   });
+
+  it("returns operational mailbox status and selected recovery detail", async () => {
+    await prisma.mailbox.update({
+      where: { id: mailboxId },
+      data: {
+        lastErrorCode: "IMAP_AUTH_FAILED",
+        lastTestedAt: new Date("2026-07-28T08:00:00.000Z")
+      }
+    });
+
+    const data = await getMailWorkspaceData(
+      { id: adminId, role: "ADMIN" },
+      { view: "mailboxes", selectedId: mailboxId }
+    );
+
+    expect(
+      data.items.find((item) => item.id === mailboxId)?.preview
+    ).toBe("邮箱账号、密码或授权未通过");
+    expect(data.selected).toMatchObject({
+      kind: "mailbox",
+      mailbox: {
+        id: mailboxId,
+        statusText: "邮箱账号、密码或授权未通过",
+        lastTestedAt: "2026-07-28T08:00:00.000Z"
+      }
+    });
+  });
 });

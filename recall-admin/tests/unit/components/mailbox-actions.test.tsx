@@ -52,4 +52,30 @@ describe("MailboxActions", () => {
       ).toBeInTheDocument();
     });
   });
+
+  it("shows a Chinese recovery message instead of an internal error code", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        json: () =>
+          Promise.resolve({
+            code: "IMAP_CONNECTION_TIMEOUT"
+          })
+      })
+    );
+    render(<MailboxActions mailboxId="mailbox-1" />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "立即同步" })
+    );
+    await waitFor(() => {
+      expect(
+        screen.getByText("连接邮箱服务器超时")
+      ).toBeInTheDocument();
+    });
+    expect(
+      screen.queryByText("IMAP_CONNECTION_TIMEOUT")
+    ).not.toBeInTheDocument();
+  });
 });
