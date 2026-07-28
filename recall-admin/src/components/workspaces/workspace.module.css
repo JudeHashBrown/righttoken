@@ -719,6 +719,179 @@
   font-size: 13px;
 }
 
+.mailRichField {
+  display: grid;
+  gap: 7px;
+}
+
+.mailRichField > label {
+  color: #3f4960;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.mailEditorToolbar {
+  display: flex;
+  min-height: 42px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #d8deea;
+  border-bottom: 0;
+  border-radius: 9px 9px 0 0;
+  background: #f7f8fb;
+  padding: 5px 7px;
+}
+
+.mailEditorToolbar button {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #4e5a72;
+  padding: 5px 8px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.mailEditorToolbar button:hover {
+  background: #e9ecf5;
+  color: #3242ad;
+}
+
+.mailEditorToolbar button:focus-visible,
+.mailAttachmentItem button:focus-visible {
+  outline: 3px solid rgb(89 103 215 / 20%);
+  outline-offset: 1px;
+}
+
+.mailEditorToolbar button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.mailEditorToolbar > span:not(.toolbarDivider) {
+  margin-left: auto;
+  color: #657087;
+  font-size: 12px;
+}
+
+.toolbarDivider {
+  width: 1px;
+  height: 22px;
+  margin: 0 3px;
+  background: #d8deea;
+}
+
+.mailRichEditor {
+  min-height: 190px;
+  overflow: auto;
+  border: 1px solid #d8deea;
+  border-radius: 0 0 9px 9px;
+  background: #ffffff;
+  color: #202a40;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.65;
+  outline: none;
+}
+
+.mailRichEditor:focus {
+  border-color: #7784dd;
+  box-shadow: 0 0 0 3px rgb(89 103 215 / 13%);
+}
+
+.mailRichEditor:empty::before {
+  color: #687288;
+  content: "输入邮件正文…";
+  pointer-events: none;
+}
+
+.mailRichEditor img {
+  display: block;
+  max-width: min(100%, 680px);
+  height: auto;
+  margin: 12px 0;
+  border-radius: 8px;
+}
+
+.mailAttachmentList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mailAttachmentItem {
+  display: flex;
+  min-width: min(100%, 250px);
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #dfe3ed;
+  border-radius: 8px;
+  background: #f8f9fc;
+  padding: 5px 6px 5px 9px;
+}
+
+.mailAttachmentItem > a {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  color: #3c4861;
+  text-decoration: none;
+}
+
+.mailAttachmentItem > a > span {
+  display: grid;
+  min-width: 0;
+}
+
+.mailAttachmentItem strong {
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mailAttachmentItem small {
+  color: #737d93;
+  font-size: 11px;
+}
+
+.iconButton {
+  display: inline-grid;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  place-items: center;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #747e94;
+  cursor: pointer;
+}
+
+.iconButton:hover {
+  background: #fbeaec;
+  color: #bd3546;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .mailWorkbench {
   display: grid;
   grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
