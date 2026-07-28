@@ -1,6 +1,9 @@
 import Link from "next/link";
 import type { TaskListItem } from "@/modules/tasks/task-queries";
 import styles from "@/components/workspaces/workspace.module.css";
+import {
+  mailComposeHref
+} from "@/modules/mail/compose-link";
 
 type TaskTableProps = {
   tasks: TaskListItem[];
@@ -111,9 +114,15 @@ export function TaskTable({
                 >
                   {task.user.externalUserId}
                 </Link>
-                <span className={styles.secondaryText}>
+                <Link
+                  className={styles.secondaryText}
+                  href={mailComposeHref({
+                    userId: task.user.id,
+                    taskId: task.id
+                  })}
+                >
                   {task.user.email}
-                </span>
+                </Link>
               </td>
               <td>
                 <span className={styles.segment}>

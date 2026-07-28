@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type {
@@ -7,6 +8,9 @@ import type {
   TaskStatus
 } from "@/generated/prisma/client";
 import styles from "@/components/workspaces/workspace.module.css";
+import {
+  mailComposeHref
+} from "@/modules/mail/compose-link";
 
 type ActionKey =
   | "claim"
@@ -19,6 +23,7 @@ type ActionKey =
 type TaskActionsProps = {
   task: {
     id: string;
+    userId: string;
     status: TaskStatus;
     assigneeId: string | null;
   };
@@ -115,6 +120,25 @@ export function TaskActions({
   return (
     <div className={styles.actionPanel}>
       <div className={styles.actionRow}>
+        {canWork &&
+        (task.status === "IN_PROGRESS" ||
+          task.status === "WAITING_USER") ? (
+          <Link
+            className={
+              task.status === "IN_PROGRESS"
+                ? styles.button
+                : styles.secondaryButton
+            }
+            href={mailComposeHref({
+              userId: task.userId,
+              taskId: task.id
+            })}
+          >
+            {task.status === "IN_PROGRESS"
+              ? "联系用户"
+              : "再次联系"}
+          </Link>
+        ) : null}
         {availableActions.map(({ action, label }) => (
           <button
             className={

@@ -6,6 +6,9 @@ import styles from "@/components/workspaces/workspace.module.css";
 import { prisma } from "@/lib/db/prisma";
 import { requireWorkspaceMember } from "@/modules/admin/page-access";
 import { getTaskDetail } from "@/modules/tasks/task-queries";
+import {
+  mailComposeHref
+} from "@/modules/mail/compose-link";
 
 function dateTime(value: Date | null): string {
   if (!value) return "—";
@@ -152,7 +155,15 @@ export default async function TaskDetailPage({
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>完整邮箱</span>
-                <strong>{task.user.email}</strong>
+                <Link
+                  className={styles.primaryLink}
+                  href={mailComposeHref({
+                    userId: task.user.id,
+                    taskId: task.id
+                  })}
+                >
+                  {task.user.email}
+                </Link>
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>当前分组</span>
@@ -234,6 +245,7 @@ export default async function TaskDetailPage({
               operators={operators}
               task={{
                 id: task.id,
+                userId: task.user.id,
                 status: task.status,
                 assigneeId: task.assigneeId
               }}
@@ -251,18 +263,6 @@ export default async function TaskDetailPage({
             <UserNoteForm userId={task.user.id} />
           </section>
 
-          <section className={styles.panel}>
-            <div className={styles.panelHeader}>
-              <div>
-                <h2>建议沟通</h2>
-                <p>邮件模板将在邮件中心完成后接入</p>
-              </div>
-            </div>
-            <div className={styles.empty}>
-              <strong>先人工确认沟通内容</strong>
-              <p>当前阶段不会自动向用户发送未经审核的邮件。</p>
-            </div>
-          </section>
         </aside>
       </div>
     </main>
