@@ -81,10 +81,14 @@ describe("SegmentRuleEditor", () => {
         .querySelector("option:checked")
     ).toHaveTextContent("异常 · 服务异常");
     expect(
-      screen.getByLabelText("判断").querySelector("option:checked")
+      screen.getAllByLabelText("判断")[0]?.querySelector(
+        "option:checked"
+      )
     ).toHaveTextContent("为");
     expect(
-      screen.getByLabelText("值").querySelector("option:checked")
+      screen.getAllByLabelText("值")[0]?.querySelector(
+        "option:checked"
+      )
     ).toHaveTextContent("存在");
   });
 

@@ -5,6 +5,7 @@ import { SegmentOverrideForm } from "@/components/users/segment-override-form";
 import { UserNoteForm } from "@/components/users/user-note-form";
 import styles from "@/components/workspaces/workspace.module.css";
 import { requireWorkspaceMember } from "@/modules/admin/page-access";
+import { isCurrentServiceAnomaly } from "@/modules/segmentation/service-anomaly";
 import { getUser360 } from "@/modules/users/user-queries";
 
 function dateTime(value: Date | null): string {
@@ -56,6 +57,7 @@ export default async function UserDetailPage({
   const member = await requireWorkspaceMember(`/users/${id}`);
   const user = await getUser360(member, id);
   if (!user) notFound();
+  const now = new Date();
 
   const timeline = [
     ...user.events.map((event) => ({
@@ -83,7 +85,7 @@ export default async function UserDetailPage({
     .slice(0, 100);
   const activeOverride = user.segmentOverrides.find(
     (override) =>
-      !override.revokedAt && override.expiresAt > new Date()
+      !override.revokedAt && override.expiresAt > now
   );
 
   return (
@@ -317,7 +319,11 @@ export default async function UserDetailPage({
                 </div>
               ) : (
                 <SegmentOverrideForm
-                  anomalyActive={user.anomalyActive}
+                  anomalyActive={isCurrentServiceAnomaly(
+                    user.anomalyActive,
+                    user.anomalyChangedAt,
+                    now
+                  )}
                   userId={user.id}
                 />
               )}

@@ -7,6 +7,7 @@ import { evaluateRuleSet } from "@/modules/segmentation/evaluate-rule-set";
 import { legacySegmentConfigToRuleSet } from "@/modules/segmentation/rule-config";
 import type { SegmentRuleSet } from "@/modules/segmentation/rule-definition";
 import { buildSegmentFacts } from "@/modules/segmentation/segment-facts";
+import { isCurrentServiceAnomaly } from "@/modules/segmentation/service-anomaly";
 
 export function classifyUser(
   facts: SegmentFacts,
@@ -17,7 +18,13 @@ export function classifyUser(
     return evaluateRuleSet(buildSegmentFacts(facts, now), config);
   }
 
-  if (facts.anomalyActive) {
+  if (
+    isCurrentServiceAnomaly(
+      facts.anomalyActive,
+      facts.anomalyChangedAt,
+      now
+    )
+  ) {
     return { segment: "F", reason: "active service anomaly" };
   }
 

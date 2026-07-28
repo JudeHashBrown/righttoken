@@ -53,7 +53,14 @@ describe("A–G segmentation", () => {
       },
       "E"
     ],
-    [{ ...base, anomalyActive: true }, "F"],
+    [
+      {
+        ...base,
+        anomalyActive: true,
+        anomalyChangedAt: new Date("2026-07-23T11:00:00.000Z")
+      },
+      "F"
+    ],
     [
       {
         ...base,
@@ -80,7 +87,8 @@ describe("A–G segmentation", () => {
       successfulCallCount: 10,
       lastCallAt: now,
       balanceMinor: 10_000,
-      anomalyActive: true
+      anomalyActive: true,
+      anomalyChangedAt: new Date("2026-07-23T11:00:00.000Z")
     };
 
     expect(
@@ -89,5 +97,21 @@ describe("A–G segmentation", () => {
       segment: "F",
       reason: "active service anomaly"
     });
+  });
+
+  it("does not keep an anomaly in F at or beyond 24 hours", () => {
+    const expired: SegmentFacts = {
+      ...base,
+      firstPaidAt: now,
+      successfulCallCount: 10,
+      lastCallAt: now,
+      balanceMinor: 10_000,
+      anomalyActive: true,
+      anomalyChangedAt: new Date("2026-07-22T12:00:00.000Z")
+    };
+
+    expect(
+      classifyUser(expired, now, defaultSegmentConfig).segment
+    ).toBe("G");
   });
 });

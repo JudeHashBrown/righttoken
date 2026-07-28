@@ -19,6 +19,7 @@ export const segmentFieldKeys = [
   "emptyBalanceElapsed",
   "anomalyActive",
   "anomalyChangedAt",
+  "anomalyElapsed",
   "unsubscribed",
   "paused",
   "externalUserId",
@@ -245,6 +246,14 @@ const fields: PublicSegmentFieldDefinition[] = [
     label: "异常发生时间",
     type: "date",
     operators: dateOperators
+  },
+  {
+    key: "anomalyElapsed",
+    category: "异常",
+    label: "异常持续时间",
+    type: "duration",
+    operators: numberOperators,
+    units: ["minutes", "hours", "days"]
   },
   {
     key: "unsubscribed",

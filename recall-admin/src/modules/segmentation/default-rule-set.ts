@@ -51,7 +51,13 @@ const groups: SegmentGroupRule[] = [
     annotation: "存在服务异常，需要紧急人工介入",
     enabled: true,
     order: 0,
-    branches: [branch(clause("anomalyActive", "eq", true))],
+    branches: [
+      branch(
+        clause("anomalyActive", "eq", true),
+        clause("anomalyChangedAt", "is_not_null"),
+        clause("anomalyElapsed", "lt", 24, "hours")
+      )
+    ],
     taskPolicy: policy(true, 0, "URGENT", 30, "service-anomaly")
   },
   {

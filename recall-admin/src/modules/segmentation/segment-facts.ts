@@ -18,6 +18,7 @@ export type SegmentEvaluationFacts = {
   emptyBalanceElapsed: number | null;
   anomalyActive: boolean;
   anomalyChangedAt: Date | null;
+  anomalyElapsed: number | null;
   unsubscribed: boolean;
   paused: boolean;
   externalUserId: string;
@@ -97,6 +98,7 @@ export function buildSegmentFacts(
         : null,
     anomalyActive: source.anomalyActive,
     anomalyChangedAt: source.anomalyChangedAt,
+    anomalyElapsed: elapsedMinutes(source.anomalyChangedAt, now),
     unsubscribed: Boolean(source.unsubscribedAt),
     paused: Boolean(source.pausedAt),
     externalUserId: source.externalUserId ?? "",

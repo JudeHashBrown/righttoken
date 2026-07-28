@@ -49,6 +49,8 @@ function relativeSource(
       return (user.balanceUsdMinor ?? user.balanceMinor) < 50
         ? user.balanceChangedAt
         : null;
+    case "anomalyElapsed":
+      return user.anomalyChangedAt;
     default:
       return null;
   }

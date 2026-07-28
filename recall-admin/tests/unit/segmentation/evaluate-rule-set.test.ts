@@ -29,6 +29,7 @@ function facts(
     emptyBalanceElapsed: null,
     anomalyActive: false,
     anomalyChangedAt: null,
+    anomalyElapsed: null,
     unsubscribed: false,
     paused: false,
     externalUserId: "U-1",
@@ -78,7 +79,9 @@ describe("mutually exclusive segment evaluation", () => {
       facts({
         firstPaidAt: now,
         successfulCallCount: 2,
-        anomalyActive: true
+        anomalyActive: true,
+        anomalyChangedAt: new Date("2026-07-24T11:00:00.000Z"),
+        anomalyElapsed: 60
       }),
       defaultSegmentRuleSet
     );
@@ -86,6 +89,26 @@ describe("mutually exclusive segment evaluation", () => {
     expect(result.segment).toBe("F");
     expect(result.matchedGroups).toContain("F");
     expect(result.reason).toContain("F 组");
+  });
+
+  it("stops matching F when the anomaly reaches 24 hours", () => {
+    const result = evaluateRuleSet(
+      facts({
+        firstPaidAt: now,
+        successfulCallCount: 3,
+        firstCallAt: now,
+        lastCallAt: now,
+        lastCallElapsed: 0,
+        balanceUsdMinor: 5_000,
+        anomalyActive: true,
+        anomalyChangedAt: new Date("2026-07-23T12:00:00.000Z"),
+        anomalyElapsed: 1_440
+      }),
+      defaultSegmentRuleSet
+    );
+
+    expect(result.segment).toBe("G");
+    expect(result.matchedGroups).not.toContain("F");
   });
 
   it("selects the first configured match while reporting overlap", () => {
