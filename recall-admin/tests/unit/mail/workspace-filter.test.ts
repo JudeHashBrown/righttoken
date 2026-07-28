@@ -16,6 +16,17 @@ describe("mail workspace filter", () => {
     });
   });
 
+  it("accepts the standalone template management view", () => {
+    expect(
+      parseMailWorkspaceFilter({
+        view: "templates"
+      })
+    ).toEqual({
+      view: "templates",
+      selectedId: null
+    });
+  });
+
   it("falls back safely for unknown or repeated values", () => {
     expect(
       parseMailWorkspaceFilter({

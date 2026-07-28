@@ -145,10 +145,10 @@ export async function getMailWorkspaceData(
     }),
     prisma.mailTemplate.findMany({
       where: {
-        active: true,
         archivedAt: null
       },
-      orderBy: [{ name: "asc" }, { version: "desc" }],
+      distinct: ["key"],
+      orderBy: [{ key: "asc" }, { version: "desc" }],
       select: {
         id: true,
         key: true,

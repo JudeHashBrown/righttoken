@@ -85,6 +85,9 @@ export function MailReplyEditor({
   thread,
   templates
 }: Props): React.JSX.Element {
+  const activeTemplates = templates.filter(
+    (template) => template.active
+  );
   const router = useRouter();
   const [selectedTemplateId, setSelectedTemplateId] = useState<
     string | null
@@ -248,7 +251,7 @@ export function MailReplyEditor({
         onToggle={() => void toggleTemplate()}
         onUpdate={() => void updateTemplate()}
         selectedTemplateId={selectedTemplateId}
-        templates={templates}
+            templates={activeTemplates}
       />
       {showTemplateCreator ? (
         <MailTemplateManager

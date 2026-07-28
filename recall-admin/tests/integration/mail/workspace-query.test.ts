@@ -26,6 +26,7 @@ describe("scoped mail workspace query", () => {
   let ownThreadId: string;
   let otherThreadId: string;
   let templateId: string;
+  let inactiveTemplateKey: string;
 
   beforeAll(async () => {
     const [admin, operator, otherOperator] = await Promise.all([
@@ -194,11 +195,39 @@ describe("scoped mail workspace query", () => {
       }
     });
     templateId = template.id;
+    inactiveTemplateKey = `workspace-inactive-${randomUUID()}`;
+    await prisma.mailTemplate.createMany({
+      data: [
+        {
+          key: inactiveTemplateKey,
+          version: 1,
+          name: "已停用旧版本",
+          subject: "旧主题",
+          bodyText: "旧正文",
+          active: false,
+          createdById: operatorId
+        },
+        {
+          key: inactiveTemplateKey,
+          version: 2,
+          name: "已停用模板",
+          subject: "最新主题",
+          bodyText: "最新正文",
+          active: false,
+          createdById: operatorId
+        }
+      ]
+    });
   });
 
   afterAll(async () => {
     await prisma.mailTemplate.deleteMany({
-      where: { id: templateId }
+      where: {
+        OR: [
+          { id: templateId },
+          { key: inactiveTemplateKey }
+        ]
+      }
     });
     await prisma.recallTask.deleteMany({
       where: { userId: { in: [ownUserId, otherUserId] } }
@@ -265,5 +294,19 @@ describe("scoped mail workspace query", () => {
     expect(
       data.templates.some((template) => template.id === templateId)
     ).toBe(true);
+    expect(data.templates).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: inactiveTemplateKey,
+          version: 2,
+          active: false
+        })
+      ])
+    );
+    expect(
+      data.templates.filter(
+        (template) => template.key === inactiveTemplateKey
+      )
+    ).toHaveLength(1);
   });
 });

@@ -6,7 +6,8 @@ export const mailWorkspaceViews = [
   "unmatched",
   "drafts",
   "failed",
-  "sync"
+  "sync",
+  "templates"
 ] as const;
 
 export type MailWorkspaceView =

@@ -620,6 +620,100 @@
   padding: 14px;
 }
 
+.templateLibrary {
+  min-width: 0;
+  border: 1px solid #e1e5ed;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.templateLibraryHeader {
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid #e6e9f0;
+  padding: 14px 20px;
+}
+
+.templateLibraryHeader h2 {
+  margin: 0;
+  color: #202a40;
+  font-size: 18px;
+}
+
+.templateLibraryHeader p {
+  margin: 5px 0 0;
+  color: #687288;
+  font-size: 13px;
+}
+
+.templateLibrary > .templateEditor {
+  margin: 16px 20px 0;
+}
+
+.templateLibraryTabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  border-bottom: 1px solid #e6e9f0;
+  padding: 14px 20px;
+}
+
+.templateLibraryForm {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+
+.templateLibraryMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: #69738a;
+  font-size: 13px;
+}
+
+.templateLibraryMeta > span:first-child {
+  margin-right: 4px;
+}
+
+.templateSubjectField {
+  grid-column: span 2;
+}
+
+.templateLibraryFooter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.templateLibraryEmpty {
+  display: grid;
+  min-height: 300px;
+  place-items: center;
+  align-content: center;
+  gap: 9px;
+  padding: 32px;
+  text-align: center;
+}
+
+.templateLibraryEmpty strong {
+  color: #30394f;
+  font-size: 16px;
+}
+
+.templateLibraryEmpty p {
+  max-width: 46ch;
+  margin: 0 0 8px;
+  color: #687288;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 .helperText {
   color: #6f7890;
   font-size: 13px;
@@ -910,6 +1004,14 @@
   .templateActions {
     flex-wrap: wrap;
   }
+
+  .templateLibraryHeader {
+    align-items: flex-start;
+  }
+
+  .templateSubjectField {
+    grid-column: auto;
+  }
 }
 
 @media (max-width: 640px) {
@@ -923,6 +1025,13 @@
   .replyEditor,
   .unmatchedBody,
   .assignmentForm {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .templateLibraryHeader,
+  .templateLibraryTabs,
+  .templateLibraryForm {
     padding-right: 14px;
     padding-left: 14px;
   }

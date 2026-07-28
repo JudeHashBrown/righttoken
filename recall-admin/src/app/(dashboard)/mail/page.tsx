@@ -1,4 +1,8 @@
+import Link from "next/link";
 import { MailStatLinks } from "@/components/mail/mail-stat-links";
+import {
+  MailTemplateLibrary
+} from "@/components/mail/mail-template-library";
 import { MailWorkbench } from "@/components/mail/mail-workbench";
 import styles from "@/components/workspaces/workspace.module.css";
 import {
@@ -33,17 +37,42 @@ export default async function MailPage({
             查看用户来信、处理待回复会话并维护公共邮件模板。
           </p>
         </div>
+        <div className={styles.headingActions}>
+          <Link
+            className={styles.secondaryButton}
+            href={
+              filter.view === "templates"
+                ? "/mail?view=replies"
+                : "/mail?view=templates"
+            }
+          >
+            {filter.view === "templates"
+              ? "返回邮件列表"
+              : "模板管理"}
+          </Link>
+        </div>
       </header>
 
-      <MailStatLinks stats={data.stats} />
+      {filter.view === "templates" ? (
+        <MailTemplateLibrary
+          key={data.templates
+            .map((template) => template.id)
+            .join(":")}
+          templates={data.templates}
+        />
+      ) : (
+        <>
+          <MailStatLinks stats={data.stats} />
 
-      {data.mailboxes.some((mailbox) => mailbox.enabled) ? null : (
-        <p className={styles.notice}>
-          尚未启用邮箱。请先由管理员在系统设置中连接 Namecheap、企业微信邮箱或自定义 SMTP/IMAP。
-        </p>
+          {data.mailboxes.some((mailbox) => mailbox.enabled) ? null : (
+            <p className={styles.notice}>
+              尚未启用邮箱。请先由管理员在系统设置中连接 Namecheap、企业微信邮箱或自定义 SMTP/IMAP。
+            </p>
+          )}
+
+          <MailWorkbench data={data} />
+        </>
       )}
-
-      <MailWorkbench data={data} />
     </main>
   );
 }
