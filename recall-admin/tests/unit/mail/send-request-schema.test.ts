@@ -18,14 +18,18 @@ describe("mailSendRequestSchema", () => {
   });
 
   it("accepts a user without an existing task", () => {
-    const { taskId: _taskId, ...withoutTask } = valid;
+    const withoutTask = Object.fromEntries(
+      Object.entries(valid).filter(([key]) => key !== "taskId")
+    );
     const result = mailSendRequestSchema.parse(withoutTask);
     expect(result).toMatchObject({ userId: "user-1" });
     expect(result.taskId).toBeUndefined();
   });
 
   it("requires a selected RightToken user", () => {
-    const { userId: _userId, ...withoutUser } = valid;
+    const withoutUser = Object.fromEntries(
+      Object.entries(valid).filter(([key]) => key !== "userId")
+    );
     expect(
       mailSendRequestSchema.safeParse(withoutUser).success
     ).toBe(false);

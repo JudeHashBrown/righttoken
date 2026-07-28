@@ -17,6 +17,7 @@ vi.mock("next/navigation", () => ({
 
 const task = {
   id: "task-1",
+  userId: "user-1",
   title: "跟进未支付用户",
   userLabel: "测试用户",
   recipient: "person@example.test",
@@ -94,7 +95,11 @@ describe("MailComposer", () => {
       screen.getByRole("button", { name: "审核并发送" })
     );
     await waitFor(() => {
-      expect(screen.getByText("邮件已发送并记录")).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "邮件已发送，任务已进入等待用户回复"
+        )
+      ).toBeInTheDocument();
     });
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/mail/send",
@@ -138,7 +143,7 @@ describe("MailComposer", () => {
       screen.getByText("当前使用手动收件人")
     ).toBeInTheDocument();
 
-    fireEvent.change(screen.getByLabelText("关联任务与用户"), {
+    fireEvent.change(screen.getByLabelText("关联任务（可选）"), {
       target: { value: "task-2" }
     });
     expect(recipient).toHaveValue("second@example.test");
@@ -176,5 +181,56 @@ describe("MailComposer", () => {
     expect(
       screen.getByRole("button", { name: "审核并发送" })
     ).toBeDisabled();
+  });
+
+  it("sends proactive mail for a selected user without an existing task", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          message: { id: "message-2", status: "SENT" },
+          taskId: "manual-task-1"
+        })
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    render(
+      <MailComposer
+        tasks={[]}
+        users={[
+          {
+            id: "user-1",
+            label: "测试用户",
+            email: "person@example.test",
+            suppressed: false,
+            paused: false
+          }
+        ]}
+        mailboxes={[mailbox]}
+        initialSubject="RightToken 主动联系"
+        initialBody="你好，我们可以协助你。"
+      />
+    );
+
+    fireEvent.change(screen.getByLabelText("选择用户"), {
+      target: { value: "user-1" }
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "审核并发送" })
+    );
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/mail/send",
+        expect.objectContaining({
+          body: expect.stringContaining('"userId":"user-1"')
+        })
+      );
+    });
+    const request = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(request.body).not.toContain('"taskId":""');
+    expect(
+      screen.getByText(
+        "邮件已发送，任务已进入等待用户回复"
+      )
+    ).toBeInTheDocument();
   });
 });

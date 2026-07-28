@@ -22,7 +22,13 @@ export async function GET(
     const filter = parseMailWorkspaceFilter({
       view: request.nextUrl.searchParams.get("view") ?? undefined,
       selected:
-        request.nextUrl.searchParams.get("selected") ?? undefined
+        request.nextUrl.searchParams.get("selected") ?? undefined,
+      compose:
+        request.nextUrl.searchParams.get("compose") ?? undefined,
+      userId:
+        request.nextUrl.searchParams.get("userId") ?? undefined,
+      taskId:
+        request.nextUrl.searchParams.get("taskId") ?? undefined
     });
     return NextResponse.json(
       await getMailWorkspaceData(member, filter)
