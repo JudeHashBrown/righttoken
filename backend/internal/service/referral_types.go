@@ -22,13 +22,13 @@ const (
 )
 
 var (
-	ErrReferralCodeNotFound        = infraerrors.NotFound("REFERRAL_CODE_NOT_FOUND", "referral code not found")
-	ErrReferralSelfBlocked         = infraerrors.BadRequest("REFERRAL_SELF_BLOCKED", "cannot refer yourself")
-	ErrReferralRuleNotFound        = infraerrors.NotFound("REFERRAL_RULE_NOT_FOUND", "referral rule not found")
-	ErrReferralCommissionMissing   = infraerrors.NotFound("REFERRAL_COMMISSION_NOT_FOUND", "referral commission not found")
-	ErrReferralCodeGenFailed       = infraerrors.InternalServer("REFERRAL_CODE_GEN_FAILED", "failed to generate invite code")
-	ErrReferralFeatureDisabled     = infraerrors.Forbidden("REFERRAL_FEATURE_DISABLED", "referral feature is not enabled for this user")
-	ErrReferralPartnerHasPending   = infraerrors.Conflict("REFERRAL_PARTNER_HAS_PENDING", "user has pending commissions and cannot be disabled")
+	ErrReferralCodeNotFound      = infraerrors.NotFound("REFERRAL_CODE_NOT_FOUND", "referral code not found")
+	ErrReferralSelfBlocked       = infraerrors.BadRequest("REFERRAL_SELF_BLOCKED", "cannot refer yourself")
+	ErrReferralRuleNotFound      = infraerrors.NotFound("REFERRAL_RULE_NOT_FOUND", "referral rule not found")
+	ErrReferralCommissionMissing = infraerrors.NotFound("REFERRAL_COMMISSION_NOT_FOUND", "referral commission not found")
+	ErrReferralCodeGenFailed     = infraerrors.InternalServer("REFERRAL_CODE_GEN_FAILED", "failed to generate invite code")
+	ErrReferralFeatureDisabled   = infraerrors.Forbidden("REFERRAL_FEATURE_DISABLED", "referral feature is not enabled for this user")
+	ErrReferralPartnerHasPending = infraerrors.Conflict("REFERRAL_PARTNER_HAS_PENDING", "user has pending commissions and cannot be disabled")
 )
 
 // ReferralCommissionRule 抽佣比例规则

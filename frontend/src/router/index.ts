@@ -241,6 +241,16 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/user-operations',
+    name: 'UserOperations',
+    component: () => import('@/views/UserOperationsRedirectView.vue'),
+    meta: {
+      requiresAuth: true,
+      title: 'User Operations',
+      titleKey: 'nav.userOperations'
+    }
+  },
+  {
     path: '/keys',
     name: 'Keys',
     component: () => import('@/views/user/KeysView.vue'),

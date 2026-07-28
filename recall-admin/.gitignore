@@ -1,0 +1,16 @@
+.superpowers/
+.worktrees/
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+dist/
+coverage/
+playwright-report/
+test-results/
+backups/
+data/
+.data/
+*.log
+*.tsbuildinfo

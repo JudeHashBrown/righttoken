@@ -1,0 +1,135 @@
+name: righttoken-recall-local
+
+x-recall-environment: &recall-environment
+  DATABASE_URL: postgresql://righttoken:righttoken@recall-db:5432/righttoken_recall?schema=recall
+  JOB_DATABASE_URL: postgresql://righttoken:righttoken@recall-db:5432/righttoken_recall
+  SESSION_COOKIE_SECRET: ${SESSION_COOKIE_SECRET:-development-session-cookie-secret-only}
+  APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=}
+  APP_URL: ${APP_URL:-http://127.0.0.1:3000}
+  AUTH_MODE: ${AUTH_MODE:-development}
+  DEPLOYMENT_ENV: local
+  INTERNAL_API_SECRET_CURRENT: ${INTERNAL_API_SECRET_CURRENT:-development-only-internal-secret-32-chars}
+  INTERNAL_API_SECRET_PREVIOUS: ${INTERNAL_API_SECRET_PREVIOUS:-}
+  RIGHTTOKEN_SOURCE_MODE: ${RIGHTTOKEN_SOURCE_MODE:-simulator}
+  RECONCILE_ENABLED: ${RECONCILE_ENABLED:-false}
+  RECONCILE_INTERVAL_MINUTES: ${RECONCILE_INTERVAL_MINUTES:-15}
+  FULL_RECONCILE_CRON: ${FULL_RECONCILE_CRON:-0 2 * * *}
+  GEOIP_MMDB_PATH: ${GEOIP_MMDB_PATH:-/var/lib/righttoken-geoip/GeoLite2-City.mmdb}
+  GEOIP_RIR_PATH: ${GEOIP_RIR_PATH:-/var/lib/righttoken-geoip/delegated-rir.txt}
+  NODE_ENV: development
+
+services:
+  recall-db:
+    image: postgres:16-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: righttoken_recall
+      POSTGRES_USER: righttoken
+      POSTGRES_PASSWORD: righttoken
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - recall_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U righttoken -d righttoken_recall"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    networks:
+      - recall-network
+
+  recall-migrate:
+    image: righttoken-recall-admin:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment: *recall-environment
+    command: ["npm", "run", "db:deploy"]
+    depends_on:
+      recall-db:
+        condition: service_healthy
+    restart: "no"
+    networks:
+      - recall-network
+
+  recall-seed:
+    image: righttoken-recall-admin-builder:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    environment:
+      <<: *recall-environment
+      SEED_PRIMARY_ADMIN_EMAIL: ${SEED_PRIMARY_ADMIN_EMAIL:-primary-admin@example.test}
+    command: ["npm", "run", "db:seed"]
+    depends_on:
+      recall-migrate:
+        condition: service_completed_successfully
+    restart: "no"
+    networks:
+      - recall-network
+
+  recall-web:
+    image: righttoken-recall-admin:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment: *recall-environment
+    ports:
+      - "127.0.0.1:${RECALL_SERVER_PORT:-3000}:3000"
+    depends_on:
+      recall-seed:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    read_only: true
+    volumes:
+      - ./data/geoip:/var/lib/righttoken-geoip:ro
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - recall-network
+
+  recall-worker:
+    image: righttoken-recall-admin:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment: *recall-environment
+    command: ["npm", "run", "worker:prod"]
+    depends_on:
+      recall-seed:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    read_only: true
+    volumes:
+      - ./data/geoip:/var/lib/righttoken-geoip:ro
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "npm", "run", "worker:health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - recall-network
+
+volumes:
+  recall_postgres_data:
+
+networks:
+  recall-network:
+    driver: bridge

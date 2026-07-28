@@ -1,0 +1,756 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["recall"]
+}
+
+enum MemberRole {
+  PRIMARY_ADMIN
+  ADMIN
+  OPERATOR
+
+  @@schema("recall")
+}
+
+enum SegmentCode {
+  A
+  B
+  C
+  D
+  E
+  F
+  G
+
+  @@schema("recall")
+}
+
+enum TaskPriority {
+  URGENT
+  IMPORTANT
+  NORMAL
+
+  @@schema("recall")
+}
+
+enum TaskStatus {
+  UNASSIGNED
+  TODO
+  IN_PROGRESS
+  WAITING_USER
+  COMPLETED
+  PAUSED
+  CANCELLED
+
+  @@schema("recall")
+}
+
+enum TaskOrigin {
+  AUTOMATION
+  MANUAL
+  EMAIL_REPLY
+
+  @@schema("recall")
+}
+
+enum MailDirection {
+  OUTBOUND
+  INBOUND
+
+  @@schema("recall")
+}
+
+enum MailMessageStatus {
+  DRAFT
+  SENT
+  RECEIVED
+  FAILED
+  UNMATCHED
+
+  @@schema("recall")
+}
+
+enum MailAssetDisposition {
+  INLINE
+  ATTACHMENT
+
+  @@schema("recall")
+}
+
+enum NotificationChannel {
+  IN_APP
+  WECOM_APP
+  WECOM_ROBOT
+  EMAIL
+
+  @@schema("recall")
+}
+
+enum DeliveryStatus {
+  PENDING
+  SENT
+  FAILED
+  DEAD_LETTER
+
+  @@schema("recall")
+}
+
+enum RecalculationStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  PARTIAL_FAILURE
+  FAILED
+
+  @@schema("recall")
+}
+
+enum LocationAttributionSource {
+  EMAIL_EXACT_DOMAIN
+  EMAIL_DOMAIN_SUFFIX
+  IP_GEOIP
+  IP_RIR
+  IP_EVENT
+  INVALID_REGISTRATION_DATA
+
+  @@schema("recall")
+}
+
+enum LocationRuleMatchType {
+  EXACT_DOMAIN
+  DOMAIN_SUFFIX
+
+  @@schema("recall")
+}
+
+model Member {
+  id              String     @id @default(cuid())
+  email           String     @unique
+  rightTokenUserId String?    @unique
+  displayName     String
+  passwordHash    String
+  role            MemberRole
+  active          Boolean    @default(true)
+  twoFactorSecret String?
+  twoFactorOn     Boolean    @default(false)
+  wecomUserId     String?    @unique
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  sessions      Session[]
+  assignedTasks RecallTask[]   @relation("TaskAssignee")
+  ownedUsers    UserProfile[]  @relation("UserOwner")
+  notes         UserNote[]
+  auditLogs     AuditLog[]     @relation("AuditActor")
+  recoveryCodes RecoveryCode[]
+  reviewedMailMessages MailMessage[] @relation("MailReviewer")
+  segmentRecalculationRuns SegmentRecalculationRun[] @relation("SegmentRecalculationRequester")
+  locationRecalculationRuns LocationRecalculationRun[] @relation("LocationRecalculationRequester")
+  assignmentRecalculationRuns AssignmentRecalculationRun[] @relation("AssignmentRecalculationRequester")
+
+  @@schema("recall")
+}
+
+model SsoTicketRedemption {
+  jti        String   @id
+  expiresAt  DateTime
+  redeemedAt DateTime @default(now())
+
+  @@index([expiresAt])
+  @@schema("recall")
+}
+
+model Session {
+  id                     String    @id @default(cuid())
+  memberId               String
+  tokenHash              String    @unique
+  expiresAt              DateTime
+  reauthenticatedAt      DateTime?
+  secondFactorRequired   Boolean   @default(false)
+  secondFactorVerifiedAt DateTime?
+  createdAt              DateTime  @default(now())
+  lastSeenAt             DateTime  @default(now())
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId, expiresAt])
+  @@schema("recall")
+}
+
+model UserProfile {
+  id                  String      @id @default(cuid())
+  externalUserId      String      @unique
+  email               String
+  emailNormalized     String
+  displayName         String?
+  registeredAt        DateTime
+  registrationIpEnc   String?
+  registrationIpHash  String?
+  countryCode         String?
+  region              String?
+  ipCountryCode       String?
+  ipRegion            String?
+  locationSource      LocationAttributionSource?
+  locationRuleId      String?
+  locationEvaluatedAt DateTime?
+  language            String?
+  timezone            String?
+  source              String?
+  checkoutStartedAt   DateTime?
+  checkoutChangedAt   DateTime?
+  paymentStatus       String      @default("NONE")
+  firstPaidAt         DateTime?
+  totalPaidMinor      Int         @default(0)
+  firstCallAt         DateTime?
+  lastCallAt          DateTime?
+  successfulCallCount Int         @default(0)
+  balanceMinor        Int         @default(0)
+  balanceCurrency     String      @default("USD")
+  balanceUsdMinor     Int         @default(0)
+  balanceChangedAt    DateTime?
+  anomalyActive       Boolean     @default(false)
+  anomalyChangedAt    DateTime?
+  currentSegment      SegmentCode
+  segmentRuleVersion  Int         @default(1)
+  ownerId             String?
+  reasonLabel         String?
+  unsubscribedAt      DateTime?
+  pausedAt            DateTime?
+  profileChangedAt    DateTime?
+  lastExternalEventAt DateTime?
+  sourceDeletedAt     DateTime?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  owner            Member?           @relation("UserOwner", fields: [ownerId], references: [id])
+  events           UserEvent[]
+  segmentHistory   SegmentHistory[]
+  segmentOverrides SegmentOverride[]
+  tasks            RecallTask[]
+  notes            UserNote[]
+  mailThreads      MailThread[]
+  mailMessages     MailMessage[]
+  locationRule     LocationAttributionRule? @relation(fields: [locationRuleId], references: [id], onDelete: SetNull)
+
+  @@index([currentSegment, updatedAt])
+  @@index([countryCode, region])
+  @@index([ipCountryCode, ipRegion])
+  @@index([locationRuleId])
+  @@index([emailNormalized])
+  @@index([sourceDeletedAt])
+  @@schema("recall")
+}
+
+model UserEvent {
+  id         String   @id @default(cuid())
+  eventId    String   @unique
+  userId     String
+  eventType  String
+  occurredAt DateTime
+  receivedAt DateTime @default(now())
+  payload    Json
+  applied    Boolean  @default(false)
+  errorCode  String?
+
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, occurredAt])
+  @@schema("recall")
+}
+
+model SegmentHistory {
+  id          String       @id @default(cuid())
+  userId      String
+  fromSegment SegmentCode?
+  toSegment   SegmentCode
+  ruleVersion Int
+  reason      String
+  changedAt   DateTime     @default(now())
+
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, changedAt])
+  @@schema("recall")
+}
+
+model SegmentOverride {
+  id          String      @id @default(cuid())
+  userId      String
+  segment     SegmentCode
+  reason      String
+  createdById String
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  createdAt   DateTime    @default(now())
+
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@schema("recall")
+}
+
+model UserNote {
+  id        String   @id @default(cuid())
+  userId    String
+  authorId  String
+  body      String
+  createdAt DateTime @default(now())
+
+  user   UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  author Member      @relation(fields: [authorId], references: [id])
+
+  @@index([userId, createdAt])
+  @@schema("recall")
+}
+
+model AutomationRuleVersion {
+  id          String   @id @default(cuid())
+  kind        String
+  version     Int
+  config      Json
+  active      Boolean  @default(false)
+  createdById String
+  createdAt   DateTime @default(now())
+
+  recalculationRuns SegmentRecalculationRun[]
+
+  @@unique([kind, version])
+  @@index([kind, active])
+  @@schema("recall")
+}
+
+model SegmentRecalculationRun {
+  id                  String              @id @default(cuid())
+  ruleVersionId       String
+  ruleVersionNumber   Int
+  requestedById       String
+  idempotencyKey      String              @unique
+  status              RecalculationStatus @default(PENDING)
+  totalUsers          Int                 @default(0)
+  processedUsers      Int                 @default(0)
+  succeededUsers      Int                 @default(0)
+  failedUsers         Int                 @default(0)
+  segmentChanges      Int                 @default(0)
+  cancelledTasks      Int                 @default(0)
+  createdTasks        Int                 @default(0)
+  lastProcessedUserId String?
+  upperBoundUserId    String?
+  previewSummary      Json
+  errorSummary        Json?
+  startedAt           DateTime?
+  completedAt         DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  ruleVersion AutomationRuleVersion @relation(fields: [ruleVersionId], references: [id], onDelete: Restrict)
+  requestedBy Member @relation("SegmentRecalculationRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+
+  @@index([status, createdAt])
+  @@index([ruleVersionId, createdAt])
+  @@schema("recall")
+}
+
+model AssignmentRule {
+  id                 String    @id @default(cuid())
+  name               String
+  enabled            Boolean   @default(true)
+  priority           Int
+  conditions         Json
+  assigneeId         String?
+  fallbackAssigneeId String?
+  poolKey            String?
+  workloadLimit      Int?
+  effectiveFrom      DateTime?
+  effectiveTo        DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@unique([priority])
+  @@index([enabled, priority])
+  @@schema("recall")
+}
+
+model AssignmentRecalculationRun {
+  id                  String              @id @default(cuid())
+  requestedById       String
+  status              RecalculationStatus @default(PENDING)
+  totalUsers          Int                 @default(0)
+  processedUsers      Int                 @default(0)
+  succeededUsers      Int                 @default(0)
+  failedUsers         Int                 @default(0)
+  ownerChanges        Int                 @default(0)
+  reassignedTasks     Int                 @default(0)
+  lastProcessedUserId String?
+  upperBoundUserId    String?
+  errorSummary        Json?
+  startedAt           DateTime?
+  completedAt         DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  requestedBy Member @relation("AssignmentRecalculationRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+
+  @@index([status, createdAt])
+  @@index([requestedById, createdAt])
+  @@schema("recall")
+}
+
+model LocationAttributionRule {
+  id          String                @id @default(cuid())
+  name        String
+  enabled     Boolean               @default(true)
+  priority    Int
+  matchType   LocationRuleMatchType
+  pattern     String
+  countryCode String
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  users UserProfile[]
+
+  @@unique([priority])
+  @@unique([matchType, pattern])
+  @@index([enabled, matchType, priority])
+  @@schema("recall")
+}
+
+model LocationRecalculationRun {
+  id                  String              @id @default(cuid())
+  requestedById       String
+  status              RecalculationStatus @default(PENDING)
+  totalUsers          Int                 @default(0)
+  processedUsers      Int                 @default(0)
+  succeededUsers      Int                 @default(0)
+  failedUsers         Int                 @default(0)
+  countryChanges      Int                 @default(0)
+  reassignedTasks     Int                 @default(0)
+  lastProcessedUserId String?
+  upperBoundUserId    String?
+  ruleSnapshot        Json
+  errorSummary        Json?
+  startedAt           DateTime?
+  completedAt         DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  requestedBy Member @relation("LocationRecalculationRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+
+  @@index([status, createdAt])
+  @@index([requestedById, createdAt])
+  @@schema("recall")
+}
+
+model RecallTask {
+  id               String       @id @default(cuid())
+  userId           String
+  origin           TaskOrigin
+  triggerKey       String
+  ruleVersion      Int
+  title            String
+  reason           String
+  priority         TaskPriority
+  status           TaskStatus   @default(UNASSIGNED)
+  assigneeId       String?
+  assignmentReason String?
+  dueAt            DateTime
+  startedAt        DateTime?
+  completedAt      DateTime?
+  cancelledAt      DateTime?
+  cancelReason     String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  user       UserProfile    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignee   Member?        @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  activities TaskActivity[]
+  mailMessages MailMessage[]
+  notificationIntents NotificationIntent[]
+
+  @@unique([userId, triggerKey, ruleVersion])
+  @@index([status, priority, dueAt])
+  @@index([assigneeId, status])
+  @@schema("recall")
+}
+
+model TaskActivity {
+  id        String   @id @default(cuid())
+  taskId    String
+  actorId   String?
+  action    String
+  detail    Json?
+  createdAt DateTime @default(now())
+
+  task RecallTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, createdAt])
+  @@schema("recall")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json
+  ipHash     String?
+  createdAt  DateTime @default(now())
+
+  actor Member? @relation("AuditActor", fields: [actorId], references: [id])
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
+  @@schema("recall")
+}
+
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  emailHash String
+  ipHash    String
+  succeeded Boolean
+  createdAt DateTime @default(now())
+
+  @@index([emailHash, ipHash, createdAt])
+  @@schema("recall")
+}
+
+model Invitation {
+  id          String     @id @default(cuid())
+  email       String
+  role        MemberRole
+  tokenHash   String     @unique
+  invitedById String
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  createdAt   DateTime   @default(now())
+
+  @@index([email, expiresAt])
+  @@schema("recall")
+}
+
+model RecoveryCode {
+  id        String    @id @default(cuid())
+  memberId  String
+  codeHash  String
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId, usedAt])
+  @@schema("recall")
+}
+
+model Mailbox {
+  id                 String   @id @default(cuid())
+  name               String
+  emailAddress       String   @unique
+  encryptedConfig    String
+  enabled            Boolean  @default(false)
+  trackingEnabled    Boolean  @default(false)
+  trackingDisclosure String?
+  lastSyncedAt       DateTime?
+  lastTestedAt       DateTime?
+  lastSuccessAt      DateTime?
+  lastErrorCode      String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  threads  MailThread[]
+  messages MailMessage[]
+
+  @@schema("recall")
+}
+
+model MailTemplate {
+  id           String       @id @default(cuid())
+  key          String
+  version      Int
+  name         String
+  locale       String       @default("zh-CN")
+  subject      String
+  bodyText     String
+  bodyHtml     String?
+  segment      SegmentCode?
+  active       Boolean      @default(false)
+  createdById  String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  archivedAt   DateTime?
+  archivedById String?
+
+  assets MailTemplateAsset[]
+
+  @@unique([key, version])
+  @@index([active, archivedAt, segment, locale])
+  @@schema("recall")
+}
+
+model MailThread {
+  id        String   @id @default(cuid())
+  userId    String
+  mailboxId String
+  subject   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     UserProfile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mailbox  Mailbox      @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+  messages MailMessage[]
+
+  @@index([userId, updatedAt])
+  @@index([mailboxId, updatedAt])
+  @@schema("recall")
+}
+
+model MailMessage {
+  id                String            @id @default(cuid())
+  mailboxId         String
+  threadId          String?
+  userId            String?
+  taskId            String?
+  direction         MailDirection
+  status            MailMessageStatus
+  providerMessageId String?           @unique
+  inReplyTo         String?
+  references        String[]
+  fromAddress       String
+  toAddresses       String[]
+  subject           String
+  bodyText          String
+  bodyHtml          String?
+  templateKey       String?
+  templateVersion   Int?
+  reviewedById      String?
+  openedAt          DateTime?
+  firstClickedAt    DateTime?
+  openCount         Int               @default(0)
+  clickCount        Int               @default(0)
+  sentAt            DateTime?
+  receivedAt        DateTime?
+  lastErrorCode     String?
+  externalImagesBlocked Boolean @default(false)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  mailbox   Mailbox      @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+  thread    MailThread?  @relation(fields: [threadId], references: [id], onDelete: SetNull)
+  user      UserProfile? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  task      RecallTask?  @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  reviewedBy Member?     @relation("MailReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  assets     MailMessageAsset[]
+
+  @@index([mailboxId, status, createdAt])
+  @@index([threadId, createdAt])
+  @@index([userId, createdAt])
+  @@index([taskId])
+  @@schema("recall")
+}
+
+model MailAsset {
+  id          String   @id @default(cuid())
+  storageKey  String   @unique
+  fileName    String
+  contentType String
+  byteSize    Int
+  sha256      String
+  width       Int
+  height      Int
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  templateUsages MailTemplateAsset[]
+  messageUsages  MailMessageAsset[]
+
+  @@index([createdById, createdAt])
+  @@schema("recall")
+}
+
+model MailTemplateAsset {
+  id          String               @id @default(cuid())
+  templateId  String
+  assetId     String
+  disposition MailAssetDisposition
+  cid         String?
+  sortOrder   Int                  @default(0)
+  createdAt   DateTime             @default(now())
+
+  template MailTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  asset    MailAsset    @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  @@unique([templateId, assetId, disposition])
+  @@index([assetId])
+  @@index([templateId, sortOrder])
+  @@schema("recall")
+}
+
+model MailMessageAsset {
+  id          String               @id @default(cuid())
+  messageId   String
+  assetId     String
+  disposition MailAssetDisposition
+  cid         String?
+  sortOrder   Int                  @default(0)
+  createdAt   DateTime             @default(now())
+
+  message MailMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  asset   MailAsset   @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  @@unique([messageId, assetId, disposition])
+  @@index([assetId])
+  @@index([messageId, sortOrder])
+  @@schema("recall")
+}
+
+model SuppressionEntry {
+  id              String   @id @default(cuid())
+  emailNormalized String   @unique
+  reason          String
+  source          String
+  createdAt       DateTime @default(now())
+
+  @@schema("recall")
+}
+
+model NotificationIntent {
+  id                String              @id @default(cuid())
+  taskId            String?
+  channel           NotificationChannel
+  recipient         String
+  payload           Json
+  status            DeliveryStatus      @default(PENDING)
+  attemptCount      Int                 @default(0)
+  lastErrorCode     String?
+  providerMessageId String?
+  sentAt            DateTime?
+  nextAttemptAt     DateTime?
+  readAt            DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  task RecallTask? @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([status, nextAttemptAt, createdAt])
+  @@index([recipient, readAt, createdAt])
+  @@unique([taskId, channel, recipient])
+  @@schema("recall")
+}
+
+model IntegrationCredential {
+  id              String   @id @default(cuid())
+  kind            String   @unique
+  displayName     String
+  encryptedConfig String
+  enabled         Boolean  @default(false)
+  lastTestedAt    DateTime?
+  lastSuccessAt   DateTime?
+  lastErrorCode   String?
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@schema("recall")
+}

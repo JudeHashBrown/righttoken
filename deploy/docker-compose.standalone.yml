@@ -75,6 +75,11 @@ services:
       # =======================================================================
       - JWT_SECRET=${JWT_SECRET:-}
       - JWT_EXPIRE_HOUR=${JWT_EXPIRE_HOUR:-24}
+      - RECALL_SSO_BASE_URL=${RECALL_SSO_BASE_URL:-}
+      - RECALL_SSO_INTERNAL_SECRET=${RECALL_SSO_INTERNAL_SECRET:-}
+      - RECALL_SSO_SSO_SECRET=${RECALL_SSO_SSO_SECRET:-}
+      - RECALL_SSO_ISSUER=${RECALL_SSO_ISSUER:-https://righttoken.ai}
+      - RECALL_SSO_AUDIENCE=${RECALL_SSO_AUDIENCE:-righttoken-recall}
 
       # =======================================================================
       # Timezone Configuration

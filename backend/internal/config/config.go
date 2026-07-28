@@ -83,6 +83,20 @@ type Config struct {
 	Gemini                  GeminiConfig                  `mapstructure:"gemini"`
 	Update                  UpdateConfig                  `mapstructure:"update"`
 	Idempotency             IdempotencyConfig             `mapstructure:"idempotency"`
+	RecallExport            RecallExportConfig            `mapstructure:"recall_export"`
+	RecallSSO               RecallSSOConfig               `mapstructure:"recall_sso"`
+}
+
+type RecallExportConfig struct {
+	Secret string `mapstructure:"secret"`
+}
+
+type RecallSSOConfig struct {
+	BaseURL        string `mapstructure:"base_url"`
+	InternalSecret string `mapstructure:"internal_secret"`
+	SSOSecret      string `mapstructure:"sso_secret"`
+	Issuer         string `mapstructure:"issuer"`
+	Audience       string `mapstructure:"audience"`
 }
 
 type LogConfig struct {
@@ -995,6 +1009,12 @@ func load(allowMissingJWTSecret bool) (*Config, error) {
 	}
 	cfg.Server.FrontendURL = strings.TrimSpace(cfg.Server.FrontendURL)
 	cfg.JWT.Secret = strings.TrimSpace(cfg.JWT.Secret)
+	cfg.RecallExport.Secret = strings.TrimSpace(cfg.RecallExport.Secret)
+	cfg.RecallSSO.BaseURL = strings.TrimRight(strings.TrimSpace(cfg.RecallSSO.BaseURL), "/")
+	cfg.RecallSSO.InternalSecret = strings.TrimSpace(cfg.RecallSSO.InternalSecret)
+	cfg.RecallSSO.SSOSecret = strings.TrimSpace(cfg.RecallSSO.SSOSecret)
+	cfg.RecallSSO.Issuer = strings.TrimSpace(cfg.RecallSSO.Issuer)
+	cfg.RecallSSO.Audience = strings.TrimSpace(cfg.RecallSSO.Audience)
 	cfg.LinuxDo.ClientID = strings.TrimSpace(cfg.LinuxDo.ClientID)
 	cfg.LinuxDo.ClientSecret = strings.TrimSpace(cfg.LinuxDo.ClientSecret)
 	cfg.LinuxDo.AuthorizeURL = strings.TrimSpace(cfg.LinuxDo.AuthorizeURL)
@@ -1266,6 +1286,12 @@ func setDefaults() {
 
 	// JWT
 	viper.SetDefault("jwt.secret", "")
+	viper.SetDefault("recall_export.secret", "")
+	viper.SetDefault("recall_sso.base_url", "")
+	viper.SetDefault("recall_sso.internal_secret", "")
+	viper.SetDefault("recall_sso.sso_secret", "")
+	viper.SetDefault("recall_sso.issuer", "https://righttoken.ai")
+	viper.SetDefault("recall_sso.audience", "righttoken-recall")
 	viper.SetDefault("jwt.expire_hour", 24)
 	viper.SetDefault("jwt.access_token_expire_minutes", 0) // 0 表示回退到 expire_hour
 	viper.SetDefault("jwt.refresh_token_expire_days", 30)  // 30天Refresh Token有效期

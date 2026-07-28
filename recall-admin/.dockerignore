@@ -1,0 +1,16 @@
+.git
+.gitignore
+.env
+.env.*
+.next
+node_modules
+coverage
+tests
+docs
+playwright-report
+test-results
+dist
+*.log
+*.tsbuildinfo
+compose*.yaml
+Dockerfile*

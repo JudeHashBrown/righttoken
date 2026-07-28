@@ -1,0 +1,30 @@
+import { defineConfig, devices } from "@playwright/test";
+
+const e2ePort = process.env.RECALL_E2E_PORT ?? "3101";
+const e2eBaseUrl = `http://127.0.0.1:${e2ePort}`;
+
+export default defineConfig({
+  testDir: "./tests/e2e",
+  fullyParallel: false,
+  retries: process.env.CI ? 2 : 0,
+  reporter: "list",
+  use: {
+    baseURL: e2eBaseUrl,
+    trace: "on-first-retry"
+  },
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] }
+    }
+  ],
+  webServer: {
+    command: `npm run dev -- -H 127.0.0.1 -p ${e2ePort}`,
+    env: {
+      ...process.env,
+      APP_URL: e2eBaseUrl
+    },
+    url: `${e2eBaseUrl}/login`,
+    reuseExistingServer: !process.env.CI
+  }
+});

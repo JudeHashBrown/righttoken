@@ -1,0 +1,107 @@
+x-recall-environment: &recall-environment
+  DATABASE_URL: ${RECALL_DATABASE_URL:?RECALL_DATABASE_URL is required}
+  JOB_DATABASE_URL: ${RECALL_JOB_DATABASE_URL:?RECALL_JOB_DATABASE_URL is required}
+  SESSION_COOKIE_SECRET: ${RECALL_SESSION_COOKIE_SECRET:?RECALL_SESSION_COOKIE_SECRET is required}
+  APP_ENCRYPTION_KEY: ${RECALL_APP_ENCRYPTION_KEY:?RECALL_APP_ENCRYPTION_KEY is required}
+  APP_URL: ${RECALL_APP_URL:-https://recall.righttoken.ai}
+  AUTH_MODE: ${RECALL_AUTH_MODE:?RECALL_AUTH_MODE is required}
+  DEPLOYMENT_ENV: production
+  INTERNAL_API_SECRET_CURRENT: ${RECALL_INTERNAL_API_SECRET_CURRENT:?RECALL_INTERNAL_API_SECRET_CURRENT is required}
+  INTERNAL_API_SECRET_PREVIOUS: ${RECALL_INTERNAL_API_SECRET_PREVIOUS:-}
+  RIGHTTOKEN_ISSUER: ${RECALL_RIGHTTOKEN_ISSUER:-}
+  RIGHTTOKEN_AUDIENCE: ${RECALL_RIGHTTOKEN_AUDIENCE:-}
+  RIGHTTOKEN_SSO_SECRET: ${RECALL_RIGHTTOKEN_SSO_SECRET:-}
+  RIGHTTOKEN_ADMIN_URL: ${RECALL_RIGHTTOKEN_ADMIN_URL:-}
+  RIGHTTOKEN_DASHBOARD_URL: ${RECALL_RIGHTTOKEN_DASHBOARD_URL:-https://righttoken.ai/dashboard}
+  RIGHTTOKEN_SOURCE_MODE: database
+  GEOIP_HTTP_URL: ${RECALL_GEOIP_HTTP_URL:-}
+  GEOIP_HTTP_TOKEN: ${RECALL_GEOIP_HTTP_TOKEN:-}
+  GEOIP_HTTP_TIMEOUT_MS: ${RECALL_GEOIP_HTTP_TIMEOUT_MS:-2000}
+  GEOIP_MMDB_PATH: ${RECALL_GEOIP_MMDB_PATH:-/var/lib/righttoken-geoip/GeoLite2-City.mmdb}
+  GEOIP_RIR_PATH: ${RECALL_GEOIP_RIR_PATH:-/var/lib/righttoken-geoip/delegated-rir.txt}
+  RECONCILE_ENABLED: ${RECALL_RECONCILE_ENABLED:-false}
+  RECONCILE_INTERVAL_MINUTES: ${RECALL_RECONCILE_INTERVAL_MINUTES:-15}
+  FULL_RECONCILE_CRON: ${RECALL_FULL_RECONCILE_CRON:-0 2 * * *}
+  SMTP_HOST: ${RECALL_SMTP_HOST:-}
+  SMTP_PORT: ${RECALL_SMTP_PORT:-}
+  SMTP_SECURE: ${RECALL_SMTP_SECURE:-false}
+  SMTP_USER: ${RECALL_SMTP_USER:-}
+  SMTP_PASSWORD: ${RECALL_SMTP_PASSWORD:-}
+  IMAP_HOST: ${RECALL_IMAP_HOST:-}
+  IMAP_PORT: ${RECALL_IMAP_PORT:-}
+  IMAP_SECURE: ${RECALL_IMAP_SECURE:-false}
+  IMAP_USER: ${RECALL_IMAP_USER:-}
+  IMAP_PASSWORD: ${RECALL_IMAP_PASSWORD:-}
+  WECHAT_WEBHOOK_URL: ${RECALL_WECHAT_WEBHOOK_URL:-}
+  NOTIFICATION_FROM: ${RECALL_NOTIFICATION_FROM:-}
+  NODE_ENV: production
+
+x-recall-application: &recall-application
+  image: ${RECALL_IMAGE:?RECALL_IMAGE is required}
+  environment: *recall-environment
+  restart: unless-stopped
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  volumes:
+    - /var/lib/righttoken-geoip:/var/lib/righttoken-geoip:ro
+
+services:
+  recall-migrate:
+    <<: *recall-application
+    command: ["npm", "run", "db:deploy"]
+    restart: "no"
+    networks:
+      - sub2api-network
+
+  recall-bootstrap:
+    <<: *recall-application
+    profiles: ["recall-bootstrap"]
+    environment:
+      <<: *recall-environment
+      BOOTSTRAP_PRIMARY_ADMIN_EMAIL: ${RECALL_BOOTSTRAP_PRIMARY_ADMIN_EMAIL:-}
+      BOOTSTRAP_PRIMARY_ADMIN_NAME: ${RECALL_BOOTSTRAP_PRIMARY_ADMIN_NAME:-主管理员}
+    command: ["npm", "run", "db:bootstrap-admin:prod"]
+    depends_on:
+      recall-migrate:
+        condition: service_completed_successfully
+    restart: "no"
+    networks:
+      - sub2api-network
+
+  recall-web:
+    <<: *recall-application
+    ports:
+      - "127.0.0.1:${RECALL_SERVER_PORT:-3000}:3000"
+    depends_on:
+      recall-migrate:
+        condition: service_completed_successfully
+    read_only: true
+    tmpfs:
+      - /tmp
+    networks:
+      - sub2api-network
+
+  recall-worker:
+    <<: *recall-application
+    command: ["npm", "run", "worker:prod"]
+    depends_on:
+      recall-migrate:
+        condition: service_completed_successfully
+    read_only: true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD", "npm", "run", "worker:health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - sub2api-network
+
+networks:
+  sub2api-network:
+    name: ${RECALL_RIGHTTOKEN_NETWORK_NAME:-deploy_sub2api-network}
+    external: true

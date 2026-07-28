@@ -114,10 +114,10 @@ backend/.installed
 # ===================
 # 其他
 # ===================
-tests
+/tests
 CLAUDE.md
 .claude
-scripts
+/scripts
 .code-review-state
 #openspec/
 code-reviews/
@@ -132,6 +132,6 @@ docs/*
 .serena/
 .codex/
 frontend/coverage/
+recall-admin/data/geoip/
 aicodex
 output/
-

@@ -15,4 +15,19 @@ describe('AppSidebar custom SVG styles', () => {
     expect(componentSource).not.toContain('stroke: currentColor;')
     expect(componentSource).not.toContain('fill: none;')
   })
+
+  it('places user operations in the personal account section and preserves a simple-mode entry', () => {
+    const personalSection = componentSource.slice(
+      componentSource.indexOf('const personalNavItems'),
+      componentSource.indexOf('// Custom menu items filtered by visibility')
+    )
+    const adminSection = componentSource.slice(
+      componentSource.indexOf('const adminNavItems'),
+      componentSource.indexOf('// Filter based on simple mode', componentSource.indexOf('const adminNavItems'))
+    )
+
+    expect(personalSection).toContain('appendUserOperationsAfterProfile')
+    expect(adminSection).toContain('const withOperations = appendUserOperationsAfterProfile')
+    expect(adminSection).toContain("path: '/user-operations'")
+  })
 })

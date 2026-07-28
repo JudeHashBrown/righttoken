@@ -1,0 +1,100 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import styles from "@/components/workspaces/workspace.module.css";
+
+export function MailboxActions({
+  mailboxId
+}: {
+  mailboxId: string;
+}): React.JSX.Element {
+  const router = useRouter();
+  const [busy, setBusy] = useState<"test" | "sync" | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function testConnection(): Promise<void> {
+    setBusy("test");
+    setMessage(null);
+    setError(null);
+    try {
+      const response = await fetch(
+        `/api/integrations/mailboxes/${mailboxId}/test`,
+        { method: "POST" }
+      );
+      if (!response.ok) {
+        setError("邮箱连接失败，请检查服务器、账号和密码。");
+        return;
+      }
+      setMessage("邮箱连接正常");
+      router.refresh();
+    } catch {
+      setError("网络连接异常。");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function syncNow(): Promise<void> {
+    setBusy("sync");
+    setMessage(null);
+    setError(null);
+    try {
+      const response = await fetch("/api/mail/sync", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ mailboxId })
+      });
+      const result = (await response.json().catch(() => null)) as {
+        received?: number;
+        matched?: number;
+      } | null;
+      if (!response.ok) {
+        setError("邮箱同步失败，请先测试连接。");
+        return;
+      }
+      setMessage(
+        `同步完成：收到 ${result?.received ?? 0} 封，匹配 ${result?.matched ?? 0} 封`
+      );
+      router.refresh();
+    } catch {
+      setError("网络连接异常。");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  return (
+    <div>
+      <div className={styles.inlineActions}>
+        <button
+          className={styles.secondaryButton}
+          type="button"
+          onClick={testConnection}
+          disabled={busy !== null}
+        >
+          {busy === "test" ? "正在测试" : "测试连接"}
+        </button>
+        <button
+          className={styles.secondaryButton}
+          type="button"
+          onClick={syncNow}
+          disabled={busy !== null}
+        >
+          {busy === "sync" ? "正在同步" : "立即同步"}
+        </button>
+      </div>
+      {message ? (
+        <p className={styles.success} role="status">
+          {message}
+        </p>
+      ) : null}
+      {error ? (
+        <p className={styles.error} role="alert">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}

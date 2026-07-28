@@ -1,11 +1,14 @@
 package handler
 
 import (
+	"context"
 	"log/slog"
+	"net"
 	"strings"
 
 	"github.com/Wei-Shaw/sub2api/internal/config"
 	"github.com/Wei-Shaw/sub2api/internal/handler/dto"
+	"github.com/Wei-Shaw/sub2api/internal/pkg/ctxkey"
 	"github.com/Wei-Shaw/sub2api/internal/pkg/ip"
 	"github.com/Wei-Shaw/sub2api/internal/pkg/response"
 	middleware2 "github.com/Wei-Shaw/sub2api/internal/server/middleware"
@@ -120,13 +123,22 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
-	_, user, err := h.authService.RegisterWithVerification(c.Request.Context(), req.Email, req.Password, req.VerifyCode, req.PromoCode, req.InvitationCode, req.ReferralCode)
+	_, user, err := h.authService.RegisterWithVerification(requestContextWithRegistrationIP(c), req.Email, req.Password, req.VerifyCode, req.PromoCode, req.InvitationCode, req.ReferralCode)
 	if err != nil {
 		response.ErrorFrom(c, err)
 		return
 	}
 
 	h.respondWithTokenPair(c, user)
+}
+
+func requestContextWithRegistrationIP(c *gin.Context) context.Context {
+	ctx := c.Request.Context()
+	clientIP := strings.TrimSpace(ip.GetClientIP(c))
+	if net.ParseIP(clientIP) == nil {
+		return ctx
+	}
+	return context.WithValue(ctx, ctxkey.RegistrationIP, clientIP)
 }
 
 // SendVerifyCode 发送邮箱验证码

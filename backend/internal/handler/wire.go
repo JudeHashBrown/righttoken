@@ -36,6 +36,7 @@ func ProvideAdminHandlers(
 	channelHandler *admin.ChannelHandler,
 	paymentHandler *admin.PaymentHandler,
 	referralHandler *admin.ReferralAdminHandler,
+	recallUserHandler *admin.RecallUserHandler,
 ) *AdminHandlers {
 	return &AdminHandlers{
 		Dashboard:             dashboardHandler,
@@ -65,6 +66,7 @@ func ProvideAdminHandlers(
 		Channel:               channelHandler,
 		Payment:               paymentHandler,
 		Referral:              referralHandler,
+		RecallUser:            recallUserHandler,
 	}
 }
 
@@ -95,6 +97,7 @@ func ProvideHandlers(
 	totpHandler *TotpHandler,
 	paymentHandler *PaymentHandler,
 	paymentWebhookHandler *PaymentWebhookHandler,
+	recallSSOHandler *RecallSSOHandler,
 	_ *service.IdempotencyCoordinator,
 	_ *service.IdempotencyCleanupService,
 	_ service.ReferralWiring,
@@ -115,6 +118,7 @@ func ProvideHandlers(
 		Totp:           totpHandler,
 		Payment:        paymentHandler,
 		PaymentWebhook: paymentWebhookHandler,
+		RecallSSO:      recallSSOHandler,
 	}
 }
 
@@ -135,6 +139,7 @@ var ProviderSet = wire.NewSet(
 	ProvideSettingHandler,
 	NewPaymentHandler,
 	NewPaymentWebhookHandler,
+	NewRecallSSOHandler,
 
 	// Admin handlers
 	admin.NewDashboardHandler,
@@ -164,6 +169,7 @@ var ProviderSet = wire.NewSet(
 	admin.NewChannelHandler,
 	admin.NewPaymentHandler,
 	admin.NewReferralAdminHandler,
+	admin.NewRecallUserHandler,
 
 	// AdminHandlers and Handlers constructors
 	ProvideAdminHandlers,

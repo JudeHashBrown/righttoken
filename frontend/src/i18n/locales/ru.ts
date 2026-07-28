@@ -757,6 +757,7 @@ export default {
   // Navigation
   nav: {
     dashboard: 'Панель',
+    userOperations: 'Управление пользователями',
     announcements: 'Объявления',
     apiKeys: 'API‑ключи',
     usage: 'Расходы',

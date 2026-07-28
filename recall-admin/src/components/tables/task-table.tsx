@@ -1,0 +1,136 @@
+import Link from "next/link";
+import type { TaskListItem } from "@/modules/tasks/task-queries";
+import styles from "@/components/workspaces/workspace.module.css";
+
+type TaskTableProps = {
+  tasks: TaskListItem[];
+  now: Date;
+};
+
+const statusLabels: Record<TaskListItem["status"], string> = {
+  UNASSIGNED: "公共池",
+  TODO: "待处理",
+  IN_PROGRESS: "处理中",
+  WAITING_USER: "等待用户",
+  COMPLETED: "已完成",
+  PAUSED: "已暂停",
+  CANCELLED: "已取消"
+};
+
+const priorityLabels: Record<TaskListItem["priority"], string> = {
+  URGENT: "紧急",
+  IMPORTANT: "重要",
+  NORMAL: "普通"
+};
+
+function dateTime(value: Date): string {
+  return new Intl.DateTimeFormat("zh-CN", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Shanghai"
+  }).format(value);
+}
+
+function dueLabel(dueAt: Date, now: Date): string {
+  const minutes = Math.round(
+    (dueAt.getTime() - now.getTime()) / 60_000
+  );
+  if (minutes < 0) {
+    return `已逾期 ${Math.max(1, Math.abs(minutes))} 分钟`;
+  }
+  if (minutes < 60) {
+    return `剩余 ${Math.max(1, minutes)} 分钟`;
+  }
+  if (minutes < 24 * 60) {
+    return `剩余 ${Math.ceil(minutes / 60)} 小时`;
+  }
+  return dateTime(dueAt);
+}
+
+export function TaskTable({
+  tasks,
+  now
+}: TaskTableProps): React.JSX.Element {
+  if (tasks.length === 0) {
+    return (
+      <div className={styles.empty}>
+        <strong>当前视图没有任务</strong>
+        <p>切换任务分类或筛选条件，查看其他需要处理的运营事项。</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.tableScroll}>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>优先级</th>
+            <th>任务</th>
+            <th>用户</th>
+            <th>分组</th>
+            <th>状态</th>
+            <th>负责人</th>
+            <th>SLA</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tasks.map((task) => (
+            <tr key={task.id}>
+              <td>
+                <span
+                  className={`${styles.priority} ${
+                    task.priority === "URGENT"
+                      ? styles.priorityUrgent
+                      : task.priority === "IMPORTANT"
+                        ? styles.priorityImportant
+                        : styles.priorityNormal
+                  }`}
+                >
+                  {priorityLabels[task.priority]}
+                </span>
+              </td>
+              <td>
+                <Link
+                  className={styles.primaryLink}
+                  href={`/tasks/${task.id}`}
+                >
+                  {task.title}
+                </Link>
+                <span className={styles.secondaryText}>
+                  {task.reason}
+                </span>
+              </td>
+              <td>
+                <Link
+                  className={styles.primaryLink}
+                  href={`/users/${task.user.id}`}
+                >
+                  {task.user.externalUserId}
+                </Link>
+                <span className={styles.secondaryText}>
+                  {task.user.email}
+                </span>
+              </td>
+              <td>
+                <span className={styles.segment}>
+                  {task.user.currentSegment}
+                </span>
+              </td>
+              <td>
+                <span className={styles.status}>
+                  {statusLabels[task.status]}
+                </span>
+              </td>
+              <td>{task.assignee?.displayName || "公共任务池"}</td>
+              <td>{dueLabel(task.dueAt, now)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
