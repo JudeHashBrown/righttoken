@@ -13,6 +13,7 @@ describe("segment field registry", () => {
     expect(keys).toContain("registrationElapsed");
     expect(keys).toContain("countryCode");
     expect(keys).toContain("balanceUsdMinor");
+    expect(keys).toContain("anomalyElapsed");
     expect(keys).not.toContain("currentSegment");
     expect(keys).not.toContain("ownerId");
     expect(keys).not.toContain("taskStatus");
@@ -41,6 +42,22 @@ describe("segment field registry", () => {
       operator: "gte",
       value: 7,
       unit: "days"
+    });
+  });
+
+  it("exposes anomaly duration as a relative duration", () => {
+    expect(
+      validateClauseForField({
+        field: "anomalyElapsed",
+        operator: "lt",
+        value: 24,
+        unit: "hours"
+      })
+    ).toEqual({
+      field: "anomalyElapsed",
+      operator: "lt",
+      value: 24,
+      unit: "hours"
     });
   });
 

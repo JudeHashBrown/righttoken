@@ -64,6 +64,34 @@ describe("structured segment rule definition", () => {
     expect(() => segmentRuleSetSchema.parse(invalid)).toThrow();
   });
 
+  it("rejects weakening the locked F entry conditions", () => {
+    const invalid = {
+      ...defaultSegmentRuleSet,
+      groups: defaultSegmentRuleSet.groups.map((group) =>
+        group.code === "F"
+          ? {
+              ...group,
+              branches: [
+                {
+                  clauses: [
+                    {
+                      field: "anomalyActive",
+                      operator: "eq",
+                      value: true
+                    }
+                  ]
+                }
+              ]
+            }
+          : group
+      )
+    };
+
+    expect(() => segmentRuleSetSchema.parse(invalid)).toThrow(
+      /F.*locked|locked.*F/i
+    );
+  });
+
   it("requires every fixed code exactly once", () => {
     const invalid = {
       ...defaultSegmentRuleSet,

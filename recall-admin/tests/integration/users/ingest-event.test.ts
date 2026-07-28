@@ -245,14 +245,17 @@ describe("idempotent user event ingestion", () => {
     ).toBe(2);
   });
 
-  it("keeps F active until an explicit recovery event", async () => {
+  it("keeps a recent F anomaly active until an explicit recovery event", async () => {
     const userId = `anomaly-${randomUUID()}`;
     externalUserIds.push(userId);
+    const anomalyAt = new Date(Date.now() - 10 * 60_000);
+    const registeredAt = new Date(anomalyAt.getTime() - 60 * 60_000);
+    const recoveredAt = new Date(anomalyAt.getTime() + 5 * 60_000);
     await ingestUserEvent(
       event(
         userId,
         "user.registered",
-        "2026-07-23T08:00:00.000Z",
+        registeredAt.toISOString(),
         { email: `${userId}@example.test` }
       )
     );
@@ -261,7 +264,7 @@ describe("idempotent user event ingestion", () => {
         event(
           userId,
           "service.anomaly",
-          "2026-07-23T09:00:00.000Z",
+          anomalyAt.toISOString(),
           { reason: "synthetic outage" }
         )
       )
@@ -271,7 +274,7 @@ describe("idempotent user event ingestion", () => {
         event(
           userId,
           "service.recovered",
-          "2026-07-23T09:30:00.000Z",
+          recoveredAt.toISOString(),
           {}
         )
       )

@@ -55,7 +55,7 @@ export function SegmentOverrideForm({
     return (
       <div className={styles.formBody}>
         <p className={styles.error}>
-          当前用户处于 F 服务异常组。为避免掩盖故障，异常恢复前不能人工覆盖分组。
+          当前用户处于 F 服务异常处理期。为避免掩盖故障，处理期内不能人工覆盖分组（最长 24 小时）。
         </p>
       </div>
     );

@@ -45,6 +45,35 @@ function cloneDefaultRuleSet(): SegmentRuleSet {
   return structuredClone(defaultSegmentRuleSet);
 }
 
+function upgradeLockedFRule(value: unknown): unknown {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return value;
+  }
+  const upgraded = structuredClone(value) as {
+    schemaVersion?: unknown;
+    groups?: unknown;
+  };
+  if (upgraded.schemaVersion !== 2 || !Array.isArray(upgraded.groups)) {
+    return value;
+  }
+  const fGroup = upgraded.groups.find(
+    (group) =>
+      Boolean(group) &&
+      typeof group === "object" &&
+      "code" in group &&
+      group.code === "F"
+  );
+  if (fGroup && typeof fGroup === "object") {
+    const defaultF = defaultSegmentRuleSet.groups.find(
+      (group) => group.code === "F"
+    )!;
+    Object.assign(fGroup, {
+      branches: structuredClone(defaultF.branches)
+    });
+  }
+  return upgraded;
+}
+
 export function legacySegmentConfigToRuleSet(
   input: SegmentConfig
 ): SegmentRuleSet {
@@ -92,7 +121,9 @@ export function legacySegmentConfigToRuleSet(
 }
 
 export function parseSegmentRuleConfig(value: unknown): SegmentRuleSet {
-  const current = segmentRuleSetSchema.safeParse(value);
+  const current = segmentRuleSetSchema.safeParse(
+    upgradeLockedFRule(value)
+  );
   if (current.success) {
     return current.data;
   }
