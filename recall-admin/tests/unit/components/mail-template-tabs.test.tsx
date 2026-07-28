@@ -21,6 +21,8 @@ const templates = [
     locale: "zh-CN",
     subject: "完成首次支付",
     bodyText: "我们可以协助你完成首次支付。",
+    bodyHtml: "<p>我们可以协助你完成首次支付。</p>",
+    assets: [],
     active: true
   },
   {
@@ -31,6 +33,8 @@ const templates = [
     locale: "zh-CN",
     subject: "余额提醒",
     bodyText: "你的余额可能不足。",
+    bodyHtml: "<p>你的余额可能不足。</p>",
+    assets: [],
     active: true
   }
 ];

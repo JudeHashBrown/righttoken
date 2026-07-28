@@ -13,6 +13,10 @@ import {
 import type {
   MailTemplateSummary
 } from "@/components/mail/mail-template-tabs";
+import {
+  MailRichEditor,
+  type MailRichContent
+} from "@/components/mail/mail-rich-editor";
 
 export function MailTemplateLibrary({
   templates
@@ -31,9 +35,11 @@ export function MailTemplateLibrary({
   );
   const [name, setName] = useState(selected?.name ?? "");
   const [subject, setSubject] = useState(selected?.subject ?? "");
-  const [bodyText, setBodyText] = useState(
-    selected?.bodyText ?? ""
-  );
+  const [content, setContent] = useState<MailRichContent>({
+    bodyHtml: selected?.bodyHtml ?? "",
+    bodyText: selected?.bodyText ?? "",
+    assets: selected?.assets ?? []
+  });
   const [dirty, setDirty] = useState(false);
   const [showCreator, setShowCreator] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -53,7 +59,11 @@ export function MailTemplateLibrary({
     setSelectedKey(template.key);
     setName(template.name);
     setSubject(template.subject);
-    setBodyText(template.bodyText);
+    setContent({
+      bodyHtml: template.bodyHtml,
+      bodyText: template.bodyText,
+      assets: template.assets
+    });
     setDirty(false);
     setError(null);
     setSuccess(null);
@@ -64,6 +74,13 @@ export function MailTemplateLibrary({
     value: string
   ): void {
     setter(value);
+    setDirty(true);
+    setError(null);
+    setSuccess(null);
+  }
+
+  function changeContent(value: MailRichContent): void {
+    setContent(value);
     setDirty(true);
     setError(null);
     setSuccess(null);
@@ -85,7 +102,19 @@ export function MailTemplateLibrary({
         {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ name, subject, bodyText })
+          body: JSON.stringify({
+            name,
+            subject,
+            bodyText: content.bodyText,
+            bodyHtml: content.bodyHtml,
+            assets: content.assets.map(
+              ({ id, disposition, sortOrder }) => ({
+                id,
+                disposition,
+                sortOrder
+              })
+            )
+          })
         }
       );
       if (!response.ok) {
@@ -247,21 +276,12 @@ export function MailTemplateLibrary({
                   />
                 </div>
               </div>
-              <div className={styles.field}>
-                <label htmlFor="library-template-body">
-                  邮件正文
-                </label>
-                <textarea
-                  className={styles.textarea}
-                  id="library-template-body"
-                  onChange={(event) =>
-                    change(setBodyText, event.target.value)
-                  }
-                  required
-                  rows={12}
-                  value={bodyText}
-                />
-              </div>
+              <MailRichEditor
+                idPrefix="library-template"
+                label="邮件正文"
+                onChange={changeContent}
+                value={content}
+              />
               {error ? (
                 <p className={styles.error} role="alert">
                   {error}
@@ -280,7 +300,7 @@ export function MailTemplateLibrary({
                     !dirty ||
                     !name.trim() ||
                     !subject.trim() ||
-                    !bodyText.trim()
+                    !content.bodyText.trim()
                   }
                   type="submit"
                 >

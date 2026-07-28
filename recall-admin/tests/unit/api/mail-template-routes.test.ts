@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => {
   class UnauthorizedError extends Error {}
   class ForbiddenError extends Error {}
+  class MailTemplateAssetError extends Error {}
   return {
     assertSameOrigin: vi.fn(),
     requireRequestPermission: vi.fn(),
@@ -13,7 +14,8 @@ const mocks = vi.hoisted(() => {
     setMailTemplateEnabled: vi.fn(),
     archiveMailTemplateVersion: vi.fn(),
     UnauthorizedError,
-    ForbiddenError
+    ForbiddenError,
+    MailTemplateAssetError
   };
 });
 
@@ -34,7 +36,8 @@ vi.mock("@/modules/mail/template-service", () => ({
   setMailTemplateEnabled: mocks.setMailTemplateEnabled,
   archiveMailTemplateVersion: mocks.archiveMailTemplateVersion,
   MailTemplateConflictError: class extends Error {},
-  MailTemplateNotFoundError: class extends Error {}
+  MailTemplateNotFoundError: class extends Error {},
+  MailTemplateAssetError: mocks.MailTemplateAssetError
 }));
 
 function jsonRequest(url: string, body: unknown): NextRequest {
@@ -96,7 +99,16 @@ describe("mail template routes", () => {
       jsonRequest("http://localhost/api/mail/templates", {
         name: "欢迎",
         subject: "欢迎使用",
-        bodyText: "你好"
+        bodyText: "你好",
+        bodyHtml:
+          '<p>你好</p><img data-mail-asset-id="asset-1" alt="欢迎图">',
+        assets: [
+          {
+            id: "asset-1",
+            disposition: "INLINE",
+            sortOrder: 0
+          }
+        ]
       })
     );
 
@@ -106,6 +118,15 @@ describe("mail template routes", () => {
       name: "欢迎",
       subject: "欢迎使用",
       bodyText: "你好",
+      bodyHtml:
+        '<p>你好</p><img data-mail-asset-id="asset-1" alt="欢迎图">',
+      assets: [
+        {
+          id: "asset-1",
+          disposition: "INLINE",
+          sortOrder: 0
+        }
+      ],
       locale: "zh-CN"
     });
   });

@@ -70,6 +70,8 @@ const templates = [
     locale: "zh-CN",
     subject: "Re: RightToken 支付协助",
     bodyText: "你好，我们可以协助你完成支付。",
+    bodyHtml: "<p>你好，我们可以协助你完成支付。</p>",
+    assets: [],
     active: true
   },
   {
@@ -80,6 +82,8 @@ const templates = [
     locale: "zh-CN",
     subject: "已停用主题",
     bodyText: "这段内容不应出现在回复模板中。",
+    bodyHtml: "<p>这段内容不应出现在回复模板中。</p>",
+    assets: [],
     active: false
   }
 ];

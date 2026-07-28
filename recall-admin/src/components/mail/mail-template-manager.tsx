@@ -2,6 +2,10 @@
 
 import { useState, type FormEvent } from "react";
 import styles from "@/components/workspaces/workspace.module.css";
+import {
+  MailRichEditor,
+  type MailRichContent
+} from "@/components/mail/mail-rich-editor";
 
 type Props = {
   initialSubject: string;
@@ -18,7 +22,16 @@ export function MailTemplateManager({
 }: Props): React.JSX.Element {
   const [name, setName] = useState("");
   const [subject, setSubject] = useState(initialSubject);
-  const [bodyText, setBodyText] = useState(initialBody);
+  const [content, setContent] = useState<MailRichContent>({
+    bodyHtml: initialBody
+      ? `<p>${initialBody
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")}</p>`
+      : "",
+    bodyText: initialBody,
+    assets: []
+  });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +45,19 @@ export function MailTemplateManager({
       const response = await fetch("/api/mail/templates", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name, subject, bodyText })
+        body: JSON.stringify({
+          name,
+          subject,
+          bodyText: content.bodyText,
+          bodyHtml: content.bodyHtml,
+          assets: content.assets.map(
+            ({ id, disposition, sortOrder }) => ({
+              id,
+              disposition,
+              sortOrder
+            })
+          )
+        })
       });
       if (!response.ok) {
         setError("模板保存失败，请检查内容后重试。");
@@ -86,17 +111,12 @@ export function MailTemplateManager({
           />
         </div>
       </div>
-      <div className={styles.field}>
-        <label htmlFor="new-template-body">邮件正文</label>
-        <textarea
-          className={styles.textarea}
-          id="new-template-body"
-          onChange={(event) => setBodyText(event.target.value)}
-          required
-          rows={5}
-          value={bodyText}
-        />
-      </div>
+      <MailRichEditor
+        idPrefix="new-template"
+        label="邮件正文"
+        onChange={setContent}
+        value={content}
+      />
       {error ? (
         <p className={styles.error} role="alert">
           {error}
@@ -104,7 +124,12 @@ export function MailTemplateManager({
       ) : null}
       <button
         className={styles.button}
-        disabled={saving}
+        disabled={
+          saving ||
+          !name.trim() ||
+          !subject.trim() ||
+          !content.bodyText.trim()
+        }
         type="submit"
       >
         {saving ? "保存中…" : "保存模板"}

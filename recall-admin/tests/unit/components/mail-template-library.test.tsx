@@ -26,6 +26,8 @@ const inactiveTemplate = {
   locale: "zh-CN",
   subject: "完成首次支付",
   bodyText: "你好，我们可以协助你完成首次支付。",
+  bodyHtml: "<p>你好，我们可以协助你完成首次支付。</p>",
+  assets: [],
   active: false
 };
 
@@ -49,7 +51,7 @@ describe("MailTemplateLibrary", () => {
     expect(screen.getByLabelText("邮件主题")).toHaveValue(
       "完成首次支付"
     );
-    expect(screen.getByLabelText("邮件正文")).toHaveValue(
+    expect(screen.getByRole("textbox", { name: "邮件正文" })).toHaveTextContent(
       "你好，我们可以协助你完成首次支付。"
     );
     expect(
@@ -59,6 +61,10 @@ describe("MailTemplateLibrary", () => {
     fireEvent.change(screen.getByLabelText("模板名称"), {
       target: { value: "支付问题协助" }
     });
+    const body = screen.getByRole("textbox", { name: "邮件正文" });
+    body.innerHTML =
+      '<p>你好，请查看说明。</p><img data-mail-asset-id="asset-1" alt="说明图">';
+    fireEvent.input(body);
     fireEvent.click(
       screen.getByRole("button", { name: "发布新版本" })
     );
@@ -74,6 +80,10 @@ describe("MailTemplateLibrary", () => {
         })
       );
     });
+    const request = fetchMock.mock.calls.find(
+      ([url]) => url === "/api/mail/templates/payment/versions"
+    )?.[1] as RequestInit;
+    expect(request.body).toContain('"bodyHtml"');
   });
 
   it("lets operators create a template when the library is empty", () => {

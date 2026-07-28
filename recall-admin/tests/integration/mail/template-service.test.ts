@@ -14,6 +14,7 @@ describe("versioned public mail templates", () => {
   let primaryAdminId: string;
   let operatorId: string;
   const templateKeys: string[] = [];
+  const assetIds: string[] = [];
 
   beforeAll(async () => {
     const [primaryAdmin, operator] = await Promise.all([
@@ -42,6 +43,9 @@ describe("versioned public mail templates", () => {
     await prisma.mailTemplate.deleteMany({
       where: { key: { in: templateKeys } }
     });
+    await prisma.mailAsset.deleteMany({
+      where: { id: { in: assetIds } }
+    });
     await prisma.member.deleteMany({
       where: { id: { in: [primaryAdminId, operatorId] } }
     });
@@ -49,11 +53,34 @@ describe("versioned public mail templates", () => {
   });
 
   it("lets an operator publish immutable template versions", async () => {
+    const asset = await prisma.mailAsset.create({
+      data: {
+        storageKey: `mail-assets/${randomUUID()}.webp`,
+        fileName: "payment-guide.webp",
+        contentType: "image/webp",
+        byteSize: 1024,
+        sha256: "c".repeat(64),
+        width: 800,
+        height: 600,
+        createdById: operatorId
+      }
+    });
+    assetIds.push(asset.id);
     const first = await createMailTemplate({
       actorId: operatorId,
       name: "注册未支付",
       subject: "完成首次支付",
-      bodyText: "你好，我们可以协助你完成首次支付。"
+      bodyText: "你好，我们可以协助你完成首次支付。",
+      bodyHtml:
+        `<p>你好，我们可以协助你完成首次支付。</p>` +
+        `<img data-mail-asset-id="${asset.id}" alt="支付说明">`,
+      assets: [
+        {
+          id: asset.id,
+          disposition: "INLINE",
+          sortOrder: 0
+        }
+      ]
     });
     templateKeys.push(first.key);
 
@@ -62,7 +89,17 @@ describe("versioned public mail templates", () => {
       key: first.key,
       name: first.name,
       subject: "首次支付协助",
-      bodyText: "你好，如需支付协助请回复此邮件。"
+      bodyText: "你好，如需支付协助请回复此邮件。",
+      bodyHtml:
+        `<p>你好，如需支付协助请回复此邮件。</p>` +
+        `<img data-mail-asset-id="${asset.id}" alt="支付说明">`,
+      assets: [
+        {
+          id: asset.id,
+          disposition: "INLINE",
+          sortOrder: 0
+        }
+      ]
     });
     const refreshedFirst =
       await prisma.mailTemplate.findUniqueOrThrow({
@@ -82,6 +119,15 @@ describe("versioned public mail templates", () => {
         where: { key: first.key }
       })
     ).toBe(2);
+    await expect(
+      prisma.mailTemplateAsset.count({
+        where: {
+          templateId: second.id,
+          assetId: asset.id,
+          disposition: "INLINE"
+        }
+      })
+    ).resolves.toBe(1);
   });
 
   it("lets an operator disable and re-enable the latest version", async () => {

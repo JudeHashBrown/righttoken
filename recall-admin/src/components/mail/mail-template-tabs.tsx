@@ -1,6 +1,9 @@
 "use client";
 
 import styles from "@/components/workspaces/workspace.module.css";
+import type {
+  MailEditorAsset
+} from "@/components/mail/mail-rich-editor";
 
 export type MailTemplateSummary = {
   id: string;
@@ -10,6 +13,8 @@ export type MailTemplateSummary = {
   locale: string;
   subject: string;
   bodyText: string;
+  bodyHtml: string;
+  assets: MailEditorAsset[];
   active: boolean;
 };
 

@@ -6,6 +6,7 @@ import {
   UnauthorizedError
 } from "@/modules/auth/guards";
 import {
+  MailTemplateAssetError,
   MailTemplateConflictError,
   MailTemplateNotFoundError,
   publishMailTemplateVersion
@@ -69,6 +70,12 @@ export async function POST(
       return NextResponse.json(
         { code: "MAIL_TEMPLATE_VERSION_CONFLICT" },
         { status: 409 }
+      );
+    }
+    if (error instanceof MailTemplateAssetError) {
+      return NextResponse.json(
+        { code: error.code },
+        { status: 400 }
       );
     }
     return NextResponse.json(

@@ -157,10 +157,45 @@ export async function getMailWorkspaceData(
         locale: true,
         subject: true,
         bodyText: true,
-        active: true
+        bodyHtml: true,
+        active: true,
+        assets: {
+          orderBy: { sortOrder: "asc" },
+          select: {
+            disposition: true,
+            cid: true,
+            sortOrder: true,
+            asset: {
+              select: {
+                id: true,
+                fileName: true,
+                contentType: true,
+                byteSize: true,
+                width: true,
+                height: true
+              }
+            }
+          }
+        }
       }
     })
   ]);
+  const templateSummaries = templates.map((template) => ({
+    ...template,
+    bodyHtml:
+      template.bodyHtml ??
+      `<p>${template.bodyText
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")}</p>`,
+    assets: template.assets.map((usage) => ({
+      ...usage.asset,
+      disposition: usage.disposition,
+      cid: usage.cid,
+      sortOrder: usage.sortOrder,
+      previewUrl: `/api/mail/assets/${usage.asset.id}`
+    }))
+  }));
 
   const items = await listItems(viewer, filter);
   const selected = filter.selectedId
@@ -203,7 +238,7 @@ export async function getMailWorkspaceData(
     },
     items,
     selected,
-    templates,
+    templates: templateSummaries,
     mailboxes: mailboxes.map((mailbox) => ({
       ...mailbox,
       lastSyncedAt: iso(mailbox.lastSyncedAt),

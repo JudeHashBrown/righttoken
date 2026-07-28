@@ -7,7 +7,8 @@ import {
 } from "@/modules/auth/guards";
 import {
   createMailTemplate,
-  listActiveMailTemplates
+  listActiveMailTemplates,
+  MailTemplateAssetError
 } from "@/modules/mail/template-service";
 import {
   createMailTemplateSchema
@@ -24,6 +25,12 @@ function authErrorResponse(error: unknown): NextResponse | null {
     return NextResponse.json(
       { code: "FORBIDDEN" },
       { status: 403 }
+    );
+  }
+  if (error instanceof MailTemplateAssetError) {
+    return NextResponse.json(
+      { code: error.code },
+      { status: 400 }
     );
   }
   return null;
