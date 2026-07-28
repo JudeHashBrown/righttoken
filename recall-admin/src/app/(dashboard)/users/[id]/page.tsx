@@ -4,6 +4,9 @@ import { RevokeOverrideButton } from "@/components/users/revoke-override-button"
 import { SegmentOverrideForm } from "@/components/users/segment-override-form";
 import { UserNoteForm } from "@/components/users/user-note-form";
 import styles from "@/components/workspaces/workspace.module.css";
+import {
+  mailComposeHref
+} from "@/modules/mail/compose-link";
 import { requireWorkspaceMember } from "@/modules/admin/page-access";
 import { isCurrentServiceAnomaly } from "@/modules/segmentation/service-anomaly";
 import { getUser360 } from "@/modules/users/user-queries";
@@ -101,6 +104,12 @@ export default async function UserDetailPage({
           </p>
         </div>
         <div className={styles.headingActions}>
+          <Link
+            className={styles.button}
+            href={mailComposeHref({ userId: user.id })}
+          >
+            发邮件
+          </Link>
           <span className={styles.segment}>
             当前分组 {user.currentSegment}
           </span>
@@ -119,7 +128,12 @@ export default async function UserDetailPage({
             <div className={styles.summaryGrid}>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>完整邮箱</span>
-                <strong>{user.email}</strong>
+                <Link
+                  className={styles.primaryLink}
+                  href={mailComposeHref({ userId: user.id })}
+                >
+                  {user.email}
+                </Link>
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>注册 IP</span>
