@@ -26,8 +26,9 @@ describe("MemberAccessActions", () => {
       ok: true,
       json: () =>
         Promise.resolve({
-          releasedUsers: 2,
-          releasedTasks: 3
+          reassignedUsers: 2,
+          transferredTasks: 3,
+          failedUsers: 0
         })
     });
     vi.stubGlobal("fetch", fetchMock);
