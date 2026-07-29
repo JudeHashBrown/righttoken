@@ -44,6 +44,7 @@ class FakeMemberAccessStore implements MemberAccessStore {
     | {
         actorId: string;
         targetId: string;
+        successorId: string;
       }
     | undefined;
 
@@ -89,6 +90,7 @@ class FakeMemberAccessStore implements MemberAccessStore {
   async revokeAccess(input: {
     actorId: string;
     targetId: string;
+    successorId: string;
   }) {
     this.lastRevocation = input;
     const target = this.members.get(input.targetId)!;
@@ -190,11 +192,42 @@ describe("member access", () => {
     );
 
     await expect(
-      revokeMemberAccess("primary", "primary", store)
+      revokeMemberAccess("primary", "primary", "admin", store)
     ).rejects.toMatchObject({ code: "CANNOT_REVOKE_SELF" });
     await expect(
-      revokeMemberAccess("admin", "primary", store)
+      revokeMemberAccess("admin", "primary", "admin", store)
     ).rejects.toMatchObject({ code: "CANNOT_REVOKE_PRIMARY_ADMIN" });
+  });
+
+  it("requires an active successor different from the revoked member", async () => {
+    const store = new FakeMemberAccessStore();
+    store.members.set(
+      "primary",
+      member({ id: "primary", role: "PRIMARY_ADMIN" })
+    );
+    store.members.set(
+      "operator",
+      member({ id: "operator", role: "OPERATOR" })
+    );
+    store.members.set(
+      "inactive",
+      member({ id: "inactive", active: false })
+    );
+
+    await expect(
+      revokeMemberAccess("primary", "operator", "", store)
+    ).rejects.toMatchObject({ code: "SUCCESSOR_REQUIRED" });
+    await expect(
+      revokeMemberAccess("primary", "operator", "missing", store)
+    ).rejects.toMatchObject({ code: "SUCCESSOR_NOT_FOUND" });
+    await expect(
+      revokeMemberAccess("primary", "operator", "inactive", store)
+    ).rejects.toMatchObject({ code: "SUCCESSOR_INACTIVE" });
+    await expect(
+      revokeMemberAccess("primary", "operator", "operator", store)
+    ).rejects.toMatchObject({
+      code: "SUCCESSOR_SAME_AS_TARGET"
+    });
   });
 
   it("revokes access, sessions and assigned work through the store", async () => {
@@ -211,12 +244,14 @@ describe("member access", () => {
     const result = await revokeMemberAccess(
       "primary",
       "operator",
+      "primary",
       store
     );
 
     expect(store.lastRevocation).toEqual({
       actorId: "primary",
-      targetId: "operator"
+      targetId: "operator",
+      successorId: "primary"
     });
     expect(result).toMatchObject({
       revokedSessions: 2,
@@ -238,7 +273,12 @@ describe("member access", () => {
     );
 
     await expect(
-      revokeMemberAccess("admin-1", "admin-2", store)
+      revokeMemberAccess(
+        "admin-1",
+        "admin-2",
+        "admin-1",
+        store
+      )
     ).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 });

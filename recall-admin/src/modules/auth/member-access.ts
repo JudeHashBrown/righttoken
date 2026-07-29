@@ -54,6 +54,7 @@ export interface MemberAccessStore {
   revokeAccess(input: {
     actorId: string;
     targetId: string;
+    successorId: string;
   }): Promise<MemberAccessRevocationResult>;
 }
 
@@ -67,6 +68,10 @@ export class MemberAccessError extends Error {
       | "CANNOT_REVOKE_SELF"
       | "CANNOT_REVOKE_PRIMARY_ADMIN"
       | "MEMBER_ALREADY_ACTIVE"
+      | "SUCCESSOR_REQUIRED"
+      | "SUCCESSOR_NOT_FOUND"
+      | "SUCCESSOR_INACTIVE"
+      | "SUCCESSOR_SAME_AS_TARGET"
   ) {
     super(code);
     this.name = "MemberAccessError";
@@ -216,6 +221,7 @@ export class PrismaMemberAccessStore implements MemberAccessStore {
   async revokeAccess(input: {
     actorId: string;
     targetId: string;
+    successorId: string;
   }): Promise<MemberAccessRevocationResult> {
     const { prisma } = await import("@/lib/db/prisma");
     return prisma.$transaction(async (tx) => {
@@ -402,11 +408,16 @@ export async function grantMemberAccess(
 export async function revokeMemberAccess(
   actorId: string,
   targetId: string,
+  successorId: string,
   store: MemberAccessStore = defaultStore
 ): Promise<MemberAccessRevocationResult> {
-  const [actor, target] = await Promise.all([
+  const normalizedSuccessorId = successorId.trim();
+  const [actor, target, successor] = await Promise.all([
     store.findMember(actorId),
-    store.findMember(targetId)
+    store.findMember(targetId),
+    normalizedSuccessorId
+      ? store.findMember(normalizedSuccessorId)
+      : null
   ]);
   assertActiveActor(actor);
   if (!target) {
@@ -421,6 +432,18 @@ export async function revokeMemberAccess(
   if (!canManageRole(actor.role, target.role)) {
     throw new MemberAccessError("FORBIDDEN");
   }
+  if (!normalizedSuccessorId) {
+    throw new MemberAccessError("SUCCESSOR_REQUIRED");
+  }
+  if (!successor) {
+    throw new MemberAccessError("SUCCESSOR_NOT_FOUND");
+  }
+  if (!successor.active) {
+    throw new MemberAccessError("SUCCESSOR_INACTIVE");
+  }
+  if (successor.id === target.id) {
+    throw new MemberAccessError("SUCCESSOR_SAME_AS_TARGET");
+  }
   if (!target.active) {
     return {
       member: target,
@@ -430,5 +453,9 @@ export async function revokeMemberAccess(
       failedUsers: 0
     };
   }
-  return store.revokeAccess({ actorId, targetId });
+  return store.revokeAccess({
+    actorId,
+    targetId,
+    successorId: successor.id
+  });
 }
