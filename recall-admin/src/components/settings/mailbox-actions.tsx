@@ -33,7 +33,7 @@ export function MailboxActions({
         setError(mailSyncStatusText(result?.code ?? null));
         return;
       }
-      setMessage("邮箱连接正常");
+      setMessage("收信和发信连接均正常");
       router.refresh();
     } catch {
       setError("网络连接异常。");

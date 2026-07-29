@@ -21,7 +21,7 @@ type Transport = {
   }): Promise<{ messageId?: string }>;
 };
 
-type TransportFactory = (config: {
+type SmtpTransportConfig = {
   host: string;
   port: number;
   secure: boolean;
@@ -29,14 +29,22 @@ type TransportFactory = (config: {
   connectionTimeout: number;
   greetingTimeout: number;
   socketTimeout: number;
-}) => Transport;
+};
 
-export async function sendSmtpMessage(
-  config: SmtpImapConfig,
-  message: OutboundMailboxMessage,
-  createTransport: TransportFactory = nodemailer.createTransport
-): Promise<{ providerMessageId: string }> {
-  const transport = createTransport({
+type TransportFactory = (
+  config: SmtpTransportConfig
+) => Transport;
+
+type VerificationTransportFactory = (
+  config: SmtpTransportConfig
+) => {
+  verify(): Promise<boolean>;
+};
+
+function transportConfig(
+  config: SmtpImapConfig
+): SmtpTransportConfig {
+  return {
     host: config.smtp.host,
     port: config.smtp.port,
     secure: config.smtp.secure,
@@ -47,7 +55,24 @@ export async function sendSmtpMessage(
     connectionTimeout: 5_000,
     greetingTimeout: 5_000,
     socketTimeout: 10_000
-  });
+  };
+}
+
+export async function verifySmtpConnection(
+  config: SmtpImapConfig,
+  createTransport: VerificationTransportFactory =
+    nodemailer.createTransport
+): Promise<void> {
+  const transport = createTransport(transportConfig(config));
+  await transport.verify();
+}
+
+export async function sendSmtpMessage(
+  config: SmtpImapConfig,
+  message: OutboundMailboxMessage,
+  createTransport: TransportFactory = nodemailer.createTransport
+): Promise<{ providerMessageId: string }> {
+  const transport = createTransport(transportConfig(config));
   const result = await transport.sendMail({
     from: {
       name: config.displayName,

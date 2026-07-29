@@ -11,9 +11,6 @@ import {
   resolveOutboundMailAssets,
   type OutboundAssetReference
 } from "@/modules/mail/outbound-assets";
-import {
-  getMailAssetStorage
-} from "@/modules/mail/assets/storage-factory";
 import type {
   MailAssetStorage
 } from "@/modules/mail/assets/types";
@@ -193,8 +190,9 @@ export async function sendReviewedMail(
     },
     {
       database: prisma,
-      storage:
-        dependencies.storage ?? getMailAssetStorage()
+      ...(dependencies.storage
+        ? { storage: dependencies.storage }
+        : {})
     }
   );
   const draft = await prisma.mailMessage.create({

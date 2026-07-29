@@ -1,9 +1,35 @@
-import { describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  describe,
+  expect,
+  it,
+  vi
+} from "vitest";
 import {
   resolveOutboundMailAssets
 } from "@/modules/mail/outbound-assets";
 
 describe("resolveOutboundMailAssets", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("does not require image storage for a text-only production email", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+
+    await expect(
+      resolveOutboundMailAssets({
+        bodyHtml: "<p>纯文字邮件</p>",
+        assets: []
+      })
+    ).resolves.toEqual({
+      bodyHtml: "<p>纯文字邮件</p>",
+      html: "<p>纯文字邮件</p>",
+      attachments: [],
+      messageAssets: []
+    });
+  });
+
   it("loads private bytes and converts controlled image markers to CID", async () => {
     const rows = [
       {
