@@ -205,8 +205,9 @@ describe("privileged member routes", () => {
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
       revokedSessions: 1,
-      releasedUsers: 1,
-      releasedTasks: 1
+      reassignedUsers: 1,
+      transferredTasks: 1,
+      failedUsers: 0
     });
     await expect(
       prisma.member.findUniqueOrThrow({
@@ -214,14 +215,21 @@ describe("privileged member routes", () => {
         select: { active: true }
       })
     ).resolves.toEqual({ active: false });
-    await expect(
+    const [reassignedUser, transferredTask] = await Promise.all([
+      prisma.userProfile.findUniqueOrThrow({
+        where: { id: registeredUserProfileId },
+        select: { ownerId: true }
+      }),
       prisma.recallTask.findUniqueOrThrow({
         where: { id: task.id },
         select: { assigneeId: true, status: true }
       })
-    ).resolves.toEqual({
-      assigneeId: null,
-      status: "UNASSIGNED"
+    ]);
+    expect(reassignedUser.ownerId).not.toBeNull();
+    expect(reassignedUser.ownerId).not.toBe(grantedMemberId);
+    expect(transferredTask).toEqual({
+      assigneeId: reassignedUser.ownerId,
+      status: "IN_PROGRESS"
     });
   });
 

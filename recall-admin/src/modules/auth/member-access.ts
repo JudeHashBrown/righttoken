@@ -1,4 +1,5 @@
 import type { MemberRole } from "@/generated/prisma/client";
+import { assignUserOwnerInTransaction } from "@/modules/assignment/assign-task";
 
 const openTaskStatuses = [
   "UNASSIGNED",
@@ -34,8 +35,9 @@ export type MemberAccessGrantInput = {
 export type MemberAccessRevocationResult = {
   member: MemberAccessRecord;
   revokedSessions: number;
-  releasedUsers: number;
-  releasedTasks: number;
+  reassignedUsers: number;
+  transferredTasks: number;
+  failedUsers: number;
 };
 
 export interface MemberAccessStore {
@@ -89,7 +91,7 @@ function canManageRole(
   return actorRole === "ADMIN" && targetRole === "OPERATOR";
 }
 
-class PrismaMemberAccessStore implements MemberAccessStore {
+export class PrismaMemberAccessStore implements MemberAccessStore {
   async findMember(id: string): Promise<MemberAccessRecord | null> {
     const { prisma } = await import("@/lib/db/prisma");
     return prisma.member.findUnique({
@@ -217,6 +219,7 @@ class PrismaMemberAccessStore implements MemberAccessStore {
   }): Promise<MemberAccessRevocationResult> {
     const { prisma } = await import("@/lib/db/prisma");
     return prisma.$transaction(async (tx) => {
+      const now = new Date();
       const member = await tx.member.update({
         where: { id: input.targetId },
         data: { active: false },
@@ -229,25 +232,103 @@ class PrismaMemberAccessStore implements MemberAccessStore {
           rightTokenUserId: true
         }
       });
-      const [sessions, users, tasks] = await Promise.all([
+      const [sessions, primaryAdmin, users] = await Promise.all([
         tx.session.deleteMany({
           where: { memberId: input.targetId }
         }),
-        tx.userProfile.updateMany({
-          where: { ownerId: input.targetId },
-          data: { ownerId: null }
+        tx.member.findFirstOrThrow({
+          where: { role: "PRIMARY_ADMIN", active: true },
+          orderBy: { createdAt: "asc" },
+          select: { id: true }
         }),
-        tx.recallTask.updateMany({
-          where: {
-            assigneeId: input.targetId,
-            status: { in: [...openTaskStatuses] }
-          },
-          data: {
-            assigneeId: null,
-            status: "UNASSIGNED"
+        tx.userProfile.findMany({
+          where: { ownerId: input.targetId },
+          select: {
+            id: true,
+            ownerId: true,
+            ownerAssignmentMode: true,
+            countryCode: true,
+            region: true
           }
         })
       ]);
+
+      let transferredTasks = 0;
+      for (const user of users) {
+        let ownerId = primaryAdmin.id;
+        let assignmentReason =
+          "原负责人权限已撤销，由主管理员暂管";
+
+        if (user.ownerAssignmentMode === "AUTO") {
+          const decision = await assignUserOwnerInTransaction(
+            tx,
+            user.id,
+            now,
+            { forceAutomatic: true }
+          );
+          ownerId = decision.assigneeId ?? primaryAdmin.id;
+          assignmentReason = decision.assignmentReason;
+        } else {
+          await tx.userProfile.update({
+            where: { id: user.id },
+            data: {
+              ownerId: primaryAdmin.id,
+              ownerAssignmentMode: "MANUAL",
+              ownerAssignedAt: now,
+              ownerAssignedById: input.actorId,
+              ownerAssignmentReason: assignmentReason
+            }
+          });
+        }
+
+        const transferred = await tx.recallTask.updateMany({
+          where: {
+            userId: user.id,
+            status: { in: [...openTaskStatuses] }
+          },
+          data: { assigneeId: ownerId }
+        });
+        transferredTasks += transferred.count;
+
+        await tx.auditLog.create({
+          data: {
+            actorId: input.actorId,
+            action: "user.owner_reassigned_after_member_revoked",
+            entityType: "UserProfile",
+            entityId: user.id,
+            metadata: {
+              previousOwnerId: input.targetId,
+              ownerId,
+              assignmentMode: user.ownerAssignmentMode,
+              assignmentReason,
+              countryCode: user.countryCode,
+              region: user.region,
+              transferredTasks: transferred.count
+            }
+          }
+        });
+      }
+
+      const remainingTasks = await tx.recallTask.findMany({
+        where: {
+          assigneeId: input.targetId,
+          status: { in: [...openTaskStatuses] }
+        },
+        select: {
+          id: true,
+          user: { select: { ownerId: true } }
+        }
+      });
+      for (const task of remainingTasks) {
+        await tx.recallTask.update({
+          where: { id: task.id },
+          data: {
+            assigneeId: task.user.ownerId ?? primaryAdmin.id
+          }
+        });
+      }
+      transferredTasks += remainingTasks.length;
+
       await tx.auditLog.create({
         data: {
           actorId: input.actorId,
@@ -256,16 +337,18 @@ class PrismaMemberAccessStore implements MemberAccessStore {
           entityId: input.targetId,
           metadata: {
             revokedSessions: sessions.count,
-            releasedUsers: users.count,
-            releasedTasks: tasks.count
+            reassignedUsers: users.length,
+            transferredTasks,
+            failedUsers: 0
           }
         }
       });
       return {
         member,
         revokedSessions: sessions.count,
-        releasedUsers: users.count,
-        releasedTasks: tasks.count
+        reassignedUsers: users.length,
+        transferredTasks,
+        failedUsers: 0
       };
     });
   }
@@ -342,8 +425,9 @@ export async function revokeMemberAccess(
     return {
       member: target,
       revokedSessions: 0,
-      releasedUsers: 0,
-      releasedTasks: 0
+      reassignedUsers: 0,
+      transferredTasks: 0,
+      failedUsers: 0
     };
   }
   return store.revokeAccess({ actorId, targetId });

@@ -96,8 +96,9 @@ class FakeMemberAccessStore implements MemberAccessStore {
     return {
       member: { ...target, active: false },
       revokedSessions: 2,
-      releasedUsers: 3,
-      releasedTasks: 4
+      reassignedUsers: 3,
+      transferredTasks: 4,
+      failedUsers: 0
     };
   }
 }
@@ -219,8 +220,9 @@ describe("member access", () => {
     });
     expect(result).toMatchObject({
       revokedSessions: 2,
-      releasedUsers: 3,
-      releasedTasks: 4
+      reassignedUsers: 3,
+      transferredTasks: 4,
+      failedUsers: 0
     });
   });
 
