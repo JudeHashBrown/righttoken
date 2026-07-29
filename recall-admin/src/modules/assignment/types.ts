@@ -46,7 +46,7 @@ export type OperatorWorkload = {
 
 export type AssignmentWorkload = Record<string, OperatorWorkload>;
 
-export type AssignmentDecision = {
+export type RuleAssignmentDecision = {
   assigneeId: string | null;
   poolKey: string;
   matchedRuleId: string | null;
@@ -55,4 +55,9 @@ export type AssignmentDecision = {
   usedFallback: boolean;
   matchedConditions: string[];
   assignmentReason: string;
+};
+
+export type AssignmentDecision = RuleAssignmentDecision & {
+  assignmentMode: "AUTO" | "MANUAL";
+  skippedManual: boolean;
 };

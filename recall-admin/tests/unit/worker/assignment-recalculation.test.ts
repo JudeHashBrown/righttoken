@@ -47,10 +47,16 @@ describe("assignment recalculation worker", () => {
       lastProcessedUserId: null
     });
     mocks.findUsers.mockResolvedValue([
-      { id: "user-1", ownerId: "old-owner" }
+      {
+        id: "user-1",
+        ownerId: "old-owner",
+        ownerAssignmentMode: "AUTO"
+      }
     ]);
     mocks.assignUserOwner.mockResolvedValue({
-      assigneeId: "new-owner"
+      assigneeId: "new-owner",
+      assignmentMode: "AUTO",
+      skippedManual: false
     });
     mocks.findTasks.mockResolvedValue([{ id: "task-1" }]);
     mocks.updateRun
@@ -85,6 +91,13 @@ describe("assignment recalculation worker", () => {
         data: expect.objectContaining({
           ownerChanges: { increment: 1 },
           reassignedTasks: { increment: 1 }
+        })
+      })
+    );
+    expect(mocks.findUsers).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          ownerAssignmentMode: "AUTO"
         })
       })
     );

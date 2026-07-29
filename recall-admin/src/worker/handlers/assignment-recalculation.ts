@@ -52,6 +52,7 @@ export async function handleAssignmentRecalculation(
     ? await prisma.userProfile.findMany({
         where: {
           sourceDeletedAt: null,
+          ownerAssignmentMode: "AUTO",
           id: {
             ...(run.lastProcessedUserId
               ? { gt: run.lastProcessedUserId }
@@ -61,7 +62,11 @@ export async function handleAssignmentRecalculation(
         },
         orderBy: { id: "asc" },
         take: batchSize,
-        select: { id: true, ownerId: true }
+        select: {
+          id: true,
+          ownerId: true,
+          ownerAssignmentMode: true
+        }
       })
     : [];
 

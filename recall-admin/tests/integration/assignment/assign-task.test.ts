@@ -237,18 +237,87 @@ describe("configurable task assignment", () => {
 
     expect(decision).toMatchObject({
       assigneeId: usOperatorId,
-      matchedRulePriority: 10
+      matchedRulePriority: 10,
+      assignmentMode: "AUTO",
+      skippedManual: false
     });
     await expect(
       prisma.userProfile.findUniqueOrThrow({
         where: { id: ownerOnlyUserId }
       })
-    ).resolves.toMatchObject({ ownerId: usOperatorId });
+    ).resolves.toMatchObject({
+      ownerId: usOperatorId,
+      ownerAssignmentMode: "AUTO"
+    });
     await expect(
       prisma.recallTask.count({
         where: { userId: ownerOnlyUserId }
       })
     ).resolves.toBe(0);
+  });
+
+  it("assigns the primary administrator when geography has no matching owner", async () => {
+    const primary = await prisma.member.findFirstOrThrow({
+      where: { role: "PRIMARY_ADMIN", active: true }
+    });
+    const email = `assignment-unknown-${randomUUID()}@example.test`;
+    const user = await prisma.userProfile.create({
+      data: {
+        externalUserId: `assignment-unknown-${randomUUID()}`,
+        email,
+        emailNormalized: email,
+        registeredAt: new Date(),
+        currentSegment: "G"
+      }
+    });
+
+    try {
+      const decision = await assignUserOwner(user.id);
+
+      expect(decision).toMatchObject({
+        assigneeId: primary.id,
+        assignmentMode: "AUTO",
+        skippedManual: false
+      });
+      await expect(
+        prisma.userProfile.findUniqueOrThrow({
+          where: { id: user.id }
+        })
+      ).resolves.toMatchObject({
+        ownerId: primary.id,
+        ownerAssignmentMode: "AUTO"
+      });
+    } finally {
+      await prisma.userProfile.delete({ where: { id: user.id } });
+    }
+  });
+
+  it("does not overwrite a manually locked owner", async () => {
+    await prisma.userProfile.update({
+      where: { id: ownerOnlyUserId },
+      data: {
+        ownerId: southOperatorId,
+        ownerAssignmentMode: "MANUAL",
+        ownerAssignmentReason: "重点客户由华南团队继续跟进"
+      }
+    });
+
+    const decision = await assignUserOwner(ownerOnlyUserId);
+
+    expect(decision).toMatchObject({
+      assigneeId: southOperatorId,
+      assignmentMode: "MANUAL",
+      skippedManual: true
+    });
+    await expect(
+      prisma.userProfile.findUniqueOrThrow({
+        where: { id: ownerOnlyUserId }
+      })
+    ).resolves.toMatchObject({
+      ownerId: southOperatorId,
+      ownerAssignmentMode: "MANUAL",
+      ownerAssignmentReason: "重点客户由华南团队继续跟进"
+    });
   });
 
   it("previews an unsaved ruleset without changing tasks or owners", async () => {

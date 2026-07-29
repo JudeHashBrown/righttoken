@@ -7,6 +7,7 @@ import { createFieldCipher } from "@/lib/crypto/field-encryption";
 import { prisma } from "@/lib/db/prisma";
 import type { TransactionClient } from "@/lib/db/transaction";
 import { matchRule } from "@/modules/assignment/match-rule";
+import { isManualOwnerLocked } from "@/modules/assignment/owner-state";
 import type {
   AssignmentDecision,
   AssignmentRuleInput,
@@ -109,8 +110,24 @@ export async function loadAssignmentWorkload(
 async function decideUserAssignment(
   tx: TransactionClient,
   user: UserProfile,
-  now: Date
+  now: Date,
+  options: { forceAutomatic?: boolean } = {}
 ): Promise<AssignmentDecision> {
+  if (!options.forceAutomatic && isManualOwnerLocked(user)) {
+    return {
+      assigneeId: user.ownerId,
+      poolKey: "manual-owner",
+      matchedRuleId: null,
+      matchedRuleName: null,
+      matchedRulePriority: null,
+      usedFallback: false,
+      matchedConditions: [],
+      assignmentReason:
+        user.ownerAssignmentReason ?? "管理员已指定负责人",
+      assignmentMode: "MANUAL",
+      skippedManual: true
+    };
+  }
   const storedRules = await tx.assignmentRule.findMany({
     where: {
       enabled: true,
@@ -148,28 +165,38 @@ async function decideUserAssignment(
       ...(defaultOwner ? [defaultOwner.id] : [])
     ]
   );
-  return matchRule(
+  const decision = matchRule(
     userToAssignmentContext(user),
     rules,
     workload,
     now,
     defaultOwner?.id ?? null
   );
+  if (!decision.assigneeId) {
+    throw new Error("ASSIGNMENT_OWNER_REQUIRED");
+  }
+  return {
+    ...decision,
+    assignmentMode: "AUTO",
+    skippedManual: false
+  };
 }
 
 export async function assignUserOwner(
   userId: string,
-  now = new Date()
+  now = new Date(),
+  options: { forceAutomatic?: boolean } = {}
 ): Promise<AssignmentDecision> {
   return prisma.$transaction(async (tx) => {
-    return assignUserOwnerInTransaction(tx, userId, now);
+    return assignUserOwnerInTransaction(tx, userId, now, options);
   });
 }
 
 export async function assignUserOwnerInTransaction(
   tx: TransactionClient,
   userId: string,
-  now = new Date()
+  now = new Date(),
+  options: { forceAutomatic?: boolean } = {}
 ): Promise<AssignmentDecision> {
   await tx.$queryRaw(
     Prisma.sql`
@@ -185,10 +212,24 @@ export async function assignUserOwnerInTransaction(
   if (user.sourceDeletedAt) {
     throw new Error("RIGHTTOKEN_USER_DELETED");
   }
-  const decision = await decideUserAssignment(tx, user, now);
+  const decision = await decideUserAssignment(
+    tx,
+    user,
+    now,
+    options
+  );
+  if (decision.skippedManual) {
+    return decision;
+  }
   await tx.userProfile.update({
     where: { id: user.id },
-    data: { ownerId: decision.assigneeId }
+    data: {
+      ownerId: decision.assigneeId,
+      ownerAssignmentMode: "AUTO",
+      ownerAssignedAt: now,
+      ownerAssignedById: null,
+      ownerAssignmentReason: decision.assignmentReason
+    }
   });
   return decision;
 }
@@ -227,10 +268,19 @@ export async function assignTask(
         status: decision.assigneeId ? "TODO" : "UNASSIGNED"
       }
     });
-    if (decision.assigneeId) {
+    if (
+      decision.assigneeId &&
+      decision.assignmentMode === "AUTO"
+    ) {
       await tx.userProfile.update({
         where: { id: task.userId },
-        data: { ownerId: decision.assigneeId }
+        data: {
+          ownerId: decision.assigneeId,
+          ownerAssignmentMode: "AUTO",
+          ownerAssignedAt: now,
+          ownerAssignedById: null,
+          ownerAssignmentReason: decision.assignmentReason
+        }
       });
     }
     await tx.taskActivity.create({

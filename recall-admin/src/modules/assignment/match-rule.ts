@@ -2,7 +2,7 @@ import { isIP } from "node:net";
 import { z } from "zod";
 import type {
   AssignmentCondition,
-  AssignmentDecision,
+  RuleAssignmentDecision,
   AssignmentRuleInput,
   AssignmentUserContext,
   AssignmentWorkload,
@@ -313,10 +313,10 @@ export function matchRule(
   workload: AssignmentWorkload,
   now = new Date(),
   defaultAssigneeId: string | null = null
-): AssignmentDecision {
+): RuleAssignmentDecision {
   const defaultDecision = (
     reason: string
-  ): AssignmentDecision | null => {
+  ): RuleAssignmentDecision | null => {
     if (
       !defaultAssigneeId ||
       !isAvailable(workload[defaultAssigneeId], null)
