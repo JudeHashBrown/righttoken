@@ -29,10 +29,8 @@ export function UserNoteForm({
       }
       setBody("");
       router.refresh();
-    } catch (caught) {
-      setError(
-        caught instanceof Error ? caught.message : "备注保存失败"
-      );
+    } catch {
+      setError("备注未能保存，请稍后重试");
     } finally {
       setPending(false);
     }

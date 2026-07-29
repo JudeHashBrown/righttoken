@@ -18,4 +18,16 @@ describe("presentSegmentReason", () => {
       "自动重新分组：如果尚未完成首单，并且已进入支付流程，则进入 B 组。"
     );
   });
+
+  it("translates historical machine-only reasons", () => {
+    expect(presentSegmentReason("active service anomaly")).toBe(
+      "近期连续调用失败，需要优先跟进"
+    );
+    expect(
+      presentSegmentReason("manual override: 重点客户人工跟进")
+    ).toBe("人工调整：重点客户人工跟进");
+    expect(presentSegmentReason("healthy active user")).toBe(
+      "用户当前使用正常"
+    );
+  });
 });

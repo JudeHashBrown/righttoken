@@ -391,7 +391,7 @@ export function MailComposer({
               }
               disabled={submitting || !selectedUser}
             >
-              <option value="">发送时自动创建人工任务</option>
+              <option value="">发送后创建跟进任务</option>
               {userTasks.map((task) => (
                 <option key={task.id} value={task.id}>
                   {task.title}
@@ -466,7 +466,7 @@ export function MailComposer({
         </div>
         {recipientOverridden ? (
           <p className={styles.notice}>
-            <strong>当前使用手动收件人</strong>
+            <strong>已修改收件邮箱</strong>
             <br />
             邮件仍会关联所选用户与任务，并记录实际收件地址。
           </p>
@@ -492,7 +492,7 @@ export function MailComposer({
 
         {unresolved.length ? (
           <p className={styles.error}>
-            仍有未替换变量：{unresolved.join("、")}
+            模板中仍有待填写内容：{unresolved.join("、")}
           </p>
         ) : null}
         {selectedUser?.suppressed ? (
@@ -517,7 +517,7 @@ export function MailComposer({
             type="submit"
             disabled={blocked || submitting}
           >
-            {submitting ? "正在发送" : "审核并发送"}
+            {submitting ? "正在发送" : "确认并发送"}
           </button>
         </div>
       </form>

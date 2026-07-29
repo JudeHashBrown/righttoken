@@ -59,11 +59,11 @@ export function MailboxStatusDetail({
           <strong>{dateTime(mailbox.lastTestedAt)}</strong>
         </div>
         <div className={styles.summaryItem}>
-          <span className={styles.detailLabel}>最近同步成功</span>
+          <span className={styles.detailLabel}>最近成功收信</span>
           <strong>{dateTime(mailbox.lastSuccessAt)}</strong>
         </div>
         <div className={styles.summaryItem}>
-          <span className={styles.detailLabel}>最近执行同步</span>
+          <span className={styles.detailLabel}>最近收取邮件</span>
           <strong>{dateTime(mailbox.lastSyncedAt)}</strong>
         </div>
       </div>

@@ -4,26 +4,15 @@ import styles from "@/components/workspaces/workspace.module.css";
 import {
   mailComposeHref
 } from "@/modules/mail/compose-link";
+import {
+  presentTaskPriority,
+  presentTaskStatus
+} from "@/modules/presentation/status";
+import { presentSegmentReason } from "@/modules/segmentation/present-reason";
 
 type TaskTableProps = {
   tasks: TaskListItem[];
   now: Date;
-};
-
-const statusLabels: Record<TaskListItem["status"], string> = {
-  UNASSIGNED: "公共池",
-  TODO: "待处理",
-  IN_PROGRESS: "处理中",
-  WAITING_USER: "等待用户",
-  COMPLETED: "已完成",
-  PAUSED: "已暂停",
-  CANCELLED: "已取消"
-};
-
-const priorityLabels: Record<TaskListItem["priority"], string> = {
-  URGENT: "紧急",
-  IMPORTANT: "重要",
-  NORMAL: "普通"
 };
 
 function dateTime(value: Date): string {
@@ -77,7 +66,7 @@ export function TaskTable({
             <th>分组</th>
             <th>状态</th>
             <th>负责人</th>
-            <th>SLA</th>
+            <th>剩余时间</th>
           </tr>
         </thead>
         <tbody>
@@ -93,7 +82,7 @@ export function TaskTable({
                         : styles.priorityNormal
                   }`}
                 >
-                  {priorityLabels[task.priority]}
+                  {presentTaskPriority(task.priority)}
                 </span>
               </td>
               <td>
@@ -104,7 +93,7 @@ export function TaskTable({
                   {task.title}
                 </Link>
                 <span className={styles.secondaryText}>
-                  {task.reason}
+                  {presentSegmentReason(task.reason)}
                 </span>
               </td>
               <td>
@@ -131,7 +120,7 @@ export function TaskTable({
               </td>
               <td>
                 <span className={styles.status}>
-                  {statusLabels[task.status]}
+                  {presentTaskStatus(task.status)}
                 </span>
               </td>
               <td>{task.assignee?.displayName || "公共任务池"}</td>

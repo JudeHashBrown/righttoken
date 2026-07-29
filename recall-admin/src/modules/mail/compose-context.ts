@@ -58,34 +58,36 @@ export async function findComposeUsers(
   const normalized = query.trim();
   const rows = await prisma.userProfile.findMany({
     where: {
-      ...userScope(viewer),
-      sourceDeletedAt: null,
-      ...(selectedUserId
-        ? { id: selectedUserId }
-        : normalized
-          ? {
-              OR: [
-                {
-                  email: {
-                    contains: normalized,
-                    mode: "insensitive"
+      AND: [
+        userScope(viewer),
+        { sourceDeletedAt: null },
+        selectedUserId
+          ? { id: selectedUserId }
+          : normalized
+            ? {
+                OR: [
+                  {
+                    email: {
+                      contains: normalized,
+                      mode: "insensitive"
+                    }
+                  },
+                  {
+                    displayName: {
+                      contains: normalized,
+                      mode: "insensitive"
+                    }
+                  },
+                  {
+                    externalUserId: {
+                      contains: normalized,
+                      mode: "insensitive"
+                    }
                   }
-                },
-                {
-                  displayName: {
-                    contains: normalized,
-                    mode: "insensitive"
-                  }
-                },
-                {
-                  externalUserId: {
-                    contains: normalized,
-                    mode: "insensitive"
-                  }
-                }
-              ]
-            }
-          : {})
+                ]
+              }
+            : {}
+      ]
     },
     orderBy: { registeredAt: "desc" },
     take: selectedUserId ? 1 : 20,

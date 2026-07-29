@@ -51,9 +51,11 @@ describe("MailComposer", () => {
       />
     );
 
-    expect(screen.getByText("仍有未替换变量：[称呼]")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "审核并发送" })
+      screen.getByText("模板中仍有待填写内容：[称呼]")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "确认并发送" })
     ).toBeDisabled();
   });
 
@@ -69,7 +71,7 @@ describe("MailComposer", () => {
 
     expect(screen.getByText("该用户已退订，禁止发送")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "审核并发送" })
+      screen.getByRole("button", { name: "确认并发送" })
     ).toBeDisabled();
   });
 
@@ -92,7 +94,7 @@ describe("MailComposer", () => {
     );
 
     fireEvent.click(
-      screen.getByRole("button", { name: "审核并发送" })
+      screen.getByRole("button", { name: "确认并发送" })
     );
     await waitFor(() => {
       expect(
@@ -140,7 +142,7 @@ describe("MailComposer", () => {
       target: { value: "manual@example.test" }
     });
     expect(
-      screen.getByText("当前使用手动收件人")
+      screen.getByText("已修改收件邮箱")
     ).toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText("关联任务（可选）"), {
@@ -152,7 +154,7 @@ describe("MailComposer", () => {
       target: { value: "manual@example.test" }
     });
     fireEvent.click(
-      screen.getByRole("button", { name: "审核并发送" })
+      screen.getByRole("button", { name: "确认并发送" })
     );
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
@@ -179,7 +181,7 @@ describe("MailComposer", () => {
       target: { value: "invalid-email" }
     });
     expect(
-      screen.getByRole("button", { name: "审核并发送" })
+      screen.getByRole("button", { name: "确认并发送" })
     ).toBeDisabled();
   });
 
@@ -215,7 +217,7 @@ describe("MailComposer", () => {
       target: { value: "user-1" }
     });
     fireEvent.click(
-      screen.getByRole("button", { name: "审核并发送" })
+      screen.getByRole("button", { name: "确认并发送" })
     );
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(

@@ -1,6 +1,10 @@
 import Link from "next/link";
 import type { UserListItem } from "@/modules/users/user-queries";
 import styles from "@/components/workspaces/workspace.module.css";
+import {
+  operationalLocationDisplay,
+  paymentStatusLabel
+} from "@/modules/users/presentation";
 
 type UserTableProps = {
   users: UserListItem[];
@@ -56,6 +60,7 @@ export function UserTable({
         <tbody>
           {users.map((user) => {
             const nextTask = user.tasks[0];
+            const location = operationalLocationDisplay(user);
             return (
               <tr key={user.id}>
                 <td>
@@ -80,13 +85,16 @@ export function UserTable({
                   </span>
                 </td>
                 <td>
-                  {user.countryCode || "—"}
+                  {location.primary}
                   <span className={styles.secondaryText}>
-                    {user.region || "地区待确认"}
+                    {location.secondary}
                   </span>
                 </td>
                 <td>
-                  {user.paymentStatus}
+                  {paymentStatusLabel(
+                    user.paymentStatus,
+                    user.totalPaidMinor
+                  )}
                   <span className={styles.secondaryText}>
                     累计 {money(user.totalPaidMinor)} · 余额{" "}
                     {money(user.balanceMinor)}

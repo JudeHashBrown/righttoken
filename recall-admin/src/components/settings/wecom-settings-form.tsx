@@ -74,7 +74,7 @@ export function WecomSettingsForm(): React.JSX.Element {
       );
       if (!response.ok) {
         setError(
-          "应用测试失败，请检查凭据和测试成员 UserID。"
+          "应用测试失败，请检查连接信息和测试接收人账号。"
         );
         return;
       }
@@ -104,7 +104,7 @@ export function WecomSettingsForm(): React.JSX.Element {
         })
       });
       if (!response.ok) {
-        setError("企微连接未保存，请检查 Webhook 地址。");
+        setError("企业微信群连接未保存，请检查群机器人地址。");
         return;
       }
       setWebhookUrl("");
@@ -125,7 +125,7 @@ export function WecomSettingsForm(): React.JSX.Element {
         { method: "POST" }
       );
       if (!response.ok) {
-        setError("企微测试失败，请先保存并检查 Webhook。");
+        setError("测试消息未能发送，请先保存并检查群机器人地址。");
         return;
       }
       setSuccess("企微测试消息已发送");
@@ -178,7 +178,9 @@ export function WecomSettingsForm(): React.JSX.Element {
               />
             </div>
             <div className={styles.field}>
-              <label htmlFor="wecom-corp-id">企业 CorpID</label>
+              <label htmlFor="wecom-corp-id">
+                企业 ID（在企业微信后台查看）
+              </label>
               <input
                 className={styles.input}
                 id="wecom-corp-id"
@@ -190,7 +192,7 @@ export function WecomSettingsForm(): React.JSX.Element {
             </div>
             <div className={styles.field}>
               <label htmlFor="wecom-agent-id">
-                应用 AgentID
+                应用 ID
               </label>
               <input
                 className={styles.input}
@@ -202,7 +204,7 @@ export function WecomSettingsForm(): React.JSX.Element {
               />
             </div>
             <div className={styles.field}>
-              <label htmlFor="wecom-secret">应用 Secret</label>
+              <label htmlFor="wecom-secret">应用密钥</label>
               <input
                 className={styles.input}
                 id="wecom-secret"
@@ -216,7 +218,7 @@ export function WecomSettingsForm(): React.JSX.Element {
             </div>
             <div className={styles.field}>
               <label htmlFor="wecom-test-recipient">
-                测试成员 UserID
+                测试接收人账号
               </label>
               <input
                 className={styles.input}
@@ -285,7 +287,7 @@ export function WecomSettingsForm(): React.JSX.Element {
             </div>
             <div className={`${styles.field} ${styles.fieldGrow}`}>
               <label htmlFor="wecom-webhook">
-                企微机器人 Webhook
+                群机器人地址
               </label>
               <input
                 className={styles.input}

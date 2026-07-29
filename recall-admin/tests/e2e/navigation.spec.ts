@@ -9,13 +9,13 @@ const pool = new pg.Pool({
 });
 const e2ePort = process.env.RECALL_E2E_PORT ?? "3101";
 const routes = [
-  { path: "/dashboard", heading: "运营驾驶舱" },
+  { path: "/dashboard", heading: "用户运营概览" },
   { path: "/tasks", heading: "任务中心" },
   { path: "/users", heading: "用户中心" },
   { path: "/mail", heading: "邮件中心" },
   { path: "/automation/segments", heading: "用户分组" },
-  { path: "/automation/assignment", heading: "分配规则" },
-  { path: "/automation/notifications", heading: "通知策略" },
+  { path: "/automation/assignment", heading: "客户分配" },
+  { path: "/automation/notifications", heading: "提醒设置" },
   { path: "/reports", heading: "数据报表" },
   { path: "/members", heading: "成员与权限" },
   { path: "/settings", heading: "系统设置" }
@@ -64,7 +64,7 @@ test("local development opens the dashboard without login", async ({
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(
     page.getByRole("heading", {
-      name: "运营驾驶舱",
+      name: "用户运营概览",
       exact: true
     })
   ).toBeVisible();
@@ -112,7 +112,7 @@ test("every administrator navigation item opens a real page", async ({
     }
     if (route.path === "/automation/notifications") {
       await expect(
-        page.getByRole("button", { name: "发布通知策略" })
+        page.getByRole("button", { name: "保存提醒设置" })
       ).toBeVisible();
     }
     if (route.path === "/members") {

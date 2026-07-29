@@ -20,7 +20,7 @@ export default async function MembersPage(): Promise<React.JSX.Element> {
       <header className={styles.heading}>
         <div>
           <h1>成员与权限</h1>
-          <p>授权主站用户进入召回后台，并管理管理员和运营人员权限。</p>
+          <p>授权主站用户进入用户运营后台，并管理管理员和运营人员权限。</p>
         </div>
         <span className={styles.statusGood}>
           {roleLabels[viewer.role]}

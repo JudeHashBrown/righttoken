@@ -139,7 +139,7 @@ test("operator claims and processes a public task with a note", async ({
   await page.getByRole("button", { name: "等待用户" }).click();
   await expect(page.getByText("等待用户", { exact: true })).toBeVisible();
 
-  await page.getByRole("link", { name: "打开用户 360" }).click();
+  await page.getByRole("link", { name: "查看用户详情" }).click();
   await expect(
     page.getByText("已联系用户，等待补充支付信息")
   ).toBeVisible();

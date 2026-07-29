@@ -17,22 +17,22 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
       <header className={styles.heading}>
         <div>
           <h1>系统设置</h1>
-          <p>检查共享数据库、邮箱和企微通道配置状态。</p>
+          <p>查看主站数据、客服邮箱和企业微信是否可以正常使用。</p>
         </div>
       </header>
 
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
-            <h2>核心服务</h2>
-            <p>页面只显示是否配置，不返回密码、密钥或完整连接地址</p>
+            <h2>基础功能</h2>
+            <p>这里只显示使用状态，不会显示密码或完整连接信息</p>
           </div>
         </div>
         <ul className={styles.list}>
           <li className={styles.listItem}>
             <div>
-              <strong>PostgreSQL 数据库</strong>
-              <p>主站用户事实与运营任务、规则和审计数据</p>
+              <strong>主站用户数据</strong>
+              <p>注册、支付、余额和使用情况</p>
             </div>
             <span
               className={
@@ -41,13 +41,13 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
                   : styles.statusDown
               }
             >
-              {overview.databaseReady ? "运行正常" : "连接失败"}
+              {overview.databaseReady ? "可以正常读取" : "暂时无法读取"}
             </span>
           </li>
           <li className={styles.listItem}>
             <div>
-              <strong>后台与任务 API</strong>
-              <p>本地管理台路由和服务端权限</p>
+              <strong>用户运营功能</strong>
+              <p>用户、任务、邮件和团队权限</p>
             </div>
             <span className={styles.statusGood}>运行正常</span>
           </li>
@@ -57,8 +57,8 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
-            <h2>集成连接</h2>
-            <p>凭据加密保存，页面只显示连接状态</p>
+            <h2>外部连接</h2>
+            <p>账号信息会加密保存，这里只显示连接状态</p>
           </div>
         </div>
         <ul className={styles.list}>
@@ -68,8 +68,8 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
                 <strong>{integration.name}</strong>
                 <p>
                   {integration.configured
-                    ? "数据源或通知通道已配置"
-                    : "等待正式账号或接口信息"}
+                    ? "已经连接，可以使用"
+                    : "尚未连接"}
                 </p>
               </div>
               <span
@@ -91,7 +91,7 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
           <div className={styles.panelHeader}>
             <div>
               <h2>已保存邮箱</h2>
-              <p>页面只显示邮箱地址和运行状态，不返回密码</p>
+              <p>这里只显示邮箱地址和使用状态，不会显示密码</p>
             </div>
           </div>
           <ul className={styles.list}>

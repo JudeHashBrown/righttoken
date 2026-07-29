@@ -31,6 +31,7 @@ import type {
   SegmentRuleSet
 } from "@/modules/segmentation/rule-definition";
 import { describeOperationalClause } from "@/modules/segmentation/operational-copy";
+import { presentRunStatus } from "@/modules/presentation/status";
 import type { SegmentCode } from "@/modules/segmentation/types";
 import styles from "./segment-rule-editor.module.css";
 
@@ -392,7 +393,7 @@ export function SegmentRuleEditor({
       }
       setPreview(result);
     } catch {
-      setError("规则预览失败，请检查条件和值后重试。");
+      setError("无法预览分组结果，请检查筛选条件后重试。");
     } finally {
       setPreviewing(false);
     }
@@ -426,7 +427,7 @@ export function SegmentRuleEditor({
         throw new Error("publish rejected");
       }
       setMessage(
-        `版本 v${result.version} 已发布，正在更新用户分组`
+        `分组方案 v${result.version} 已保存，正在整理用户分组`
       );
       setActiveRunId(result.runId ?? null);
       setRunProgress(null);
@@ -435,7 +436,7 @@ export function SegmentRuleEditor({
       setChangeSummary("");
       router.refresh();
     } catch {
-      setError("发布失败，草稿已保留，请重新预览后再试。");
+      setError("分组方案未能保存，当前修改已保留，请重新预览后再试。");
     } finally {
       setPublishing(false);
     }
@@ -459,7 +460,7 @@ export function SegmentRuleEditor({
       }
       setHistory(result.versions);
     } catch {
-      setError("历史版本加载失败，请稍后重试。");
+      setError("方案记录暂时无法加载，请稍后重试。");
     } finally {
       setHistoryLoading(false);
     }
@@ -478,18 +479,18 @@ export function SegmentRuleEditor({
         }
       );
       if (!response.ok) throw new Error("retry failed");
-      setMessage("失败用户重算已重新进入队列");
+      setMessage("未完成的用户已开始重新整理");
       setHistory([]);
       setHistoryOpen(false);
       router.refresh();
     } catch {
-      setError("重试未启动，请稍后再试。");
+      setError("暂时无法重新整理这些用户，请稍后再试。");
     }
   }
 
   async function rollback(): Promise<void> {
     if (!rollbackTarget || rollbackSummary.trim().length < 4) {
-      setError("请填写至少 4 个字的回滚说明。");
+      setError("请填写至少 4 个字的恢复说明。");
       return;
     }
     setPublishing(true);
@@ -517,7 +518,7 @@ export function SegmentRuleEditor({
         throw new Error("rollback failed");
       }
       setMessage(
-        `已发布回滚版本 v${result.version}，正在全量重算`
+        `已恢复为方案 v${result.version}，正在重新整理全部用户`
       );
       setRollbackTarget(null);
       setRollbackSummary("");
@@ -525,7 +526,7 @@ export function SegmentRuleEditor({
       setHistoryOpen(false);
       router.refresh();
     } catch {
-      setError("回滚发布失败，请稍后重试。");
+      setError("暂时无法恢复该方案，请稍后重试。");
     } finally {
       setPublishing(false);
     }
@@ -541,7 +542,7 @@ export function SegmentRuleEditor({
             onClick={loadHistory}
           >
             <History size={15} />
-            {historyOpen ? "收起历史版本" : "查看历史版本"}
+            {historyOpen ? "收起方案记录" : "查看方案记录"}
           </button>
           {canEdit ? (
             <button
@@ -560,12 +561,12 @@ export function SegmentRuleEditor({
         <section className={styles.historyPanel}>
           <header>
             <div>
-              <strong>规则版本历史</strong>
-              <span>历史记录不可修改；回滚会发布一个新版本</span>
+              <strong>分组方案记录</strong>
+              <span>历史方案不可修改，但可以恢复后重新使用</span>
             </div>
           </header>
           {historyLoading ? (
-            <p className={styles.historyEmpty}>正在加载历史版本…</p>
+            <p className={styles.historyEmpty}>正在加载方案记录…</p>
           ) : history.length ? (
             <div className={styles.historyList}>
               {history.map((version) => {
@@ -587,13 +588,13 @@ export function SegmentRuleEditor({
                       </p>
                     </div>
                     <div className={styles.runSummary}>
-                      <span>{version.active ? "当前生效" : "历史版本"}</span>
+                      <span>{version.active ? "当前使用" : "历史方案"}</span>
                       <small>
                         {run
-                          ? `${run.status} · ${run.processedUsers}/${
+                          ? `${presentRunStatus(run.status)} · ${run.processedUsers}/${
                               run.totalUsers
-                            } · 失败 ${run.failedUsers}`
-                          : "无重算记录"}
+                            } 位已完成 · ${run.failedUsers} 位未完成`
+                          : "暂无用户整理记录"}
                       </small>
                     </div>
                     {canEdit ? (
@@ -606,7 +607,7 @@ export function SegmentRuleEditor({
                             type="button"
                             onClick={() => retryRun(run.id)}
                           >
-                            重试失败用户
+                            重新整理未完成用户
                           </button>
                         ) : null}
                         {!version.active ? (
@@ -616,11 +617,11 @@ export function SegmentRuleEditor({
                             onClick={() => {
                               setRollbackTarget(version);
                               setRollbackSummary(
-                                `回滚到 v${version.version}：`
+                                `恢复到方案 v${version.version}：`
                               );
                             }}
                           >
-                            回滚到此版本
+                            恢复此方案
                           </button>
                         ) : null}
                       </div>
@@ -630,7 +631,7 @@ export function SegmentRuleEditor({
               })}
             </div>
           ) : (
-            <p className={styles.historyEmpty}>暂无历史版本。</p>
+            <p className={styles.historyEmpty}>暂无历史方案。</p>
           )}
         </section>
       ) : null}
@@ -738,7 +739,7 @@ export function SegmentRuleEditor({
                 <div className={styles.groupBody}>
                   <div className={styles.annotationField}>
                     <label htmlFor={`annotation-${group.code}`}>
-                      {group.code} 组注释
+                      {group.code} 组说明
                     </label>
                     <input
                       id={`annotation-${group.code}`}
@@ -759,7 +760,7 @@ export function SegmentRuleEditor({
                       <div>
                         <strong>G 组自动接收其他用户</strong>
                         <p>
-                          该组不配置筛选条件，也不创建个人召回任务。
+                          不符合前面分组条件的用户会进入 G 组，系统不会为其自动创建个人跟进任务。
                         </p>
                       </div>
                     </div>
@@ -783,7 +784,7 @@ export function SegmentRuleEditor({
                               })
                             }
                           >
-                            <Plus size={14} /> 添加条件组
+                            <Plus size={14} /> 添加一组筛选条件
                           </button>
                         ) : null}
                       </div>
@@ -794,7 +795,7 @@ export function SegmentRuleEditor({
                             key={`${group.code}-${branchIndex}`}
                           >
                             <div className={styles.branchHeader}>
-                              <strong>条件组 {branchIndex + 1}</strong>
+                              <strong>筛选方案 {branchIndex + 1}</strong>
                               <span>
                                   {branchIndex === 0 ? "主要" : "补充"}
                               </span>
@@ -863,11 +864,11 @@ export function SegmentRuleEditor({
                                   ) : null}
                                   <div className={styles.condition}>
                                     <label>
-                                      <span>字段</span>
+                                      <span>筛选依据</span>
                                       <select
                                         aria-label={`${group.code} 组分支 ${
                                           branchIndex + 1
-                                        }条件 ${clauseIndex + 1}字段`}
+                                        }条件 ${clauseIndex + 1}筛选依据`}
                                         value={clause.field}
                                         disabled={!canEdit}
                                         onChange={(event) =>
@@ -891,7 +892,7 @@ export function SegmentRuleEditor({
                                       </select>
                                     </label>
                                     <label>
-                                      <span>判断</span>
+                                      <span>条件</span>
                                       <select
                                         value={clause.operator}
                                         disabled={!canEdit}
@@ -917,7 +918,7 @@ export function SegmentRuleEditor({
                                     </label>
                                     {!hidesValue ? (
                                       <label className={styles.valueField}>
-                                        <span>值</span>
+                                        <span>目标</span>
                                         {field.type === "boolean" ? (
                                           <select
                                             value={String(clause.value)}
@@ -981,12 +982,12 @@ export function SegmentRuleEditor({
                                             disabled={!canEdit}
                                             placeholder={
                                               clause.operator === "between"
-                                                ? "起始值, 结束值"
+                                                ? "范围起点, 范围终点"
                                                 : clause.operator === "in" ||
                                                     clause.operator ===
                                                       "not_in"
-                                                  ? "多个值用逗号分隔"
-                                                  : "请输入比较值"
+                                                  ? "多个内容用逗号分隔"
+                                                  : "请输入目标内容"
                                             }
                                             onChange={(event) =>
                                               changeValue(
@@ -1081,8 +1082,8 @@ export function SegmentRuleEditor({
                       <div className={styles.policy}>
                         <div className={styles.sectionHeading}>
                           <div>
-                            <strong>触达设置</strong>
-                            <span>进入此组后的运营提醒设置</span>
+                            <strong>跟进设置</strong>
+                            <span>用户进入此组后是否需要团队跟进</span>
                           </div>
                         </div>
                         <div className={styles.policyGrid}>
@@ -1101,10 +1102,10 @@ export function SegmentRuleEditor({
                                 })
                               }
                             />
-                            创建个人召回任务
+                            自动创建个人跟进任务
                           </label>
                           <label>
-                            <span>等待时间（分钟）</span>
+                            <span>多久后开始跟进（分钟）</span>
                             <input
                               type="number"
                               min={0}
@@ -1119,7 +1120,7 @@ export function SegmentRuleEditor({
                             />
                           </label>
                           <label>
-                            <span>任务等级</span>
+                            <span>紧急程度</span>
                             <select
                               value={group.taskPolicy.priority}
                               disabled={!canEdit || group.code === "F"}
@@ -1143,7 +1144,7 @@ export function SegmentRuleEditor({
                             </select>
                           </label>
                           <label>
-                            <span>处理时限（分钟）</span>
+                            <span>建议完成时间（分钟）</span>
                             <input
                               type="number"
                               min={1}
@@ -1180,7 +1181,7 @@ export function SegmentRuleEditor({
                       }
                     >
                       <RotateCcw size={14} />
-                      恢复该组默认设置
+                      恢复该组初始设置
                     </button>
                   ) : null}
                 </div>
@@ -1205,11 +1206,10 @@ export function SegmentRuleEditor({
       {runProgress ? (
         <div className={styles.progress} role="status">
           <div>
-            <strong>全量重算：{runProgress.status}</strong>
+            <strong>{presentRunStatus(runProgress.status)}</strong>
             <span>
-              {runProgress.processedUsers}/{runProgress.totalUsers} 已处理，
-              成功 {runProgress.succeededUsers}，失败{" "}
-              {runProgress.failedUsers}
+              {runProgress.processedUsers}/{runProgress.totalUsers} 位用户已完成，
+              {runProgress.failedUsers} 位暂未完成
             </span>
           </div>
           <span className={styles.progressTrack}>
@@ -1235,13 +1235,13 @@ export function SegmentRuleEditor({
       {preview ? (
         <div className={styles.modalBackdrop}>
           <section
-            aria-label="规则发布预览"
+            aria-label="分组方案预览"
             className={styles.previewModal}
           >
             <header>
               <div>
-                <span>发布前影响预览</span>
-                <h2>确认新规则影响</h2>
+                <span>保存前预览</span>
+                <h2>确认新的分组结果</h2>
               </div>
               <button
                 aria-label="关闭预览"
@@ -1253,19 +1253,19 @@ export function SegmentRuleEditor({
             </header>
             <div className={styles.previewMetrics}>
               <div>
-                <span>覆盖用户</span>
+                <span>全部用户</span>
                 <strong>{preview.totalUsers} 人</strong>
               </div>
               <div>
-                <span>分组迁移</span>
-                <strong>预计迁移 {preview.migrations} 人</strong>
+                <span>分组发生变化</span>
+                <strong>预计 {preview.migrations} 人</strong>
               </div>
               <div>
-                <span>规则重叠</span>
+                <span>同时符合多个分组</span>
                 <strong>{preview.overlapUsers} 人</strong>
               </div>
               <div>
-                <span>取消旧任务</span>
+                <span>不再需要的旧任务</span>
                 <strong>{preview.tasksToCancel} 个</strong>
               </div>
               <div>
@@ -1289,13 +1289,13 @@ export function SegmentRuleEditor({
               <textarea
                 value={changeSummary}
                 maxLength={500}
-                placeholder="例如：调整 E 组余额阈值并优化 D 组优先级"
+                placeholder="例如：调整 E 组余额标准并提高 D 组跟进紧急程度"
                 onChange={(event) => setChangeSummary(event.target.value)}
               />
             </label>
             <p className={styles.previewWarning}>
-              发布后，新版本立即生效，后台将重新计算系统内全部用户。
-              进行中的人工任务不会被取消。
+              保存后，新方案立即生效，系统会重新整理全部用户的分组。
+              团队正在处理的任务不会被取消。
             </p>
             <footer>
               <button
@@ -1311,7 +1311,7 @@ export function SegmentRuleEditor({
                 disabled={publishing}
                 onClick={publish}
               >
-                {publishing ? "正在发布" : "确认发布新版本"}
+                {publishing ? "正在保存" : "确认保存新方案"}
               </button>
             </footer>
           </section>
@@ -1321,16 +1321,16 @@ export function SegmentRuleEditor({
       {rollbackTarget ? (
         <div className={styles.modalBackdrop}>
           <section
-            aria-label="确认规则回滚"
+            aria-label="确认恢复历史分组方案"
             className={styles.previewModal}
           >
             <header>
               <div>
-                <span>发布新的回滚版本</span>
-                <h2>回滚到 v{rollbackTarget.version}</h2>
+                <span>恢复历史方案</span>
+                <h2>恢复到方案 v{rollbackTarget.version}</h2>
               </div>
               <button
-                aria-label="关闭回滚确认"
+                aria-label="关闭恢复确认"
                 type="button"
                 onClick={() => setRollbackTarget(null)}
               >
@@ -1338,7 +1338,7 @@ export function SegmentRuleEditor({
               </button>
             </header>
             <label className={styles.summaryInput}>
-              <span>回滚说明</span>
+              <span>恢复说明</span>
               <textarea
                 value={rollbackSummary}
                 maxLength={500}
@@ -1348,8 +1348,7 @@ export function SegmentRuleEditor({
               />
             </label>
             <p className={styles.previewWarning}>
-              系统不会修改旧记录，而是复制该配置并发布一个新版本，
-              随后重新计算全部用户。
+              当前方案记录会保留。恢复后，系统会按照这套条件重新整理全部用户。
             </p>
             <footer>
               <button
@@ -1365,7 +1364,7 @@ export function SegmentRuleEditor({
                 disabled={publishing}
                 onClick={rollback}
               >
-                {publishing ? "正在回滚" : "确认回滚并发布"}
+                {publishing ? "正在恢复" : "确认恢复并使用"}
               </button>
             </footer>
           </section>

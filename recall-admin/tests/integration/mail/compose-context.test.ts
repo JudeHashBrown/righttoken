@@ -106,15 +106,27 @@ describe("mail compose context", () => {
   });
 
   it("limits an operator to owned and unowned users", async () => {
-    const users = await findComposeUsers(
+    const ownedUsers = await findComposeUsers(
       { id: operatorAId, role: "OPERATOR" },
-      ""
+      "operator-a-user"
     );
-    const ids = users.map((user) => user.id);
-    expect(ids).toEqual(
-      expect.arrayContaining([operatorAUserId, unownedUserId])
+    const unownedUsers = await findComposeUsers(
+      { id: operatorAId, role: "OPERATOR" },
+      "unowned-user"
     );
-    expect(ids).not.toContain(operatorBUserId);
+    const otherOperatorUsers = await findComposeUsers(
+      { id: operatorAId, role: "OPERATOR" },
+      "operator-b-user"
+    );
+    expect(ownedUsers.map((user) => user.id)).toContain(
+      operatorAUserId
+    );
+    expect(unownedUsers.map((user) => user.id)).toContain(
+      unownedUserId
+    );
+    expect(otherOperatorUsers.map((user) => user.id)).not.toContain(
+      operatorBUserId
+    );
   });
 
   it("lets an admin search all active users", async () => {

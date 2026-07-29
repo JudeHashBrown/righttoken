@@ -108,10 +108,8 @@ export function TaskActions({
       setTransferReason("");
       setTargetAssigneeId("");
       router.refresh();
-    } catch (caught) {
-      setError(
-        caught instanceof Error ? caught.message : "操作未完成"
-      );
+    } catch {
+      setError("操作未完成，请刷新页面后重试");
     } finally {
       setPending(null);
     }

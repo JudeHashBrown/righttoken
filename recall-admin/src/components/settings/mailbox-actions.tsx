@@ -62,7 +62,7 @@ export function MailboxActions({
         return;
       }
       setMessage(
-        `同步完成：收到 ${result?.received ?? 0} 封，匹配 ${result?.matched ?? 0} 封`
+        `收信完成：收到 ${result?.received ?? 0} 封，已关联 ${result?.matched ?? 0} 封`
       );
       router.refresh();
     } catch {
@@ -89,7 +89,7 @@ export function MailboxActions({
           onClick={syncNow}
           disabled={busy !== null}
         >
-          {busy === "sync" ? "正在同步" : "立即同步"}
+          {busy === "sync" ? "正在收取" : "立即收取邮件"}
         </button>
       </div>
       {message ? (

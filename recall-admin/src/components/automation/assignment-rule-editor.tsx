@@ -159,20 +159,18 @@ export function AssignmentRuleEditor({
         | PreviewResult
         | { published?: number };
       if (!response.ok) {
-        throw new Error("规则校验失败，请检查条件和负责人");
+        throw new Error("分配方案未能保存，请检查条件和负责人");
       }
       if (mode === "preview") {
         setPreview(body as PreviewResult);
       } else {
         setMessage(
-          `已发布 ${(body as { published?: number }).published ?? rules.length} 条规则`
+          `已保存 ${(body as { published?: number }).published ?? rules.length} 条分配条件`
         );
         router.refresh();
       }
-    } catch (error) {
-      setMessage(
-        error instanceof Error ? error.message : "操作失败，请稍后重试"
-      );
+    } catch {
+      setMessage("暂时无法完成操作，请稍后重试");
     } finally {
       setPending(null);
     }
@@ -191,7 +189,7 @@ export function AssignmentRuleEditor({
           }
           type="button"
         >
-          新增规则
+          新增分配条件
         </button>
         <div className={styles.inlineActions}>
           <button
@@ -208,7 +206,7 @@ export function AssignmentRuleEditor({
             onClick={() => submit("publish")}
             type="button"
           >
-            {pending === "publish" ? "发布中…" : "发布规则"}
+            {pending === "publish" ? "保存中…" : "保存分配方案"}
           </button>
         </div>
       </div>
@@ -221,10 +219,10 @@ export function AssignmentRuleEditor({
               key={rule.id ?? `draft-${index}`}
             >
               <div className={styles.ruleCardHeader}>
-                <strong>优先级 {index + 1}</strong>
+                <strong>判断顺序 {index + 1}</strong>
                 <div className={styles.inlineActions}>
                   <button
-                    aria-label={`上移规则 ${index + 1}`}
+                    aria-label={`上移分配条件 ${index + 1}`}
                     className={styles.secondaryButton}
                     disabled={index === 0}
                     onClick={() => move(index, -1)}
@@ -233,7 +231,7 @@ export function AssignmentRuleEditor({
                     ↑
                   </button>
                   <button
-                    aria-label={`下移规则 ${index + 1}`}
+                    aria-label={`下移分配条件 ${index + 1}`}
                     className={styles.secondaryButton}
                     disabled={index === rules.length - 1}
                     onClick={() => move(index, 1)}
@@ -257,9 +255,9 @@ export function AssignmentRuleEditor({
 
               <div className={styles.editorGrid}>
                 <div className={styles.field}>
-                  <label htmlFor={`rule-name-${index}`}>规则名称</label>
+                  <label htmlFor={`rule-name-${index}`}>条件名称</label>
                   <input
-                    aria-label="规则名称"
+                    aria-label="分配条件名称"
                     className={styles.input}
                     id={`rule-name-${index}`}
                     maxLength={120}
@@ -271,7 +269,7 @@ export function AssignmentRuleEditor({
                 </div>
                 <div className={styles.field}>
                   <label htmlFor={`rule-countries-${index}`}>
-                    国家（代码）
+                    国家或地区
                   </label>
                   <input
                     className={styles.input}
@@ -281,7 +279,7 @@ export function AssignmentRuleEditor({
                         countryCodes: event.target.value
                       })
                     }
-                    placeholder="CN, US, SG"
+                    placeholder="例如 CN、US、SG"
                     value={rule.countryCodes}
                   />
                 </div>
@@ -298,14 +296,14 @@ export function AssignmentRuleEditor({
                   />
                 </div>
                 <div className={styles.field}>
-                  <label htmlFor={`rule-sources-${index}`}>注册来源</label>
+                  <label htmlFor={`rule-sources-${index}`}>注册渠道（选填）</label>
                   <input
                     className={styles.input}
                     id={`rule-sources-${index}`}
                     onChange={(event) =>
                       update(index, { sources: event.target.value })
                     }
-                    placeholder="organic, partner"
+                    placeholder="填写主站中记录的渠道名称"
                     value={rule.sources}
                   />
                 </div>
@@ -354,7 +352,7 @@ export function AssignmentRuleEditor({
                   </select>
                 </div>
                 <div className={styles.field}>
-                  <label htmlFor={`rule-limit-${index}`}>负载上限</label>
+                  <label htmlFor={`rule-limit-${index}`}>最多同时负责</label>
                   <input
                     className={styles.input}
                     id={`rule-limit-${index}`}
@@ -401,29 +399,29 @@ export function AssignmentRuleEditor({
                   }
                   type="checkbox"
                 />
-                启用此规则
+                使用这项分配条件
               </label>
             </section>
           ))}
         </div>
       ) : (
         <div className={styles.empty}>
-          <strong>尚未配置分配规则</strong>
-          <p>新增第一条规则；未命中的任务将交给主管理员。</p>
+          <strong>尚未设置负责人分配条件</strong>
+          <p>新增第一项条件；暂时无法分配的任务将交给主管理员。</p>
         </div>
       )}
 
       {preview ? (
         <div className={styles.previewResult} role="status">
-          <strong>抽样 {preview.sampledUsers} 位用户</strong>
-          <span>待默认接管 {preview.publicPool} 人</span>
-          <span>未匹配 {preview.unmatchedConditions} 人</span>
+          <strong>已查看最近 {preview.sampledUsers} 位用户</strong>
+          <span>由主管理员暂管 {preview.publicPool} 人</span>
+          <span>暂未找到负责人 {preview.unmatchedConditions} 人</span>
         </div>
       ) : null}
       {message ? (
         <p
           className={
-            message.startsWith("已发布")
+            message.startsWith("已保存")
               ? styles.success
               : styles.error
           }

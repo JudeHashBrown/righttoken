@@ -52,7 +52,7 @@ export function DashboardOverview({
     <main className={styles.dashboard}>
       <header className={styles.pageHeading}>
         <div>
-          <h1>运营驾驶舱</h1>
+          <h1>用户运营概览</h1>
           <p>
             {greeting(now)}，{memberName}。今天需要重点关注的运营事项都在这里。
           </p>
@@ -75,14 +75,14 @@ export function DashboardOverview({
         <MetricCard
           label="紧急任务"
           value={metrics.urgent.toLocaleString("zh-CN")}
-          note={metrics.urgent ? "需要立即介入" : "运行状态平稳"}
+          note={metrics.urgent ? "需要立即介入" : "目前无需紧急介入"}
           icon={Siren}
           tone="danger"
         />
         <MetricCard
           label="用户待回复"
           value={metrics.awaitingReply.toLocaleString("zh-CN")}
-          note="邮件回复自动进入任务"
+          note="用户来信会自动生成跟进任务"
           icon={MailQuestion}
           tone="warning"
         />

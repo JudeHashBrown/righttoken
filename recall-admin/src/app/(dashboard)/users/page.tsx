@@ -74,7 +74,7 @@ export default async function UsersPage({
         <div>
           <h1>用户中心</h1>
           <p>
-            查看用户当前分组、完整邮箱、业务事实、负责人和下一项运营任务。
+            查看用户当前分组、完整邮箱、付费与使用情况、负责人和下一项运营任务。
             完整注册 IP 仅在用户详情页展示。
           </p>
         </div>
@@ -117,7 +117,7 @@ export default async function UsersPage({
             defaultValue={first(params.countryCode)}
             id="user-country"
             name="countryCode"
-            placeholder="例如 US"
+            placeholder="例如 中国或 CN"
           />
         </div>
         <div className={styles.field}>

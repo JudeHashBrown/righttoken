@@ -89,8 +89,8 @@ export default async function TasksPage({
         <div>
           <h1>任务中心</h1>
           <p>
-            领取公共任务、处理自己的任务，并根据优先级和 SLA
-            安排运营介入顺序。
+            领取公共任务、处理自己的任务，并根据紧急程度和剩余时间
+            安排跟进顺序。
           </p>
         </div>
       </header>

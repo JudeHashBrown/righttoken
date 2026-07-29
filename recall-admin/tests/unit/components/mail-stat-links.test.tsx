@@ -31,7 +31,7 @@ describe("MailStatLinks", () => {
       screen.getByRole("link", { name: /待处理回复/ })
     ).toHaveAttribute("href", "/mail?view=pending");
     expect(
-      screen.getByRole("link", { name: /人工归档箱/ })
+      screen.getByRole("link", { name: /待关联来信/ })
     ).toHaveAttribute("href", "/mail?view=unmatched");
     expect(
       screen.getByRole("link", { name: /发送失败/ })

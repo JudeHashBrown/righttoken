@@ -45,10 +45,10 @@ describe("MailboxActions", () => {
     await waitFor(() => {
       expect(screen.getByText("邮箱连接正常")).toBeInTheDocument();
     });
-    fireEvent.click(screen.getByRole("button", { name: "立即同步" }));
+    fireEvent.click(screen.getByRole("button", { name: "立即收取邮件" }));
     await waitFor(() => {
       expect(
-        screen.getByText("同步完成：收到 2 封，匹配 1 封")
+        screen.getByText("收信完成：收到 2 封，已关联 1 封")
       ).toBeInTheDocument();
     });
   });
@@ -67,7 +67,7 @@ describe("MailboxActions", () => {
     render(<MailboxActions mailboxId="mailbox-1" />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: "立即同步" })
+      screen.getByRole("button", { name: "立即收取邮件" })
     );
     await waitFor(() => {
       expect(

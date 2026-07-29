@@ -44,7 +44,7 @@ describe("MailboxStatusDetail", () => {
       screen.getByRole("button", { name: "测试连接" })
     ).toBeEnabled();
     expect(
-      screen.getByRole("button", { name: "立即同步" })
+      screen.getByRole("button", { name: "立即收取邮件" })
     ).toBeEnabled();
   });
 });

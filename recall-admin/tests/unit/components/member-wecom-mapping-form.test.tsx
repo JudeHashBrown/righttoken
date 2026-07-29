@@ -42,7 +42,7 @@ describe("MemberWecomMappingForm", () => {
     );
 
     expect(screen.getByText("未映射")).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText("企微 UserID"), {
+    fireEvent.change(screen.getByLabelText("企业微信成员账号"), {
       target: { value: "zhangsan" }
     });
     fireEvent.click(screen.getByRole("button", { name: "保存" }));

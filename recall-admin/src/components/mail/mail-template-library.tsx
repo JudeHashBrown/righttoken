@@ -51,7 +51,7 @@ export function MailTemplateLibrary({
       template.key !== selectedKey &&
       dirty &&
       !window.confirm(
-        "当前模板内容尚未发布。切换模板会丢失这些修改，是否继续？"
+        "当前模板内容尚未保存。切换模板会丢失这些修改，是否继续？"
       )
     ) {
       return;
@@ -118,14 +118,14 @@ export function MailTemplateLibrary({
         }
       );
       if (!response.ok) {
-        setError("模板发布失败，请检查内容后重试。");
+        setError("模板未能保存，请检查内容后重试。");
         return;
       }
       setDirty(false);
-      setSuccess("新版本已发布");
+      setSuccess("模板修改已保存");
       router.refresh();
     } catch {
-      setError("网络连接异常，当前修改尚未发布。");
+      setError("网络连接异常，当前修改尚未保存。");
     } finally {
       setSaving(false);
     }
@@ -230,7 +230,7 @@ export function MailTemplateLibrary({
             >
               <div className={styles.templateLibraryMeta}>
                 <span>
-                  当前版本 v{selected.version}
+                  第 {selected.version} 次保存
                 </span>
                 <span
                   className={
@@ -304,7 +304,7 @@ export function MailTemplateLibrary({
                   }
                   type="submit"
                 >
-                  {saving ? "发布中…" : "发布新版本"}
+                  {saving ? "保存中…" : "保存模板修改"}
                 </button>
                 <button
                   className={styles.secondaryButton}

@@ -62,10 +62,10 @@ export function NotificationPolicyEditor({
         version?: number;
       } | null;
       if (!response.ok || !result?.version) {
-        setError("通知策略未发布，请检查输入后重试。");
+        setError("提醒设置未能保存，请检查填写内容后重试。");
         return;
       }
-      setMessage(`通知策略 v${result.version} 已发布`);
+      setMessage(`提醒设置 v${result.version} 已保存`);
       router.refresh();
     } catch {
       setError("网络连接异常，请稍后重试。");
@@ -78,8 +78,8 @@ export function NotificationPolicyEditor({
     <section className={styles.panel}>
       <div className={styles.panelHeader}>
         <div>
-          <h2>通知策略编辑</h2>
-          <p>后台通知始终保留；外部通道连接后按这里的规则发送</p>
+          <h2>编辑提醒方式</h2>
+          <p>站内提醒始终保留；企业微信和邮箱连接后会按这里的设置发送</p>
         </div>
       </div>
       <form className={styles.formBody} onSubmit={handleSubmit}>
@@ -107,7 +107,7 @@ export function NotificationPolicyEditor({
               </label>
               <div className={styles.field}>
                 <label htmlFor={`${key}-repeat`}>
-                  重复提醒间隔（分钟，0 为关闭）
+                  多久后再次提醒（分钟，填写 0 表示不再提醒）
                 </label>
                 <input
                   className={styles.input}
@@ -124,7 +124,7 @@ export function NotificationPolicyEditor({
               </div>
               <div className={styles.field}>
                 <label htmlFor={`${key}-escalate`}>
-                  升级管理员时间（分钟，0 为关闭）
+                  多久后提醒管理员（分钟，填写 0 表示不升级）
                 </label>
                 <input
                   className={styles.input}
@@ -171,7 +171,7 @@ export function NotificationPolicyEditor({
             type="submit"
             disabled={submitting}
           >
-            {submitting ? "正在发布" : "发布通知策略"}
+            {submitting ? "正在保存" : "保存提醒设置"}
           </button>
         </div>
       </form>

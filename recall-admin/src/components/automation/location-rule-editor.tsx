@@ -23,7 +23,7 @@ type PreviewResult = {
 
 function emptyRule(priority: number): EditableLocationRule {
   return {
-    name: "新邮箱规则",
+    name: "新的邮箱判断条件",
     enabled: true,
     priority,
     matchType: "EXACT_DOMAIN",
@@ -115,20 +115,18 @@ export function LocationRuleEditor({
         | PreviewResult
         | { published?: number };
       if (!response.ok) {
-        throw new Error("规则校验失败，请检查域名和国家代码");
+        throw new Error("邮箱判断条件未能保存，请检查域名和国家或地区");
       }
       if (mode === "preview") {
         setPreview(body as PreviewResult);
       } else {
         setMessage(
-          `已发布 ${(body as { published?: number }).published ?? rules.length} 条归属规则`
+          `已保存 ${(body as { published?: number }).published ?? rules.length} 条邮箱判断条件`
         );
         router.refresh();
       }
-    } catch (error) {
-      setMessage(
-        error instanceof Error ? error.message : "操作失败，请稍后重试"
-      );
+    } catch {
+      setMessage("暂时无法完成操作，请稍后重试");
     } finally {
       setPending(null);
     }
@@ -148,7 +146,7 @@ export function LocationRuleEditor({
             }
             type="button"
           >
-            新增邮箱规则
+            新增邮箱判断条件
           </button>
           <div className={styles.inlineActions}>
             <button
@@ -165,7 +163,7 @@ export function LocationRuleEditor({
               onClick={() => submit("publish")}
               type="button"
             >
-              {pending === "publish" ? "发布中…" : "发布归属规则"}
+              {pending === "publish" ? "保存中…" : "保存邮箱判断"}
             </button>
           </div>
         </div>
@@ -175,8 +173,8 @@ export function LocationRuleEditor({
         <table className={styles.locationRuleTable}>
           <thead>
             <tr>
-              <th>规则名称</th>
-              <th>匹配方式</th>
+              <th>条件名称</th>
+              <th>判断方式</th>
               <th>邮箱域名</th>
               <th>国家</th>
               <th>状态与顺序</th>
@@ -187,7 +185,7 @@ export function LocationRuleEditor({
               <tr key={rule.id ?? `location-draft-${index}`}>
                 <td>
                   <input
-                    aria-label="归属规则名称"
+                    aria-label="邮箱判断条件名称"
                     className={styles.input}
                     disabled={!editable}
                     id={`location-name-${index}`}
@@ -199,7 +197,7 @@ export function LocationRuleEditor({
                 </td>
                 <td>
                   <select
-                    aria-label="匹配方式"
+                    aria-label="邮箱判断方式"
                     className={styles.select}
                     disabled={!editable}
                     id={`location-type-${index}`}
@@ -217,7 +215,7 @@ export function LocationRuleEditor({
                 </td>
                 <td>
                   <input
-                    aria-label="匹配内容"
+                    aria-label="邮箱域名或后缀"
                     className={styles.input}
                     disabled={!editable}
                     id={`location-pattern-${index}`}
@@ -234,7 +232,7 @@ export function LocationRuleEditor({
                 </td>
                 <td>
                   <input
-                    aria-label="归属国家"
+                    aria-label="判断为哪个国家或地区"
                     className={styles.input}
                     disabled={!editable}
                     id={`location-country-${index}`}
@@ -266,7 +264,7 @@ export function LocationRuleEditor({
                     {editable ? (
                       <>
                         <button
-                          aria-label={`上移归属规则 ${index + 1}`}
+                          aria-label={`上移邮箱判断条件 ${index + 1}`}
                           className={styles.compactIconButton}
                           disabled={index === 0}
                           onClick={() => move(index, -1)}
@@ -275,7 +273,7 @@ export function LocationRuleEditor({
                           ↑
                         </button>
                         <button
-                          aria-label={`下移归属规则 ${index + 1}`}
+                          aria-label={`下移邮箱判断条件 ${index + 1}`}
                           className={styles.compactIconButton}
                           disabled={index === rules.length - 1}
                           onClick={() => move(index, 1)}
@@ -284,7 +282,7 @@ export function LocationRuleEditor({
                           ↓
                         </button>
                         <button
-                          aria-label={`删除归属规则 ${index + 1}`}
+                          aria-label={`删除邮箱判断条件 ${index + 1}`}
                           className={styles.compactDeleteButton}
                           onClick={() =>
                             setRules((current) =>

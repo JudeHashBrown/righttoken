@@ -31,10 +31,8 @@ export function RevokeOverrideButton({
         throw new Error("撤销失败，请刷新后重试");
       }
       router.refresh();
-    } catch (caught) {
-      setError(
-        caught instanceof Error ? caught.message : "撤销失败"
-      );
+    } catch {
+      setError("暂时无法取消临时分组，请稍后重试");
     } finally {
       setPending(false);
     }

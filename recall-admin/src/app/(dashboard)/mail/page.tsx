@@ -149,7 +149,7 @@ export default async function MailPage({
 
           {data.mailboxes.some((mailbox) => mailbox.enabled) ? null : (
             <p className={styles.notice}>
-              尚未启用邮箱。请先由管理员在系统设置中连接 Namecheap、企业微信邮箱或自定义 SMTP/IMAP。
+              尚未启用客服邮箱。请先由管理员在系统设置中连接 Namecheap、企业微信邮箱或其他邮箱。
             </p>
           )}
 

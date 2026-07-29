@@ -8,8 +8,20 @@ import {
   mailComposeHref
 } from "@/modules/mail/compose-link";
 import { requireWorkspaceMember } from "@/modules/admin/page-access";
+import { presentUserEvent } from "@/modules/presentation/events";
+import {
+  presentTaskPriority,
+  presentTaskStatus
+} from "@/modules/presentation/status";
 import { isCurrentServiceAnomaly } from "@/modules/segmentation/service-anomaly";
+import { presentSegmentReason } from "@/modules/segmentation/present-reason";
 import { getUser360 } from "@/modules/users/user-queries";
+import {
+  locationSourceLabel,
+  operationalLocationLabel,
+  paymentStatusLabel,
+  userSourceLabel
+} from "@/modules/users/presentation";
 
 function dateTime(value: Date | null): string {
   if (!value) return "—";
@@ -32,25 +44,6 @@ function money(minor: number): string {
   }).format(minor / 100);
 }
 
-const taskStatusLabels = {
-  UNASSIGNED: "公共池",
-  TODO: "待处理",
-  IN_PROGRESS: "处理中",
-  WAITING_USER: "等待用户",
-  COMPLETED: "已完成",
-  PAUSED: "已暂停",
-  CANCELLED: "已取消"
-} as const;
-
-const locationSourceLabels = {
-  EMAIL_EXACT_DOMAIN: "邮箱服务商",
-  EMAIL_DOMAIN_SUFFIX: "邮箱国家后缀",
-  IP_GEOIP: "注册 IP",
-  IP_RIR: "IP 地址段",
-  IP_EVENT: "RightToken 注册数据",
-  INVALID_REGISTRATION_DATA: "注册数据异常"
-} as const;
-
 export default async function UserDetailPage({
   params
 }: {
@@ -63,19 +56,23 @@ export default async function UserDetailPage({
   const now = new Date();
 
   const timeline = [
-    ...user.events.map((event) => ({
-      id: `event-${event.id}`,
-      at: event.occurredAt,
-      title: event.eventType,
-      detail: event.applied
-        ? "RightToken 事件已应用"
-        : event.errorCode || "事件未改变当前事实"
-    })),
+    ...user.events.map((event) => {
+      const presentation = presentUserEvent({
+        eventType: event.eventType,
+        applied: event.applied,
+        errorCode: event.errorCode
+      });
+      return {
+        id: `event-${event.id}`,
+        at: event.occurredAt,
+        ...presentation
+      };
+    }),
     ...user.segmentHistory.map((entry) => ({
       id: `segment-${entry.id}`,
       at: entry.changedAt,
       title: `${entry.fromSegment || "新用户"} → ${entry.toSegment}`,
-      detail: entry.reason
+      detail: presentSegmentReason(entry.reason)
     })),
     ...user.notes.map((note) => ({
       id: `note-${note.id}`,
@@ -122,7 +119,11 @@ export default async function UserDetailPage({
             <div className={styles.panelHeader}>
               <div>
                 <h2>用户概况</h2>
-                <p>{user.reasonLabel || "等待形成分组原因"}</p>
+                <p>
+                  {user.reasonLabel
+                    ? presentSegmentReason(user.reasonLabel)
+                    : "分组说明正在更新"}
+                </p>
               </div>
             </div>
             <div className={styles.summaryGrid}>
@@ -142,9 +143,7 @@ export default async function UserDetailPage({
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>运营归属</span>
                 <strong>
-                  {[user.countryCode, user.region]
-                    .filter(Boolean)
-                    .join(" · ") || "待确认"}
+                  {operationalLocationLabel(user)}
                 </strong>
               </div>
               <div className={styles.summaryItem}>
@@ -152,8 +151,8 @@ export default async function UserDetailPage({
                 <strong>
                   {user.locationRule?.name ??
                     (user.locationSource
-                      ? locationSourceLabels[user.locationSource]
-                      : "待计算")}
+                      ? locationSourceLabel(user.locationSource)
+                      : "注册来源信息不足")}
                 </strong>
               </div>
               <div className={styles.summaryItem}>
@@ -170,7 +169,7 @@ export default async function UserDetailPage({
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>来源</span>
-                <strong>{user.source || "未知"}</strong>
+                <strong>{userSourceLabel(user.source)}</strong>
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>注册时间</span>
@@ -183,13 +182,18 @@ export default async function UserDetailPage({
             <div className={styles.panelHeader}>
               <div>
                 <h2>支付、调用与余额</h2>
-                <p>来自 RightToken 事件的最新业务事实</p>
+                <p>用户当前的付费与使用情况</p>
               </div>
             </div>
             <div className={styles.summaryGrid}>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>支付状态</span>
-                <strong>{user.paymentStatus}</strong>
+                <strong>
+                  {paymentStatusLabel(
+                    user.paymentStatus,
+                    user.totalPaidMinor
+                  )}
+                </strong>
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>累计支付</span>
@@ -220,7 +224,7 @@ export default async function UserDetailPage({
             <div className={styles.panelHeader}>
               <div>
                 <h2>运营时间线</h2>
-                <p>外部事件、分组迁移和人工备注统一排列</p>
+                <p>按时间查看用户动态、分组变化和团队备注</p>
               </div>
             </div>
             {timeline.length ? (
@@ -275,11 +279,11 @@ export default async function UserDetailPage({
                             {task.title}
                           </Link>
                           <span className={styles.secondaryText}>
-                            {task.reason}
+                            {presentSegmentReason(task.reason)}
                           </span>
                         </td>
-                        <td>{task.priority}</td>
-                        <td>{taskStatusLabels[task.status]}</td>
+                        <td>{presentTaskPriority(task.priority)}</td>
+                        <td>{presentTaskStatus(task.status)}</td>
                         <td>
                           {task.assignee?.displayName || "公共任务池"}
                         </td>
@@ -292,7 +296,7 @@ export default async function UserDetailPage({
             ) : (
               <div className={styles.empty}>
                 <strong>暂无相关任务</strong>
-                <p>用户命中需要人工介入的规则后，任务会自动出现在这里。</p>
+                <p>需要团队跟进时，任务会自动出现在这里。</p>
               </div>
             )}
           </section>
@@ -348,7 +352,7 @@ export default async function UserDetailPage({
             <div className={styles.panelHeader}>
               <div>
                 <h2>邮件会话</h2>
-                <p>将在邮件中心接入后自动同步</p>
+                <p>用户来信和团队回复会显示在这里</p>
               </div>
             </div>
             <div className={styles.empty}>

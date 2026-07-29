@@ -29,35 +29,35 @@ export default async function SegmentRulesPage(): Promise<React.JSX.Element> {
       <div className={styles.segmentWorkspace}>
         <div className={`${styles.cardGrid} ${styles.compactCardGrid}`}>
           <div className={styles.statCard}>
-            <span>当前生效版本</span>
+            <span>当前分组方案</span>
             <strong>v{overview.version}</strong>
             <small>
               {overview.publishedBy
                 ? `${overview.publishedBy} 发布`
-                : "系统默认规则"}
+                : "系统默认方案"}
             </small>
           </div>
           <div className={styles.statCard}>
-            <span>规则覆盖用户</span>
+            <span>已分组用户</span>
             <strong>{total} 人</strong>
-            <small>系统内全部用户均归入唯一分组</small>
+            <small>每位用户只会进入一个分组</small>
           </div>
           <div className={styles.statCard}>
-            <span>最近全量重算</span>
+            <span>最近整理进度</span>
             <strong>{latestRun ? `${progress}%` : "尚未运行"}</strong>
             <small>
               {latestRun
-                ? `${latestRun.processedUsers}/${latestRun.totalUsers} 已处理`
-                : "发布新规则后自动执行"}
+                ? `${latestRun.processedUsers}/${latestRun.totalUsers} 位用户已完成`
+                : "发布新方案后自动整理"}
             </small>
           </div>
           <div className={styles.statCard}>
-            <span>重算失败</span>
+            <span>未完成用户</span>
             <strong>{latestRun?.failedUsers ?? 0} 人</strong>
             <small>
               {latestRun?.status === "PARTIAL_FAILURE"
-                ? "可在历史版本中重试"
-                : "当前没有待重试失败"}
+                ? "可在方案记录中重新处理"
+                : "当前没有需要重新处理的用户"}
             </small>
           </div>
         </div>
@@ -76,7 +76,7 @@ export default async function SegmentRulesPage(): Promise<React.JSX.Element> {
           <div className={styles.panelHeader}>
             <div>
               <h2>当前用户分布</h2>
-              <p>基于数据库中的最新用户事实</p>
+              <p>根据用户当前的注册、付费和使用情况整理</p>
             </div>
           </div>
           <div className={styles.distribution}>
@@ -98,8 +98,8 @@ export default async function SegmentRulesPage(): Promise<React.JSX.Element> {
         <section className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <h2>最近分组迁移</h2>
-              <p>自动规则和人工操作统一记录</p>
+              <h2>最近分组变化</h2>
+              <p>系统调整和人工调整都会记录</p>
             </div>
           </div>
           {overview.recentChanges.length ? (
@@ -122,7 +122,7 @@ export default async function SegmentRulesPage(): Promise<React.JSX.Element> {
           ) : (
             <div className={styles.empty}>
               <strong>暂无迁移记录</strong>
-              <p>用户事实变化后，分组历史会出现在这里。</p>
+              <p>用户情况变化后，分组记录会出现在这里。</p>
             </div>
           )}
         </section>
