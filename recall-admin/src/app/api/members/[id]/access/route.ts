@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { assertSameOrigin } from "@/modules/auth/csrf";
 import {
   ForbiddenError,
@@ -9,6 +10,12 @@ import {
   MemberAccessError,
   revokeMemberAccess
 } from "@/modules/auth/member-access";
+
+const revokeSchema = z
+  .object({
+    successorId: z.string().trim().min(1)
+  })
+  .strict();
 
 export async function DELETE(
   request: NextRequest,
@@ -21,7 +28,20 @@ export async function DELETE(
       "operators:manage"
     );
     const { id } = await context.params;
-    const result = await revokeMemberAccess(actor.id, id);
+    const parsed = revokeSchema.safeParse(
+      await request.json().catch(() => null)
+    );
+    if (!parsed.success) {
+      return NextResponse.json(
+        { code: "SUCCESSOR_REQUIRED" },
+        { status: 400 }
+      );
+    }
+    const result = await revokeMemberAccess(
+      actor.id,
+      id,
+      parsed.data.successorId
+    );
     return NextResponse.json(result);
   } catch (error) {
     if (error instanceof UnauthorizedError) {
@@ -30,28 +50,26 @@ export async function DELETE(
         { status: 401 }
       );
     }
-    if (
-      error instanceof ForbiddenError ||
-      (error instanceof MemberAccessError &&
-        error.code !== "TARGET_NOT_FOUND")
-    ) {
+    if (error instanceof ForbiddenError) {
       return NextResponse.json(
-        {
-          code:
-            error instanceof MemberAccessError
-              ? error.code
-              : "FORBIDDEN"
-        },
+        { code: "FORBIDDEN" },
         { status: 403 }
       );
     }
-    if (
-      error instanceof MemberAccessError &&
-      error.code === "TARGET_NOT_FOUND"
-    ) {
+    if (error instanceof MemberAccessError) {
+      const status =
+        error.code === "TARGET_NOT_FOUND" ||
+        error.code === "SUCCESSOR_NOT_FOUND"
+          ? 404
+          : error.code === "SUCCESSOR_REQUIRED"
+            ? 400
+            : error.code === "SUCCESSOR_INACTIVE" ||
+                error.code === "SUCCESSOR_SAME_AS_TARGET"
+              ? 409
+              : 403;
       return NextResponse.json(
         { code: error.code },
-        { status: 404 }
+        { status }
       );
     }
     return NextResponse.json(
