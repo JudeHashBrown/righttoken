@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { SegmentCode } from "@/generated/prisma/client";
 import { UserTable } from "@/components/tables/user-table";
+import { SegmentQuickFilter } from "@/components/users/segment-quick-filter";
 import styles from "@/components/workspaces/workspace.module.css";
 import { prisma } from "@/lib/db/prisma";
 import { requireWorkspaceMember } from "@/modules/admin/page-access";
@@ -92,24 +93,7 @@ export default async function UsersPage({
             placeholder="用户编号、邮箱或姓名（至少 3 个字符）"
           />
         </div>
-        <div className={styles.field}>
-          <label htmlFor="user-segment">分组</label>
-          <select
-            className={styles.select}
-            defaultValue={segment}
-            id="user-segment"
-            name="segment"
-          >
-            <option value="">全部分组</option>
-            {(["A", "B", "C", "D", "E", "F", "G"] as const).map(
-              (value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              )
-            )}
-          </select>
-        </div>
+        <SegmentQuickFilter selectedSegment={segment} />
         <div className={styles.field}>
           <label htmlFor="user-country">国家</label>
           <input
