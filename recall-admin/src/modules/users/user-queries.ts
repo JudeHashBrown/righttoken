@@ -41,6 +41,9 @@ const userListSelect = {
   currentSegment: true,
   reasonLabel: true,
   ownerId: true,
+  ownerAssignmentMode: true,
+  ownerAssignedAt: true,
+  ownerAssignmentReason: true,
   lastExternalEventAt: true,
   updatedAt: true,
   owner: {
@@ -325,6 +328,12 @@ export async function getUser360(viewer: Viewer, userId: string) {
           id: true,
           displayName: true,
           email: true
+        }
+      },
+      ownerAssignedBy: {
+        select: {
+          id: true,
+          displayName: true
         }
       },
       events: {

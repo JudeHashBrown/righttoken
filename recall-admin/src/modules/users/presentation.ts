@@ -82,3 +82,15 @@ export function userSourceLabel(source: string | null): string {
   void source;
   return "RightToken 主站";
 }
+
+export function ownerAssignmentLabel(
+  mode: "AUTO" | "MANUAL"
+): string {
+  return mode === "MANUAL" ? "人工分配" : "系统分配";
+}
+
+export function ownerDisplayName(
+  owner: { displayName: string } | null
+): string {
+  return owner?.displayName || "主管理员暂管";
+}

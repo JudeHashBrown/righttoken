@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   locationSourceLabel,
   operationalLocationDisplay,
+  ownerAssignmentLabel,
+  ownerDisplayName,
   paymentStatusLabel,
   userSourceLabel
 } from "@/modules/users/presentation";
@@ -74,5 +76,19 @@ describe("source labels", () => {
     expect(userSourceLabel("INTERNAL_IMPORT_V2")).toBe(
       "RightToken 主站"
     );
+  });
+});
+
+describe("owner assignment labels", () => {
+  it("uses operational language for automatic and manual owners", () => {
+    expect(ownerAssignmentLabel("AUTO")).toBe("系统分配");
+    expect(ownerAssignmentLabel("MANUAL")).toBe("人工分配");
+  });
+
+  it("uses the primary administrator fallback instead of pool language", () => {
+    expect(ownerDisplayName(null)).toBe("主管理员暂管");
+    expect(
+      ownerDisplayName({ displayName: "运营甲" })
+    ).toBe("运营甲");
   });
 });

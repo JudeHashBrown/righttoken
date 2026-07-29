@@ -1813,6 +1813,63 @@
   display: block;
 }
 
+.ownerControl {
+  display: grid;
+  gap: 8px;
+}
+
+.ownerControlCompact {
+  margin-top: 4px;
+}
+
+.ownerControlSummary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+
+.ownerControlEditor {
+  display: grid;
+  min-width: 280px;
+  max-width: 440px;
+  gap: 7px;
+  border: 1px solid #e1e5ee;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.ownerControlEditor label {
+  color: #5f6980;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.ownerControlHint {
+  margin: 0;
+  color: #737d92;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.textButton {
+  border: 0;
+  background: transparent;
+  color: #5967d7;
+  padding: 0;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.textButton:hover {
+  color: #4553c6;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .notificationGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

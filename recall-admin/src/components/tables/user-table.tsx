@@ -1,13 +1,21 @@
 import Link from "next/link";
 import type { UserListItem } from "@/modules/users/user-queries";
 import styles from "@/components/workspaces/workspace.module.css";
+import { UserOwnerControl } from "@/components/users/user-owner-control";
 import {
   operationalLocationDisplay,
+  ownerAssignmentLabel,
+  ownerDisplayName,
   paymentStatusLabel
 } from "@/modules/users/presentation";
 
 type UserTableProps = {
   users: UserListItem[];
+  canManageOwners?: boolean;
+  members?: Array<{
+    id: string;
+    displayName: string;
+  }>;
 };
 
 function dateTime(value: Date | null): string {
@@ -31,7 +39,9 @@ function money(minor: number): string {
 }
 
 export function UserTable({
-  users
+  users,
+  canManageOwners = false,
+  members = []
 }: UserTableProps): React.JSX.Element {
   if (users.length === 0) {
     return (
@@ -106,7 +116,24 @@ export function UserTable({
                     最近 {dateTime(user.lastCallAt)}
                   </span>
                 </td>
-                <td>{user.owner?.displayName || "公共池"}</td>
+                <td>
+                  <strong>{ownerDisplayName(user.owner)}</strong>
+                  <span className={styles.secondaryText}>
+                    {ownerAssignmentLabel(
+                      user.ownerAssignmentMode
+                    )}
+                  </span>
+                  {canManageOwners ? (
+                    <UserOwnerControl
+                      compact
+                      userId={user.id}
+                      currentOwnerId={user.ownerId}
+                      currentOwnerName={ownerDisplayName(user.owner)}
+                      assignmentMode={user.ownerAssignmentMode}
+                      members={members}
+                    />
+                  ) : null}
+                </td>
                 <td>
                   {nextTask ? (
                     <Link

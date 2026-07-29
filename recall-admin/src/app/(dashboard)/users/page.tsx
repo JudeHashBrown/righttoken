@@ -151,7 +151,11 @@ export default async function UsersPage({
             </p>
           </div>
         </div>
-        <UserTable users={page.items} />
+        <UserTable
+          users={page.items}
+          canManageOwners={member.role !== "OPERATOR"}
+          members={owners}
+        />
       </section>
 
       {page.nextCursor ? (
