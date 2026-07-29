@@ -105,6 +105,32 @@ test("every administrator navigation item opens a real page", async ({
         path: testInfo.outputPath("segment-rules-desktop.png")
       });
     }
+    if (route.path === "/users") {
+      const segmentGroup = page.getByRole("group", { name: "分组" });
+      const segmentButtons = segmentGroup.getByRole("button");
+
+      await expect(segmentGroup).toBeVisible();
+      await expect(segmentButtons).toHaveText([
+        "全部",
+        "F",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "G"
+      ]);
+      await expect(segmentGroup.getByRole("combobox")).toHaveCount(0);
+      await expect(segmentButtons.first()).toHaveCSS("height", "36px");
+
+      await page.getByLabel("国家").fill("CN");
+      await segmentGroup.getByRole("button", { name: "F" }).click();
+      await expect(page).toHaveURL(/segment=F/);
+      await expect(page).toHaveURL(/countryCode=CN/);
+      await expect(
+        page.getByRole("button", { name: "F" })
+      ).toHaveAttribute("aria-pressed", "true");
+    }
     if (route.path === "/automation/assignment") {
       await expect(
         page.getByRole("button", { name: "预览分配" })

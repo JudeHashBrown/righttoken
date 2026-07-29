@@ -81,7 +81,7 @@ export default async function UsersPage({
         </div>
       </header>
 
-      <form className={styles.filterBar}>
+      <form className={`${styles.filterBar} ${styles.userFilterBar}`}>
         <div className={`${styles.field} ${styles.fieldGrow}`}>
           <label htmlFor="user-search">搜索用户</label>
           <input
@@ -94,7 +94,7 @@ export default async function UsersPage({
           />
         </div>
         <SegmentQuickFilter selectedSegment={segment} />
-        <div className={styles.field}>
+        <div className={`${styles.field} ${styles.userFilterCompact}`}>
           <label htmlFor="user-country">国家</label>
           <input
             className={styles.input}
@@ -104,7 +104,7 @@ export default async function UsersPage({
             placeholder="例如 中国或 CN"
           />
         </div>
-        <div className={styles.field}>
+        <div className={`${styles.field} ${styles.userFilterCompact}`}>
           <label htmlFor="user-region">地区</label>
           <input
             className={styles.input}
@@ -115,7 +115,7 @@ export default async function UsersPage({
           />
         </div>
         {owners.length ? (
-          <div className={styles.field}>
+          <div className={`${styles.field} ${styles.userFilterOwner}`}>
             <label htmlFor="user-owner">负责人</label>
             <select
               className={styles.select}
