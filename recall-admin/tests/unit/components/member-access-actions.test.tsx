@@ -15,6 +15,21 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: vi.fn() })
 }));
 
+const successorOptions = [
+  {
+    id: "operator-2",
+    displayName: "运营二",
+    email: "operator2@example.test",
+    role: "OPERATOR" as const
+  },
+  {
+    id: "primary-1",
+    displayName: "主管理员",
+    email: "primary@example.test",
+    role: "PRIMARY_ADMIN" as const
+  }
+];
+
 describe("MemberAccessActions", () => {
   afterEach(() => {
     cleanup();
@@ -41,6 +56,7 @@ describe("MemberAccessActions", () => {
         active
         viewerId="primary-1"
         viewerRole="PRIMARY_ADMIN"
+        successorOptions={successorOptions}
       />
     );
 
@@ -48,16 +64,36 @@ describe("MemberAccessActions", () => {
       screen.getByRole("button", { name: "撤销权限" })
     );
     expect(
-      screen.getByText(/撤销后，该成员将立即退出/)
+      screen.getByText(/客户和未完成任务会转给接管人/)
     ).toBeInTheDocument();
+    const confirmButton = screen.getByRole("button", {
+      name: "确认撤销并交接"
+    });
+    expect(confirmButton).toBeDisabled();
+    expect(
+      screen.getByRole("option", {
+        name: "运营二 · operator2@example.test · 运营人员"
+      })
+    ).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("工作接管人"), {
+      target: { value: "operator-2" }
+    });
     fireEvent.click(
-      screen.getByRole("button", { name: "确认撤销" })
+      screen.getByRole("button", {
+        name: "确认撤销并交接"
+      })
     );
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
         "/api/members/operator-1/access",
-        expect.objectContaining({ method: "DELETE" })
+        {
+          method: "DELETE",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            successorId: "operator-2"
+          })
+        }
       );
     });
   });
@@ -71,6 +107,7 @@ describe("MemberAccessActions", () => {
         active
         viewerId="primary-1"
         viewerRole="PRIMARY_ADMIN"
+        successorOptions={successorOptions}
       />
     );
     expect(
@@ -85,6 +122,7 @@ describe("MemberAccessActions", () => {
         active
         viewerId="admin-1"
         viewerRole="ADMIN"
+        successorOptions={successorOptions}
       />
     );
     expect(
@@ -101,6 +139,7 @@ describe("MemberAccessActions", () => {
         active
         viewerId="admin-1"
         viewerRole="ADMIN"
+        successorOptions={successorOptions}
       />
     );
     expect(
@@ -115,6 +154,7 @@ describe("MemberAccessActions", () => {
         active
         viewerId="admin-1"
         viewerRole="ADMIN"
+        successorOptions={successorOptions}
       />
     );
     expect(

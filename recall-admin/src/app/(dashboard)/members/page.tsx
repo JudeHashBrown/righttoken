@@ -154,6 +154,18 @@ export default async function MembersPage(): Promise<React.JSX.Element> {
                       active={member.active}
                       viewerId={viewer.id}
                       viewerRole={viewer.role}
+                      successorOptions={members
+                        .filter(
+                          (candidate) =>
+                            candidate.active &&
+                            candidate.id !== member.id
+                        )
+                        .map((candidate) => ({
+                          id: candidate.id,
+                          displayName: candidate.displayName,
+                          email: candidate.email,
+                          role: candidate.role
+                        }))}
                     />
                   </td>
                 </tr>
