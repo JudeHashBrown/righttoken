@@ -23,6 +23,7 @@ export function storedRuleToInput(
     id: rule.id,
     name: rule.name,
     enabled: rule.enabled,
+    memberTerritoryManaged: rule.memberTerritoryManaged,
     priority: rule.priority,
     conditions:
       rule.conditions as AssignmentRuleInput["conditions"],

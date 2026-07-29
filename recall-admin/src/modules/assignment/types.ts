@@ -16,6 +16,7 @@ export type AssignmentRuleInput = {
   id?: string;
   name: string;
   enabled: boolean;
+  memberTerritoryManaged?: boolean;
   priority: number;
   conditions: AssignmentCondition;
   assigneeId: string | null;

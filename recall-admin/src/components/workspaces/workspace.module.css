@@ -1870,6 +1870,32 @@
   text-underline-offset: 3px;
 }
 
+.territorySummary {
+  display: flex;
+  min-width: 170px;
+  max-width: 320px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.territoryEditor {
+  display: grid;
+  min-width: 520px;
+  gap: 10px;
+  border: 1px solid #e1e5ee;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.territoryEditorRow {
+  display: grid;
+  grid-template-columns: 120px minmax(230px, 1fr) auto;
+  align-items: end;
+  gap: 8px;
+}
+
 .notificationGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

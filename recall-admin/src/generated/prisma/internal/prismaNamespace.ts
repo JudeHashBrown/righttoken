@@ -2897,6 +2897,7 @@ export const AssignmentRuleScalarFieldEnum = {
   id: 'id',
   name: 'name',
   enabled: 'enabled',
+  memberTerritoryManaged: 'memberTerritoryManaged',
   priority: 'priority',
   conditions: 'conditions',
   assigneeId: 'assigneeId',

@@ -371,6 +371,7 @@ model AssignmentRule {
   id                 String    @id @default(cuid())
   name               String
   enabled            Boolean   @default(true)
+  memberTerritoryManaged Boolean @default(false)
   priority           Int
   conditions         Json
   assigneeId         String?
@@ -384,6 +385,7 @@ model AssignmentRule {
 
   @@unique([priority])
   @@index([enabled, priority])
+  @@index([memberTerritoryManaged, assigneeId])
   @@schema("recall")
 }
 
