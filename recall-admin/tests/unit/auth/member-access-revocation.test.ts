@@ -11,7 +11,8 @@ const mocks = vi.hoisted(() => {
     },
     userProfile: {
       findMany: vi.fn(),
-      update: vi.fn()
+      update: vi.fn(),
+      updateMany: vi.fn()
     },
     recallTask: {
       updateMany: vi.fn(),
@@ -23,7 +24,8 @@ const mocks = vi.hoisted(() => {
       create: vi.fn()
     },
     auditLog: {
-      create: vi.fn()
+      create: vi.fn(),
+      createMany: vi.fn()
     }
   };
   return {
@@ -61,7 +63,10 @@ describe("member access revocation reassignment", () => {
       rightTokenUserId: "rt-old"
     });
     mocks.tx.member.findFirstOrThrow.mockResolvedValue({
-      id: "primary-1"
+      id: "operator-new",
+      displayName: "新运营",
+      email: "new@example.test",
+      active: true
     });
     mocks.tx.session.deleteMany.mockResolvedValue({ count: 1 });
     mocks.tx.userProfile.findMany.mockResolvedValue([
@@ -80,59 +85,62 @@ describe("member access revocation reassignment", () => {
         region: null
       }
     ]);
-    mocks.assignUserOwnerInTransaction.mockResolvedValue({
-      assigneeId: "operator-new",
-      assignmentMode: "AUTO",
-      skippedManual: false,
-      assignmentReason: "广东地区由新运营负责"
-    });
-    mocks.tx.userProfile.update.mockResolvedValue({});
-    mocks.tx.recallTask.updateMany
-      .mockResolvedValueOnce({ count: 2 })
-      .mockResolvedValueOnce({ count: 1 });
+    mocks.tx.userProfile.updateMany.mockResolvedValue({ count: 2 });
+    mocks.tx.recallTask.updateMany.mockResolvedValue({ count: 3 });
     mocks.tx.recallTask.findMany.mockResolvedValue([]);
     mocks.tx.taskActivity.createMany.mockResolvedValue({ count: 3 });
     mocks.tx.auditLog.create.mockResolvedValue({});
+    mocks.tx.auditLog.createMany.mockResolvedValue({ count: 2 });
   });
 
-  it("reassigns automatic users and gives manual users to the primary administrator", async () => {
+  it("hands every customer and unfinished task to the selected successor", async () => {
     const result = await new PrismaMemberAccessStore().revokeAccess({
       actorId: "admin-1",
-      targetId: "operator-old"
+      targetId: "operator-old",
+      successorId: "operator-new"
     });
 
     expect(result).toMatchObject({
       revokedSessions: 1,
       reassignedUsers: 2,
       transferredTasks: 3,
-      failedUsers: 0
+      failedUsers: 0,
+      successor: {
+        id: "operator-new",
+        displayName: "新运营",
+        email: "new@example.test"
+      }
+    });
+    expect(mocks.tx.userProfile.updateMany).toHaveBeenCalledWith({
+      where: { ownerId: "operator-old" },
+      data: expect.objectContaining({
+        ownerId: "operator-new",
+        ownerAssignmentMode: "MANUAL",
+        ownerAssignedById: "admin-1",
+        ownerAssignmentReason:
+          "原负责人权限已撤销，由指定成员接管"
+      })
+    });
+    expect(mocks.tx.recallTask.updateMany).toHaveBeenCalledWith({
+      where: {
+        status: {
+          in: [
+            "UNASSIGNED",
+            "TODO",
+            "IN_PROGRESS",
+            "WAITING_USER",
+            "PAUSED"
+          ]
+        },
+        OR: [
+          { userId: { in: ["user-auto", "user-manual"] } },
+          { assigneeId: "operator-old" }
+        ]
+      },
+      data: { assigneeId: "operator-new" }
     });
     expect(
       mocks.assignUserOwnerInTransaction
-    ).toHaveBeenCalledWith(
-      mocks.tx,
-      "user-auto",
-      expect.any(Date),
-      { forceAutomatic: true }
-    );
-    expect(mocks.tx.userProfile.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { id: "user-manual" },
-        data: expect.objectContaining({
-          ownerId: "primary-1",
-          ownerAssignmentMode: "MANUAL",
-          ownerAssignmentReason:
-            "原负责人权限已撤销，由主管理员暂管"
-        })
-      })
-    );
-    expect(mocks.tx.recallTask.updateMany).not.toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          assigneeId: null,
-          status: "UNASSIGNED"
-        })
-      })
-    );
+    ).not.toHaveBeenCalled();
   });
 });

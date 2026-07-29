@@ -1,5 +1,4 @@
 import type { MemberRole } from "@/generated/prisma/client";
-import { assignUserOwnerInTransaction } from "@/modules/assignment/assign-task";
 
 const openTaskStatuses = [
   "UNASSIGNED",
@@ -38,6 +37,11 @@ export type MemberAccessRevocationResult = {
   reassignedUsers: number;
   transferredTasks: number;
   failedUsers: number;
+  successor: {
+    id: string;
+    displayName: string;
+    email: string;
+  };
 };
 
 export interface MemberAccessStore {
@@ -238,14 +242,17 @@ export class PrismaMemberAccessStore implements MemberAccessStore {
           rightTokenUserId: true
         }
       });
-      const [sessions, primaryAdmin, users] = await Promise.all([
+      const [sessions, successor, users] = await Promise.all([
         tx.session.deleteMany({
           where: { memberId: input.targetId }
         }),
         tx.member.findFirstOrThrow({
-          where: { role: "PRIMARY_ADMIN", active: true },
-          orderBy: { createdAt: "asc" },
-          select: { id: true }
+          where: { id: input.successorId, active: true },
+          select: {
+            id: true,
+            displayName: true,
+            email: true
+          }
         }),
         tx.userProfile.findMany({
           where: { ownerId: input.targetId },
@@ -259,81 +266,49 @@ export class PrismaMemberAccessStore implements MemberAccessStore {
         })
       ]);
 
-      let transferredTasks = 0;
-      for (const user of users) {
-        let ownerId = primaryAdmin.id;
-        let assignmentReason =
-          "原负责人权限已撤销，由主管理员暂管";
-
-        if (user.ownerAssignmentMode === "AUTO") {
-          const decision = await assignUserOwnerInTransaction(
-            tx,
-            user.id,
-            now,
-            { forceAutomatic: true }
-          );
-          ownerId = decision.assigneeId ?? primaryAdmin.id;
-          assignmentReason = decision.assignmentReason;
-        } else {
-          await tx.userProfile.update({
-            where: { id: user.id },
-            data: {
-              ownerId: primaryAdmin.id,
-              ownerAssignmentMode: "MANUAL",
-              ownerAssignedAt: now,
-              ownerAssignedById: input.actorId,
-              ownerAssignmentReason: assignmentReason
-            }
-          });
+      const assignmentReason =
+        "原负责人权限已撤销，由指定成员接管";
+      const reassigned = await tx.userProfile.updateMany({
+        where: { ownerId: input.targetId },
+        data: {
+          ownerId: successor.id,
+          ownerAssignmentMode: "MANUAL",
+          ownerAssignedAt: now,
+          ownerAssignedById: input.actorId,
+          ownerAssignmentReason: assignmentReason
         }
-
-        const transferred = await tx.recallTask.updateMany({
-          where: {
-            userId: user.id,
-            status: { in: [...openTaskStatuses] }
-          },
-          data: { assigneeId: ownerId }
-        });
-        transferredTasks += transferred.count;
-
-        await tx.auditLog.create({
-          data: {
+      });
+      const transferred = await tx.recallTask.updateMany({
+        where: {
+          status: { in: [...openTaskStatuses] },
+          OR: [
+            { userId: { in: users.map((user) => user.id) } },
+            { assigneeId: input.targetId }
+          ]
+        },
+        data: { assigneeId: successor.id }
+      });
+      if (users.length > 0) {
+        await tx.auditLog.createMany({
+          data: users.map((user) => ({
             actorId: input.actorId,
-            action: "user.owner_reassigned_after_member_revoked",
+            action:
+              "user.owner_reassigned_after_member_revoked",
             entityType: "UserProfile",
             entityId: user.id,
             metadata: {
               previousOwnerId: input.targetId,
-              ownerId,
-              assignmentMode: user.ownerAssignmentMode,
+              ownerId: successor.id,
+              assignmentMode: "MANUAL",
               assignmentReason,
+              previousAssignmentMode:
+                user.ownerAssignmentMode,
               countryCode: user.countryCode,
-              region: user.region,
-              transferredTasks: transferred.count
+              region: user.region
             }
-          }
+          }))
         });
       }
-
-      const remainingTasks = await tx.recallTask.findMany({
-        where: {
-          assigneeId: input.targetId,
-          status: { in: [...openTaskStatuses] }
-        },
-        select: {
-          id: true,
-          user: { select: { ownerId: true } }
-        }
-      });
-      for (const task of remainingTasks) {
-        await tx.recallTask.update({
-          where: { id: task.id },
-          data: {
-            assigneeId: task.user.ownerId ?? primaryAdmin.id
-          }
-        });
-      }
-      transferredTasks += remainingTasks.length;
 
       await tx.auditLog.create({
         data: {
@@ -343,18 +318,21 @@ export class PrismaMemberAccessStore implements MemberAccessStore {
           entityId: input.targetId,
           metadata: {
             revokedSessions: sessions.count,
-            reassignedUsers: users.length,
-            transferredTasks,
-            failedUsers: 0
+            reassignedUsers: reassigned.count,
+            transferredTasks: transferred.count,
+            failedUsers: 0,
+            successorId: successor.id,
+            successorEmail: successor.email
           }
         }
       });
       return {
         member,
         revokedSessions: sessions.count,
-        reassignedUsers: users.length,
-        transferredTasks,
-        failedUsers: 0
+        reassignedUsers: reassigned.count,
+        transferredTasks: transferred.count,
+        failedUsers: 0,
+        successor
       };
     });
   }
@@ -450,7 +428,12 @@ export async function revokeMemberAccess(
       revokedSessions: 0,
       reassignedUsers: 0,
       transferredTasks: 0,
-      failedUsers: 0
+      failedUsers: 0,
+      successor: {
+        id: successor.id,
+        displayName: successor.displayName,
+        email: successor.email
+      }
     };
   }
   return store.revokeAccess({

@@ -100,7 +100,16 @@ class FakeMemberAccessStore implements MemberAccessStore {
       revokedSessions: 2,
       reassignedUsers: 3,
       transferredTasks: 4,
-      failedUsers: 0
+      failedUsers: 0,
+      successor: {
+        id: input.successorId,
+        displayName:
+          this.members.get(input.successorId)?.displayName ??
+          input.successorId,
+        email:
+          this.members.get(input.successorId)?.email ??
+          `${input.successorId}@example.test`
+      }
     };
   }
 }
