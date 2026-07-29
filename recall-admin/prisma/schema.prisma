@@ -126,6 +126,13 @@ enum LocationRuleMatchType {
   @@schema("recall")
 }
 
+enum OwnerAssignmentMode {
+  AUTO
+  MANUAL
+
+  @@schema("recall")
+}
+
 model Member {
   id              String     @id @default(cuid())
   email           String     @unique
@@ -150,6 +157,7 @@ model Member {
   segmentRecalculationRuns SegmentRecalculationRun[] @relation("SegmentRecalculationRequester")
   locationRecalculationRuns LocationRecalculationRun[] @relation("LocationRecalculationRequester")
   assignmentRecalculationRuns AssignmentRecalculationRun[] @relation("AssignmentRecalculationRequester")
+  ownerAssignmentsMade UserProfile[] @relation("UserOwnerAssigner")
 
   @@schema("recall")
 }
@@ -216,6 +224,10 @@ model UserProfile {
   currentSegment      SegmentCode
   segmentRuleVersion  Int         @default(1)
   ownerId             String?
+  ownerAssignmentMode OwnerAssignmentMode @default(AUTO)
+  ownerAssignedAt     DateTime?
+  ownerAssignedById   String?
+  ownerAssignmentReason String?
   reasonLabel         String?
   unsubscribedAt      DateTime?
   pausedAt            DateTime?
@@ -226,6 +238,7 @@ model UserProfile {
   updatedAt           DateTime    @updatedAt
 
   owner            Member?           @relation("UserOwner", fields: [ownerId], references: [id])
+  ownerAssignedBy  Member?           @relation("UserOwnerAssigner", fields: [ownerAssignedById], references: [id], onDelete: SetNull)
   events           UserEvent[]
   segmentHistory   SegmentHistory[]
   segmentOverrides SegmentOverride[]
@@ -239,6 +252,7 @@ model UserProfile {
   @@index([countryCode, region])
   @@index([ipCountryCode, ipRegion])
   @@index([locationRuleId])
+  @@index([ownerAssignmentMode, ownerId])
   @@index([emailNormalized])
   @@index([sourceDeletedAt])
   @@schema("recall")
