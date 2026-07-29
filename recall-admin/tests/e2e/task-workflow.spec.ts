@@ -23,13 +23,13 @@ test.beforeAll(async () => {
   const email = `e2e-operator-${randomUUID()}@example.test`;
   const userEmail = `e2e-user-${randomUUID()}@example.test`;
   await pool.query(
-    `INSERT INTO "Member"
+    `INSERT INTO recall."Member"
       ("id", "email", "displayName", "passwordHash", "role", "updatedAt")
      VALUES ($1, $2, $3, $4, 'OPERATOR', $5)`,
     [memberId, email, "E2E 运营", "not-used-in-this-test", now]
   );
   await pool.query(
-    `INSERT INTO "Session"
+    `INSERT INTO recall."Session"
       ("id", "memberId", "tokenHash", "expiresAt")
      VALUES ($1, $2, $3, $4)`,
     [
@@ -40,7 +40,7 @@ test.beforeAll(async () => {
     ]
   );
   await pool.query(
-    `INSERT INTO "UserProfile"
+    `INSERT INTO recall."UserProfile"
       ("id", "externalUserId", "email", "emailNormalized",
        "displayName", "registeredAt", "countryCode", "region",
        "source", "currentSegment", "ownerId", "updatedAt")
@@ -56,7 +56,7 @@ test.beforeAll(async () => {
     ]
   );
   await pool.query(
-    `INSERT INTO "RecallTask"
+    `INSERT INTO recall."RecallTask"
       ("id", "userId", "origin", "triggerKey", "ruleVersion",
        "title", "reason", "priority", "dueAt", "updatedAt")
      VALUES ($1, $2, 'MANUAL', $3, 1, $4, $5,
@@ -75,12 +75,12 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   if (userId) {
-    await pool.query(`DELETE FROM "UserProfile" WHERE "id" = $1`, [
+    await pool.query(`DELETE FROM recall."UserProfile" WHERE "id" = $1`, [
       userId
     ]);
   }
   if (memberId) {
-    await pool.query(`DELETE FROM "Member" WHERE "id" = $1`, [
+    await pool.query(`DELETE FROM recall."Member" WHERE "id" = $1`, [
       memberId
     ]);
   }
@@ -139,7 +139,7 @@ test("operator claims and processes a public task with a note", async ({
   await page.getByRole("button", { name: "等待用户" }).click();
   await expect(page.getByText("等待用户", { exact: true })).toBeVisible();
 
-  await page.getByRole("link", { name: "打开用户 360" }).click();
+  await page.getByRole("link", { name: "查看用户详情" }).click();
   await expect(
     page.getByText("已联系用户，等待补充支付信息")
   ).toBeVisible();

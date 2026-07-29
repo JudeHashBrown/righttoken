@@ -17,13 +17,13 @@ test.beforeAll(async () => {
   sessionToken = randomBytes(32).toString("base64url");
   const now = new Date();
   await pool.query(
-    `INSERT INTO "Member"
+    `INSERT INTO recall."Member"
       ("id", "email", "displayName", "passwordHash", "role", "updatedAt")
      VALUES ($1, $2, '规则 E2E 管理员', 'not-used', 'ADMIN', $3)`,
     [memberId, `segment-e2e-${randomUUID()}@example.test`, now]
   );
   await pool.query(
-    `INSERT INTO "Session"
+    `INSERT INTO recall."Session"
       ("id", "memberId", "tokenHash", "expiresAt")
      VALUES ($1, $2, $3, $4)`,
     [
@@ -37,7 +37,7 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   if (memberId) {
-    await pool.query(`DELETE FROM "Member" WHERE "id" = $1`, [
+    await pool.query(`DELETE FROM recall."Member" WHERE "id" = $1`, [
       memberId
     ]);
   }
@@ -158,24 +158,28 @@ test("administrator previews, publishes and inspects history", async ({
     )
   ).toHaveCount(0);
   await expect(page.getByText("互斥分配逻辑")).toHaveCount(0);
-  await page.getByRole("button", { name: /^A12 人/ }).click();
   await page
-    .getByLabel("A 组注释")
+    .getByRole("group", { name: "用户分组导航" })
+    .getByRole("button")
+    .filter({ hasText: /^A/ })
+    .click();
+  await page
+    .getByLabel("A 组说明")
     .fill("注册后未支付，需要重点跟进");
   await page.getByRole("button", { name: "预览并发布" }).click();
-  await expect(page.getByText("预计迁移 3 人")).toBeVisible();
+  await expect(page.getByText("预计 3 人")).toBeVisible();
   await page.getByLabel("本次变更说明").fill("优化 A 组运营范围");
   await page
-    .getByRole("button", { name: "确认发布新版本" })
+    .getByRole("button", { name: "确认保存新方案" })
     .click();
   await expect(
-    page.getByText("版本 v2 已发布，正在更新用户分组")
+    page.getByText("分组方案 v2 已保存，正在整理用户分组")
   ).toBeVisible();
   await expect(
-    page.getByText(/182\/182 已处理，\s*成功 182，失败 0/)
+    page.getByText(/182\/182 位用户已完成，\s*0 位暂未完成/)
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "查看历史版本" }).click();
+  await page.getByRole("button", { name: "查看方案记录" }).click();
   await expect(page.getByText("优化 A 组运营范围")).toBeVisible();
-  await expect(page.getByText(/COMPLETED · 182\/182/)).toBeVisible();
+  await expect(page.getByText(/整理完成 · 182\/182/)).toBeVisible();
 });

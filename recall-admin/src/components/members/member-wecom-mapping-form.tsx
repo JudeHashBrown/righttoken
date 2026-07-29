@@ -36,7 +36,7 @@ export function MemberWecomMappingForm(props: {
       if (!response.ok) {
         setError(
           response.status === 409
-            ? "该 UserID 已分配给其他成员"
+            ? "该企业微信成员账号已分配给其他成员"
             : "映射未保存"
         );
         return;
@@ -69,14 +69,14 @@ export function MemberWecomMappingForm(props: {
         {state}
       </span>
       <label className={styles.srOnly} htmlFor={`wecom-${props.memberId}`}>
-        企微 UserID
+        企业微信成员账号
       </label>
       <input
         className={styles.input}
         id={`wecom-${props.memberId}`}
         value={value}
         onChange={(event) => setValue(event.target.value)}
-        placeholder="企微 UserID"
+        placeholder="在企业微信通讯录中查看"
         disabled={saving}
       />
       <button

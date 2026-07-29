@@ -9,13 +9,13 @@ const pool = new pg.Pool({
 });
 const e2ePort = process.env.RECALL_E2E_PORT ?? "3101";
 const routes = [
-  { path: "/dashboard", heading: "运营驾驶舱" },
+  { path: "/dashboard", heading: "用户运营概览" },
   { path: "/tasks", heading: "任务中心" },
   { path: "/users", heading: "用户中心" },
   { path: "/mail", heading: "邮件中心" },
   { path: "/automation/segments", heading: "用户分组" },
-  { path: "/automation/assignment", heading: "分配规则" },
-  { path: "/automation/notifications", heading: "通知策略" },
+  { path: "/automation/assignment", heading: "客户分配" },
+  { path: "/automation/notifications", heading: "提醒设置" },
   { path: "/reports", heading: "数据报表" },
   { path: "/members", heading: "成员与权限" },
   { path: "/settings", heading: "系统设置" }
@@ -29,13 +29,13 @@ test.beforeAll(async () => {
   sessionToken = randomBytes(32).toString("base64url");
   const now = new Date();
   await pool.query(
-    `INSERT INTO "Member"
+    `INSERT INTO recall."Member"
       ("id", "email", "displayName", "passwordHash", "role", "updatedAt")
      VALUES ($1, $2, 'E2E 管理员', 'not-used-in-this-test', 'ADMIN', $3)`,
     [memberId, `e2e-admin-${randomUUID()}@example.test`, now]
   );
   await pool.query(
-    `INSERT INTO "Session"
+    `INSERT INTO recall."Session"
       ("id", "memberId", "tokenHash", "expiresAt")
      VALUES ($1, $2, $3, $4)`,
     [
@@ -49,7 +49,7 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   if (memberId) {
-    await pool.query(`DELETE FROM "Member" WHERE "id" = $1`, [
+    await pool.query(`DELETE FROM recall."Member" WHERE "id" = $1`, [
       memberId
     ]);
   }
@@ -64,7 +64,7 @@ test("local development opens the dashboard without login", async ({
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(
     page.getByRole("heading", {
-      name: "运营驾驶舱",
+      name: "用户运营概览",
       exact: true
     })
   ).toBeVisible();
@@ -105,6 +105,32 @@ test("every administrator navigation item opens a real page", async ({
         path: testInfo.outputPath("segment-rules-desktop.png")
       });
     }
+    if (route.path === "/users") {
+      const segmentGroup = page.getByRole("group", { name: "分组" });
+      const segmentButtons = segmentGroup.getByRole("button");
+
+      await expect(segmentGroup).toBeVisible();
+      await expect(segmentButtons).toHaveText([
+        "全部",
+        "F",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "G"
+      ]);
+      await expect(segmentGroup.getByRole("combobox")).toHaveCount(0);
+      await expect(segmentButtons.first()).toHaveCSS("height", "36px");
+
+      await page.getByLabel("国家").fill("CN");
+      await segmentGroup.getByRole("button", { name: "F" }).click();
+      await expect(page).toHaveURL(/segment=F/);
+      await expect(page).toHaveURL(/countryCode=CN/);
+      await expect(
+        page.getByRole("button", { name: "F" })
+      ).toHaveAttribute("aria-pressed", "true");
+    }
     if (route.path === "/automation/assignment") {
       await expect(
         page.getByRole("button", { name: "预览分配" })
@@ -112,12 +138,12 @@ test("every administrator navigation item opens a real page", async ({
     }
     if (route.path === "/automation/notifications") {
       await expect(
-        page.getByRole("button", { name: "发布通知策略" })
+        page.getByRole("button", { name: "保存提醒设置" })
       ).toBeVisible();
     }
     if (route.path === "/members") {
       await expect(
-        page.getByRole("button", { name: "创建邀请" })
+        page.getByRole("button", { name: "添加成员" })
       ).toBeVisible();
     }
     if (route.path === "/reports") {

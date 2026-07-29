@@ -35,7 +35,7 @@ describe("WecomSettingsForm", () => {
     });
     vi.stubGlobal("fetch", fetchMock);
     render(<WecomSettingsForm />);
-    fireEvent.change(screen.getByLabelText("企微机器人 Webhook"), {
+    fireEvent.change(screen.getByLabelText("群机器人地址"), {
       target: {
         value:
           "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=test-key"
@@ -46,7 +46,7 @@ describe("WecomSettingsForm", () => {
     await waitFor(() => {
       expect(screen.getByText("企微连接已安全保存")).toBeInTheDocument();
     });
-    expect(screen.getByLabelText("企微机器人 Webhook")).toHaveValue("");
+    expect(screen.getByLabelText("群机器人地址")).toHaveValue("");
   });
 
   it("shows separate application and group robot configuration", () => {
@@ -56,14 +56,16 @@ describe("WecomSettingsForm", () => {
     expect(
       screen.getByRole("heading", { name: "企业微信应用" })
     ).toBeInTheDocument();
-    expect(screen.getByLabelText("企业 CorpID")).toBeInTheDocument();
-    expect(screen.getByLabelText("应用 AgentID")).toBeInTheDocument();
-    expect(screen.getByLabelText("应用 Secret")).toHaveAttribute(
+    expect(
+      screen.getByLabelText("企业 ID（在企业微信后台查看）")
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("应用 ID")).toBeInTheDocument();
+    expect(screen.getByLabelText("应用密钥")).toHaveAttribute(
       "type",
       "password"
     );
     expect(
-      screen.getByLabelText("测试成员 UserID")
+      screen.getByLabelText("测试接收人账号")
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: "运营群机器人" })

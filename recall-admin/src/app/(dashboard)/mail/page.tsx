@@ -3,6 +3,7 @@ import { MailStatLinks } from "@/components/mail/mail-stat-links";
 import {
   MailTemplateLibrary
 } from "@/components/mail/mail-template-library";
+import { MailComposer } from "@/components/mail/mail-composer";
 import { MailWorkbench } from "@/components/mail/mail-workbench";
 import styles from "@/components/workspaces/workspace.module.css";
 import {
@@ -14,6 +15,10 @@ import {
 import {
   getMailWorkspaceData
 } from "@/modules/mail/workspace-query";
+import {
+  findComposeUsers,
+  getComposeContext
+} from "@/modules/mail/compose-context";
 
 type MailPageProps = {
   searchParams: Promise<
@@ -26,7 +31,46 @@ export default async function MailPage({
 }: MailPageProps): Promise<React.JSX.Element> {
   const member = await requireWorkspaceMember("/mail");
   const filter = parseMailWorkspaceFilter(await searchParams);
-  const data = await getMailWorkspaceData(member, filter);
+  const [data, initialUsers, composeContext] =
+    await Promise.all([
+      getMailWorkspaceData(member, filter),
+      filter.compose
+        ? findComposeUsers(member, "")
+        : Promise.resolve([]),
+      filter.compose
+        ? getComposeContext(member, {
+            userId: filter.composeUserId,
+            taskId: filter.composeTaskId
+          })
+        : Promise.resolve({
+            selectedUser: null,
+            selectedTask: null
+          })
+    ]);
+  const composeUsers = composeContext.selectedUser
+    ? [
+        composeContext.selectedUser,
+        ...initialUsers.filter(
+          (user) =>
+            user.id !== composeContext.selectedUser?.id
+        )
+      ]
+    : initialUsers;
+  const composeTasks =
+    composeContext.selectedTask &&
+    composeContext.selectedUser
+      ? [
+          {
+            id: composeContext.selectedTask.id,
+            userId: composeContext.selectedUser.id,
+            title: composeContext.selectedTask.title,
+            userLabel: composeContext.selectedUser.label,
+            recipient: composeContext.selectedUser.email,
+            suppressed:
+              composeContext.selectedUser.suppressed
+          }
+        ]
+      : [];
 
   return (
     <main className={styles.page}>
@@ -38,6 +82,14 @@ export default async function MailPage({
           </p>
         </div>
         <div className={styles.headingActions}>
+          {filter.view === "templates" ? null : (
+            <Link
+              className={styles.button}
+              href={`/mail?view=${filter.view}&compose=1`}
+            >
+              写邮件
+            </Link>
+          )}
           <Link
             className={styles.secondaryButton}
             href={
@@ -62,11 +114,42 @@ export default async function MailPage({
         />
       ) : (
         <>
+          {filter.compose ? (
+            <MailComposer
+              tasks={composeTasks}
+              users={composeUsers}
+              mailboxes={data.mailboxes
+                .filter((mailbox) => mailbox.enabled)
+                .map((mailbox) => ({
+                  id: mailbox.id,
+                  name: mailbox.name,
+                  emailAddress: mailbox.emailAddress
+                }))}
+              templates={data.templates
+                .filter((template) => template.active)
+                .map((template) => ({
+                  id: template.id,
+                  name: template.name,
+                  subject: template.subject,
+                  bodyText: template.bodyText
+                }))}
+              initialUserId={
+                composeContext.selectedUser?.id ?? null
+              }
+              initialTaskId={
+                composeContext.selectedTask?.id ?? null
+              }
+              initialSubject=""
+              initialBody=""
+              closeHref={`/mail?view=${filter.view}`}
+            />
+          ) : null}
+
           <MailStatLinks stats={data.stats} />
 
           {data.mailboxes.some((mailbox) => mailbox.enabled) ? null : (
             <p className={styles.notice}>
-              尚未启用邮箱。请先由管理员在系统设置中连接 Namecheap、企业微信邮箱或自定义 SMTP/IMAP。
+              尚未启用客服邮箱。请先由管理员在系统设置中连接 Namecheap、企业微信邮箱或其他邮箱。
             </p>
           )}
 

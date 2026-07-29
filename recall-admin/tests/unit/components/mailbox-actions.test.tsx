@@ -45,11 +45,37 @@ describe("MailboxActions", () => {
     await waitFor(() => {
       expect(screen.getByText("邮箱连接正常")).toBeInTheDocument();
     });
-    fireEvent.click(screen.getByRole("button", { name: "立即同步" }));
+    fireEvent.click(screen.getByRole("button", { name: "立即收取邮件" }));
     await waitFor(() => {
       expect(
-        screen.getByText("同步完成：收到 2 封，匹配 1 封")
+        screen.getByText("收信完成：收到 2 封，已关联 1 封")
       ).toBeInTheDocument();
     });
+  });
+
+  it("shows a Chinese recovery message instead of an internal error code", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        json: () =>
+          Promise.resolve({
+            code: "IMAP_CONNECTION_TIMEOUT"
+          })
+      })
+    );
+    render(<MailboxActions mailboxId="mailbox-1" />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "立即收取邮件" })
+    );
+    await waitFor(() => {
+      expect(
+        screen.getByText("连接邮箱服务器超时")
+      ).toBeInTheDocument();
+    });
+    expect(
+      screen.queryByText("IMAP_CONNECTION_TIMEOUT")
+    ).not.toBeInTheDocument();
   });
 });

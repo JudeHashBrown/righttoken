@@ -133,6 +133,71 @@ export function parsedMailToMailboxMessage(
   };
 }
 
+type FetchedMessageSource = {
+  source?: Buffer | null;
+  internalDate?: Date | string | null;
+};
+
+type ParseFetchedMessage = (
+  source: Buffer,
+  internalDate: Date
+) => Promise<MailboxMessage | null>;
+
+type ParseFailureReporter = (detail: {
+  stage: "message_parse";
+  code: "IMAP_MESSAGE_PARSE_FAILED";
+}) => void;
+
+export async function parseFetchedMessage(
+  source: Buffer,
+  internalDate: Date
+): Promise<MailboxMessage | null> {
+  const parsed = await simpleParser(source, {
+    skipHtmlToText: true,
+    skipTextToHtml: true
+  });
+  return parsedMailToMailboxMessage(parsed, internalDate);
+}
+
+function reportParseFailure(detail: {
+  stage: "message_parse";
+  code: "IMAP_MESSAGE_PARSE_FAILED";
+}): void {
+  console.error("mail_message_parse_failed", detail);
+}
+
+export async function collectFetchedMessages(
+  items:
+    | AsyncIterable<FetchedMessageSource>
+    | Iterable<FetchedMessageSource>,
+  parseMessage: ParseFetchedMessage = parseFetchedMessage,
+  onParseFailure: ParseFailureReporter = reportParseFailure
+): Promise<MailboxMessage[]> {
+  const messages: MailboxMessage[] = [];
+  for await (const item of items) {
+    if (!item.source) {
+      continue;
+    }
+    try {
+      const message = await parseMessage(
+        item.source,
+        item.internalDate instanceof Date
+          ? item.internalDate
+          : new Date(item.internalDate ?? Date.now())
+      );
+      if (message) {
+        messages.push(message);
+      }
+    } catch {
+      onParseFailure({
+        stage: "message_parse",
+        code: "IMAP_MESSAGE_PARSE_FAILED"
+      });
+    }
+  }
+  return messages;
+}
+
 export function createSmtpImapAdapter(
   rawConfig: SmtpImapConfig
 ): MailboxAdapter {
@@ -176,30 +241,13 @@ export function createSmtpImapAdapter(
         if (!ids || ids.length === 0) {
           return [];
         }
-        const messages: MailboxMessage[] = [];
-        for await (const item of client.fetch(
-          ids,
-          { source: true, internalDate: true },
-          { uid: true }
-        )) {
-          if (!item.source) {
-            continue;
-          }
-          const parsed = await simpleParser(item.source, {
-            skipHtmlToText: true,
-            skipTextToHtml: true
-          });
-          const message = parsedMailToMailboxMessage(
-            parsed,
-            item.internalDate instanceof Date
-              ? item.internalDate
-              : new Date(item.internalDate ?? Date.now())
-          );
-          if (message) {
-            messages.push(message);
-          }
-        }
-        return messages;
+        return collectFetchedMessages(
+          client.fetch(
+            ids,
+            { source: true, internalDate: true },
+            { uid: true }
+          )
+        );
       } finally {
         lock.release();
         await client.logout();

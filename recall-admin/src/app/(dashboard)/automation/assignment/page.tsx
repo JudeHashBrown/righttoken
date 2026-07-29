@@ -65,7 +65,7 @@ export default async function AssignmentRulesPage(): Promise<React.JSX.Element> 
     <main className={styles.page}>
       <header className={styles.heading}>
         <div>
-          <h1>分配规则</h1>
+          <h1>客户分配</h1>
           <p>
             先按邮箱域名判断运营国家，未命中时再按注册 IP
             解析出的国家、省 / 州或地区分配负责人。
@@ -75,16 +75,16 @@ export default async function AssignmentRulesPage(): Promise<React.JSX.Element> 
 
       <div className={styles.cardGrid}>
         <div className={styles.statCard}>
-          <span>已发布规则</span>
+          <span>分配条件</span>
           <strong>{overview.rules.length}</strong>
-          <small>按优先级从小到大匹配</small>
+          <small>按页面顺序依次判断</small>
         </div>
         <div className={styles.statCard}>
-          <span>启用规则</span>
+          <span>正在使用</span>
           <strong>
             {overview.rules.filter((rule) => rule.enabled).length}
           </strong>
-          <small>停用规则不会参与分配</small>
+          <small>停用的条件不会分配用户</small>
         </div>
         <div className={styles.statCard}>
           <span>可用成员</span>
@@ -92,7 +92,7 @@ export default async function AssignmentRulesPage(): Promise<React.JSX.Element> 
           <small>包含管理员和运营人员</small>
         </div>
         <div className={styles.statCard}>
-          <span>待默认接管</span>
+          <span>主管理员暂管</span>
           <strong>{overview.publicPoolTasks}</strong>
           <small>历史任务或资料异常时交由主管理员</small>
         </div>
@@ -101,8 +101,8 @@ export default async function AssignmentRulesPage(): Promise<React.JSX.Element> 
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
-            <h2>邮箱归属规则</h2>
-            <p>命中邮箱规则时，优先使用邮箱对应的运营国家。</p>
+            <h2>邮箱来源判断</h2>
+            <p>可以根据邮箱域名优先判断用户所属国家或地区。</p>
           </div>
         </div>
         <LocationRuleEditor
@@ -114,8 +114,8 @@ export default async function AssignmentRulesPage(): Promise<React.JSX.Element> 
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
-            <h2>编辑规则顺序</h2>
-            <p>先预览最近用户，再一次性发布整个规则集</p>
+            <h2>负责人分配顺序</h2>
+            <p>先查看预计分配结果，确认后保存整套方案</p>
           </div>
         </div>
         <AssignmentRuleEditor

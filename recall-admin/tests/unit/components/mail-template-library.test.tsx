@@ -66,7 +66,7 @@ describe("MailTemplateLibrary", () => {
       '<p>你好，请查看说明。</p><img data-mail-asset-id="asset-1" alt="说明图">';
     fireEvent.input(body);
     fireEvent.click(
-      screen.getByRole("button", { name: "发布新版本" })
+      screen.getByRole("button", { name: "保存模板修改" })
     );
 
     await waitFor(() => {

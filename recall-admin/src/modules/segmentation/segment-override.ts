@@ -6,6 +6,7 @@ import {
   ForbiddenError
 } from "@/modules/auth/guards";
 import { resegmentUser } from "@/modules/segmentation/resegment-user";
+import { isCurrentServiceAnomaly } from "@/modules/segmentation/service-anomaly";
 
 const MAX_OVERRIDE_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -65,7 +66,13 @@ export async function createSegmentOverride(
       const user = await tx.userProfile.findUniqueOrThrow({
         where: { id: userId }
       });
-      if (user.anomalyActive) {
+      if (
+        isCurrentServiceAnomaly(
+          user.anomalyActive,
+          user.anomalyChangedAt,
+          now
+        )
+      ) {
         throw new Error(
           "active service anomalies cannot be overridden"
         );

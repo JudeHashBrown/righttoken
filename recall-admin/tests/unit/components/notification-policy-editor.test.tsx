@@ -54,10 +54,10 @@ describe("NotificationPolicyEditor", () => {
     fireEvent.change(screen.getByLabelText("每日汇总时间"), {
       target: { value: "09:30" }
     });
-    fireEvent.click(screen.getByRole("button", { name: "发布通知策略" }));
+    fireEvent.click(screen.getByRole("button", { name: "保存提醒设置" }));
 
     await waitFor(() => {
-      expect(screen.getByText("通知策略 v3 已发布")).toBeInTheDocument();
+      expect(screen.getByText("提醒设置 v3 已保存")).toBeInTheDocument();
     });
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/automation/notification-policies",

@@ -13,8 +13,8 @@ export function TeamWorkload({
     <section className={styles.panel} aria-labelledby="workload-heading">
       <header className={styles.panelHeader}>
         <div>
-          <h2 id="workload-heading">团队任务负载</h2>
-          <p>未完成任务的当前分配</p>
+          <h2 id="workload-heading">团队工作量</h2>
+          <p>每位成员当前负责的待办任务</p>
         </div>
         <UsersRound aria-hidden="true" size={18} />
       </header>

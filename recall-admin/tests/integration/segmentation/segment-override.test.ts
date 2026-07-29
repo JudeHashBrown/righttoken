@@ -152,6 +152,28 @@ describe("audited manual segment overrides", () => {
     ).toBe(overrideCount);
   });
 
+  it("allows an override after the 24-hour anomaly lock expires", async () => {
+    await prisma.userProfile.update({
+      where: { id: userId },
+      data: {
+        anomalyActive: true,
+        anomalyChangedAt: new Date(now.getTime() - DAY_MS),
+        currentSegment: "G"
+      }
+    });
+
+    await expect(
+      createSegmentOverride(
+        adminId,
+        userId,
+        "G",
+        "异常锁定期已经结束",
+        new Date(now.getTime() + DAY_MS),
+        now
+      )
+    ).resolves.toMatchObject({ segment: "G" });
+  });
+
   it("revokes an override, resegments the user, and records an audit", async () => {
     await prisma.userProfile.update({
       where: { id: userId },

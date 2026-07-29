@@ -96,6 +96,7 @@ describe("user and task workspaces", () => {
       <TaskActions
         task={{
           id: "task-1",
+          userId: "user-1",
           status: "IN_PROGRESS",
           assigneeId: "operator-1"
         }}
@@ -114,6 +115,12 @@ describe("user and task workspaces", () => {
       screen.getByRole("button", { name: "暂停" })
     ).toBeEnabled();
     expect(
+      screen.getByRole("link", { name: "联系用户" })
+    ).toHaveAttribute(
+      "href",
+      "/mail?view=replies&compose=1&userId=user-1&taskId=task-1"
+    );
+    expect(
       screen.queryByRole("button", { name: "领取任务" })
     ).not.toBeInTheDocument();
   });
@@ -128,8 +135,13 @@ describe("user and task workspaces", () => {
       screen.getByRole("link", { name: /rt-user-1/i })
     ).toHaveAttribute("href", "/users/user-1");
     expect(
-      screen.getByText("complete-email@example.test")
-    ).toBeInTheDocument();
+      screen.getByRole("link", {
+        name: "complete-email@example.test"
+      })
+    ).toHaveAttribute(
+      "href",
+      "/mail?view=replies&compose=1&userId=user-1&taskId=task-1"
+    );
   });
 
   it("offers only claim for an unassigned public task to an operator", () => {
@@ -137,6 +149,7 @@ describe("user and task workspaces", () => {
       <TaskActions
         task={{
           id: "task-public",
+          userId: "user-1",
           status: "UNASSIGNED",
           assigneeId: null
         }}

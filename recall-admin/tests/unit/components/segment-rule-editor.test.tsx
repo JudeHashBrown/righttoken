@@ -77,14 +77,18 @@ describe("SegmentRuleEditor", () => {
     expect(rail).not.toHaveTextContent(/美元等值余额|距离最后调用时间/);
 
     expect(
-      screen.getByLabelText("F 组分支 1条件 1字段")
+      screen.getByLabelText("F 组分支 1条件 1筛选依据")
         .querySelector("option:checked")
     ).toHaveTextContent("异常 · 服务异常");
     expect(
-      screen.getByLabelText("判断").querySelector("option:checked")
+      screen.getAllByLabelText("条件")[0]?.querySelector(
+        "option:checked"
+      )
     ).toHaveTextContent("为");
     expect(
-      screen.getByLabelText("值").querySelector("option:checked")
+      screen.getAllByLabelText("目标")[0]?.querySelector(
+        "option:checked"
+      )
     ).toHaveTextContent("存在");
   });
 
@@ -149,7 +153,7 @@ describe("SegmentRuleEditor", () => {
     fireEvent.click(
       screen.getByRole("button", { name: /^A12 人/ })
     );
-    fireEvent.change(screen.getByLabelText("A 组注释"), {
+    fireEvent.change(screen.getByLabelText("A 组说明"), {
       target: { value: "注册后尚未支付的重点用户" }
     });
     fireEvent.click(
@@ -157,18 +161,18 @@ describe("SegmentRuleEditor", () => {
     );
 
     expect(
-      await screen.findByText("预计迁移 5 人")
+      await screen.findByText("预计 5 人")
     ).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("本次变更说明"), {
       target: { value: "优化 A 组运营范围" }
     });
     fireEvent.click(
-      screen.getByRole("button", { name: "确认发布新版本" })
+      screen.getByRole("button", { name: "确认保存新方案" })
     );
 
     await waitFor(() => {
       expect(
-        screen.getByText("版本 v4 已发布，正在更新用户分组")
+        screen.getByText("分组方案 v4 已保存，正在整理用户分组")
       ).toBeInTheDocument();
     });
     expect(fetchMock).toHaveBeenNthCalledWith(
@@ -201,6 +205,6 @@ describe("SegmentRuleEditor", () => {
     fireEvent.click(
       screen.getByRole("button", { name: /^A12 人/ })
     );
-    expect(screen.getByLabelText("A 组注释")).toBeDisabled();
+    expect(screen.getByLabelText("A 组说明")).toBeDisabled();
   });
 });

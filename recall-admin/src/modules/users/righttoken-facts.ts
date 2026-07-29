@@ -19,6 +19,7 @@ export type RightTokenUserFacts = {
   balanceCurrency: string;
   balanceUsdMinor: number;
   anomalyActive: boolean;
+  anomalyChangedAt: Date | null;
 };
 
 export async function getRightTokenUserFactsByIds(
@@ -62,7 +63,8 @@ export async function getRightTokenUserFactsByIds(
         balanceCurrency: snapshot.balanceCurrency ?? "USD",
         balanceUsdMinor:
           snapshot.balanceUsdMinor ?? snapshot.balanceMinor,
-        anomalyActive: snapshot.anomalyActive
+        anomalyActive: snapshot.anomalyActive,
+        anomalyChangedAt: snapshot.anomalyChangedAt
       }
     ])
   );

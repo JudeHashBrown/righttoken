@@ -26,13 +26,13 @@ export default async function NotificationRulesPage(): Promise<React.JSX.Element
     <main className={styles.page}>
       <header className={styles.heading}>
         <div>
-          <h1>通知策略</h1>
-          <p>查看提醒级别、通知渠道、重试和升级规则。</p>
+          <h1>提醒设置</h1>
+          <p>设置不同紧急程度的提醒方式、再次提醒和负责人升级。</p>
         </div>
       </header>
 
       <p className={styles.notice}>
-        后台通知已生效；企业微信和运营邮箱将在系统设置中完成连接后自动启用。未配置的外部通道不会阻塞任务创建。
+        站内提醒始终可用；企业微信和运营邮箱连接后会自动启用。即使暂未连接，也不会影响任务创建。
       </p>
 
       <div className={styles.cardGrid}>
@@ -40,7 +40,7 @@ export default async function NotificationRulesPage(): Promise<React.JSX.Element
           const policy = policies[row.priority];
           const config = overview.config[policy.key];
           const channels = [
-            "后台",
+            "站内",
             config.wecom ? "企微" : null,
             config.email ? "邮件" : null
           ]
@@ -57,7 +57,7 @@ export default async function NotificationRulesPage(): Promise<React.JSX.Element
         <div className={styles.statCard}>
           <span>每日汇总时间</span>
           <strong>{overview.config.dailyDigestTime}</strong>
-          <small>Asia/Shanghai</small>
+          <small>北京时间</small>
         </div>
       </div>
 
@@ -66,8 +66,8 @@ export default async function NotificationRulesPage(): Promise<React.JSX.Element
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
           <div>
-            <h2>默认级别矩阵</h2>
-            <p>所有外部消息只包含脱敏用户信息</p>
+            <h2>各级别提醒方式</h2>
+            <p>发送到企业微信和邮箱的内容会隐藏敏感用户信息</p>
           </div>
         </div>
         <div className={styles.tableScroll}>
@@ -77,14 +77,14 @@ export default async function NotificationRulesPage(): Promise<React.JSX.Element
                 <th>级别</th>
                 <th>通知渠道</th>
                 <th>首次提醒</th>
-                <th>升级规则</th>
+                <th>管理员提醒</th>
               </tr>
             </thead>
             <tbody>
               {Object.entries(policies).map(([priority, policy]) => {
                 const config = overview.config[policy.key];
                 const channels = [
-                  "后台",
+                  "站内",
                   config.wecom ? "企微" : null,
                   config.email ? "邮件" : null
                 ]
@@ -102,7 +102,7 @@ export default async function NotificationRulesPage(): Promise<React.JSX.Element
                   <tr key={priority}>
                     <td>{policy.label}</td>
                     <td>{channels}</td>
-                    <td>后台立即</td>
+                    <td>立即在站内提醒</td>
                     <td>{escalation}</td>
                   </tr>
                 );

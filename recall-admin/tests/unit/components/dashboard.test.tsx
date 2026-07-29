@@ -83,15 +83,15 @@ describe("DashboardOverview", () => {
       />
     );
 
-    expect(screen.getByText("运营驾驶舱")).toBeInTheDocument();
+    expect(screen.getByText("用户运营概览")).toBeInTheDocument();
     expect(screen.getByText("今日待处理")).toBeInTheDocument();
     expect(screen.getByText("紧急任务")).toBeInTheDocument();
     expect(screen.getByText("用户待回复")).toBeInTheDocument();
     expect(screen.getByText("7 日召回转化")).toBeInTheDocument();
     expect(screen.getByText("服务异常需要介入")).toBeInTheDocument();
     expect(screen.getByText("A–G 用户分组")).toBeInTheDocument();
-    expect(screen.getByText("渠道健康")).toBeInTheDocument();
-    expect(screen.getByText("团队任务负载")).toBeInTheDocument();
+    expect(screen.getByText("联系渠道")).toBeInTheDocument();
+    expect(screen.getByText("团队工作量")).toBeInTheDocument();
     expect(screen.queryByText(/A 方案展开/)).not.toBeInTheDocument();
     expect(screen.queryByText("用户中心", { exact: true })).not.toBeInTheDocument();
     expect(screen.queryByText("任务与邮件", { exact: true })).not.toBeInTheDocument();

@@ -9,6 +9,21 @@ import {
 export const segmentCodes = ["A", "B", "C", "D", "E", "F", "G"] as const;
 export const taskPriorities = ["URGENT", "IMPORTANT", "NORMAL"] as const;
 
+const lockedFBranches = [
+  {
+    clauses: [
+      { field: "anomalyActive", operator: "eq", value: true },
+      { field: "anomalyChangedAt", operator: "is_not_null" },
+      {
+        field: "anomalyElapsed",
+        operator: "lt",
+        value: 24,
+        unit: "hours"
+      }
+    ]
+  }
+];
+
 const clauseSchema = z
   .object({
     field: z.enum(segmentFieldKeys),
@@ -121,6 +136,16 @@ export const segmentRuleSetSchema = z
           code: "custom",
           path: ["groups", index, "taskPolicy"],
           message: "F must remain enabled, immediate and urgent"
+        });
+      }
+      if (
+        group.code === "F" &&
+        JSON.stringify(group.branches) !== JSON.stringify(lockedFBranches)
+      ) {
+        context.addIssue({
+          code: "custom",
+          path: ["groups", index, "branches"],
+          message: "F entry conditions are system-locked"
         });
       }
       if (

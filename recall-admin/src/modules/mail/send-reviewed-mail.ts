@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import type { MailMessage } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { assertMemberPermission, ForbiddenError } from "@/modules/auth/guards";
@@ -23,7 +24,8 @@ import {
 export type ReviewedMailInput = {
   actorId: string;
   mailboxId: string;
-  taskId: string;
+  userId: string;
+  taskId?: string;
   recipient: string;
   subject: string;
   bodyText: string;
@@ -39,10 +41,11 @@ export async function sendReviewedMail(
   dependencies: {
     storage?: MailAssetStorage;
   } = {}
-): Promise<MailMessage> {
+): Promise<{ message: MailMessage; taskId: string }> {
   const now = input.now ?? new Date();
   const recipient = input.recipient.trim().toLowerCase();
-  const [actor, mailbox, task] = await Promise.all([
+  const [actor, mailbox, user, existingTask] =
+    await Promise.all([
     prisma.member.findUniqueOrThrow({
       where: { id: input.actorId },
       select: { id: true, role: true, active: true }
@@ -51,32 +54,47 @@ export async function sendReviewedMail(
       where: { id: input.mailboxId },
       select: { id: true, emailAddress: true, enabled: true }
     }),
-    prisma.recallTask.findUniqueOrThrow({
-      where: { id: input.taskId },
+    prisma.userProfile.findUniqueOrThrow({
+      where: { id: input.userId },
       select: {
         id: true,
-        assigneeId: true,
-        user: {
+        ownerId: true,
+        email: true,
+        emailNormalized: true,
+        unsubscribedAt: true,
+        pausedAt: true
+      }
+    }),
+    input.taskId
+      ? prisma.recallTask.findUniqueOrThrow({
+          where: { id: input.taskId },
           select: {
             id: true,
-            ownerId: true,
-            email: true,
-            emailNormalized: true,
-            unsubscribedAt: true,
-            pausedAt: true
+            userId: true,
+            assigneeId: true,
+            status: true,
+            startedAt: true
           }
-        }
-      }
-    })
-  ]);
+        })
+      : null
+    ]);
   if (!actor.active) {
     throw new ForbiddenError("mail:send-reviewed");
   }
   assertMemberPermission(actor, "mail:send-reviewed");
   if (
+    existingTask &&
+    (existingTask.userId !== user.id ||
+      existingTask.status === "COMPLETED" ||
+      existingTask.status === "CANCELLED")
+  ) {
+    throw new ForbiddenError("mail:send-reviewed");
+  }
+  if (
     actor.role === "OPERATOR" &&
-    task.assigneeId !== actor.id &&
-    task.user.ownerId !== actor.id
+    existingTask?.assigneeId !== actor.id &&
+    user.ownerId !== actor.id &&
+    user.ownerId !== null
   ) {
     throw new ForbiddenError("mail:send-reviewed");
   }
@@ -84,10 +102,37 @@ export async function sendReviewedMail(
     throw new MailSendBlockedError("EMPTY_MESSAGE");
   }
 
+  const task =
+    existingTask ??
+    (await prisma.recallTask.create({
+      data: {
+        userId: user.id,
+        origin: "MANUAL",
+        triggerKey: `manual-mail:${randomUUID()}`,
+        ruleVersion: 1,
+        title: `主动联系：${input.subject.trim()}`.slice(0, 200),
+        reason: "运营人员主动联系用户",
+        priority: "NORMAL",
+        status: "IN_PROGRESS",
+        assigneeId: actor.id,
+        assignmentReason: "由发件运营人员创建",
+        dueAt: new Date(
+          now.getTime() + 24 * 60 * 60 * 1000
+        ),
+        startedAt: now
+      },
+      select: {
+        id: true,
+        userId: true,
+        assigneeId: true,
+        status: true,
+        startedAt: true
+      }
+    }));
   const [userSuppressed, recipientSuppressed, lastSent] =
     await Promise.all([
     prisma.suppressionEntry.findUnique({
-      where: { emailNormalized: task.user.emailNormalized },
+      where: { emailNormalized: user.emailNormalized },
       select: { id: true }
     }),
     prisma.suppressionEntry.findUnique({
@@ -96,7 +141,7 @@ export async function sendReviewedMail(
     }),
     prisma.mailMessage.findFirst({
       where: {
-        userId: task.user.id,
+        userId: user.id,
         direction: "OUTBOUND",
         status: "SENT"
       },
@@ -106,11 +151,11 @@ export async function sendReviewedMail(
     ]);
   assertMailSendAllowed(
     {
-      emailNormalized: task.user.emailNormalized,
+      emailNormalized: user.emailNormalized,
       unsubscribedAt: userSuppressed || recipientSuppressed
         ? now
-        : task.user.unsubscribedAt,
-      pausedAt: task.user.pausedAt
+        : user.unsubscribedAt,
+      pausedAt: user.pausedAt
     },
     {
       reviewedById: actor.id,
@@ -126,7 +171,7 @@ export async function sendReviewedMail(
   const thread =
     (await prisma.mailThread.findFirst({
       where: {
-        userId: task.user.id,
+        userId: user.id,
         mailboxId: mailbox.id,
         subject: input.subject.trim()
       },
@@ -134,7 +179,7 @@ export async function sendReviewedMail(
     })) ??
     (await prisma.mailThread.create({
       data: {
-        userId: task.user.id,
+        userId: user.id,
         mailboxId: mailbox.id,
         subject: input.subject.trim()
       }
@@ -156,7 +201,7 @@ export async function sendReviewedMail(
     data: {
       mailboxId: mailbox.id,
       threadId: thread.id,
-      userId: task.user.id,
+      userId: user.id,
       taskId: task.id,
       direction: "OUTBOUND",
       status: "DRAFT",
@@ -193,7 +238,7 @@ export async function sendReviewedMail(
     throw new Error("SMTP_SEND_FAILED");
   }
 
-  return prisma.$transaction(async (tx) => {
+  const message = await prisma.$transaction(async (tx) => {
     const sent = await tx.mailMessage.update({
       where: { id: draft.id },
       data: {
@@ -201,6 +246,25 @@ export async function sendReviewedMail(
         providerMessageId: delivery.providerMessageId,
         sentAt: now,
         lastErrorCode: null
+      }
+    });
+    await tx.recallTask.update({
+      where: { id: task.id },
+      data: {
+        status: "WAITING_USER",
+        startedAt: task.startedAt ?? now
+      }
+    });
+    await tx.taskActivity.create({
+      data: {
+        taskId: task.id,
+        actorId: actor.id,
+        action: "task.waiting_user",
+        detail: {
+          from: task.status,
+          to: "WAITING_USER",
+          source: "mail.reviewed_sent"
+        }
       }
     });
     await tx.taskActivity.create({
@@ -224,15 +288,16 @@ export async function sendReviewedMail(
           taskId: task.id,
           mailboxId: mailbox.id,
           recipientOverridden:
-            recipient !== task.user.email.trim().toLowerCase(),
+            recipient !== user.email.trim().toLowerCase(),
           recipientDomain:
             recipient.split("@")[1] ?? "unknown",
           originalRecipientDomain:
-            task.user.email.trim().toLowerCase().split("@")[1] ??
+            user.email.trim().toLowerCase().split("@")[1] ??
             "unknown"
         }
       }
     });
     return sent;
   });
+  return { message, taskId: task.id };
 }

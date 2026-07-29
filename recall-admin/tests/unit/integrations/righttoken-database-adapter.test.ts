@@ -16,7 +16,8 @@ const firstRow = {
   successful_call_count: 3n,
   last_call_at: new Date("2026-07-02T00:00:00.000Z"),
   balance_minor: 250n,
-  anomaly_active: false
+  anomaly_active: true,
+  anomaly_changed_at: new Date("2026-07-02T00:15:00.000Z")
 };
 
 describe("RightToken database adapter", () => {
@@ -35,11 +36,48 @@ describe("RightToken database adapter", () => {
       balanceCurrency: "USD",
       balanceUsdMinor: 250,
       successfulCallCount: 3,
-      totalPaidCurrency: "USD"
+      totalPaidCurrency: "USD",
+      anomalyActive: true,
+      anomalyChangedAt: new Date("2026-07-02T00:15:00.000Z")
     });
     expect(page.nextCursor).toBeNull();
     expect(query).toHaveBeenCalledTimes(1);
     expect(query.mock.calls[0]?.[0]).toContain("FROM public.users");
+    expect(query.mock.calls[0]?.[0]).toContain("final_request_events AS");
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "event.consecutive_successes >= 3"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "event.consecutive_failures >= 3"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "event.failure_count * 2 >= event.request_count"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "error_log.status_code >= 400"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "COALESCE(error_log.is_business_limited, false) = false"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "COALESCE(error_log.error_owner, 'platform') <> 'client'"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "'invalid_request_error'"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "'authentication_error'"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain("'billing_error'");
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "'subscription_error'"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "NOW() - INTERVAL '24 hours'"
+    );
+    expect(query.mock.calls[0]?.[0]).not.toContain(
+      "COALESCE(error_log.resolved, false) = false"
+    );
     expect(query.mock.calls[0]?.[1]).toEqual([
       new Date(0),
       0n,

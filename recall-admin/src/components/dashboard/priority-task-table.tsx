@@ -1,22 +1,10 @@
 import Link from "next/link";
 import type { DashboardTask } from "@/modules/reports/dashboard-query";
+import {
+  presentTaskPriority,
+  presentTaskStatus
+} from "@/modules/presentation/status";
 import styles from "./dashboard.module.css";
-
-const priorityLabels = {
-  URGENT: "紧急",
-  IMPORTANT: "重要",
-  NORMAL: "普通"
-} as const;
-
-const statusLabels = {
-  UNASSIGNED: "待领取",
-  TODO: "待处理",
-  IN_PROGRESS: "处理中",
-  WAITING_USER: "等待用户",
-  PAUSED: "已暂停",
-  COMPLETED: "已完成",
-  CANCELLED: "已取消"
-} as const;
 
 function dueLabel(value: Date, now: Date): string {
   const diffMinutes = Math.round(
@@ -55,7 +43,7 @@ export function PriorityTaskTable({
       <header className={styles.panelHeader}>
         <div>
           <h2 id="priority-heading">优先任务</h2>
-          <p>按级别与剩余 SLA 自动排序</p>
+          <p>需要优先跟进的用户</p>
         </div>
         <Link href="/tasks">查看全部</Link>
       </header>
@@ -64,7 +52,7 @@ export function PriorityTaskTable({
         <div className={styles.emptyState}>
           <span aria-hidden="true">✓</span>
           <strong>当前没有需要优先处理的任务</strong>
-          <p>新任务会根据分组、地区和 SLA 自动出现在这里。</p>
+          <p>需要团队优先跟进时，任务会自动出现在这里。</p>
         </div>
       ) : (
         <div className={styles.tableScroll}>
@@ -74,7 +62,7 @@ export function PriorityTaskTable({
                 <th scope="col">任务 / 用户</th>
                 <th scope="col">级别</th>
                 <th scope="col">负责人</th>
-                <th scope="col">SLA</th>
+                <th scope="col">剩余时间</th>
               </tr>
             </thead>
             <tbody>
@@ -89,7 +77,7 @@ export function PriorityTaskTable({
                     </Link>
                     <span className={styles.taskMeta}>
                       {task.userLabel} · {task.region ?? "地区未知"} ·{" "}
-                      {statusLabels[task.status]}
+                      {presentTaskStatus(task.status)}
                     </span>
                   </td>
                   <td>
@@ -98,7 +86,7 @@ export function PriorityTaskTable({
                         styles[`priority${task.priority}`]
                       }`}
                     >
-                      {priorityLabels[task.priority]}
+                      {presentTaskPriority(task.priority)}
                     </span>
                   </td>
                   <td className={styles.assignee}>

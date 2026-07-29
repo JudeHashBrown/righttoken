@@ -19,12 +19,12 @@ async function readError(response: Response): Promise<string> {
     return "当前账号没有邀请该角色的权限。";
   }
   if (result?.code === "RIGHTTOKEN_USER_NOT_FOUND") {
-    return "没有找到该邮箱对应的 RightToken 注册用户，请先确认主站账号已经注册并完成同步。";
+    return "没有找到该邮箱对应的 RightToken 用户，请先确认对方已经在主站注册。";
   }
   if (result?.code === "MEMBER_ALREADY_ACTIVE") {
-    return "该用户已经拥有召回后台权限。";
+    return "该用户已经拥有用户运营后台权限。";
   }
-  return result?.error?.message ?? "操作未完成，请检查信息后重试。";
+  return "操作未完成，请检查信息后重试。";
 }
 
 export function MemberInviteForm({

@@ -66,16 +66,16 @@ describe("AssignmentRuleEditor", () => {
 
     expect(screen.getByDisplayValue("新加坡用户")).toBeInTheDocument();
     expect(screen.getByDisplayValue("Central Region")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "新增规则" }));
-    expect(screen.getAllByLabelText("规则名称")).toHaveLength(2);
-    fireEvent.change(screen.getAllByLabelText("规则名称")[1]!, {
+    fireEvent.click(screen.getByRole("button", { name: "新增分配条件" }));
+    expect(screen.getAllByLabelText("分配条件名称")).toHaveLength(2);
+    fireEvent.change(screen.getAllByLabelText("分配条件名称")[1]!, {
       target: { value: "美国用户" }
     });
 
     fireEvent.click(screen.getByRole("button", { name: "预览分配" }));
     await waitFor(() => {
-      expect(screen.getByText("抽样 83 位用户")).toBeInTheDocument();
-      expect(screen.getByText("待默认接管 33 人")).toBeInTheDocument();
+      expect(screen.getByText("已查看最近 83 位用户")).toBeInTheDocument();
+      expect(screen.getByText("由主管理员暂管 33 人")).toBeInTheDocument();
     });
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/automation/assignment-rules/preview",
@@ -91,9 +91,9 @@ describe("AssignmentRuleEditor", () => {
       <AssignmentRuleEditor initialRules={[]} members={[]} />
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "新增规则" }));
+    fireEvent.click(screen.getByRole("button", { name: "新增分配条件" }));
     expect(
-      screen.getByRole("button", { name: "发布规则" })
+      screen.getByRole("button", { name: "保存分配方案" })
     ).toBeDisabled();
   });
 });

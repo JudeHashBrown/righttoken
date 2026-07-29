@@ -63,7 +63,7 @@ describe("reviewed user mail", () => {
     await prisma.auditLog.deleteMany({
       where: { actorId: memberId, entityType: "MailMessage" }
     });
-    await prisma.recallTask.deleteMany({ where: { id: taskId } });
+    await prisma.recallTask.deleteMany({ where: { userId } });
     await prisma.mailbox.deleteMany({ where: { id: mailboxId } });
     await prisma.userProfile.deleteMany({ where: { id: userId } });
     await prisma.member.deleteMany({ where: { id: memberId } });
@@ -79,10 +79,12 @@ describe("reviewed user mail", () => {
       })
     };
 
-    const sent = await sendReviewedMail(
+    const { message: sent, taskId: resolvedTaskId } =
+      await sendReviewedMail(
       {
         actorId: memberId,
         mailboxId,
+        userId,
         taskId,
         recipient: userEmail,
         subject: "RightToken 首次使用提醒",
@@ -92,6 +94,7 @@ describe("reviewed user mail", () => {
       },
       adapter
     );
+    expect(resolvedTaskId).toBe(taskId);
 
     expect(adapter.send).toHaveBeenCalledWith({
       to: [expect.stringMatching(/@example\.test$/)],
@@ -128,10 +131,11 @@ describe("reviewed user mail", () => {
       })
     };
 
-    const sent = await sendReviewedMail(
+    const { message: sent } = await sendReviewedMail(
       {
         actorId: memberId,
         mailboxId,
+        userId,
         taskId,
         recipient,
         subject: "RightToken 邮箱联调",
@@ -184,6 +188,7 @@ describe("reviewed user mail", () => {
           {
             actorId: memberId,
             mailboxId,
+            userId,
             taskId,
             recipient,
             subject: "不可发送",
@@ -200,5 +205,51 @@ describe("reviewed user mail", () => {
         where: { emailNormalized: recipient }
       });
     }
+  });
+
+  it("creates a tracked manual task when proactive mail has no task", async () => {
+    const now = new Date("2026-07-24T10:00:00.000Z");
+    const result = await sendReviewedMail(
+      {
+        actorId: memberId,
+        mailboxId,
+        userId,
+        recipient: userEmail,
+        subject: "主动联系用户",
+        bodyText: "这是一次没有既有任务的主动联系。",
+        minimumContactIntervalMinutes: 0,
+        now
+      },
+      {
+        send: vi.fn().mockResolvedValue({
+          providerMessageId: "<proactive@example.test>"
+        })
+      }
+    );
+
+    expect(result.message).toMatchObject({
+      taskId: result.taskId,
+      userId,
+      status: "SENT"
+    });
+    await expect(
+      prisma.recallTask.findUniqueOrThrow({
+        where: { id: result.taskId }
+      })
+    ).resolves.toMatchObject({
+      userId,
+      origin: "MANUAL",
+      assigneeId: memberId,
+      status: "WAITING_USER",
+      startedAt: now
+    });
+    await expect(
+      prisma.taskActivity.findFirstOrThrow({
+        where: {
+          taskId: result.taskId,
+          action: "task.waiting_user"
+        }
+      })
+    ).resolves.toBeTruthy();
   });
 });

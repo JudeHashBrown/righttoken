@@ -37,19 +37,22 @@ describe("MailboxSettingsForm", () => {
     vi.stubGlobal("fetch", fetchMock);
     render(<MailboxSettingsForm />);
 
-    fireEvent.change(screen.getByLabelText("邮箱地址"), {
+    fireEvent.change(screen.getByLabelText("对外显示的邮箱地址"), {
       target: { value: "support@righttoken.test" }
     });
-    fireEvent.change(screen.getByLabelText("邮箱账号"), {
+    fireEvent.change(
+      screen.getByLabelText("登录账号（通常与邮箱地址相同）"),
+      {
       target: { value: "support@righttoken.test" }
-    });
+      }
+    );
     fireEvent.change(screen.getByLabelText("邮箱密码"), {
       target: { value: "mailbox-secret-password" }
     });
-    expect(screen.getByLabelText("SMTP 主机")).toHaveValue(
+    expect(screen.getByLabelText("发件服务器地址")).toHaveValue(
       "mail.privateemail.com"
     );
-    expect(screen.getByLabelText("IMAP 主机")).toHaveValue(
+    expect(screen.getByLabelText("收件服务器地址")).toHaveValue(
       "mail.privateemail.com"
     );
     fireEvent.click(screen.getByRole("button", { name: "保存邮箱连接" }));

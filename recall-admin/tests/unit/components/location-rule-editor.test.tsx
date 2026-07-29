@@ -52,14 +52,19 @@ describe("LocationRuleEditor", () => {
     expect(screen.getByRole("table")).toBeInTheDocument();
     expect(screen.getAllByRole("row")).toHaveLength(2);
     expect(screen.getByDisplayValue("qq.com")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "新增邮箱规则" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "新增邮箱判断条件" })
+    );
     expect(screen.getAllByRole("row")).toHaveLength(3);
-    fireEvent.change(screen.getAllByLabelText("匹配内容")[1]!, {
+    fireEvent.change(screen.getAllByLabelText("邮箱域名或后缀")[1]!, {
       target: { value: ".ru" }
     });
-    fireEvent.change(screen.getAllByLabelText("归属国家")[1]!, {
+    fireEvent.change(
+      screen.getAllByLabelText("判断为哪个国家或地区")[1]!,
+      {
       target: { value: "RU" }
-    });
+      }
+    );
     fireEvent.click(screen.getByRole("button", { name: "预览影响" }));
 
     await waitFor(() => {
@@ -94,7 +99,7 @@ describe("LocationRuleEditor", () => {
 
     expect(screen.getByDisplayValue("qq.com")).toBeDisabled();
     expect(
-      screen.queryByRole("button", { name: "发布归属规则" })
+      screen.queryByRole("button", { name: "保存邮箱判断" })
     ).not.toBeInTheDocument();
   });
 });

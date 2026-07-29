@@ -285,7 +285,7 @@ test("template images flow into replies and incoming images remain private", asy
       mimeType: "image/png",
       buffer: pixel
     });
-  await page.getByRole("button", { name: "发布新版本" }).click();
+  await page.getByRole("button", { name: "保存模板修改" }).click();
   await expect
     .poll(() => captured.publishedPayload)
     .not.toBeNull();

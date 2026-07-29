@@ -16,6 +16,9 @@ export type MailWorkspaceView =
 export type MailWorkspaceFilter = {
   view: MailWorkspaceView;
   selectedId: string | null;
+  compose: boolean;
+  composeUserId: string | null;
+  composeTaskId: string | null;
 };
 
 type SearchParams = Record<
@@ -28,6 +31,9 @@ export function parseMailWorkspaceFilter(
 ): MailWorkspaceFilter {
   const view = searchParams.view;
   const selected = searchParams.selected;
+  const compose = searchParams.compose;
+  const userId = searchParams.userId;
+  const taskId = searchParams.taskId;
   return {
     view:
       typeof view === "string" &&
@@ -37,6 +43,15 @@ export function parseMailWorkspaceFilter(
     selectedId:
       typeof selected === "string" && selected.trim()
         ? selected
+        : null,
+    compose: compose === "1",
+    composeUserId:
+      typeof userId === "string" && userId.trim()
+        ? userId
+        : null,
+    composeTaskId:
+      typeof taskId === "string" && taskId.trim()
+        ? taskId
         : null
   };
 }

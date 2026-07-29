@@ -60,6 +60,98 @@
   flex: 1 1 260px;
 }
 
+.userFilterBar {
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+.userFilterBar .fieldGrow {
+  min-width: 220px;
+}
+
+.userFilterBar > .button,
+.userFilterBar > .secondaryButton {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.userFilterCompact {
+  width: 126px;
+  min-width: 126px;
+}
+
+.userFilterOwner {
+  width: 168px;
+  min-width: 168px;
+}
+
+.segmentQuickFieldset {
+  display: grid;
+  min-width: 276px;
+  max-width: 100%;
+  flex: 0 0 auto;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.segmentQuickFieldset legend {
+  padding: 0;
+  color: #737d93;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.segmentQuickList {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.segmentQuickList::-webkit-scrollbar {
+  display: none;
+}
+
+.segmentQuickButton {
+  min-width: 32px;
+  height: 36px;
+  flex: 0 0 auto;
+  border: 1px solid #d9deea;
+  border-radius: 999px;
+  background: #f7f8fc;
+  color: #4f5870;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    color 160ms ease-out;
+}
+
+.segmentQuickButton:first-child {
+  min-width: 48px;
+}
+
+.segmentQuickButton:hover {
+  border-color: #9aa5ee;
+  color: #4f5fd4;
+}
+
+.segmentQuickButton:focus-visible {
+  outline: 3px solid rgb(102 117 232 / 20%);
+  outline-offset: 1px;
+}
+
+.segmentQuickButtonSelected,
+.segmentQuickButtonSelected:hover {
+  border-color: #5b6cdb;
+  background: #5b6cdb;
+  color: #ffffff;
+}
+
 .field label,
 .detailLabel {
   color: #737d93;
@@ -1022,6 +1114,32 @@
   min-width: 0;
 }
 
+.mailboxStatusDetail {
+  display: grid;
+  gap: 20px;
+  padding: 24px;
+}
+
+.mailboxHealth {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid #e1e5ee;
+  border-radius: 14px;
+  background: #f7f8fc;
+}
+
+.mailboxHealth span {
+  color: #737d93;
+}
+
+.mailboxHealth strong {
+  color: #202a40;
+  text-align: right;
+}
+
 .mailDetailHeader {
   display: flex;
   min-height: 78px;
@@ -1731,6 +1849,12 @@
   }
 }
 
+@media (max-width: 1180px) {
+  .userFilterBar {
+    flex-wrap: wrap;
+  }
+}
+
 @media (max-width: 760px) {
   .page {
     padding: 18px 14px 28px;
@@ -1742,6 +1866,14 @@
 
   .headingActions {
     margin-top: 14px;
+  }
+
+  .userFilterBar .fieldGrow,
+  .userFilterCompact,
+  .userFilterOwner,
+  .segmentQuickFieldset {
+    width: 100%;
+    min-width: 0;
   }
 
   .summaryGrid {
@@ -1793,7 +1925,8 @@
   .tab,
   .input,
   .select,
-  .textarea {
+  .textarea,
+  .segmentQuickButton {
     transition: none;
   }
 }

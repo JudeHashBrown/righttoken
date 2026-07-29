@@ -40,12 +40,8 @@ export function SegmentOverrideForm({
       }
       setReason("");
       router.refresh();
-    } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : "临时分组保存失败"
-      );
+    } catch {
+      setError("临时分组未能保存，请稍后重试");
     } finally {
       setPending(false);
     }
@@ -55,7 +51,7 @@ export function SegmentOverrideForm({
     return (
       <div className={styles.formBody}>
         <p className={styles.error}>
-          当前用户处于 F 服务异常组。为避免掩盖故障，异常恢复前不能人工覆盖分组。
+          当前用户处于 F 服务异常处理期。为避免掩盖故障，处理期内不能人工覆盖分组（最长 24 小时）。
         </p>
       </div>
     );
@@ -107,7 +103,7 @@ export function SegmentOverrideForm({
           maxLength={500}
           minLength={3}
           onChange={(event) => setReason(event.target.value)}
-          placeholder="填写人工判断依据，便于后续审计"
+          placeholder="填写调整原因，方便团队后续查看"
           required
           value={reason}
         />
@@ -117,7 +113,7 @@ export function SegmentOverrideForm({
         disabled={pending || reason.trim().length < 3}
         type="submit"
       >
-        {pending ? "发布中…" : "发布临时分组"}
+        {pending ? "保存中…" : "保存临时分组"}
       </button>
       {error ? (
         <p className={styles.error} role="alert">

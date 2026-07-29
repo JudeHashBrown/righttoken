@@ -68,7 +68,11 @@ function snapshot(
     balanceCurrency: "USD",
     balanceUsdMinor:
       scenario === "E" ? 0 : paid ? 5_000 : 0,
-    anomalyActive: scenario === "F"
+    anomalyActive: scenario === "F",
+    anomalyChangedAt:
+      scenario === "F"
+        ? new Date(baseNow.getTime() - hour)
+        : null
   };
 }
 

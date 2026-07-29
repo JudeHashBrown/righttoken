@@ -1,6 +1,12 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import Link from "next/link";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type FormEvent
+} from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/components/workspaces/workspace.module.css";
 import {
@@ -8,8 +14,17 @@ import {
   type MailRichContent
 } from "@/components/mail/mail-rich-editor";
 
+type ComposerUser = {
+  id: string;
+  label: string;
+  email: string;
+  suppressed: boolean;
+  paused: boolean;
+};
+
 type ComposerTask = {
   id: string;
+  userId?: string;
   title: string;
   userLabel: string;
   recipient: string;
@@ -22,17 +37,35 @@ type ComposerMailbox = {
   emailAddress: string;
 };
 
-type MailComposerProps = {
-  tasks: ComposerTask[];
-  mailboxes: ComposerMailbox[];
-  initialSubject: string;
-  initialBody: string;
+type ComposerTemplate = {
+  id: string;
+  name: string;
+  subject: string;
+  bodyText: string;
 };
 
-function unresolvedVariables(subject: string, body: string): string[] {
+type MailComposerProps = {
+  tasks: ComposerTask[];
+  users?: ComposerUser[];
+  mailboxes: ComposerMailbox[];
+  templates?: ComposerTemplate[];
+  initialUserId?: string | null;
+  initialTaskId?: string | null;
+  initialSubject: string;
+  initialBody: string;
+  closeHref?: string;
+};
+
+function unresolvedVariables(
+  subject: string,
+  body: string
+): string[] {
   return Array.from(
     new Set(
-      [...subject.matchAll(/\[[^\[\]\n]{1,80}\]/g), ...body.matchAll(/\[[^\[\]\n]{1,80}\]/g)]
+      [
+        ...subject.matchAll(/\[[^\[\]\n]{1,80}\]/g),
+        ...body.matchAll(/\[[^\[\]\n]{1,80}\]/g)
+      ]
         .map((match) => match[0])
         .filter(Boolean)
     )
@@ -56,16 +89,56 @@ function initialRichContent(value: string): MailRichContent {
   };
 }
 
+function taskUser(task: ComposerTask): ComposerUser {
+  return {
+    id: task.userId ?? `task-user:${task.id}`,
+    label: task.userLabel,
+    email: task.recipient,
+    suppressed: task.suppressed,
+    paused: false
+  };
+}
+
 export function MailComposer({
   tasks,
+  users = [],
   mailboxes,
+  templates = [],
+  initialUserId = null,
+  initialTaskId = null,
   initialSubject,
-  initialBody
+  initialBody,
+  closeHref
 }: MailComposerProps): React.JSX.Element {
   const router = useRouter();
-  const [taskId, setTaskId] = useState(tasks[0]?.id ?? "");
+  const initialTask =
+    tasks.find((task) => task.id === initialTaskId) ??
+    (initialTaskId ? undefined : tasks[0]);
+  const initialUsers = useMemo(() => {
+    const byId = new Map(
+      users.map((user) => [user.id, user])
+    );
+    for (const task of tasks) {
+      const user = taskUser(task);
+      if (!byId.has(user.id)) {
+        byId.set(user.id, user);
+      }
+    }
+    return [...byId.values()];
+  }, [tasks, users]);
+  const firstUserId =
+    initialUserId ??
+    (initialTask ? taskUser(initialTask).id : "");
+  const firstUser =
+    initialUsers.find((user) => user.id === firstUserId) ??
+    null;
+  const [availableUsers, setAvailableUsers] =
+    useState(initialUsers);
+  const [userQuery, setUserQuery] = useState("");
+  const [userId, setUserId] = useState(firstUser?.id ?? "");
+  const [taskId, setTaskId] = useState(initialTask?.id ?? "");
   const [recipient, setRecipient] = useState(
-    tasks[0]?.recipient ?? ""
+    firstUser?.email ?? ""
   );
   const [mailboxId, setMailboxId] = useState(
     mailboxes[0]?.id ?? ""
@@ -77,15 +150,22 @@ export function MailComposer({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const selectedUser =
+    availableUsers.find((user) => user.id === userId) ??
+    initialUsers.find((user) => user.id === userId) ??
+    null;
   const selectedTask = tasks.find((task) => task.id === taskId);
+  const userTasks = tasks.filter(
+    (task) => taskUser(task).id === userId
+  );
   const normalizedRecipient = recipient.trim().toLowerCase();
   const originalRecipient =
-    selectedTask?.recipient.trim().toLowerCase() ?? "";
+    selectedUser?.email.trim().toLowerCase() ?? "";
   const recipientValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
     normalizedRecipient
   );
   const recipientOverridden =
-    Boolean(selectedTask) &&
+    Boolean(selectedUser) &&
     recipientValid &&
     normalizedRecipient !== originalRecipient;
   const unresolved = useMemo(
@@ -93,19 +173,62 @@ export function MailComposer({
     [subject, content.bodyText]
   );
   const blocked =
-    !selectedTask ||
+    !selectedUser ||
     !mailboxId ||
     !recipientValid ||
-    selectedTask.suppressed ||
+    selectedUser.suppressed ||
+    selectedUser.paused ||
     unresolved.length > 0 ||
     !subject.trim() ||
     !content.bodyText.trim();
+
+  useEffect(() => {
+    const query = userQuery.trim();
+    if (query.length < 2) {
+      return;
+    }
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      try {
+        const response = await fetch(
+          `/api/mail/compose-context?query=${encodeURIComponent(
+            query
+          )}`,
+          { signal: controller.signal }
+        );
+        const result = (await response.json().catch(() => null)) as {
+          users?: ComposerUser[];
+        } | null;
+        if (response.ok && result?.users) {
+          setAvailableUsers((current) => {
+            const byId = new Map(
+              current
+                .filter((user) => user.id === userId)
+                .map((user) => [user.id, user])
+            );
+            for (const user of result.users ?? []) {
+              byId.set(user.id, user);
+            }
+            return [...byId.values()];
+          });
+        }
+      } catch {
+        if (!controller.signal.aborted) {
+          setError("用户搜索暂时不可用，请稍后重试。");
+        }
+      }
+    }, 250);
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [userId, userQuery]);
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>
   ): Promise<void> {
     event.preventDefault();
-    if (blocked) {
+    if (blocked || !selectedUser) {
       return;
     }
     setSubmitting(true);
@@ -116,7 +239,8 @@ export function MailComposer({
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          taskId,
+          userId: selectedUser.id,
+          ...(taskId ? { taskId } : {}),
           mailboxId,
           recipient: normalizedRecipient,
           subject,
@@ -133,6 +257,7 @@ export function MailComposer({
       });
       const result = (await response.json().catch(() => null)) as {
         code?: string;
+        taskId?: string;
       } | null;
       if (!response.ok) {
         const messages: Record<string, string> = {
@@ -155,7 +280,10 @@ export function MailComposer({
         );
         return;
       }
-      setSuccess("邮件已发送并记录");
+      if (result?.taskId) {
+        setTaskId(result.taskId);
+      }
+      setSuccess("邮件已发送，任务已进入等待用户回复");
       router.refresh();
     } catch {
       setError("网络连接异常，请稍后重试。");
@@ -164,40 +292,119 @@ export function MailComposer({
     }
   }
 
+  function selectUser(nextUserId: string): void {
+    const user = availableUsers.find(
+      (candidate) => candidate.id === nextUserId
+    );
+    setUserId(nextUserId);
+    setRecipient(user?.email ?? "");
+    setTaskId(
+      tasks.find(
+        (task) => taskUser(task).id === nextUserId
+      )?.id ?? ""
+    );
+    setError(null);
+    setSuccess(null);
+  }
+
   function selectTask(nextTaskId: string): void {
     setTaskId(nextTaskId);
-    setRecipient(
-      tasks.find((task) => task.id === nextTaskId)?.recipient ?? ""
+    const task = tasks.find(
+      (candidate) => candidate.id === nextTaskId
     );
+    if (!task) {
+      return;
+    }
+    const user = taskUser(task);
+    setUserId(user.id);
+    setRecipient(user.email);
+  }
+
+  function selectTemplate(templateId: string): void {
+    const template = templates.find(
+      (candidate) => candidate.id === templateId
+    );
+    if (!template) {
+      return;
+    }
+    setSubject(template.subject);
+    setContent(initialRichContent(template.bodyText));
   }
 
   return (
     <section className={styles.panel}>
       <div className={styles.panelHeader}>
         <div>
-          <h2>审核并发送邮件</h2>
-          <p>发送前可编辑最终主题与正文；发送版本会永久保存</p>
+          <h2>写邮件</h2>
+          <p>选择用户并审核最终收件人、主题和正文</p>
         </div>
+        {closeHref ? (
+          <Link
+            className={styles.secondaryButton}
+            href={closeHref}
+          >
+            关闭写信
+          </Link>
+        ) : null}
       </div>
       <form className={styles.formBody} onSubmit={handleSubmit}>
         <div className={styles.editorGrid}>
           <div className={styles.field}>
-            <label htmlFor="mail-task">关联任务与用户</label>
+            <label htmlFor="mail-user-search">搜索用户</label>
+            <input
+              className={styles.input}
+              id="mail-user-search"
+              onChange={(event) =>
+                setUserQuery(event.target.value)
+              }
+              placeholder="输入邮箱、用户编号或姓名"
+              value={userQuery}
+            />
+          </div>
+          <div className={styles.field}>
+            <label htmlFor="mail-user">选择用户</label>
+            <select
+              className={styles.select}
+              id="mail-user"
+              value={userId}
+              onChange={(event) =>
+                selectUser(event.target.value)
+              }
+              disabled={submitting}
+            >
+              <option value="">请选择 RightToken 用户</option>
+              {availableUsers.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.label} · {user.email}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={styles.field}>
+            <label htmlFor="mail-task">关联任务（可选）</label>
             <select
               className={styles.select}
               id="mail-task"
               value={taskId}
-              onChange={(event) => selectTask(event.target.value)}
-              disabled={submitting || tasks.length === 0}
+              onChange={(event) =>
+                selectTask(event.target.value)
+              }
+              disabled={submitting || !selectedUser}
             >
-              {tasks.length === 0 ? (
-                <option value="">暂无可发送任务</option>
-              ) : null}
-              {tasks.map((task) => (
+              <option value="">发送后创建跟进任务</option>
+              {userTasks.map((task) => (
                 <option key={task.id} value={task.id}>
-                  {task.userLabel} · {task.title}
+                  {task.title}
                 </option>
               ))}
+              {selectedTask &&
+              !userTasks.some(
+                (task) => task.id === selectedTask.id
+              ) ? (
+                <option value={selectedTask.id}>
+                  {selectedTask.title}
+                </option>
+              ) : null}
             </select>
           </div>
           <div className={styles.field}>
@@ -206,7 +413,9 @@ export function MailComposer({
               className={styles.select}
               id="mailbox"
               value={mailboxId}
-              onChange={(event) => setMailboxId(event.target.value)}
+              onChange={(event) =>
+                setMailboxId(event.target.value)
+              }
               disabled={submitting || mailboxes.length === 0}
             >
               {mailboxes.length === 0 ? (
@@ -226,17 +435,40 @@ export function MailComposer({
               id="mail-recipient"
               type="email"
               value={recipient}
-              onChange={(event) => setRecipient(event.target.value)}
+              onChange={(event) =>
+                setRecipient(event.target.value)
+              }
               required
-              disabled={submitting}
+              disabled={submitting || !selectedUser}
             />
           </div>
+          {templates.length ? (
+            <div className={styles.field}>
+              <label htmlFor="mail-template">使用模板</label>
+              <select
+                className={styles.select}
+                id="mail-template"
+                defaultValue=""
+                onChange={(event) =>
+                  selectTemplate(event.target.value)
+                }
+                disabled={submitting}
+              >
+                <option value="">不使用模板</option>
+                {templates.map((template) => (
+                  <option key={template.id} value={template.id}>
+                    {template.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
         </div>
         {recipientOverridden ? (
           <p className={styles.notice}>
-            <strong>当前使用手动收件人</strong>
+            <strong>已修改收件邮箱</strong>
             <br />
-            邮件仍会关联所选任务，并记录实际收件地址。
+            邮件仍会关联所选用户与任务，并记录实际收件地址。
           </p>
         ) : null}
         <div className={styles.field}>
@@ -260,11 +492,14 @@ export function MailComposer({
 
         {unresolved.length ? (
           <p className={styles.error}>
-            仍有未替换变量：{unresolved.join("、")}
+            模板中仍有待填写内容：{unresolved.join("、")}
           </p>
         ) : null}
-        {selectedTask?.suppressed ? (
+        {selectedUser?.suppressed ? (
           <p className={styles.error}>该用户已退订，禁止发送</p>
+        ) : null}
+        {selectedUser?.paused ? (
+          <p className={styles.error}>该用户当前已暂停联系</p>
         ) : null}
         {error ? (
           <p className={styles.error} role="alert">
@@ -282,7 +517,7 @@ export function MailComposer({
             type="submit"
             disabled={blocked || submitting}
           >
-            {submitting ? "正在发送" : "审核并发送"}
+            {submitting ? "正在发送" : "确认并发送"}
           </button>
         </div>
       </form>

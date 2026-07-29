@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/components/workspaces/workspace.module.css";
+import {
+  mailSyncStatusText
+} from "@/modules/mail/sync-error";
 
 export function MailboxActions({
   mailboxId
@@ -24,7 +27,10 @@ export function MailboxActions({
         { method: "POST" }
       );
       if (!response.ok) {
-        setError("邮箱连接失败，请检查服务器、账号和密码。");
+        const result = (await response.json().catch(() => null)) as {
+          code?: string;
+        } | null;
+        setError(mailSyncStatusText(result?.code ?? null));
         return;
       }
       setMessage("邮箱连接正常");
@@ -47,15 +53,16 @@ export function MailboxActions({
         body: JSON.stringify({ mailboxId })
       });
       const result = (await response.json().catch(() => null)) as {
+        code?: string;
         received?: number;
         matched?: number;
       } | null;
       if (!response.ok) {
-        setError("邮箱同步失败，请先测试连接。");
+        setError(mailSyncStatusText(result?.code ?? null));
         return;
       }
       setMessage(
-        `同步完成：收到 ${result?.received ?? 0} 封，匹配 ${result?.matched ?? 0} 封`
+        `收信完成：收到 ${result?.received ?? 0} 封，已关联 ${result?.matched ?? 0} 封`
       );
       router.refresh();
     } catch {
@@ -82,7 +89,7 @@ export function MailboxActions({
           onClick={syncNow}
           disabled={busy !== null}
         >
-          {busy === "sync" ? "正在同步" : "立即同步"}
+          {busy === "sync" ? "正在收取" : "立即收取邮件"}
         </button>
       </div>
       {message ? (

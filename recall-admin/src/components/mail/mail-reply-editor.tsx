@@ -190,7 +190,7 @@ export function MailReplyEditor({
       setError("模板更新失败，请刷新后重试。");
       return;
     }
-    setSuccess("公共模板已发布新版本");
+    setSuccess("公共模板修改已保存");
     setDirty(false);
     router.refresh();
   }
@@ -351,7 +351,7 @@ export function MailReplyEditor({
         ) : null}
         {unresolved.length ? (
           <p className={styles.error}>
-            仍有未替换内容：{unresolved.join("、")}
+            模板中仍有待填写内容：{unresolved.join("、")}
           </p>
         ) : null}
         {!thread.user.task ? (
@@ -379,8 +379,8 @@ export function MailReplyEditor({
           </button>
           {selectedTemplate ? (
             <span className={styles.helperText}>
-              本次使用：{selectedTemplate.name} v
-              {selectedTemplate.version}
+              本次使用：{selectedTemplate.name}（第
+              {selectedTemplate.version} 次保存）
             </span>
           ) : null}
         </div>

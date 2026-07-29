@@ -60,7 +60,7 @@ export function AppSidebar({
       label: "运营工作",
       items: [
         {
-          label: "运营驾驶舱",
+          label: "用户运营概览",
           href: "/dashboard",
           icon: LayoutDashboard
         },
@@ -84,7 +84,7 @@ export function AppSidebar({
       ]
     },
     {
-      label: "自动化",
+      label: "运营设置",
       items: [
         {
           label: "用户分组",
@@ -92,13 +92,13 @@ export function AppSidebar({
           icon: Sparkles
         },
         {
-          label: "分配规则",
+          label: "客户分配",
           href: "/automation/assignment",
           icon: SlidersHorizontal,
           administratorOnly: true
         },
         {
-          label: "通知策略",
+          label: "提醒设置",
           href: "/automation/notifications",
           icon: Bot,
           administratorOnly: true

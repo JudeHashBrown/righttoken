@@ -1,5 +1,13 @@
 const replacements: Array<[RegExp, string]> = [
   [/^RightToken user reconciliation:\s*/u, "自动重新分组："],
+  [/^manual override:\s*/u, "人工调整："],
+  [/^active service anomaly$/u, "近期连续调用失败，需要优先跟进"],
+  [/^checkout started without first payment$/u, "已开始支付，但尚未完成首单"],
+  [/^registered without checkout or first payment$/u, "已注册，尚未开始支付"],
+  [/^paid without successful call$/u, "已完成支付，尚无成功调用"],
+  [/^balance exhausted$/u, "余额不足，需要跟进续费"],
+  [/^inactive with positive balance$/u, "账户仍有余额，但已较长时间未使用"],
+  [/^healthy active user$/u, "用户当前使用正常"],
   [/首次支付时间不为空/gu, "已完成首单"],
   [/首次支付时间为空/gu, "尚未完成首单"],
   [/是否进入支付等于 (?:是|true)/gu, "已进入支付流程"],

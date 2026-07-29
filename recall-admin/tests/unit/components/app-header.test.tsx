@@ -20,15 +20,15 @@ describe("AppHeader", () => {
   });
 
   it.each([
-    ["/dashboard", "运营驾驶舱"],
+    ["/dashboard", "用户运营概览"],
     ["/tasks", "任务中心"],
     ["/tasks/task-1", "任务中心"],
     ["/users", "用户中心"],
     ["/users/user-1", "用户中心"],
     ["/mail", "邮件中心"],
     ["/automation/segments", "用户分组"],
-    ["/automation/assignment", "分配规则"],
-    ["/automation/notifications", "通知策略"],
+    ["/automation/assignment", "客户分配"],
+    ["/automation/notifications", "提醒设置"],
     ["/reports", "数据报表"],
     ["/members", "成员与权限"],
     ["/settings", "系统设置"]

@@ -6,6 +6,10 @@ const e2eBaseUrl = `http://127.0.0.1:${e2ePort}`;
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: false,
+  // The E2E files share one disposable database and create/delete
+  // relational fixtures. Run them serially so one file cannot remove
+  // a fixture while another page is still reading it.
+  workers: 1,
   retries: process.env.CI ? 2 : 0,
   reporter: "list",
   use: {

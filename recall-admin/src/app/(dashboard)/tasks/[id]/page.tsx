@@ -6,6 +6,20 @@ import styles from "@/components/workspaces/workspace.module.css";
 import { prisma } from "@/lib/db/prisma";
 import { requireWorkspaceMember } from "@/modules/admin/page-access";
 import { getTaskDetail } from "@/modules/tasks/task-queries";
+import {
+  mailComposeHref
+} from "@/modules/mail/compose-link";
+import {
+  operationalLocationLabel,
+  paymentStatusLabel
+} from "@/modules/users/presentation";
+import {
+  presentTaskOrigin,
+  presentTaskPriority,
+  presentTaskStatus
+} from "@/modules/presentation/status";
+import { presentAssignmentReason } from "@/modules/presentation/tasks";
+import { presentSegmentReason } from "@/modules/segmentation/present-reason";
 
 function dateTime(value: Date | null): string {
   if (!value) return "—";
@@ -19,16 +33,6 @@ function dateTime(value: Date | null): string {
     timeZone: "Asia/Shanghai"
   }).format(value);
 }
-
-const statusLabels = {
-  UNASSIGNED: "公共任务池",
-  TODO: "待处理",
-  IN_PROGRESS: "处理中",
-  WAITING_USER: "等待用户",
-  COMPLETED: "已完成",
-  PAUSED: "已暂停",
-  CANCELLED: "已取消"
-} as const;
 
 const actionLabels: Record<string, string> = {
   "task.claimed": "领取任务",
@@ -81,14 +85,14 @@ export default async function TaskDetailPage({
             ← 返回任务中心
           </Link>
           <h1>{task.title}</h1>
-          <p>{task.reason}</p>
+          <p>{presentSegmentReason(task.reason)}</p>
         </div>
         <div className={styles.headingActions}>
           <span className={styles.status}>
-            {statusLabels[task.status]}
+            {presentTaskStatus(task.status)}
           </span>
           <span className={styles.priority}>
-            {task.priority}
+            {presentTaskPriority(task.priority)}
           </span>
         </div>
       </header>
@@ -99,17 +103,17 @@ export default async function TaskDetailPage({
             <div className={styles.panelHeader}>
               <div>
                 <h2>任务详情</h2>
-                <p>{task.assignmentReason || "等待分配"}</p>
+                <p>{presentAssignmentReason(task.assignmentReason)}</p>
               </div>
             </div>
             <div className={styles.summaryGrid}>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>状态</span>
-                <strong>{statusLabels[task.status]}</strong>
+                <strong>{presentTaskStatus(task.status)}</strong>
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>优先级</span>
-                <strong>{task.priority}</strong>
+                <strong>{presentTaskPriority(task.priority)}</strong>
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>截止时间</span>
@@ -123,7 +127,7 @@ export default async function TaskDetailPage({
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>任务来源</span>
-                <strong>{task.origin}</strong>
+                <strong>{presentTaskOrigin(task.origin)}</strong>
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>创建时间</span>
@@ -136,13 +140,13 @@ export default async function TaskDetailPage({
             <div className={styles.panelHeader}>
               <div>
                 <h2>关联用户</h2>
-                <p>处理任务所需的当前用户上下文</p>
+                <p>联系和跟进这位用户所需的信息</p>
               </div>
               <Link
                 className={styles.backLink}
                 href={`/users/${task.user.id}`}
               >
-                打开用户 360
+                查看用户详情
               </Link>
             </div>
             <div className={styles.summaryGrid}>
@@ -152,7 +156,15 @@ export default async function TaskDetailPage({
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>完整邮箱</span>
-                <strong>{task.user.email}</strong>
+                <Link
+                  className={styles.primaryLink}
+                  href={mailComposeHref({
+                    userId: task.user.id,
+                    taskId: task.id
+                  })}
+                >
+                  {task.user.email}
+                </Link>
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>当前分组</span>
@@ -161,14 +173,17 @@ export default async function TaskDetailPage({
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>国家 / 地区</span>
                 <strong>
-                  {[task.user.countryCode, task.user.region]
-                    .filter(Boolean)
-                    .join(" · ") || "待确认"}
+                  {operationalLocationLabel(task.user)}
                 </strong>
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>支付状态</span>
-                <strong>{task.user.paymentStatus}</strong>
+                <strong>
+                  {paymentStatusLabel(
+                    task.user.paymentStatus,
+                    task.user.totalPaidMinor
+                  )}
+                </strong>
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>成功调用</span>
@@ -201,7 +216,7 @@ export default async function TaskDetailPage({
                     <div>
                       <strong>
                         {actionLabels[activity.action] ||
-                          activity.action}
+                          "任务状态发生变化"}
                       </strong>
                       <p>
                         {activity.actorId
@@ -227,13 +242,14 @@ export default async function TaskDetailPage({
             <div className={styles.panelHeader}>
               <div>
                 <h2>处理任务</h2>
-                <p>可用动作由当前任务状态和负责人决定</p>
+                <p>选择下一步跟进动作</p>
               </div>
             </div>
             <TaskActions
               operators={operators}
               task={{
                 id: task.id,
+                userId: task.user.id,
                 status: task.status,
                 assigneeId: task.assigneeId
               }}
@@ -245,24 +261,12 @@ export default async function TaskDetailPage({
             <div className={styles.panelHeader}>
               <div>
                 <h2>添加用户备注</h2>
-                <p>备注会同步到用户 360 时间线</p>
+                <p>备注会显示在用户的运营时间线中</p>
               </div>
             </div>
             <UserNoteForm userId={task.user.id} />
           </section>
 
-          <section className={styles.panel}>
-            <div className={styles.panelHeader}>
-              <div>
-                <h2>建议沟通</h2>
-                <p>邮件模板将在邮件中心完成后接入</p>
-              </div>
-            </div>
-            <div className={styles.empty}>
-              <strong>先人工确认沟通内容</strong>
-              <p>当前阶段不会自动向用户发送未经审核的邮件。</p>
-            </div>
-          </section>
         </aside>
       </div>
     </main>

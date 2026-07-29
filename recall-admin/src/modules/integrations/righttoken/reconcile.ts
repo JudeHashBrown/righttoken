@@ -97,7 +97,7 @@ function sourceFacts(snapshot: RightTokenUserSnapshot) {
       snapshot.balanceUsdMinor ?? snapshot.balanceMinor,
     balanceChangedAt: snapshot.updatedAt,
     anomalyActive: snapshot.anomalyActive,
-    anomalyChangedAt: snapshot.updatedAt,
+    anomalyChangedAt: snapshot.anomalyChangedAt,
     profileChangedAt: snapshot.updatedAt,
     lastExternalEventAt: snapshot.updatedAt,
     sourceDeletedAt: snapshot.deletedAt ?? null,

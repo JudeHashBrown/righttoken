@@ -46,7 +46,8 @@ function conditionValue(clause: SegmentClause): unknown {
     [
       "registrationElapsed",
       "lastCallElapsed",
-      "emptyBalanceElapsed"
+      "emptyBalanceElapsed",
+      "anomalyElapsed"
     ].includes(clause.field)
   ) {
     const multiplier = durationMultiplier(clause.unit);

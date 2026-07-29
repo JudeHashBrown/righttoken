@@ -73,4 +73,26 @@ describe("next structured-rule boundary", () => {
       expectedSegment: "F"
     });
   });
+
+  it("schedules automatic F expiry exactly 24 hours after the trigger", () => {
+    const anomalyAt = new Date("2026-07-23T09:30:00.000Z");
+
+    expect(
+      getNextRuleBoundary(
+        {
+          ...base,
+          anomalyActive: true,
+          anomalyChangedAt: anomalyAt
+        },
+        defaultSegmentRuleSet,
+        4,
+        now,
+        { includeTask: false }
+      )
+    ).toMatchObject({
+      runAt: new Date("2026-07-24T09:30:00.000Z"),
+      purpose: "RULE",
+      boundaryKey: expect.stringContaining("anomalyElapsed")
+    });
+  });
 });

@@ -30,12 +30,12 @@ describe("AppSidebar", () => {
       />
     );
 
-    expect(screen.getByText("运营驾驶舱")).toBeInTheDocument();
+    expect(screen.getByText("用户运营概览")).toBeInTheDocument();
     expect(screen.getByText("任务中心")).toBeInTheDocument();
     expect(screen.getByText("28")).toBeInTheDocument();
     expect(screen.queryByText("成员与权限")).not.toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /运营驾驶舱/ })
+      screen.getByRole("link", { name: /用户运营概览/ })
     ).toHaveAttribute("aria-current", "page");
   });
 

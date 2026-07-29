@@ -15,8 +15,8 @@ export function ChannelHealth({
     <section className={styles.panel} aria-labelledby="channel-heading">
       <header className={styles.panelHeader}>
         <div>
-          <h2 id="channel-heading">渠道健康</h2>
-          <p>邮箱与运营提醒连接状态</p>
+          <h2 id="channel-heading">联系渠道</h2>
+          <p>客服邮箱和企业微信是否可以正常使用</p>
         </div>
         <ShieldCheck aria-hidden="true" size={18} />
       </header>

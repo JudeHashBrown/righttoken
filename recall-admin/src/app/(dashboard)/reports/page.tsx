@@ -1,6 +1,10 @@
 import styles from "@/components/workspaces/workspace.module.css";
 import { requireWorkspaceMember } from "@/modules/admin/page-access";
 import { getReportWorkspaceOverview } from "@/modules/admin/workspace-queries";
+import {
+  presentAuditAction,
+  presentAuditEntity
+} from "@/modules/presentation/audit";
 
 function rate(numerator: number, denominator: number): string {
   if (!denominator) return "—";
@@ -20,7 +24,7 @@ export default async function ReportsPage(): Promise<React.JSX.Element> {
         </div>
         {member.role === "PRIMARY_ADMIN" ? (
           <a className={styles.button} href="/api/users/export">
-            导出用户 CSV
+            导出用户名单（CSV）
           </a>
         ) : (
           <span className={styles.status}>在线查看</span>
@@ -78,7 +82,7 @@ export default async function ReportsPage(): Promise<React.JSX.Element> {
           <div className={styles.panelHeader}>
             <div>
               <h2>最近操作记录</h2>
-              <p>只展示当前账号有权查看的审计摘要</p>
+              <p>只展示当前账号有权查看的管理操作</p>
             </div>
           </div>
           {report.audits.length ? (
@@ -86,10 +90,10 @@ export default async function ReportsPage(): Promise<React.JSX.Element> {
               {report.audits.map((audit) => (
                 <li className={styles.listItem} key={audit.id}>
                   <div>
-                    <strong>{audit.action}</strong>
+                    <strong>{presentAuditAction(audit.action)}</strong>
                     <p>
                       {audit.actor?.displayName || "系统"} ·{" "}
-                      {audit.entityType}
+                      {presentAuditEntity(audit.entityType)}
                     </p>
                   </div>
                 </li>
@@ -98,7 +102,7 @@ export default async function ReportsPage(): Promise<React.JSX.Element> {
           ) : (
             <div className={styles.empty}>
               <strong>暂无操作记录</strong>
-              <p>规则、成员和任务操作会留下不可修改的审计摘要。</p>
+              <p>分组、成员和任务操作会自动留存记录。</p>
             </div>
           )}
         </section>

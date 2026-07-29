@@ -5,6 +5,9 @@ import type {
 import {
   MailAssetList
 } from "@/components/mail/mail-asset-list";
+import {
+  operationalLocationLabel
+} from "@/modules/users/presentation";
 
 function hydrateMessageHtml(
   bodyHtml: string,
@@ -99,9 +102,7 @@ export function MailConversationDetail({
         <div className={styles.mailUserFacts}>
           <span>{thread.user.currentSegment} 组</span>
           <span>
-            {[thread.user.countryCode, thread.user.region]
-              .filter(Boolean)
-              .join(" · ") || "地区待确认"}
+            {operationalLocationLabel(thread.user)}
           </span>
           <span>
             {thread.user.owner?.displayName || "公共池"}

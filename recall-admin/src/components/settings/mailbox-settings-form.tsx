@@ -45,7 +45,7 @@ export function MailboxSettingsForm(): React.JSX.Element {
         })
       });
       if (!response.ok) {
-        setError("邮箱连接未保存，请检查账号与服务器参数。");
+        setError("邮箱连接未保存，请检查账号和收发邮件设置。");
         return;
       }
       setSuccess("邮箱连接已安全保存");
@@ -62,7 +62,7 @@ export function MailboxSettingsForm(): React.JSX.Element {
       <div className={styles.panelHeader}>
         <div>
           <h2>连接客服邮箱</h2>
-          <p>密码会在服务端整体加密，保存后页面不会再次显示</p>
+          <p>密码会加密保存，保存后页面不会再次显示</p>
         </div>
       </div>
       <form className={styles.formBody} onSubmit={handleSubmit}>
@@ -78,7 +78,7 @@ export function MailboxSettingsForm(): React.JSX.Element {
             >
               <option value="NAMECHEAP">Namecheap Private Email</option>
               <option value="WECOM_MAIL">企业微信邮箱</option>
-              <option value="CUSTOM">自定义 SMTP/IMAP</option>
+              <option value="CUSTOM">其他邮箱（手动设置）</option>
             </select>
           </div>
           <div className={styles.field}>
@@ -104,7 +104,7 @@ export function MailboxSettingsForm(): React.JSX.Element {
             />
           </div>
           <div className={styles.field}>
-            <label htmlFor="mailbox-address">邮箱地址</label>
+            <label htmlFor="mailbox-address">对外显示的邮箱地址</label>
             <input
               className={styles.input}
               id="mailbox-address"
@@ -115,7 +115,9 @@ export function MailboxSettingsForm(): React.JSX.Element {
             />
           </div>
           <div className={styles.field}>
-            <label htmlFor="mailbox-username">邮箱账号</label>
+            <label htmlFor="mailbox-username">
+              登录账号（通常与邮箱地址相同）
+            </label>
             <input
               className={styles.input}
               id="mailbox-username"
@@ -137,7 +139,7 @@ export function MailboxSettingsForm(): React.JSX.Element {
             />
           </div>
           <div className={styles.field}>
-            <label htmlFor="smtp-host">SMTP 主机</label>
+            <label htmlFor="smtp-host">发件服务器地址</label>
             <input
               className={styles.input}
               id="smtp-host"
@@ -148,7 +150,7 @@ export function MailboxSettingsForm(): React.JSX.Element {
             />
           </div>
           <div className={styles.field}>
-            <label htmlFor="smtp-port">SMTP 端口</label>
+            <label htmlFor="smtp-port">发件服务器端口</label>
             <input
               className={styles.input}
               id="smtp-port"
@@ -162,7 +164,7 @@ export function MailboxSettingsForm(): React.JSX.Element {
             />
           </div>
           <div className={styles.field}>
-            <label htmlFor="imap-host">IMAP 主机</label>
+            <label htmlFor="imap-host">收件服务器地址</label>
             <input
               className={styles.input}
               id="imap-host"
@@ -173,7 +175,7 @@ export function MailboxSettingsForm(): React.JSX.Element {
             />
           </div>
           <div className={styles.field}>
-            <label htmlFor="imap-port">IMAP 端口</label>
+            <label htmlFor="imap-port">收件服务器端口</label>
             <input
               className={styles.input}
               id="imap-port"
@@ -195,7 +197,7 @@ export function MailboxSettingsForm(): React.JSX.Element {
               defaultChecked
               disabled={submitting}
             />
-            SMTP 使用 SSL/TLS
+            发件服务器使用安全连接
           </label>
           <label className={styles.toggle}>
             <input
@@ -204,7 +206,7 @@ export function MailboxSettingsForm(): React.JSX.Element {
               defaultChecked
               disabled={submitting}
             />
-            IMAP 使用 SSL/TLS
+            收件服务器使用安全连接
           </label>
           <label className={styles.toggle}>
             <input

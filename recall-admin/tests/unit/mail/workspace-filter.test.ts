@@ -12,7 +12,10 @@ describe("mail workspace filter", () => {
       })
     ).toEqual({
       view: "pending",
-      selectedId: "thread-1"
+      selectedId: "thread-1",
+      compose: false,
+      composeUserId: null,
+      composeTaskId: null
     });
   });
 
@@ -23,7 +26,27 @@ describe("mail workspace filter", () => {
       })
     ).toEqual({
       view: "templates",
-      selectedId: null
+      selectedId: null,
+      compose: false,
+      composeUserId: null,
+      composeTaskId: null
+    });
+  });
+
+  it("accepts task-linked compose state", () => {
+    expect(
+      parseMailWorkspaceFilter({
+        view: "replies",
+        compose: "1",
+        userId: "user-1",
+        taskId: "task-1"
+      })
+    ).toEqual({
+      view: "replies",
+      selectedId: null,
+      compose: true,
+      composeUserId: "user-1",
+      composeTaskId: "task-1"
     });
   });
 
@@ -35,7 +58,10 @@ describe("mail workspace filter", () => {
       })
     ).toEqual({
       view: "replies",
-      selectedId: null
+      selectedId: null,
+      compose: false,
+      composeUserId: null,
+      composeTaskId: null
     });
   });
 });

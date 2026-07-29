@@ -35,7 +35,7 @@ export function MailStatLinks({
       href: "/mail?view=unsubscribed",
       label: "已退订用户",
       value: String(stats.unsubscribedUsers),
-      detail: "发送前由服务端拦截"
+      detail: "系统会阻止继续发送"
     },
     {
       href: "/mail?view=mailboxes",
@@ -45,9 +45,9 @@ export function MailStatLinks({
     },
     {
       href: "/mail?view=unmatched",
-      label: "人工归档箱",
+      label: "待关联来信",
       value: String(stats.unmatchedMessages),
-      detail: "关联无法自动识别的来信"
+      detail: "为暂时无法识别的来信选择用户"
     },
     {
       href: "/mail?view=drafts",
@@ -63,9 +63,9 @@ export function MailStatLinks({
     },
     {
       href: "/mail?view=sync",
-      label: "最近同步",
-      value: stats.lastSyncRan ? "已运行" : "未运行",
-      detail: "查看各邮箱同步结果"
+      label: "最近收取邮件",
+      value: stats.lastSyncRan ? "已完成" : "尚未执行",
+      detail: "查看各邮箱最近一次收信结果"
     }
   ];
 

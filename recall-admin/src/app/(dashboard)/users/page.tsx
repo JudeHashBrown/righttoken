@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { SegmentCode } from "@/generated/prisma/client";
 import { UserTable } from "@/components/tables/user-table";
+import { SegmentQuickFilter } from "@/components/users/segment-quick-filter";
 import styles from "@/components/workspaces/workspace.module.css";
 import { prisma } from "@/lib/db/prisma";
 import { requireWorkspaceMember } from "@/modules/admin/page-access";
@@ -74,13 +75,13 @@ export default async function UsersPage({
         <div>
           <h1>用户中心</h1>
           <p>
-            查看用户当前分组、完整邮箱、业务事实、负责人和下一项运营任务。
+            查看用户当前分组、完整邮箱、付费与使用情况、负责人和下一项运营任务。
             完整注册 IP 仅在用户详情页展示。
           </p>
         </div>
       </header>
 
-      <form className={styles.filterBar}>
+      <form className={`${styles.filterBar} ${styles.userFilterBar}`}>
         <div className={`${styles.field} ${styles.fieldGrow}`}>
           <label htmlFor="user-search">搜索用户</label>
           <input
@@ -92,35 +93,18 @@ export default async function UsersPage({
             placeholder="用户编号、邮箱或姓名（至少 3 个字符）"
           />
         </div>
-        <div className={styles.field}>
-          <label htmlFor="user-segment">分组</label>
-          <select
-            className={styles.select}
-            defaultValue={segment}
-            id="user-segment"
-            name="segment"
-          >
-            <option value="">全部分组</option>
-            {(["A", "B", "C", "D", "E", "F", "G"] as const).map(
-              (value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              )
-            )}
-          </select>
-        </div>
-        <div className={styles.field}>
+        <SegmentQuickFilter selectedSegment={segment} />
+        <div className={`${styles.field} ${styles.userFilterCompact}`}>
           <label htmlFor="user-country">国家</label>
           <input
             className={styles.input}
             defaultValue={first(params.countryCode)}
             id="user-country"
             name="countryCode"
-            placeholder="例如 US"
+            placeholder="例如 中国或 CN"
           />
         </div>
-        <div className={styles.field}>
+        <div className={`${styles.field} ${styles.userFilterCompact}`}>
           <label htmlFor="user-region">地区</label>
           <input
             className={styles.input}
@@ -131,7 +115,7 @@ export default async function UsersPage({
           />
         </div>
         {owners.length ? (
-          <div className={styles.field}>
+          <div className={`${styles.field} ${styles.userFilterOwner}`}>
             <label htmlFor="user-owner">负责人</label>
             <select
               className={styles.select}

@@ -8,6 +8,9 @@ import {
 } from "@/modules/auth/guards";
 import { createSmtpImapAdapter } from "@/modules/mail/adapters/smtp-imap";
 import { getMailboxRuntimeConfig } from "@/modules/mail/mailbox-credentials";
+import {
+  classifyMailSyncError
+} from "@/modules/mail/sync-error";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -48,17 +51,23 @@ export async function POST(
         { status: error instanceof UnauthorizedError ? 401 : 403 }
       );
     }
+    const code = classifyMailSyncError(error);
     await prisma.mailbox
       .update({
         where: { id },
         data: {
           lastTestedAt: testedAt,
-          lastErrorCode: "MAILBOX_CONNECTION_FAILED"
+          lastErrorCode: code
         }
       })
       .catch(() => undefined);
+    console.error("mailbox_connection_test_failed", {
+      mailboxId: id,
+      stage: "connection_test",
+      code
+    });
     return NextResponse.json(
-      { code: "MAILBOX_CONNECTION_FAILED" },
+      { code },
       { status: 502 }
     );
   }
