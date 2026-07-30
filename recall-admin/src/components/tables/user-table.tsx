@@ -3,6 +3,7 @@ import type { UserListItem } from "@/modules/users/user-queries";
 import styles from "@/components/workspaces/workspace.module.css";
 import { UserOwnerControl } from "@/components/users/user-owner-control";
 import {
+  locationAssignmentLabel,
   operationalLocationDisplay,
   ownerAssignmentLabel,
   ownerDisplayName,
@@ -99,6 +100,13 @@ export function UserTable({
                   <span className={styles.secondaryText}>
                     {location.secondary}
                   </span>
+                  {user.locationAssignmentMode === "MANUAL" ? (
+                    <span className={styles.secondaryText}>
+                      {locationAssignmentLabel(
+                        user.locationAssignmentMode
+                      )}
+                    </span>
+                  ) : null}
                 </td>
                 <td>
                   {paymentStatusLabel(

@@ -97,6 +97,7 @@ export async function getMailWorkspaceData(
     mailboxes,
     unmatchedMessages,
     draftMessages,
+    sentMessages,
     failedMessages,
     templates
   ] = await Promise.all([
@@ -137,6 +138,13 @@ export async function getMailWorkspaceData(
         ...messages,
         direction: "OUTBOUND",
         status: "DRAFT"
+      }
+    }),
+    prisma.mailMessage.count({
+      where: {
+        ...messages,
+        direction: "OUTBOUND",
+        status: "SENT"
       }
     }),
     prisma.mailMessage.count({
@@ -234,6 +242,7 @@ export async function getMailWorkspaceData(
       totalMailboxes: mailboxes.length,
       unmatchedMessages,
       draftMessages,
+      sentMessages,
       failedMessages,
       lastSyncRan: mailboxes.some(
         (mailbox) => mailbox.lastSyncedAt
@@ -318,6 +327,7 @@ async function listItems(
   if (
     filter.view === "unmatched" ||
     filter.view === "drafts" ||
+    filter.view === "sent" ||
     filter.view === "failed"
   ) {
     const status =
@@ -325,7 +335,9 @@ async function listItems(
         ? "UNMATCHED"
         : filter.view === "drafts"
           ? "DRAFT"
-          : "FAILED";
+          : filter.view === "sent"
+            ? "SENT"
+            : "FAILED";
     const rows = await prisma.mailMessage.findMany({
       where: {
         ...messages,
@@ -342,6 +354,7 @@ async function listItems(
         subject: true,
         bodyText: true,
         fromAddress: true,
+        toAddresses: true,
         status: true,
         createdAt: true,
         receivedAt: true,
@@ -356,22 +369,28 @@ async function listItems(
       }
     });
     return rows.map((message) => ({
-      id: message.threadId ?? message.id,
+      id:
+        filter.view === "sent"
+          ? message.id
+          : message.threadId ?? message.id,
       messageId: message.id,
       kind:
-        message.threadId !== null
+        filter.view !== "sent" && message.threadId !== null
           ? ("THREAD" as const)
           : ("MESSAGE" as const),
       title: message.subject,
       subtitle:
-        message.user?.displayName ||
-        message.user?.externalUserId ||
-        message.fromAddress,
+        filter.view === "sent"
+          ? message.toAddresses.join("、")
+          : message.user?.displayName ||
+            message.user?.externalUserId ||
+            message.fromAddress,
       preview: message.bodyText.slice(0, 160),
       occurredAt: iso(
         message.receivedAt ?? message.sentAt ?? message.createdAt
       ),
-      status: message.status
+      status:
+        filter.view === "sent" ? "已发送" : message.status
     }));
   }
 
@@ -518,6 +537,62 @@ async function selectedItem(
               previewUrl: `/api/mail/assets/${usage.asset.id}`
             })),
             receivedAt: iso(message.receivedAt),
+            createdAt: message.createdAt.toISOString()
+          }
+        }
+      : null;
+  }
+  if (filter.view === "sent" && filter.selectedId) {
+    const message = await prisma.mailMessage.findFirst({
+      where: {
+        id: filter.selectedId,
+        ...messageScope(viewer),
+        direction: "OUTBOUND",
+        status: "SENT"
+      },
+      select: {
+        id: true,
+        fromAddress: true,
+        toAddresses: true,
+        subject: true,
+        bodyText: true,
+        bodyHtml: true,
+        externalImagesBlocked: true,
+        assets: {
+          orderBy: { sortOrder: "asc" },
+          select: {
+            disposition: true,
+            cid: true,
+            sortOrder: true,
+            asset: {
+              select: {
+                id: true,
+                fileName: true,
+                contentType: true,
+                byteSize: true,
+                width: true,
+                height: true
+              }
+            }
+          }
+        },
+        sentAt: true,
+        createdAt: true
+      }
+    });
+    return message
+      ? {
+          kind: "message" as const,
+          message: {
+            ...message,
+            assets: message.assets.map((usage) => ({
+              ...usage.asset,
+              disposition: usage.disposition,
+              cid: usage.cid,
+              sortOrder: usage.sortOrder,
+              previewUrl: `/api/mail/assets/${usage.asset.id}`
+            })),
+            sentAt: iso(message.sentAt),
             createdAt: message.createdAt.toISOString()
           }
         }

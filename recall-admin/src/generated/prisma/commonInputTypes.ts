@@ -172,6 +172,13 @@ export type EnumLocationAttributionSourceNullableFilter<$PrismaModel = never> = 
   not?: Prisma.NestedEnumLocationAttributionSourceNullableFilter<$PrismaModel> | $Enums.LocationAttributionSource | null
 }
 
+export type EnumLocationAssignmentModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.LocationAssignmentMode | Prisma.EnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  in?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLocationAssignmentModeFilter<$PrismaModel> | $Enums.LocationAssignmentMode
+}
+
 export type IntFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
@@ -205,6 +212,16 @@ export type EnumLocationAttributionSourceNullableWithAggregatesFilter<$PrismaMod
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumLocationAttributionSourceNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumLocationAttributionSourceNullableFilter<$PrismaModel>
+}
+
+export type EnumLocationAssignmentModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.LocationAssignmentMode | Prisma.EnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  in?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLocationAssignmentModeWithAggregatesFilter<$PrismaModel> | $Enums.LocationAssignmentMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumLocationAssignmentModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumLocationAssignmentModeFilter<$PrismaModel>
 }
 
 export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -730,6 +747,13 @@ export type NestedEnumLocationAttributionSourceNullableFilter<$PrismaModel = nev
   not?: Prisma.NestedEnumLocationAttributionSourceNullableFilter<$PrismaModel> | $Enums.LocationAttributionSource | null
 }
 
+export type NestedEnumLocationAssignmentModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.LocationAssignmentMode | Prisma.EnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  in?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLocationAssignmentModeFilter<$PrismaModel> | $Enums.LocationAssignmentMode
+}
+
 export type NestedEnumSegmentCodeFilter<$PrismaModel = never> = {
   equals?: $Enums.SegmentCode | Prisma.EnumSegmentCodeFieldRefInput<$PrismaModel>
   in?: $Enums.SegmentCode[] | Prisma.ListEnumSegmentCodeFieldRefInput<$PrismaModel>
@@ -752,6 +776,16 @@ export type NestedEnumLocationAttributionSourceNullableWithAggregatesFilter<$Pri
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumLocationAttributionSourceNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumLocationAttributionSourceNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumLocationAssignmentModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.LocationAssignmentMode | Prisma.EnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  in?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLocationAssignmentModeWithAggregatesFilter<$PrismaModel> | $Enums.LocationAssignmentMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumLocationAssignmentModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumLocationAssignmentModeFilter<$PrismaModel>
 }
 
 export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {

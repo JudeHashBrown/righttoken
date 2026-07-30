@@ -13,19 +13,28 @@ describe("SegmentQuickFilter", () => {
 
     expect(
       screen.getAllByRole("button").map((button) => button.textContent)
-    ).toEqual(["全部", "F", "A", "B", "C", "D", "E", "G"]);
+    ).toEqual([
+      "全部全部用户",
+      "F服务异常",
+      "A注册未支付",
+      "B支付未完成",
+      "C充值未调用",
+      "D长期未调用",
+      "E余额不足",
+      "G健康或其他"
+    ]);
     expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "F" })).toHaveAttribute(
-      "aria-pressed",
-      "true"
-    );
-    expect(screen.getByRole("button", { name: "A" })).toHaveAttribute(
-      "name",
-      "segment"
-    );
-    expect(screen.getByRole("button", { name: "A" })).toHaveAttribute(
-      "value",
-      "A"
-    );
+    expect(
+      screen.getByRole("button", { name: "F 服务异常" })
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(
+      screen.getByRole("button", { name: "A 注册未支付" })
+    ).toHaveAttribute("name", "segment");
+    expect(
+      screen.getByRole("button", { name: "A 注册未支付" })
+    ).toHaveAttribute("value", "A");
+    expect(
+      screen.getByRole("button", { name: "G 健康或其他" })
+    ).toBeVisible();
   });
 });

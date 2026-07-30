@@ -58,6 +58,10 @@ export type UserProfileMinAggregateOutputType = {
   locationSource: $Enums.LocationAttributionSource | null
   locationRuleId: string | null
   locationEvaluatedAt: Date | null
+  locationAssignmentMode: $Enums.LocationAssignmentMode | null
+  locationAssignedAt: Date | null
+  locationAssignedById: string | null
+  locationAssignmentReason: string | null
   language: string | null
   timezone: string | null
   source: string | null
@@ -108,6 +112,10 @@ export type UserProfileMaxAggregateOutputType = {
   locationSource: $Enums.LocationAttributionSource | null
   locationRuleId: string | null
   locationEvaluatedAt: Date | null
+  locationAssignmentMode: $Enums.LocationAssignmentMode | null
+  locationAssignedAt: Date | null
+  locationAssignedById: string | null
+  locationAssignmentReason: string | null
   language: string | null
   timezone: string | null
   source: string | null
@@ -158,6 +166,10 @@ export type UserProfileCountAggregateOutputType = {
   locationSource: number
   locationRuleId: number
   locationEvaluatedAt: number
+  locationAssignmentMode: number
+  locationAssignedAt: number
+  locationAssignedById: number
+  locationAssignmentReason: number
   language: number
   timezone: number
   source: number
@@ -226,6 +238,10 @@ export type UserProfileMinAggregateInputType = {
   locationSource?: true
   locationRuleId?: true
   locationEvaluatedAt?: true
+  locationAssignmentMode?: true
+  locationAssignedAt?: true
+  locationAssignedById?: true
+  locationAssignmentReason?: true
   language?: true
   timezone?: true
   source?: true
@@ -276,6 +292,10 @@ export type UserProfileMaxAggregateInputType = {
   locationSource?: true
   locationRuleId?: true
   locationEvaluatedAt?: true
+  locationAssignmentMode?: true
+  locationAssignedAt?: true
+  locationAssignedById?: true
+  locationAssignmentReason?: true
   language?: true
   timezone?: true
   source?: true
@@ -326,6 +346,10 @@ export type UserProfileCountAggregateInputType = {
   locationSource?: true
   locationRuleId?: true
   locationEvaluatedAt?: true
+  locationAssignmentMode?: true
+  locationAssignedAt?: true
+  locationAssignedById?: true
+  locationAssignmentReason?: true
   language?: true
   timezone?: true
   source?: true
@@ -463,6 +487,10 @@ export type UserProfileGroupByOutputType = {
   locationSource: $Enums.LocationAttributionSource | null
   locationRuleId: string | null
   locationEvaluatedAt: Date | null
+  locationAssignmentMode: $Enums.LocationAssignmentMode
+  locationAssignedAt: Date | null
+  locationAssignedById: string | null
+  locationAssignmentReason: string | null
   language: string | null
   timezone: string | null
   source: string | null
@@ -536,6 +564,10 @@ export type UserProfileWhereInput = {
   locationSource?: Prisma.EnumLocationAttributionSourceNullableFilter<"UserProfile"> | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   locationEvaluatedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFilter<"UserProfile"> | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  locationAssignedById?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  locationAssignmentReason?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   language?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   timezone?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   source?: Prisma.StringNullableFilter<"UserProfile"> | string | null
@@ -578,6 +610,7 @@ export type UserProfileWhereInput = {
   mailThreads?: Prisma.MailThreadListRelationFilter
   mailMessages?: Prisma.MailMessageListRelationFilter
   locationRule?: Prisma.XOR<Prisma.LocationAttributionRuleNullableScalarRelationFilter, Prisma.LocationAttributionRuleWhereInput> | null
+  locationAssignedBy?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
 }
 
 export type UserProfileOrderByWithRelationInput = {
@@ -596,6 +629,10 @@ export type UserProfileOrderByWithRelationInput = {
   locationSource?: Prisma.SortOrderInput | Prisma.SortOrder
   locationRuleId?: Prisma.SortOrderInput | Prisma.SortOrder
   locationEvaluatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  locationAssignmentMode?: Prisma.SortOrder
+  locationAssignedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  locationAssignedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  locationAssignmentReason?: Prisma.SortOrderInput | Prisma.SortOrder
   language?: Prisma.SortOrderInput | Prisma.SortOrder
   timezone?: Prisma.SortOrderInput | Prisma.SortOrder
   source?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -638,6 +675,7 @@ export type UserProfileOrderByWithRelationInput = {
   mailThreads?: Prisma.MailThreadOrderByRelationAggregateInput
   mailMessages?: Prisma.MailMessageOrderByRelationAggregateInput
   locationRule?: Prisma.LocationAttributionRuleOrderByWithRelationInput
+  locationAssignedBy?: Prisma.MemberOrderByWithRelationInput
 }
 
 export type UserProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -659,6 +697,10 @@ export type UserProfileWhereUniqueInput = Prisma.AtLeast<{
   locationSource?: Prisma.EnumLocationAttributionSourceNullableFilter<"UserProfile"> | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   locationEvaluatedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFilter<"UserProfile"> | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  locationAssignedById?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  locationAssignmentReason?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   language?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   timezone?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   source?: Prisma.StringNullableFilter<"UserProfile"> | string | null
@@ -701,6 +743,7 @@ export type UserProfileWhereUniqueInput = Prisma.AtLeast<{
   mailThreads?: Prisma.MailThreadListRelationFilter
   mailMessages?: Prisma.MailMessageListRelationFilter
   locationRule?: Prisma.XOR<Prisma.LocationAttributionRuleNullableScalarRelationFilter, Prisma.LocationAttributionRuleWhereInput> | null
+  locationAssignedBy?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
 }, "id" | "externalUserId">
 
 export type UserProfileOrderByWithAggregationInput = {
@@ -719,6 +762,10 @@ export type UserProfileOrderByWithAggregationInput = {
   locationSource?: Prisma.SortOrderInput | Prisma.SortOrder
   locationRuleId?: Prisma.SortOrderInput | Prisma.SortOrder
   locationEvaluatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  locationAssignmentMode?: Prisma.SortOrder
+  locationAssignedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  locationAssignedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  locationAssignmentReason?: Prisma.SortOrderInput | Prisma.SortOrder
   language?: Prisma.SortOrderInput | Prisma.SortOrder
   timezone?: Prisma.SortOrderInput | Prisma.SortOrder
   source?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -777,6 +824,10 @@ export type UserProfileScalarWhereWithAggregatesInput = {
   locationSource?: Prisma.EnumLocationAttributionSourceNullableWithAggregatesFilter<"UserProfile"> | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
   locationEvaluatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeWithAggregatesFilter<"UserProfile"> | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
+  locationAssignedById?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
+  locationAssignmentReason?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
   language?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
   timezone?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
   source?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
@@ -826,6 +877,9 @@ export type UserProfileCreateInput = {
   ipRegion?: string | null
   locationSource?: $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -866,6 +920,7 @@ export type UserProfileCreateInput = {
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
 
 export type UserProfileUncheckedCreateInput = {
@@ -884,6 +939,10 @@ export type UserProfileUncheckedCreateInput = {
   locationSource?: $Enums.LocationAttributionSource | null
   locationRuleId?: string | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -940,6 +999,9 @@ export type UserProfileUpdateInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -980,6 +1042,7 @@ export type UserProfileUpdateInput = {
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
 
 export type UserProfileUncheckedUpdateInput = {
@@ -998,6 +1061,10 @@ export type UserProfileUncheckedUpdateInput = {
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1055,6 +1122,10 @@ export type UserProfileCreateManyInput = {
   locationSource?: $Enums.LocationAttributionSource | null
   locationRuleId?: string | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -1104,6 +1175,9 @@ export type UserProfileUpdateManyMutationInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1152,6 +1226,10 @@ export type UserProfileUncheckedUpdateManyInput = {
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1212,6 +1290,10 @@ export type UserProfileCountOrderByAggregateInput = {
   locationSource?: Prisma.SortOrder
   locationRuleId?: Prisma.SortOrder
   locationEvaluatedAt?: Prisma.SortOrder
+  locationAssignmentMode?: Prisma.SortOrder
+  locationAssignedAt?: Prisma.SortOrder
+  locationAssignedById?: Prisma.SortOrder
+  locationAssignmentReason?: Prisma.SortOrder
   language?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   source?: Prisma.SortOrder
@@ -1270,6 +1352,10 @@ export type UserProfileMaxOrderByAggregateInput = {
   locationSource?: Prisma.SortOrder
   locationRuleId?: Prisma.SortOrder
   locationEvaluatedAt?: Prisma.SortOrder
+  locationAssignmentMode?: Prisma.SortOrder
+  locationAssignedAt?: Prisma.SortOrder
+  locationAssignedById?: Prisma.SortOrder
+  locationAssignmentReason?: Prisma.SortOrder
   language?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   source?: Prisma.SortOrder
@@ -1320,6 +1406,10 @@ export type UserProfileMinOrderByAggregateInput = {
   locationSource?: Prisma.SortOrder
   locationRuleId?: Prisma.SortOrder
   locationEvaluatedAt?: Prisma.SortOrder
+  locationAssignmentMode?: Prisma.SortOrder
+  locationAssignedAt?: Prisma.SortOrder
+  locationAssignedById?: Prisma.SortOrder
+  locationAssignmentReason?: Prisma.SortOrder
   language?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   source?: Prisma.SortOrder
@@ -1386,6 +1476,13 @@ export type UserProfileCreateNestedManyWithoutOwnerAssignedByInput = {
   connect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
 }
 
+export type UserProfileCreateNestedManyWithoutLocationAssignedByInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutLocationAssignedByInput, Prisma.UserProfileUncheckedCreateWithoutLocationAssignedByInput> | Prisma.UserProfileCreateWithoutLocationAssignedByInput[] | Prisma.UserProfileUncheckedCreateWithoutLocationAssignedByInput[]
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutLocationAssignedByInput | Prisma.UserProfileCreateOrConnectWithoutLocationAssignedByInput[]
+  createMany?: Prisma.UserProfileCreateManyLocationAssignedByInputEnvelope
+  connect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+}
+
 export type UserProfileUncheckedCreateNestedManyWithoutOwnerInput = {
   create?: Prisma.XOR<Prisma.UserProfileCreateWithoutOwnerInput, Prisma.UserProfileUncheckedCreateWithoutOwnerInput> | Prisma.UserProfileCreateWithoutOwnerInput[] | Prisma.UserProfileUncheckedCreateWithoutOwnerInput[]
   connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutOwnerInput | Prisma.UserProfileCreateOrConnectWithoutOwnerInput[]
@@ -1397,6 +1494,13 @@ export type UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput = {
   create?: Prisma.XOR<Prisma.UserProfileCreateWithoutOwnerAssignedByInput, Prisma.UserProfileUncheckedCreateWithoutOwnerAssignedByInput> | Prisma.UserProfileCreateWithoutOwnerAssignedByInput[] | Prisma.UserProfileUncheckedCreateWithoutOwnerAssignedByInput[]
   connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutOwnerAssignedByInput | Prisma.UserProfileCreateOrConnectWithoutOwnerAssignedByInput[]
   createMany?: Prisma.UserProfileCreateManyOwnerAssignedByInputEnvelope
+  connect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+}
+
+export type UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutLocationAssignedByInput, Prisma.UserProfileUncheckedCreateWithoutLocationAssignedByInput> | Prisma.UserProfileCreateWithoutLocationAssignedByInput[] | Prisma.UserProfileUncheckedCreateWithoutLocationAssignedByInput[]
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutLocationAssignedByInput | Prisma.UserProfileCreateOrConnectWithoutLocationAssignedByInput[]
+  createMany?: Prisma.UserProfileCreateManyLocationAssignedByInputEnvelope
   connect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
 }
 
@@ -1428,6 +1532,20 @@ export type UserProfileUpdateManyWithoutOwnerAssignedByNestedInput = {
   deleteMany?: Prisma.UserProfileScalarWhereInput | Prisma.UserProfileScalarWhereInput[]
 }
 
+export type UserProfileUpdateManyWithoutLocationAssignedByNestedInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutLocationAssignedByInput, Prisma.UserProfileUncheckedCreateWithoutLocationAssignedByInput> | Prisma.UserProfileCreateWithoutLocationAssignedByInput[] | Prisma.UserProfileUncheckedCreateWithoutLocationAssignedByInput[]
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutLocationAssignedByInput | Prisma.UserProfileCreateOrConnectWithoutLocationAssignedByInput[]
+  upsert?: Prisma.UserProfileUpsertWithWhereUniqueWithoutLocationAssignedByInput | Prisma.UserProfileUpsertWithWhereUniqueWithoutLocationAssignedByInput[]
+  createMany?: Prisma.UserProfileCreateManyLocationAssignedByInputEnvelope
+  set?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  disconnect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  delete?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  connect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  update?: Prisma.UserProfileUpdateWithWhereUniqueWithoutLocationAssignedByInput | Prisma.UserProfileUpdateWithWhereUniqueWithoutLocationAssignedByInput[]
+  updateMany?: Prisma.UserProfileUpdateManyWithWhereWithoutLocationAssignedByInput | Prisma.UserProfileUpdateManyWithWhereWithoutLocationAssignedByInput[]
+  deleteMany?: Prisma.UserProfileScalarWhereInput | Prisma.UserProfileScalarWhereInput[]
+}
+
 export type UserProfileUncheckedUpdateManyWithoutOwnerNestedInput = {
   create?: Prisma.XOR<Prisma.UserProfileCreateWithoutOwnerInput, Prisma.UserProfileUncheckedCreateWithoutOwnerInput> | Prisma.UserProfileCreateWithoutOwnerInput[] | Prisma.UserProfileUncheckedCreateWithoutOwnerInput[]
   connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutOwnerInput | Prisma.UserProfileCreateOrConnectWithoutOwnerInput[]
@@ -1456,8 +1574,26 @@ export type UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput = {
   deleteMany?: Prisma.UserProfileScalarWhereInput | Prisma.UserProfileScalarWhereInput[]
 }
 
+export type UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutLocationAssignedByInput, Prisma.UserProfileUncheckedCreateWithoutLocationAssignedByInput> | Prisma.UserProfileCreateWithoutLocationAssignedByInput[] | Prisma.UserProfileUncheckedCreateWithoutLocationAssignedByInput[]
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutLocationAssignedByInput | Prisma.UserProfileCreateOrConnectWithoutLocationAssignedByInput[]
+  upsert?: Prisma.UserProfileUpsertWithWhereUniqueWithoutLocationAssignedByInput | Prisma.UserProfileUpsertWithWhereUniqueWithoutLocationAssignedByInput[]
+  createMany?: Prisma.UserProfileCreateManyLocationAssignedByInputEnvelope
+  set?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  disconnect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  delete?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  connect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  update?: Prisma.UserProfileUpdateWithWhereUniqueWithoutLocationAssignedByInput | Prisma.UserProfileUpdateWithWhereUniqueWithoutLocationAssignedByInput[]
+  updateMany?: Prisma.UserProfileUpdateManyWithWhereWithoutLocationAssignedByInput | Prisma.UserProfileUpdateManyWithWhereWithoutLocationAssignedByInput[]
+  deleteMany?: Prisma.UserProfileScalarWhereInput | Prisma.UserProfileScalarWhereInput[]
+}
+
 export type NullableEnumLocationAttributionSourceFieldUpdateOperationsInput = {
   set?: $Enums.LocationAttributionSource | null
+}
+
+export type EnumLocationAssignmentModeFieldUpdateOperationsInput = {
+  set?: $Enums.LocationAssignmentMode
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -1633,6 +1769,9 @@ export type UserProfileCreateWithoutOwnerInput = {
   ipRegion?: string | null
   locationSource?: $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -1672,6 +1811,7 @@ export type UserProfileCreateWithoutOwnerInput = {
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
 
 export type UserProfileUncheckedCreateWithoutOwnerInput = {
@@ -1690,6 +1830,10 @@ export type UserProfileUncheckedCreateWithoutOwnerInput = {
   locationSource?: $Enums.LocationAttributionSource | null
   locationRuleId?: string | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -1755,6 +1899,9 @@ export type UserProfileCreateWithoutOwnerAssignedByInput = {
   ipRegion?: string | null
   locationSource?: $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -1794,6 +1941,7 @@ export type UserProfileCreateWithoutOwnerAssignedByInput = {
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
 
 export type UserProfileUncheckedCreateWithoutOwnerAssignedByInput = {
@@ -1812,6 +1960,10 @@ export type UserProfileUncheckedCreateWithoutOwnerAssignedByInput = {
   locationSource?: $Enums.LocationAttributionSource | null
   locationRuleId?: string | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -1862,6 +2014,136 @@ export type UserProfileCreateManyOwnerAssignedByInputEnvelope = {
   skipDuplicates?: boolean
 }
 
+export type UserProfileCreateWithoutLocationAssignedByInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  ipCountryCode?: string | null
+  ipRegion?: string | null
+  locationSource?: $Enums.LocationAttributionSource | null
+  locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
+  events?: Prisma.UserEventCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+}
+
+export type UserProfileUncheckedCreateWithoutLocationAssignedByInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  ipCountryCode?: string | null
+  ipRegion?: string | null
+  locationSource?: $Enums.LocationAttributionSource | null
+  locationRuleId?: string | null
+  locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserProfileCreateOrConnectWithoutLocationAssignedByInput = {
+  where: Prisma.UserProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutLocationAssignedByInput, Prisma.UserProfileUncheckedCreateWithoutLocationAssignedByInput>
+}
+
+export type UserProfileCreateManyLocationAssignedByInputEnvelope = {
+  data: Prisma.UserProfileCreateManyLocationAssignedByInput | Prisma.UserProfileCreateManyLocationAssignedByInput[]
+  skipDuplicates?: boolean
+}
+
 export type UserProfileUpsertWithWhereUniqueWithoutOwnerInput = {
   where: Prisma.UserProfileWhereUniqueInput
   update: Prisma.XOR<Prisma.UserProfileUpdateWithoutOwnerInput, Prisma.UserProfileUncheckedUpdateWithoutOwnerInput>
@@ -1897,6 +2179,10 @@ export type UserProfileScalarWhereInput = {
   locationSource?: Prisma.EnumLocationAttributionSourceNullableFilter<"UserProfile"> | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   locationEvaluatedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFilter<"UserProfile"> | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  locationAssignedById?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  locationAssignmentReason?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   language?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   timezone?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   source?: Prisma.StringNullableFilter<"UserProfile"> | string | null
@@ -1947,6 +2233,22 @@ export type UserProfileUpdateManyWithWhereWithoutOwnerAssignedByInput = {
   data: Prisma.XOR<Prisma.UserProfileUpdateManyMutationInput, Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByInput>
 }
 
+export type UserProfileUpsertWithWhereUniqueWithoutLocationAssignedByInput = {
+  where: Prisma.UserProfileWhereUniqueInput
+  update: Prisma.XOR<Prisma.UserProfileUpdateWithoutLocationAssignedByInput, Prisma.UserProfileUncheckedUpdateWithoutLocationAssignedByInput>
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutLocationAssignedByInput, Prisma.UserProfileUncheckedCreateWithoutLocationAssignedByInput>
+}
+
+export type UserProfileUpdateWithWhereUniqueWithoutLocationAssignedByInput = {
+  where: Prisma.UserProfileWhereUniqueInput
+  data: Prisma.XOR<Prisma.UserProfileUpdateWithoutLocationAssignedByInput, Prisma.UserProfileUncheckedUpdateWithoutLocationAssignedByInput>
+}
+
+export type UserProfileUpdateManyWithWhereWithoutLocationAssignedByInput = {
+  where: Prisma.UserProfileScalarWhereInput
+  data: Prisma.XOR<Prisma.UserProfileUpdateManyMutationInput, Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByInput>
+}
+
 export type UserProfileCreateWithoutEventsInput = {
   id?: string
   externalUserId: string
@@ -1962,6 +2264,9 @@ export type UserProfileCreateWithoutEventsInput = {
   ipRegion?: string | null
   locationSource?: $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -2001,6 +2306,7 @@ export type UserProfileCreateWithoutEventsInput = {
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
 
 export type UserProfileUncheckedCreateWithoutEventsInput = {
@@ -2019,6 +2325,10 @@ export type UserProfileUncheckedCreateWithoutEventsInput = {
   locationSource?: $Enums.LocationAttributionSource | null
   locationRuleId?: string | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -2090,6 +2400,9 @@ export type UserProfileUpdateWithoutEventsInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2129,6 +2442,7 @@ export type UserProfileUpdateWithoutEventsInput = {
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutEventsInput = {
@@ -2147,6 +2461,10 @@ export type UserProfileUncheckedUpdateWithoutEventsInput = {
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2202,6 +2520,9 @@ export type UserProfileCreateWithoutSegmentHistoryInput = {
   ipRegion?: string | null
   locationSource?: $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -2241,6 +2562,7 @@ export type UserProfileCreateWithoutSegmentHistoryInput = {
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
 
 export type UserProfileUncheckedCreateWithoutSegmentHistoryInput = {
@@ -2259,6 +2581,10 @@ export type UserProfileUncheckedCreateWithoutSegmentHistoryInput = {
   locationSource?: $Enums.LocationAttributionSource | null
   locationRuleId?: string | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -2330,6 +2656,9 @@ export type UserProfileUpdateWithoutSegmentHistoryInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2369,6 +2698,7 @@ export type UserProfileUpdateWithoutSegmentHistoryInput = {
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutSegmentHistoryInput = {
@@ -2387,6 +2717,10 @@ export type UserProfileUncheckedUpdateWithoutSegmentHistoryInput = {
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2442,6 +2776,9 @@ export type UserProfileCreateWithoutSegmentOverridesInput = {
   ipRegion?: string | null
   locationSource?: $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -2481,6 +2818,7 @@ export type UserProfileCreateWithoutSegmentOverridesInput = {
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
 
 export type UserProfileUncheckedCreateWithoutSegmentOverridesInput = {
@@ -2499,6 +2837,10 @@ export type UserProfileUncheckedCreateWithoutSegmentOverridesInput = {
   locationSource?: $Enums.LocationAttributionSource | null
   locationRuleId?: string | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -2570,6 +2912,9 @@ export type UserProfileUpdateWithoutSegmentOverridesInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2609,6 +2954,7 @@ export type UserProfileUpdateWithoutSegmentOverridesInput = {
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutSegmentOverridesInput = {
@@ -2627,6 +2973,10 @@ export type UserProfileUncheckedUpdateWithoutSegmentOverridesInput = {
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2682,6 +3032,9 @@ export type UserProfileCreateWithoutNotesInput = {
   ipRegion?: string | null
   locationSource?: $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -2721,6 +3074,7 @@ export type UserProfileCreateWithoutNotesInput = {
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
 
 export type UserProfileUncheckedCreateWithoutNotesInput = {
@@ -2739,6 +3093,10 @@ export type UserProfileUncheckedCreateWithoutNotesInput = {
   locationSource?: $Enums.LocationAttributionSource | null
   locationRuleId?: string | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -2810,6 +3168,9 @@ export type UserProfileUpdateWithoutNotesInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2849,6 +3210,7 @@ export type UserProfileUpdateWithoutNotesInput = {
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutNotesInput = {
@@ -2867,6 +3229,10 @@ export type UserProfileUncheckedUpdateWithoutNotesInput = {
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2922,6 +3288,9 @@ export type UserProfileCreateWithoutLocationRuleInput = {
   ipRegion?: string | null
   locationSource?: $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -2961,6 +3330,7 @@ export type UserProfileCreateWithoutLocationRuleInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
 
 export type UserProfileUncheckedCreateWithoutLocationRuleInput = {
@@ -2978,6 +3348,10 @@ export type UserProfileUncheckedCreateWithoutLocationRuleInput = {
   ipRegion?: string | null
   locationSource?: $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -3060,6 +3434,9 @@ export type UserProfileCreateWithoutTasksInput = {
   ipRegion?: string | null
   locationSource?: $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -3099,6 +3476,7 @@ export type UserProfileCreateWithoutTasksInput = {
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
 
 export type UserProfileUncheckedCreateWithoutTasksInput = {
@@ -3117,6 +3495,10 @@ export type UserProfileUncheckedCreateWithoutTasksInput = {
   locationSource?: $Enums.LocationAttributionSource | null
   locationRuleId?: string | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -3188,6 +3570,9 @@ export type UserProfileUpdateWithoutTasksInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3227,6 +3612,7 @@ export type UserProfileUpdateWithoutTasksInput = {
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutTasksInput = {
@@ -3245,6 +3631,10 @@ export type UserProfileUncheckedUpdateWithoutTasksInput = {
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3300,6 +3690,9 @@ export type UserProfileCreateWithoutMailThreadsInput = {
   ipRegion?: string | null
   locationSource?: $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -3339,6 +3732,7 @@ export type UserProfileCreateWithoutMailThreadsInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
 
 export type UserProfileUncheckedCreateWithoutMailThreadsInput = {
@@ -3357,6 +3751,10 @@ export type UserProfileUncheckedCreateWithoutMailThreadsInput = {
   locationSource?: $Enums.LocationAttributionSource | null
   locationRuleId?: string | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -3428,6 +3826,9 @@ export type UserProfileUpdateWithoutMailThreadsInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3467,6 +3868,7 @@ export type UserProfileUpdateWithoutMailThreadsInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutMailThreadsInput = {
@@ -3485,6 +3887,10 @@ export type UserProfileUncheckedUpdateWithoutMailThreadsInput = {
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3540,6 +3946,9 @@ export type UserProfileCreateWithoutMailMessagesInput = {
   ipRegion?: string | null
   locationSource?: $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -3579,6 +3988,7 @@ export type UserProfileCreateWithoutMailMessagesInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
 
 export type UserProfileUncheckedCreateWithoutMailMessagesInput = {
@@ -3597,6 +4007,10 @@ export type UserProfileUncheckedCreateWithoutMailMessagesInput = {
   locationSource?: $Enums.LocationAttributionSource | null
   locationRuleId?: string | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -3668,6 +4082,9 @@ export type UserProfileUpdateWithoutMailMessagesInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3707,6 +4124,7 @@ export type UserProfileUpdateWithoutMailMessagesInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutMailMessagesInput = {
@@ -3725,6 +4143,10 @@ export type UserProfileUncheckedUpdateWithoutMailMessagesInput = {
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3781,6 +4203,10 @@ export type UserProfileCreateManyOwnerInput = {
   locationSource?: $Enums.LocationAttributionSource | null
   locationRuleId?: string | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -3830,6 +4256,10 @@ export type UserProfileCreateManyOwnerAssignedByInput = {
   locationSource?: $Enums.LocationAttributionSource | null
   locationRuleId?: string | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -3863,6 +4293,59 @@ export type UserProfileCreateManyOwnerAssignedByInput = {
   updatedAt?: Date | string
 }
 
+export type UserProfileCreateManyLocationAssignedByInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  ipCountryCode?: string | null
+  ipRegion?: string | null
+  locationSource?: $Enums.LocationAttributionSource | null
+  locationRuleId?: string | null
+  locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
 export type UserProfileUpdateWithoutOwnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3878,6 +4361,9 @@ export type UserProfileUpdateWithoutOwnerInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3917,6 +4403,7 @@ export type UserProfileUpdateWithoutOwnerInput = {
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutOwnerInput = {
@@ -3935,6 +4422,10 @@ export type UserProfileUncheckedUpdateWithoutOwnerInput = {
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3991,6 +4482,10 @@ export type UserProfileUncheckedUpdateManyWithoutOwnerInput = {
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4039,6 +4534,9 @@ export type UserProfileUpdateWithoutOwnerAssignedByInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4078,6 +4576,7 @@ export type UserProfileUpdateWithoutOwnerAssignedByInput = {
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutOwnerAssignedByInput = {
@@ -4096,6 +4595,10 @@ export type UserProfileUncheckedUpdateWithoutOwnerAssignedByInput = {
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4152,6 +4655,10 @@ export type UserProfileUncheckedUpdateManyWithoutOwnerAssignedByInput = {
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4185,6 +4692,179 @@ export type UserProfileUncheckedUpdateManyWithoutOwnerAssignedByInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type UserProfileUpdateWithoutLocationAssignedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
+  locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
+  events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+}
+
+export type UserProfileUncheckedUpdateWithoutLocationAssignedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
+  locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserProfileUncheckedUpdateManyWithoutLocationAssignedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
+  locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type UserProfileCreateManyLocationRuleInput = {
   id?: string
   externalUserId: string
@@ -4200,6 +4880,10 @@ export type UserProfileCreateManyLocationRuleInput = {
   ipRegion?: string | null
   locationSource?: $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
   language?: string | null
   timezone?: string | null
   source?: string | null
@@ -4249,6 +4933,9 @@ export type UserProfileUpdateWithoutLocationRuleInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4288,6 +4975,7 @@ export type UserProfileUpdateWithoutLocationRuleInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
 
 export type UserProfileUncheckedUpdateWithoutLocationRuleInput = {
@@ -4305,6 +4993,10 @@ export type UserProfileUncheckedUpdateWithoutLocationRuleInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4361,6 +5053,10 @@ export type UserProfileUncheckedUpdateManyWithoutLocationRuleInput = {
   ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
   locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4496,6 +5192,10 @@ export type UserProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   locationSource?: boolean
   locationRuleId?: boolean
   locationEvaluatedAt?: boolean
+  locationAssignmentMode?: boolean
+  locationAssignedAt?: boolean
+  locationAssignedById?: boolean
+  locationAssignmentReason?: boolean
   language?: boolean
   timezone?: boolean
   source?: boolean
@@ -4538,6 +5238,7 @@ export type UserProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   mailThreads?: boolean | Prisma.UserProfile$mailThreadsArgs<ExtArgs>
   mailMessages?: boolean | Prisma.UserProfile$mailMessagesArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
+  locationAssignedBy?: boolean | Prisma.UserProfile$locationAssignedByArgs<ExtArgs>
   _count?: boolean | Prisma.UserProfileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["userProfile"]>
 
@@ -4557,6 +5258,10 @@ export type UserProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   locationSource?: boolean
   locationRuleId?: boolean
   locationEvaluatedAt?: boolean
+  locationAssignmentMode?: boolean
+  locationAssignedAt?: boolean
+  locationAssignedById?: boolean
+  locationAssignmentReason?: boolean
   language?: boolean
   timezone?: boolean
   source?: boolean
@@ -4592,6 +5297,7 @@ export type UserProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
   ownerAssignedBy?: boolean | Prisma.UserProfile$ownerAssignedByArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
+  locationAssignedBy?: boolean | Prisma.UserProfile$locationAssignedByArgs<ExtArgs>
 }, ExtArgs["result"]["userProfile"]>
 
 export type UserProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -4610,6 +5316,10 @@ export type UserProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   locationSource?: boolean
   locationRuleId?: boolean
   locationEvaluatedAt?: boolean
+  locationAssignmentMode?: boolean
+  locationAssignedAt?: boolean
+  locationAssignedById?: boolean
+  locationAssignmentReason?: boolean
   language?: boolean
   timezone?: boolean
   source?: boolean
@@ -4645,6 +5355,7 @@ export type UserProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
   ownerAssignedBy?: boolean | Prisma.UserProfile$ownerAssignedByArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
+  locationAssignedBy?: boolean | Prisma.UserProfile$locationAssignedByArgs<ExtArgs>
 }, ExtArgs["result"]["userProfile"]>
 
 export type UserProfileSelectScalar = {
@@ -4663,6 +5374,10 @@ export type UserProfileSelectScalar = {
   locationSource?: boolean
   locationRuleId?: boolean
   locationEvaluatedAt?: boolean
+  locationAssignmentMode?: boolean
+  locationAssignedAt?: boolean
+  locationAssignedById?: boolean
+  locationAssignmentReason?: boolean
   language?: boolean
   timezone?: boolean
   source?: boolean
@@ -4697,7 +5412,7 @@ export type UserProfileSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "externalUserId" | "email" | "emailNormalized" | "displayName" | "registeredAt" | "registrationIpEnc" | "registrationIpHash" | "countryCode" | "region" | "ipCountryCode" | "ipRegion" | "locationSource" | "locationRuleId" | "locationEvaluatedAt" | "language" | "timezone" | "source" | "checkoutStartedAt" | "checkoutChangedAt" | "paymentStatus" | "firstPaidAt" | "totalPaidMinor" | "firstCallAt" | "lastCallAt" | "successfulCallCount" | "balanceMinor" | "balanceCurrency" | "balanceUsdMinor" | "balanceChangedAt" | "anomalyActive" | "anomalyChangedAt" | "currentSegment" | "segmentRuleVersion" | "ownerId" | "ownerAssignmentMode" | "ownerAssignedAt" | "ownerAssignedById" | "ownerAssignmentReason" | "reasonLabel" | "unsubscribedAt" | "pausedAt" | "profileChangedAt" | "lastExternalEventAt" | "sourceDeletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProfile"]>
+export type UserProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "externalUserId" | "email" | "emailNormalized" | "displayName" | "registeredAt" | "registrationIpEnc" | "registrationIpHash" | "countryCode" | "region" | "ipCountryCode" | "ipRegion" | "locationSource" | "locationRuleId" | "locationEvaluatedAt" | "locationAssignmentMode" | "locationAssignedAt" | "locationAssignedById" | "locationAssignmentReason" | "language" | "timezone" | "source" | "checkoutStartedAt" | "checkoutChangedAt" | "paymentStatus" | "firstPaidAt" | "totalPaidMinor" | "firstCallAt" | "lastCallAt" | "successfulCallCount" | "balanceMinor" | "balanceCurrency" | "balanceUsdMinor" | "balanceChangedAt" | "anomalyActive" | "anomalyChangedAt" | "currentSegment" | "segmentRuleVersion" | "ownerId" | "ownerAssignmentMode" | "ownerAssignedAt" | "ownerAssignedById" | "ownerAssignmentReason" | "reasonLabel" | "unsubscribedAt" | "pausedAt" | "profileChangedAt" | "lastExternalEventAt" | "sourceDeletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProfile"]>
 export type UserProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
   ownerAssignedBy?: boolean | Prisma.UserProfile$ownerAssignedByArgs<ExtArgs>
@@ -4709,17 +5424,20 @@ export type UserProfileInclude<ExtArgs extends runtime.Types.Extensions.Internal
   mailThreads?: boolean | Prisma.UserProfile$mailThreadsArgs<ExtArgs>
   mailMessages?: boolean | Prisma.UserProfile$mailMessagesArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
+  locationAssignedBy?: boolean | Prisma.UserProfile$locationAssignedByArgs<ExtArgs>
   _count?: boolean | Prisma.UserProfileCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserProfileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
   ownerAssignedBy?: boolean | Prisma.UserProfile$ownerAssignedByArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
+  locationAssignedBy?: boolean | Prisma.UserProfile$locationAssignedByArgs<ExtArgs>
 }
 export type UserProfileIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
   ownerAssignedBy?: boolean | Prisma.UserProfile$ownerAssignedByArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
+  locationAssignedBy?: boolean | Prisma.UserProfile$locationAssignedByArgs<ExtArgs>
 }
 
 export type $UserProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4735,6 +5453,7 @@ export type $UserProfilePayload<ExtArgs extends runtime.Types.Extensions.Interna
     mailThreads: Prisma.$MailThreadPayload<ExtArgs>[]
     mailMessages: Prisma.$MailMessagePayload<ExtArgs>[]
     locationRule: Prisma.$LocationAttributionRulePayload<ExtArgs> | null
+    locationAssignedBy: Prisma.$MemberPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4752,6 +5471,10 @@ export type $UserProfilePayload<ExtArgs extends runtime.Types.Extensions.Interna
     locationSource: $Enums.LocationAttributionSource | null
     locationRuleId: string | null
     locationEvaluatedAt: Date | null
+    locationAssignmentMode: $Enums.LocationAssignmentMode
+    locationAssignedAt: Date | null
+    locationAssignedById: string | null
+    locationAssignmentReason: string | null
     language: string | null
     timezone: string | null
     source: string | null
@@ -5188,6 +5911,7 @@ export interface Prisma__UserProfileClient<T, Null = never, ExtArgs extends runt
   mailThreads<T extends Prisma.UserProfile$mailThreadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$mailThreadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mailMessages<T extends Prisma.UserProfile$mailMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$mailMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   locationRule<T extends Prisma.UserProfile$locationRuleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$locationRuleArgs<ExtArgs>>): Prisma.Prisma__LocationAttributionRuleClient<runtime.Types.Result.GetResult<Prisma.$LocationAttributionRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  locationAssignedBy<T extends Prisma.UserProfile$locationAssignedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$locationAssignedByArgs<ExtArgs>>): Prisma.Prisma__MemberClient<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5232,6 +5956,10 @@ export interface UserProfileFieldRefs {
   readonly locationSource: Prisma.FieldRef<"UserProfile", 'LocationAttributionSource'>
   readonly locationRuleId: Prisma.FieldRef<"UserProfile", 'String'>
   readonly locationEvaluatedAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
+  readonly locationAssignmentMode: Prisma.FieldRef<"UserProfile", 'LocationAssignmentMode'>
+  readonly locationAssignedAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
+  readonly locationAssignedById: Prisma.FieldRef<"UserProfile", 'String'>
+  readonly locationAssignmentReason: Prisma.FieldRef<"UserProfile", 'String'>
   readonly language: Prisma.FieldRef<"UserProfile", 'String'>
   readonly timezone: Prisma.FieldRef<"UserProfile", 'String'>
   readonly source: Prisma.FieldRef<"UserProfile", 'String'>
@@ -5887,6 +6615,25 @@ export type UserProfile$locationRuleArgs<ExtArgs extends runtime.Types.Extension
    */
   include?: Prisma.LocationAttributionRuleInclude<ExtArgs> | null
   where?: Prisma.LocationAttributionRuleWhereInput
+}
+
+/**
+ * UserProfile.locationAssignedBy
+ */
+export type UserProfile$locationAssignedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Member
+   */
+  select?: Prisma.MemberSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Member
+   */
+  omit?: Prisma.MemberOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MemberInclude<ExtArgs> | null
+  where?: Prisma.MemberWhereInput
 }
 
 /**

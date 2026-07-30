@@ -23,6 +23,7 @@ describe("user and task workspace scope", () => {
   let ownedUserId: string;
   let otherUserId: string;
   let publicUserId: string;
+  let unrecognizedUserId: string;
   let ownedExternalId: string;
   let ownedEmail: string;
   let publicTaskId: string;
@@ -52,7 +53,8 @@ describe("user and task workspace scope", () => {
     );
     ownedExternalId = `workspace-owned-${randomUUID()}`;
     ownedEmail = `${ownedExternalId}@example.test`;
-    const [ownedUser, otherUser, publicUser] = await Promise.all([
+    const [ownedUser, otherUser, publicUser, unrecognizedUser] =
+      await Promise.all([
       prisma.userProfile.create({
         data: {
           externalUserId: ownedExternalId,
@@ -93,12 +95,31 @@ describe("user and task workspace scope", () => {
           source: "righttoken-web",
           currentSegment: "C"
         }
+      }),
+      prisma.userProfile.create({
+        data: {
+          externalUserId: `workspace-unrecognized-${randomUUID()}`,
+          email: `unrecognized-${randomUUID()}@example.test`,
+          emailNormalized: `unrecognized-${randomUUID()}@example.test`,
+          displayName: "Unrecognized Location User",
+          registeredAt: new Date("2026-07-23T08:00:00.000Z"),
+          countryCode: null,
+          region: null,
+          source: "righttoken-web",
+          currentSegment: "G"
+        }
       })
     ]);
     ownedUserId = ownedUser.id;
     otherUserId = otherUser.id;
     publicUserId = publicUser.id;
-    userIds.push(ownedUserId, otherUserId, publicUserId);
+    unrecognizedUserId = unrecognizedUser.id;
+    userIds.push(
+      ownedUserId,
+      otherUserId,
+      publicUserId,
+      unrecognizedUserId
+    );
 
     await prisma.recallTask.createMany({
       data: [
@@ -196,6 +217,20 @@ describe("user and task workspace scope", () => {
     expect(firstPage.nextCursor).toBeTruthy();
     expect(secondPage.items).toHaveLength(1);
     expect(secondPage.items[0]?.id).not.toBe(firstPage.items[0]?.id);
+  });
+
+  it("filters only users whose country and region are both unrecognized", async () => {
+    const filtered = await findUsers(admin, {
+      locationState: "unrecognized",
+      pageSize: 20
+    });
+
+    expect(filtered.items.map((row) => row.id)).toEqual([
+      unrecognizedUserId
+    ]);
+    expect(filtered.items).not.toContainEqual(
+      expect.objectContaining({ id: publicUserId })
+    );
   });
 
   it("shows full IP only in an authorized User 360 detail", async () => {

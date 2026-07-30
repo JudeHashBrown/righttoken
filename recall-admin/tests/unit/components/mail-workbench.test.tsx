@@ -123,4 +123,56 @@ describe("MailWorkbench", () => {
       screen.queryByText("准备接入客服邮箱会话")
     ).not.toBeInTheDocument();
   });
+
+  it("shows the complete selected sent message without reply controls", () => {
+    const sentData = {
+      ...data,
+      filter: { view: "sent", selectedId: "sent-1" },
+      items: [
+        {
+          id: "sent-1",
+          kind: "MESSAGE",
+          title: "RightToken 使用提醒",
+          subtitle: "person@example.test",
+          preview: "这是一封已经发送的邮件。",
+          occurredAt: "2026-07-29T09:00:00.000Z",
+          status: "已发送"
+        }
+      ],
+      selected: {
+        kind: "message",
+        message: {
+          id: "sent-1",
+          fromAddress: "support@righttoken.test",
+          toAddresses: ["person@example.test"],
+          subject: "RightToken 使用提醒",
+          bodyText: "这是一封已经发送的邮件。",
+          bodyHtml: null,
+          externalImagesBlocked: false,
+          assets: [],
+          sentAt: "2026-07-29T09:00:00.000Z",
+          createdAt: "2026-07-29T08:59:00.000Z"
+        }
+      }
+    } as unknown as MailWorkspaceData;
+
+    render(<MailWorkbench data={sentData} />);
+
+    expect(
+      screen.getByRole("heading", {
+        name: "RightToken 使用提醒"
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getAllByText("这是一封已经发送的邮件。")
+    ).toHaveLength(2);
+    expect(
+      screen.getByText(
+        "support@righttoken.test → person@example.test"
+      )
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /发送回复/ })
+    ).not.toBeInTheDocument();
+  });
 });

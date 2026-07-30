@@ -61,7 +61,7 @@
 }
 
 .userFilterBar {
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
@@ -87,9 +87,9 @@
 
 .segmentQuickFieldset {
   display: grid;
-  min-width: 276px;
+  min-width: 620px;
   max-width: 100%;
-  flex: 0 0 auto;
+  flex: 1 1 620px;
   gap: 6px;
   margin: 0;
   padding: 0;
@@ -115,15 +115,20 @@
 }
 
 .segmentQuickButton {
-  min-width: 32px;
-  height: 36px;
-  flex: 0 0 auto;
+  display: inline-flex;
+  min-width: 70px;
+  min-height: 48px;
+  flex: 1 0 70px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
   border: 1px solid #d9deea;
-  border-radius: 999px;
+  border-radius: 10px;
   background: #f7f8fc;
   color: #4f5870;
   font: inherit;
-  font-weight: 700;
+  padding: 5px 8px;
   cursor: pointer;
   transition:
     background-color 160ms ease-out,
@@ -132,7 +137,20 @@
 }
 
 .segmentQuickButton:first-child {
-  min-width: 48px;
+  min-width: 74px;
+}
+
+.segmentQuickButton strong {
+  font-size: 14px;
+  line-height: 1.1;
+}
+
+.segmentQuickButton small {
+  color: #768097;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .segmentQuickButton:hover {
@@ -150,6 +168,10 @@
   border-color: #5b6cdb;
   background: #5b6cdb;
   color: #ffffff;
+}
+
+.segmentQuickButtonSelected small {
+  color: rgb(255 255 255 / 82%);
 }
 
 .field label,

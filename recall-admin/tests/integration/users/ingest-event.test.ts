@@ -186,6 +186,56 @@ describe("idempotent user event ingestion", () => {
     ).toBe(false);
   });
 
+  it("does not overwrite a manually confirmed location from a later profile event", async () => {
+    const userId = `manual-location-${randomUUID()}`;
+    externalUserIds.push(userId);
+    await ingestUserEvent(
+      event(
+        userId,
+        "user.registered",
+        "2026-07-23T08:00:00.000Z",
+        {
+          email: `${userId}@example.test`,
+          country_code: "US",
+          region: "California"
+        }
+      )
+    );
+    await prisma.userProfile.update({
+      where: { externalUserId: userId },
+      data: {
+        countryCode: "CN",
+        region: "广东",
+        locationAssignmentMode: "MANUAL",
+        locationAssignmentReason: "客户在沟通中确认"
+      }
+    });
+
+    await ingestUserEvent(
+      event(
+        userId,
+        "user.profile_updated",
+        "2026-07-23T09:00:00.000Z",
+        {
+          display_name: "地区已人工确认",
+          country_code: "DE",
+          region: "Berlin"
+        }
+      )
+    );
+
+    await expect(
+      prisma.userProfile.findUniqueOrThrow({
+        where: { externalUserId: userId }
+      })
+    ).resolves.toMatchObject({
+      displayName: "地区已人工确认",
+      countryCode: "CN",
+      region: "广东",
+      locationAssignmentMode: "MANUAL"
+    });
+  });
+
   it("moves checkout B → paid C → successful call G with history", async () => {
     const userId = `journey-${randomUUID()}`;
     externalUserIds.push(userId);

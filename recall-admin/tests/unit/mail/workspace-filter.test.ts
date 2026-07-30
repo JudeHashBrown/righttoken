@@ -33,6 +33,21 @@ describe("mail workspace filter", () => {
     });
   });
 
+  it("accepts the sent-mail view", () => {
+    expect(
+      parseMailWorkspaceFilter({
+        view: "sent",
+        selected: "message-1"
+      })
+    ).toEqual({
+      view: "sent",
+      selectedId: "message-1",
+      compose: false,
+      composeUserId: null,
+      composeTaskId: null
+    });
+  });
+
   it("accepts task-linked compose state", () => {
     expect(
       parseMailWorkspaceFilter({

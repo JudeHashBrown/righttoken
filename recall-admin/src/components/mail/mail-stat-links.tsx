@@ -9,6 +9,7 @@ type MailStats = {
   totalMailboxes: number;
   unmatchedMessages: number;
   draftMessages: number;
+  sentMessages: number;
   failedMessages: number;
   lastSyncRan: boolean;
 };
@@ -54,6 +55,12 @@ export function MailStatLinks({
       label: "草稿",
       value: String(stats.draftMessages),
       detail: "继续处理未完成内容"
+    },
+    {
+      href: "/mail?view=sent",
+      label: "已发送",
+      value: String(stats.sentMessages),
+      detail: "查看所有成功发送的邮件"
     },
     {
       href: "/mail?view=failed",

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { RevokeOverrideButton } from "@/components/users/revoke-override-button";
 import { SegmentOverrideForm } from "@/components/users/segment-override-form";
 import { UserNoteForm } from "@/components/users/user-note-form";
+import { UserLocationControl } from "@/components/users/user-location-control";
 import { UserOwnerControl } from "@/components/users/user-owner-control";
 import styles from "@/components/workspaces/workspace.module.css";
 import { prisma } from "@/lib/db/prisma";
@@ -19,6 +20,7 @@ import { isCurrentServiceAnomaly } from "@/modules/segmentation/service-anomaly"
 import { presentSegmentReason } from "@/modules/segmentation/present-reason";
 import { getUser360 } from "@/modules/users/user-queries";
 import {
+  locationAssignmentLabel,
   locationSourceLabel,
   operationalLocationLabel,
   ownerAssignmentLabel,
@@ -157,15 +159,39 @@ export default async function UserDetailPage({
                 <strong>
                   {operationalLocationLabel(user)}
                 </strong>
+                <span className={styles.secondaryText}>
+                  {locationAssignmentLabel(
+                    user.locationAssignmentMode
+                  )}
+                  {user.locationAssignedAt
+                    ? ` · ${dateTime(user.locationAssignedAt)}`
+                    : ""}
+                </span>
+                {member.role !== "OPERATOR" ? (
+                  <UserLocationControl
+                    assignmentMode={user.locationAssignmentMode}
+                    currentCountryCode={user.countryCode}
+                    currentRegion={user.region}
+                    userId={user.id}
+                  />
+                ) : null}
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>判定依据</span>
                 <strong>
-                  {user.locationRule?.name ??
-                    (user.locationSource
-                      ? locationSourceLabel(user.locationSource)
-                      : "注册来源信息不足")}
+                  {user.locationAssignmentMode === "MANUAL"
+                    ? user.locationAssignmentReason ||
+                      "管理员已确认所属地区"
+                    : user.locationRule?.name ??
+                      (user.locationSource
+                        ? locationSourceLabel(user.locationSource)
+                        : "注册来源信息不足")}
                 </strong>
+                {user.locationAssignedBy ? (
+                  <span className={styles.secondaryText}>
+                    由 {user.locationAssignedBy.displayName} 确认
+                  </span>
+                ) : null}
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>IP 原始地区</span>

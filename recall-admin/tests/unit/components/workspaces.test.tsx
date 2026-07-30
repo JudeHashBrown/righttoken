@@ -23,6 +23,7 @@ const user = {
   registeredAt: new Date("2026-07-20T08:00:00.000Z"),
   countryCode: "US",
   region: "California",
+  locationAssignmentMode: "AUTO",
   source: "righttoken-web",
   paymentStatus: "NONE",
   totalPaidMinor: 0,

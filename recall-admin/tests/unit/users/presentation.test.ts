@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  locationAssignmentLabel,
   locationSourceLabel,
   operationalLocationDisplay,
   ownerAssignmentLabel,
@@ -90,5 +91,12 @@ describe("owner assignment labels", () => {
     expect(
       ownerDisplayName({ displayName: "运营甲" })
     ).toBe("运营甲");
+  });
+});
+
+describe("location assignment labels", () => {
+  it("distinguishes automatic and manually confirmed locations", () => {
+    expect(locationAssignmentLabel("AUTO")).toBe("系统判定");
+    expect(locationAssignmentLabel("MANUAL")).toBe("人工确认");
   });
 });

@@ -143,6 +143,8 @@ async function applyFacts(
     case "user.profile_updated": {
       if (!user.profileChangedAt || occurredAt >= user.profileChangedAt) {
         const payload = input.payload;
+        const canUpdateOperationalLocation =
+          user.locationAssignmentMode === "AUTO";
         const registrationFields =
           input.event_type === "user.registered" &&
           "registration_ip" in payload
@@ -160,25 +162,31 @@ async function applyFacts(
             ...(payload.display_name !== undefined
               ? { displayName: payload.display_name }
               : {}),
-            ...(registrationLocation?.countryCode ||
-            payload.country_code !== undefined
+            ...(canUpdateOperationalLocation &&
+            (registrationLocation?.countryCode ||
+              payload.country_code !== undefined)
               ? {
                   countryCode:
                     registrationLocation?.countryCode ??
                     payload.country_code
-                }
+                  }
               : {}),
-            ...(registrationLocation?.region ||
-            payload.region !== undefined
+            ...(canUpdateOperationalLocation &&
+            (registrationLocation?.region ||
+              payload.region !== undefined)
               ? {
                   region:
                     registrationLocation?.region ?? payload.region
-                }
+                  }
               : {}),
             ...(registrationLocation
               ? {
                   ipCountryCode: registrationLocation.ipCountryCode,
-                  ipRegion: registrationLocation.ipRegion,
+                  ipRegion: registrationLocation.ipRegion
+                }
+              : {}),
+            ...(canUpdateOperationalLocation && registrationLocation
+              ? {
                   locationSource: registrationLocation.source,
                   locationRuleId: registrationLocation.ruleId,
                   locationEvaluatedAt: new Date()

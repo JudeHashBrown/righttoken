@@ -11,6 +11,8 @@ type SearchParams = Promise<
   Record<string, string | string[] | undefined>
 >;
 
+const unrecognizedLocationValue = "__UNRECOGNIZED__";
+
 function first(value: string | string[] | undefined): string {
   return Array.isArray(value) ? value[0] ?? "" : value ?? "";
 }
@@ -40,6 +42,7 @@ export default async function UsersPage({
   const searchTooShort = search.length > 0 && search.length < 3;
   const registeredFrom = first(params.registeredFrom);
   const registeredTo = first(params.registeredTo);
+  const regionFilter = first(params.region);
   const page = searchTooShort
     ? { items: [], nextCursor: null }
     : await findUsers(member, {
@@ -48,7 +51,15 @@ export default async function UsersPage({
           ? [segment as SegmentCode]
           : undefined,
         countryCode: first(params.countryCode) || undefined,
-        region: first(params.region) || undefined,
+        region:
+          regionFilter &&
+          regionFilter !== unrecognizedLocationValue
+            ? regionFilter
+            : undefined,
+        locationState:
+          regionFilter === unrecognizedLocationValue
+            ? "unrecognized"
+            : undefined,
         ownerId: first(params.ownerId) || undefined,
         source: first(params.source) || undefined,
         registeredFrom: registeredFrom
@@ -68,6 +79,21 @@ export default async function UsersPage({
           orderBy: { displayName: "asc" },
           select: { id: true, displayName: true }
         });
+  const regionRows = await prisma.userProfile.findMany({
+    where: {
+      sourceDeletedAt: null,
+      region: { not: null },
+      ...(member.role === "OPERATOR"
+        ? { ownerId: member.id }
+        : {})
+    },
+    distinct: ["region"],
+    orderBy: { region: "asc" },
+    select: { region: true }
+  });
+  const regions = regionRows
+    .map((row) => row.region?.trim())
+    .filter((region): region is string => Boolean(region));
 
   return (
     <main className={styles.page}>
@@ -106,13 +132,20 @@ export default async function UsersPage({
         </div>
         <div className={`${styles.field} ${styles.userFilterCompact}`}>
           <label htmlFor="user-region">地区</label>
-          <input
-            className={styles.input}
+          <select
+            className={styles.select}
             defaultValue={first(params.region)}
             id="user-region"
             name="region"
-            placeholder="例如 广东"
-          />
+          >
+            <option value="">全部地区</option>
+            <option value={unrecognizedLocationValue}>未识别</option>
+            {regions.map((region) => (
+              <option key={region} value={region}>
+                {region}
+              </option>
+            ))}
+          </select>
         </div>
         {owners.length ? (
           <div className={`${styles.field} ${styles.userFilterOwner}`}>

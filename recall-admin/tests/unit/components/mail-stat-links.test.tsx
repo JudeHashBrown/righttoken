@@ -21,6 +21,7 @@ describe("MailStatLinks", () => {
           totalMailboxes: 1,
           unmatchedMessages: 4,
           draftMessages: 2,
+          sentMessages: 12,
           failedMessages: 1,
           lastSyncRan: true
         }}
@@ -36,6 +37,9 @@ describe("MailStatLinks", () => {
     expect(
       screen.getByRole("link", { name: /发送失败/ })
     ).toHaveAttribute("href", "/mail?view=failed");
-    expect(screen.getAllByRole("link")).toHaveLength(8);
+    expect(
+      screen.getByRole("link", { name: /已发送 12/ })
+    ).toHaveAttribute("href", "/mail?view=sent");
+    expect(screen.getAllByRole("link")).toHaveLength(9);
   });
 });

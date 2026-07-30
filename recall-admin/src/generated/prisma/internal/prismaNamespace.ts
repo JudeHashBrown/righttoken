@@ -2763,6 +2763,10 @@ export const UserProfileScalarFieldEnum = {
   locationSource: 'locationSource',
   locationRuleId: 'locationRuleId',
   locationEvaluatedAt: 'locationEvaluatedAt',
+  locationAssignmentMode: 'locationAssignmentMode',
+  locationAssignedAt: 'locationAssignedAt',
+  locationAssignedById: 'locationAssignedById',
+  locationAssignmentReason: 'locationAssignmentReason',
   language: 'language',
   timezone: 'timezone',
   source: 'source',
@@ -3349,6 +3353,20 @@ export type EnumLocationAttributionSourceFieldRefInput<$PrismaModel> = FieldRefI
  * Reference to a field of type 'LocationAttributionSource[]'
  */
 export type ListEnumLocationAttributionSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LocationAttributionSource[]'>
+
+
+
+/**
+ * Reference to a field of type 'LocationAssignmentMode'
+ */
+export type EnumLocationAssignmentModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LocationAssignmentMode'>
+
+
+
+/**
+ * Reference to a field of type 'LocationAssignmentMode[]'
+ */
+export type ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LocationAssignmentMode[]'>
     
 
 
@@ -3804,4 +3822,3 @@ export type PrismaAction =
  * `PrismaClient` proxy available in interactive transactions.
  */
 export type TransactionClient = Omit<DefaultPrismaClient, runtime.ITXClientDenyList>
-

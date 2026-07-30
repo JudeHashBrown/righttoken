@@ -71,6 +71,7 @@ export function DashboardOverview({
           }
           icon={AlarmClock}
           tone="neutral"
+          href="/tasks?view=all&due=today"
         />
         <MetricCard
           label="紧急任务"
@@ -78,6 +79,7 @@ export function DashboardOverview({
           note={metrics.urgent ? "需要立即介入" : "目前无需紧急介入"}
           icon={Siren}
           tone="danger"
+          href="/tasks?view=all&priority=URGENT&scope=open"
         />
         <MetricCard
           label="用户待回复"
@@ -85,6 +87,7 @@ export function DashboardOverview({
           note="用户来信会自动生成跟进任务"
           icon={MailQuestion}
           tone="warning"
+          href="/tasks?view=all&origin=EMAIL_REPLY&scope=open"
         />
         <MetricCard
           label="7 日召回转化"
