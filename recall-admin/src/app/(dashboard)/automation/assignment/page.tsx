@@ -39,6 +39,7 @@ export default async function AssignmentRulesPage(): Promise<React.JSX.Element> 
       id: rule.id,
       name: rule.name,
       enabled: rule.enabled,
+      memberTerritoryManaged: rule.memberTerritoryManaged,
       priority: rule.priority,
       countryCodes: stringList(rule.conditions, "countryCodes"),
       regions: stringList(rule.conditions, "regionIncludes"),

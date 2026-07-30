@@ -95,6 +95,8 @@ export async function publishAssignmentRules(
                 data: {
                   name: rule.name,
                   enabled: rule.enabled,
+                  memberTerritoryManaged:
+                    rule.memberTerritoryManaged,
                   priority: rule.priority,
                   conditions: toAuditJson(rule.conditions),
                   assigneeId: rule.assigneeId,

@@ -32,6 +32,9 @@ const user = {
   currentSegment: "B",
   reasonLabel: "checkout unpaid",
   ownerId: "operator-1",
+  ownerAssignmentMode: "AUTO",
+  ownerAssignedAt: new Date("2026-07-23T08:00:00.000Z"),
+  ownerAssignmentReason: "美国用户由运营一负责",
   lastExternalEventAt: new Date("2026-07-23T08:00:00.000Z"),
   updatedAt: new Date("2026-07-23T08:00:00.000Z"),
   owner: {

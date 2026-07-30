@@ -58,19 +58,42 @@ export async function resolveOutboundMailAssets(
     assets: OutboundAssetReference[];
   },
   dependencies: {
-    database: AssetDatabase;
-    storage: MailAssetStorage;
-  } = {
-    database: prisma,
-    storage: getMailAssetStorage()
-  }
+    database?: AssetDatabase;
+    storage?: MailAssetStorage;
+  } = {}
 ) {
   if (input.assets.length > 10) {
     throw new OutboundMailAssetError(
       "MAIL_ASSET_LIMIT_EXCEEDED"
     );
   }
-  const rows = await dependencies.database.mailAsset.findMany({
+  const safeHtml = sanitizeMailHtml(input.bodyHtml);
+  const inlineIds = new Set(
+    input.assets
+      .filter((asset) => asset.disposition === "INLINE")
+      .map((asset) => asset.id)
+  );
+  const htmlIds = new Set(mailAssetIdsInHtml(safeHtml));
+  if (
+    inlineIds.size !== htmlIds.size ||
+    [...inlineIds].some((id) => !htmlIds.has(id))
+  ) {
+    throw new OutboundMailAssetError(
+      "MAIL_INLINE_ASSET_MISMATCH"
+    );
+  }
+  if (input.assets.length === 0) {
+    return {
+      bodyHtml: safeHtml,
+      html: safeHtml,
+      attachments: [],
+      messageAssets: []
+    };
+  }
+
+  const database = dependencies.database ?? prisma;
+  const storage = dependencies.storage ?? getMailAssetStorage();
+  const rows = await database.mailAsset.findMany({
     where: {
       id: { in: input.assets.map((asset) => asset.id) }
     },
@@ -94,22 +117,6 @@ export async function resolveOutboundMailAssets(
     );
   }
 
-  const safeHtml = sanitizeMailHtml(input.bodyHtml);
-  const inlineIds = new Set(
-    input.assets
-      .filter((asset) => asset.disposition === "INLINE")
-      .map((asset) => asset.id)
-  );
-  const htmlIds = new Set(mailAssetIdsInHtml(safeHtml));
-  if (
-    inlineIds.size !== htmlIds.size ||
-    [...inlineIds].some((id) => !htmlIds.has(id))
-  ) {
-    throw new OutboundMailAssetError(
-      "MAIL_INLINE_ASSET_MISMATCH"
-    );
-  }
-
   const rowById = new Map(rows.map((row) => [row.id, row]));
   const ordered = [...input.assets].sort(
     (left, right) => left.sortOrder - right.sortOrder
@@ -122,7 +129,7 @@ export async function resolveOutboundMailAssets(
       }
       let content: Buffer;
       try {
-        content = await dependencies.storage.get(row.storageKey);
+        content = await storage.get(row.storageKey);
       } catch {
         throw new OutboundMailAssetError("MAIL_ASSET_MISSING");
       }

@@ -34,8 +34,14 @@ export type MemberAccessGrantInput = {
 export type MemberAccessRevocationResult = {
   member: MemberAccessRecord;
   revokedSessions: number;
-  releasedUsers: number;
-  releasedTasks: number;
+  reassignedUsers: number;
+  transferredTasks: number;
+  failedUsers: number;
+  successor: {
+    id: string;
+    displayName: string;
+    email: string;
+  };
 };
 
 export interface MemberAccessStore {
@@ -52,6 +58,7 @@ export interface MemberAccessStore {
   revokeAccess(input: {
     actorId: string;
     targetId: string;
+    successorId: string;
   }): Promise<MemberAccessRevocationResult>;
 }
 
@@ -65,6 +72,10 @@ export class MemberAccessError extends Error {
       | "CANNOT_REVOKE_SELF"
       | "CANNOT_REVOKE_PRIMARY_ADMIN"
       | "MEMBER_ALREADY_ACTIVE"
+      | "SUCCESSOR_REQUIRED"
+      | "SUCCESSOR_NOT_FOUND"
+      | "SUCCESSOR_INACTIVE"
+      | "SUCCESSOR_SAME_AS_TARGET"
   ) {
     super(code);
     this.name = "MemberAccessError";
@@ -89,7 +100,7 @@ function canManageRole(
   return actorRole === "ADMIN" && targetRole === "OPERATOR";
 }
 
-class PrismaMemberAccessStore implements MemberAccessStore {
+export class PrismaMemberAccessStore implements MemberAccessStore {
   async findMember(id: string): Promise<MemberAccessRecord | null> {
     const { prisma } = await import("@/lib/db/prisma");
     return prisma.member.findUnique({
@@ -214,9 +225,11 @@ class PrismaMemberAccessStore implements MemberAccessStore {
   async revokeAccess(input: {
     actorId: string;
     targetId: string;
+    successorId: string;
   }): Promise<MemberAccessRevocationResult> {
     const { prisma } = await import("@/lib/db/prisma");
     return prisma.$transaction(async (tx) => {
+      const now = new Date();
       const member = await tx.member.update({
         where: { id: input.targetId },
         data: { active: false },
@@ -229,25 +242,74 @@ class PrismaMemberAccessStore implements MemberAccessStore {
           rightTokenUserId: true
         }
       });
-      const [sessions, users, tasks] = await Promise.all([
+      const [sessions, successor, users] = await Promise.all([
         tx.session.deleteMany({
           where: { memberId: input.targetId }
         }),
-        tx.userProfile.updateMany({
-          where: { ownerId: input.targetId },
-          data: { ownerId: null }
+        tx.member.findFirstOrThrow({
+          where: { id: input.successorId, active: true },
+          select: {
+            id: true,
+            displayName: true,
+            email: true
+          }
         }),
-        tx.recallTask.updateMany({
-          where: {
-            assigneeId: input.targetId,
-            status: { in: [...openTaskStatuses] }
-          },
-          data: {
-            assigneeId: null,
-            status: "UNASSIGNED"
+        tx.userProfile.findMany({
+          where: { ownerId: input.targetId },
+          select: {
+            id: true,
+            ownerId: true,
+            ownerAssignmentMode: true,
+            countryCode: true,
+            region: true
           }
         })
       ]);
+
+      const assignmentReason =
+        "原负责人权限已撤销，由指定成员接管";
+      const reassigned = await tx.userProfile.updateMany({
+        where: { ownerId: input.targetId },
+        data: {
+          ownerId: successor.id,
+          ownerAssignmentMode: "MANUAL",
+          ownerAssignedAt: now,
+          ownerAssignedById: input.actorId,
+          ownerAssignmentReason: assignmentReason
+        }
+      });
+      const transferred = await tx.recallTask.updateMany({
+        where: {
+          status: { in: [...openTaskStatuses] },
+          OR: [
+            { userId: { in: users.map((user) => user.id) } },
+            { assigneeId: input.targetId }
+          ]
+        },
+        data: { assigneeId: successor.id }
+      });
+      if (users.length > 0) {
+        await tx.auditLog.createMany({
+          data: users.map((user) => ({
+            actorId: input.actorId,
+            action:
+              "user.owner_reassigned_after_member_revoked",
+            entityType: "UserProfile",
+            entityId: user.id,
+            metadata: {
+              previousOwnerId: input.targetId,
+              ownerId: successor.id,
+              assignmentMode: "MANUAL",
+              assignmentReason,
+              previousAssignmentMode:
+                user.ownerAssignmentMode,
+              countryCode: user.countryCode,
+              region: user.region
+            }
+          }))
+        });
+      }
+
       await tx.auditLog.create({
         data: {
           actorId: input.actorId,
@@ -256,16 +318,21 @@ class PrismaMemberAccessStore implements MemberAccessStore {
           entityId: input.targetId,
           metadata: {
             revokedSessions: sessions.count,
-            releasedUsers: users.count,
-            releasedTasks: tasks.count
+            reassignedUsers: reassigned.count,
+            transferredTasks: transferred.count,
+            failedUsers: 0,
+            successorId: successor.id,
+            successorEmail: successor.email
           }
         }
       });
       return {
         member,
         revokedSessions: sessions.count,
-        releasedUsers: users.count,
-        releasedTasks: tasks.count
+        reassignedUsers: reassigned.count,
+        transferredTasks: transferred.count,
+        failedUsers: 0,
+        successor
       };
     });
   }
@@ -319,11 +386,16 @@ export async function grantMemberAccess(
 export async function revokeMemberAccess(
   actorId: string,
   targetId: string,
+  successorId: string,
   store: MemberAccessStore = defaultStore
 ): Promise<MemberAccessRevocationResult> {
-  const [actor, target] = await Promise.all([
+  const normalizedSuccessorId = successorId.trim();
+  const [actor, target, successor] = await Promise.all([
     store.findMember(actorId),
-    store.findMember(targetId)
+    store.findMember(targetId),
+    normalizedSuccessorId
+      ? store.findMember(normalizedSuccessorId)
+      : null
   ]);
   assertActiveActor(actor);
   if (!target) {
@@ -338,13 +410,35 @@ export async function revokeMemberAccess(
   if (!canManageRole(actor.role, target.role)) {
     throw new MemberAccessError("FORBIDDEN");
   }
+  if (!normalizedSuccessorId) {
+    throw new MemberAccessError("SUCCESSOR_REQUIRED");
+  }
+  if (!successor) {
+    throw new MemberAccessError("SUCCESSOR_NOT_FOUND");
+  }
+  if (!successor.active) {
+    throw new MemberAccessError("SUCCESSOR_INACTIVE");
+  }
+  if (successor.id === target.id) {
+    throw new MemberAccessError("SUCCESSOR_SAME_AS_TARGET");
+  }
   if (!target.active) {
     return {
       member: target,
       revokedSessions: 0,
-      releasedUsers: 0,
-      releasedTasks: 0
+      reassignedUsers: 0,
+      transferredTasks: 0,
+      failedUsers: 0,
+      successor: {
+        id: successor.id,
+        displayName: successor.displayName,
+        email: successor.email
+      }
     };
   }
-  return store.revokeAccess({ actorId, targetId });
+  return store.revokeAccess({
+    actorId,
+    targetId,
+    successorId: successor.id
+  });
 }

@@ -166,7 +166,7 @@ describe("privileged member routes", () => {
     expect(missing.status).toBe(404);
   });
 
-  it("revokes sessions and releases assigned work", async () => {
+  it("revokes sessions and hands assigned work to the selected member", async () => {
     const grantedSession = await createSession(grantedMemberId);
     grantedSessionToken = grantedSession.token;
     await prisma.userProfile.update({
@@ -194,9 +194,13 @@ describe("privileged member routes", () => {
         {
           method: "DELETE",
           headers: {
+            "content-type": "application/json",
             origin: "http://127.0.0.1:3101",
             cookie: `${SESSION_COOKIE_NAME}=${sessionToken}`
-          }
+          },
+          body: JSON.stringify({
+            successorId: currentPrimaryId
+          })
         }
       ),
       { params: Promise.resolve({ id: grantedMemberId }) }
@@ -205,8 +209,12 @@ describe("privileged member routes", () => {
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
       revokedSessions: 1,
-      releasedUsers: 1,
-      releasedTasks: 1
+      reassignedUsers: 1,
+      transferredTasks: 1,
+      failedUsers: 0,
+      successor: {
+        id: currentPrimaryId
+      }
     });
     await expect(
       prisma.member.findUniqueOrThrow({
@@ -214,14 +222,26 @@ describe("privileged member routes", () => {
         select: { active: true }
       })
     ).resolves.toEqual({ active: false });
-    await expect(
+    const [reassignedUser, transferredTask] = await Promise.all([
+      prisma.userProfile.findUniqueOrThrow({
+        where: { id: registeredUserProfileId },
+        select: {
+          ownerId: true,
+          ownerAssignmentMode: true
+        }
+      }),
       prisma.recallTask.findUniqueOrThrow({
         where: { id: task.id },
         select: { assigneeId: true, status: true }
       })
-    ).resolves.toEqual({
-      assigneeId: null,
-      status: "UNASSIGNED"
+    ]);
+    expect(reassignedUser).toEqual({
+      ownerId: currentPrimaryId,
+      ownerAssignmentMode: "MANUAL"
+    });
+    expect(transferredTask).toEqual({
+      assigneeId: reassignedUser.ownerId,
+      status: "IN_PROGRESS"
     });
   });
 

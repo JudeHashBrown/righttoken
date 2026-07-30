@@ -40,6 +40,7 @@ export type AssignmentRuleMinAggregateOutputType = {
   id: string | null
   name: string | null
   enabled: boolean | null
+  memberTerritoryManaged: boolean | null
   priority: number | null
   assigneeId: string | null
   fallbackAssigneeId: string | null
@@ -55,6 +56,7 @@ export type AssignmentRuleMaxAggregateOutputType = {
   id: string | null
   name: string | null
   enabled: boolean | null
+  memberTerritoryManaged: boolean | null
   priority: number | null
   assigneeId: string | null
   fallbackAssigneeId: string | null
@@ -70,6 +72,7 @@ export type AssignmentRuleCountAggregateOutputType = {
   id: number
   name: number
   enabled: number
+  memberTerritoryManaged: number
   priority: number
   conditions: number
   assigneeId: number
@@ -98,6 +101,7 @@ export type AssignmentRuleMinAggregateInputType = {
   id?: true
   name?: true
   enabled?: true
+  memberTerritoryManaged?: true
   priority?: true
   assigneeId?: true
   fallbackAssigneeId?: true
@@ -113,6 +117,7 @@ export type AssignmentRuleMaxAggregateInputType = {
   id?: true
   name?: true
   enabled?: true
+  memberTerritoryManaged?: true
   priority?: true
   assigneeId?: true
   fallbackAssigneeId?: true
@@ -128,6 +133,7 @@ export type AssignmentRuleCountAggregateInputType = {
   id?: true
   name?: true
   enabled?: true
+  memberTerritoryManaged?: true
   priority?: true
   conditions?: true
   assigneeId?: true
@@ -231,6 +237,7 @@ export type AssignmentRuleGroupByOutputType = {
   id: string
   name: string
   enabled: boolean
+  memberTerritoryManaged: boolean
   priority: number
   conditions: runtime.JsonValue
   assigneeId: string | null
@@ -270,6 +277,7 @@ export type AssignmentRuleWhereInput = {
   id?: Prisma.StringFilter<"AssignmentRule"> | string
   name?: Prisma.StringFilter<"AssignmentRule"> | string
   enabled?: Prisma.BoolFilter<"AssignmentRule"> | boolean
+  memberTerritoryManaged?: Prisma.BoolFilter<"AssignmentRule"> | boolean
   priority?: Prisma.IntFilter<"AssignmentRule"> | number
   conditions?: Prisma.JsonFilter<"AssignmentRule">
   assigneeId?: Prisma.StringNullableFilter<"AssignmentRule"> | string | null
@@ -286,6 +294,7 @@ export type AssignmentRuleOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
+  memberTerritoryManaged?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   conditions?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -306,6 +315,7 @@ export type AssignmentRuleWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.AssignmentRuleWhereInput | Prisma.AssignmentRuleWhereInput[]
   name?: Prisma.StringFilter<"AssignmentRule"> | string
   enabled?: Prisma.BoolFilter<"AssignmentRule"> | boolean
+  memberTerritoryManaged?: Prisma.BoolFilter<"AssignmentRule"> | boolean
   conditions?: Prisma.JsonFilter<"AssignmentRule">
   assigneeId?: Prisma.StringNullableFilter<"AssignmentRule"> | string | null
   fallbackAssigneeId?: Prisma.StringNullableFilter<"AssignmentRule"> | string | null
@@ -321,6 +331,7 @@ export type AssignmentRuleOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
+  memberTerritoryManaged?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   conditions?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -345,6 +356,7 @@ export type AssignmentRuleScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"AssignmentRule"> | string
   name?: Prisma.StringWithAggregatesFilter<"AssignmentRule"> | string
   enabled?: Prisma.BoolWithAggregatesFilter<"AssignmentRule"> | boolean
+  memberTerritoryManaged?: Prisma.BoolWithAggregatesFilter<"AssignmentRule"> | boolean
   priority?: Prisma.IntWithAggregatesFilter<"AssignmentRule"> | number
   conditions?: Prisma.JsonWithAggregatesFilter<"AssignmentRule">
   assigneeId?: Prisma.StringNullableWithAggregatesFilter<"AssignmentRule"> | string | null
@@ -361,6 +373,7 @@ export type AssignmentRuleCreateInput = {
   id?: string
   name: string
   enabled?: boolean
+  memberTerritoryManaged?: boolean
   priority: number
   conditions: Prisma.JsonNullValueInput | runtime.InputJsonValue
   assigneeId?: string | null
@@ -377,6 +390,7 @@ export type AssignmentRuleUncheckedCreateInput = {
   id?: string
   name: string
   enabled?: boolean
+  memberTerritoryManaged?: boolean
   priority: number
   conditions: Prisma.JsonNullValueInput | runtime.InputJsonValue
   assigneeId?: string | null
@@ -393,6 +407,7 @@ export type AssignmentRuleUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  memberTerritoryManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   conditions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -409,6 +424,7 @@ export type AssignmentRuleUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  memberTerritoryManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   conditions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -425,6 +441,7 @@ export type AssignmentRuleCreateManyInput = {
   id?: string
   name: string
   enabled?: boolean
+  memberTerritoryManaged?: boolean
   priority: number
   conditions: Prisma.JsonNullValueInput | runtime.InputJsonValue
   assigneeId?: string | null
@@ -441,6 +458,7 @@ export type AssignmentRuleUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  memberTerritoryManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   conditions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -457,6 +475,7 @@ export type AssignmentRuleUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  memberTerritoryManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   conditions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   assigneeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -473,6 +492,7 @@ export type AssignmentRuleCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
+  memberTerritoryManaged?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   conditions?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrder
@@ -494,6 +514,7 @@ export type AssignmentRuleMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
+  memberTerritoryManaged?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrder
   fallbackAssigneeId?: Prisma.SortOrder
@@ -509,6 +530,7 @@ export type AssignmentRuleMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
+  memberTerritoryManaged?: Prisma.SortOrder
   priority?: Prisma.SortOrder
   assigneeId?: Prisma.SortOrder
   fallbackAssigneeId?: Prisma.SortOrder
@@ -539,6 +561,7 @@ export type AssignmentRuleSelect<ExtArgs extends runtime.Types.Extensions.Intern
   id?: boolean
   name?: boolean
   enabled?: boolean
+  memberTerritoryManaged?: boolean
   priority?: boolean
   conditions?: boolean
   assigneeId?: boolean
@@ -555,6 +578,7 @@ export type AssignmentRuleSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   id?: boolean
   name?: boolean
   enabled?: boolean
+  memberTerritoryManaged?: boolean
   priority?: boolean
   conditions?: boolean
   assigneeId?: boolean
@@ -571,6 +595,7 @@ export type AssignmentRuleSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   id?: boolean
   name?: boolean
   enabled?: boolean
+  memberTerritoryManaged?: boolean
   priority?: boolean
   conditions?: boolean
   assigneeId?: boolean
@@ -587,6 +612,7 @@ export type AssignmentRuleSelectScalar = {
   id?: boolean
   name?: boolean
   enabled?: boolean
+  memberTerritoryManaged?: boolean
   priority?: boolean
   conditions?: boolean
   assigneeId?: boolean
@@ -599,7 +625,7 @@ export type AssignmentRuleSelectScalar = {
   updatedAt?: boolean
 }
 
-export type AssignmentRuleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "enabled" | "priority" | "conditions" | "assigneeId" | "fallbackAssigneeId" | "poolKey" | "workloadLimit" | "effectiveFrom" | "effectiveTo" | "createdAt" | "updatedAt", ExtArgs["result"]["assignmentRule"]>
+export type AssignmentRuleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "enabled" | "memberTerritoryManaged" | "priority" | "conditions" | "assigneeId" | "fallbackAssigneeId" | "poolKey" | "workloadLimit" | "effectiveFrom" | "effectiveTo" | "createdAt" | "updatedAt", ExtArgs["result"]["assignmentRule"]>
 
 export type $AssignmentRulePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AssignmentRule"
@@ -608,6 +634,7 @@ export type $AssignmentRulePayload<ExtArgs extends runtime.Types.Extensions.Inte
     id: string
     name: string
     enabled: boolean
+    memberTerritoryManaged: boolean
     priority: number
     conditions: runtime.JsonValue
     assigneeId: string | null
@@ -1044,6 +1071,7 @@ export interface AssignmentRuleFieldRefs {
   readonly id: Prisma.FieldRef<"AssignmentRule", 'String'>
   readonly name: Prisma.FieldRef<"AssignmentRule", 'String'>
   readonly enabled: Prisma.FieldRef<"AssignmentRule", 'Boolean'>
+  readonly memberTerritoryManaged: Prisma.FieldRef<"AssignmentRule", 'Boolean'>
   readonly priority: Prisma.FieldRef<"AssignmentRule", 'Int'>
   readonly conditions: Prisma.FieldRef<"AssignmentRule", 'Json'>
   readonly assigneeId: Prisma.FieldRef<"AssignmentRule", 'String'>

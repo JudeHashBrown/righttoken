@@ -229,6 +229,41 @@ HttpOnly 会话。上线时使用四个测试身份逐项确认：
 - 页面用户总数与主站有效用户数一致；
 - 不在日志、通知、截图或 Git 中输出真实邮箱和 IP。
 
+### 负责人分配迁移验收
+
+本次版本包含客户负责人状态和成员地区规则字段。部署镜像前必须先运行
+第 5 节的 `recall-migrate`，确认以下迁移已成功：
+
+```text
+20260729173000_add_owner_assignment_state
+20260729190000_mark_member_territory_rules
+```
+
+迁移完成后，以只读方式检查负责人状态：
+
+```sql
+SELECT "ownerAssignmentMode", COUNT(*)
+FROM recall."UserProfile"
+WHERE "sourceDeletedAt" IS NULL
+GROUP BY "ownerAssignmentMode";
+
+SELECT COUNT(*) AS users_without_owner
+FROM recall."UserProfile"
+WHERE "sourceDeletedAt" IS NULL
+  AND "ownerId" IS NULL;
+```
+
+上线验收要求：
+
+1. 新同步用户会立即按省份/州优先、国家其次的规则获得负责人。
+2. 没有地区规则可匹配的用户由主管理员暂管，`users_without_owner` 为 0。
+3. 手动调整一个用户后执行增量同步和规则重算，负责人保持不变。
+4. 点击“恢复自动分配”后，该用户按最新地区规则重新分配。
+5. 撤销一个测试运营的权限时必须先选择接管人；确认后其全部客户和未完成
+   任务转给该成员，客户显示为人工指定，已完成和已取消任务的历史负责人
+   保持不变。
+6. 普通运营账号只能看到自己的客户和任务。
+
 ## 8. 邮箱、企微与健康检查
 
 邮箱和企微连接仍由主管理员在“系统设置”配置。主站用户数据不再在页面

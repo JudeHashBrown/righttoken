@@ -11,6 +11,7 @@ export type EditableAssignmentRule = {
   id?: string;
   name: string;
   enabled: boolean;
+  memberTerritoryManaged?: boolean;
   priority: number;
   countryCodes: string;
   regions?: string;
@@ -39,6 +40,7 @@ function emptyRule(priority: number): EditableAssignmentRule {
   return {
     name: "",
     enabled: true,
+    memberTerritoryManaged: false,
     priority,
     countryCodes: "",
     regions: "",
@@ -64,6 +66,8 @@ function requestRules(rules: EditableAssignmentRule[]) {
     ...(rule.id ? { id: rule.id } : {}),
     name: rule.name.trim(),
     enabled: rule.enabled,
+    memberTerritoryManaged:
+      rule.memberTerritoryManaged ?? false,
     priority: index + 1,
     conditions: {
       ...(list(rule.countryCodes)

@@ -4,7 +4,10 @@ import {
   simpleParser,
   type AddressObject
 } from "mailparser";
-import { sendSmtpMessage } from "@/modules/integrations/email/smtp-sender";
+import {
+  sendSmtpMessage,
+  verifySmtpConnection
+} from "@/modules/integrations/email/smtp-sender";
 import type {
   MailboxAdapter,
   MailboxMessage
@@ -220,8 +223,13 @@ export function createSmtpImapAdapter(
   return {
     async testConnection() {
       const client = imapClient();
-      await client.connect();
-      await client.logout();
+      await Promise.all([
+        (async () => {
+          await client.connect();
+          await client.logout();
+        })(),
+        verifySmtpConnection(config)
+      ]);
       return { ok: true };
     },
 

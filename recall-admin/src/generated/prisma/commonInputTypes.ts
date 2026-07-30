@@ -190,6 +190,13 @@ export type EnumSegmentCodeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumSegmentCodeFilter<$PrismaModel> | $Enums.SegmentCode
 }
 
+export type EnumOwnerAssignmentModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.OwnerAssignmentMode | Prisma.EnumOwnerAssignmentModeFieldRefInput<$PrismaModel>
+  in?: $Enums.OwnerAssignmentMode[] | Prisma.ListEnumOwnerAssignmentModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OwnerAssignmentMode[] | Prisma.ListEnumOwnerAssignmentModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOwnerAssignmentModeFilter<$PrismaModel> | $Enums.OwnerAssignmentMode
+}
+
 export type EnumLocationAttributionSourceNullableWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.LocationAttributionSource | Prisma.EnumLocationAttributionSourceFieldRefInput<$PrismaModel> | null
   in?: $Enums.LocationAttributionSource[] | Prisma.ListEnumLocationAttributionSourceFieldRefInput<$PrismaModel> | null
@@ -224,6 +231,16 @@ export type EnumSegmentCodeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumSegmentCodeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumSegmentCodeFilter<$PrismaModel>
+}
+
+export type EnumOwnerAssignmentModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OwnerAssignmentMode | Prisma.EnumOwnerAssignmentModeFieldRefInput<$PrismaModel>
+  in?: $Enums.OwnerAssignmentMode[] | Prisma.ListEnumOwnerAssignmentModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OwnerAssignmentMode[] | Prisma.ListEnumOwnerAssignmentModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOwnerAssignmentModeWithAggregatesFilter<$PrismaModel> | $Enums.OwnerAssignmentMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOwnerAssignmentModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOwnerAssignmentModeFilter<$PrismaModel>
 }
 
 export type JsonFilter<$PrismaModel = never> =
@@ -720,6 +737,13 @@ export type NestedEnumSegmentCodeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumSegmentCodeFilter<$PrismaModel> | $Enums.SegmentCode
 }
 
+export type NestedEnumOwnerAssignmentModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.OwnerAssignmentMode | Prisma.EnumOwnerAssignmentModeFieldRefInput<$PrismaModel>
+  in?: $Enums.OwnerAssignmentMode[] | Prisma.ListEnumOwnerAssignmentModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OwnerAssignmentMode[] | Prisma.ListEnumOwnerAssignmentModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOwnerAssignmentModeFilter<$PrismaModel> | $Enums.OwnerAssignmentMode
+}
+
 export type NestedEnumLocationAttributionSourceNullableWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.LocationAttributionSource | Prisma.EnumLocationAttributionSourceFieldRefInput<$PrismaModel> | null
   in?: $Enums.LocationAttributionSource[] | Prisma.ListEnumLocationAttributionSourceFieldRefInput<$PrismaModel> | null
@@ -765,6 +789,16 @@ export type NestedEnumSegmentCodeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumSegmentCodeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumSegmentCodeFilter<$PrismaModel>
+}
+
+export type NestedEnumOwnerAssignmentModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OwnerAssignmentMode | Prisma.EnumOwnerAssignmentModeFieldRefInput<$PrismaModel>
+  in?: $Enums.OwnerAssignmentMode[] | Prisma.ListEnumOwnerAssignmentModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OwnerAssignmentMode[] | Prisma.ListEnumOwnerAssignmentModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOwnerAssignmentModeWithAggregatesFilter<$PrismaModel> | $Enums.OwnerAssignmentMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOwnerAssignmentModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOwnerAssignmentModeFilter<$PrismaModel>
 }
 
 export type NestedJsonFilter<$PrismaModel = never> =

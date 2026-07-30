@@ -43,7 +43,9 @@ describe("MailboxActions", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "测试连接" }));
     await waitFor(() => {
-      expect(screen.getByText("邮箱连接正常")).toBeInTheDocument();
+      expect(
+        screen.getByText("收信和发信连接均正常")
+      ).toBeInTheDocument();
     });
     fireEvent.click(screen.getByRole("button", { name: "立即收取邮件" }));
     await waitFor(() => {

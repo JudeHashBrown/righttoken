@@ -138,3 +138,11 @@ export const LocationRuleMatchType = {
 } as const
 
 export type LocationRuleMatchType = (typeof LocationRuleMatchType)[keyof typeof LocationRuleMatchType]
+
+
+export const OwnerAssignmentMode = {
+  AUTO: 'AUTO',
+  MANUAL: 'MANUAL'
+} as const
+
+export type OwnerAssignmentMode = (typeof OwnerAssignmentMode)[keyof typeof OwnerAssignmentMode]

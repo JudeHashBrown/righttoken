@@ -2,8 +2,14 @@ import styles from "@/components/workspaces/workspace.module.css";
 import { MemberInviteForm } from "@/components/members/member-invite-form";
 import { MemberAccessActions } from "@/components/members/member-access-actions";
 import { MemberWecomMappingForm } from "@/components/members/member-wecom-mapping-form";
+import { MemberTerritoryEditor } from "@/components/members/member-territory-editor";
 import { requireAdministrator } from "@/modules/admin/page-access";
-import { getMemberWorkspaceOverview } from "@/modules/admin/workspace-queries";
+import {
+  getAssignmentWorkspaceOverview,
+  getMemberWorkspaceOverview
+} from "@/modules/admin/workspace-queries";
+import { territoriesForMember } from "@/modules/assignment/member-territories";
+import type { AssignmentRuleInput } from "@/modules/assignment/types";
 
 const roleLabels = {
   PRIMARY_ADMIN: "主管理员",
@@ -13,7 +19,26 @@ const roleLabels = {
 
 export default async function MembersPage(): Promise<React.JSX.Element> {
   const viewer = await requireAdministrator("/members");
-  const members = await getMemberWorkspaceOverview();
+  const [members, assignment] = await Promise.all([
+    getMemberWorkspaceOverview(),
+    getAssignmentWorkspaceOverview()
+  ]);
+  const assignmentRules: AssignmentRuleInput[] =
+    assignment.rules.map((rule) => ({
+      id: rule.id,
+      name: rule.name,
+      enabled: rule.enabled,
+      memberTerritoryManaged: rule.memberTerritoryManaged,
+      priority: rule.priority,
+      conditions:
+        rule.conditions as AssignmentRuleInput["conditions"],
+      assigneeId: rule.assigneeId,
+      fallbackAssigneeId: rule.fallbackAssigneeId,
+      poolKey: rule.poolKey,
+      workloadLimit: rule.workloadLimit,
+      effectiveFrom: rule.effectiveFrom,
+      effectiveTo: rule.effectiveTo
+    }));
 
   return (
     <main className={styles.page}>
@@ -67,6 +92,7 @@ export default async function MembersPage(): Promise<React.JSX.Element> {
                 <th>账号状态</th>
                 <th>未完成任务</th>
                 <th>负责用户</th>
+                <th>负责地区</th>
                 <th>企微通知</th>
                 <th>权限操作</th>
               </tr>
@@ -95,6 +121,25 @@ export default async function MembersPage(): Promise<React.JSX.Element> {
                   <td>{member._count.assignedTasks}</td>
                   <td>{member._count.ownedUsers}</td>
                   <td>
+                    {member.role === "OPERATOR" && member.active ? (
+                      <MemberTerritoryEditor
+                        member={{
+                          id: member.id,
+                          displayName: member.displayName
+                        }}
+                        initialTerritories={territoriesForMember(
+                          member.id,
+                          assignmentRules
+                        )}
+                        allRules={assignmentRules}
+                      />
+                    ) : (
+                      <span className={styles.secondaryText}>
+                        全局管理
+                      </span>
+                    )}
+                  </td>
+                  <td>
                     <MemberWecomMappingForm
                       memberId={member.id}
                       initialWecomUserId={member.wecomUserId}
@@ -109,6 +154,18 @@ export default async function MembersPage(): Promise<React.JSX.Element> {
                       active={member.active}
                       viewerId={viewer.id}
                       viewerRole={viewer.role}
+                      successorOptions={members
+                        .filter(
+                          (candidate) =>
+                            candidate.active &&
+                            candidate.id !== member.id
+                        )
+                        .map((candidate) => ({
+                          id: candidate.id,
+                          displayName: candidate.displayName,
+                          email: candidate.email,
+                          role: candidate.role
+                        }))}
                     />
                   </td>
                 </tr>

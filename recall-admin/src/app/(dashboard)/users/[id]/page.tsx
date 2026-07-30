@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import { RevokeOverrideButton } from "@/components/users/revoke-override-button";
 import { SegmentOverrideForm } from "@/components/users/segment-override-form";
 import { UserNoteForm } from "@/components/users/user-note-form";
+import { UserOwnerControl } from "@/components/users/user-owner-control";
 import styles from "@/components/workspaces/workspace.module.css";
+import { prisma } from "@/lib/db/prisma";
 import {
   mailComposeHref
 } from "@/modules/mail/compose-link";
@@ -19,6 +21,8 @@ import { getUser360 } from "@/modules/users/user-queries";
 import {
   locationSourceLabel,
   operationalLocationLabel,
+  ownerAssignmentLabel,
+  ownerDisplayName,
   paymentStatusLabel,
   userSourceLabel
 } from "@/modules/users/presentation";
@@ -53,6 +57,14 @@ export default async function UserDetailPage({
   const member = await requireWorkspaceMember(`/users/${id}`);
   const user = await getUser360(member, id);
   if (!user) notFound();
+  const ownerOptions =
+    member.role === "OPERATOR"
+      ? []
+      : await prisma.member.findMany({
+          where: { active: true },
+          orderBy: { displayName: "asc" },
+          select: { id: true, displayName: true }
+        });
   const now = new Date();
 
   const timeline = [
@@ -165,7 +177,36 @@ export default async function UserDetailPage({
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>负责人</span>
-                <strong>{user.owner?.displayName || "公共池"}</strong>
+                <strong>{ownerDisplayName(user.owner)}</strong>
+                <span className={styles.secondaryText}>
+                  {ownerAssignmentLabel(
+                    user.ownerAssignmentMode
+                  )}
+                  {user.ownerAssignedAt
+                    ? ` · ${dateTime(user.ownerAssignedAt)}`
+                    : ""}
+                </span>
+                {member.role !== "OPERATOR" ? (
+                  <UserOwnerControl
+                    userId={user.id}
+                    currentOwnerId={user.ownerId}
+                    currentOwnerName={ownerDisplayName(user.owner)}
+                    assignmentMode={user.ownerAssignmentMode}
+                    members={ownerOptions}
+                  />
+                ) : null}
+              </div>
+              <div className={styles.summaryItem}>
+                <span className={styles.detailLabel}>分配说明</span>
+                <strong>
+                  {user.ownerAssignmentReason ||
+                    "系统已根据用户归属地区安排负责人"}
+                </strong>
+                {user.ownerAssignedBy ? (
+                  <span className={styles.secondaryText}>
+                    由 {user.ownerAssignedBy.displayName} 调整
+                  </span>
+                ) : null}
               </div>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>来源</span>

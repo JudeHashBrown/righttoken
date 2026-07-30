@@ -2783,6 +2783,10 @@ export const UserProfileScalarFieldEnum = {
   currentSegment: 'currentSegment',
   segmentRuleVersion: 'segmentRuleVersion',
   ownerId: 'ownerId',
+  ownerAssignmentMode: 'ownerAssignmentMode',
+  ownerAssignedAt: 'ownerAssignedAt',
+  ownerAssignedById: 'ownerAssignedById',
+  ownerAssignmentReason: 'ownerAssignmentReason',
   reasonLabel: 'reasonLabel',
   unsubscribedAt: 'unsubscribedAt',
   pausedAt: 'pausedAt',
@@ -2893,6 +2897,7 @@ export const AssignmentRuleScalarFieldEnum = {
   id: 'id',
   name: 'name',
   enabled: 'enabled',
+  memberTerritoryManaged: 'memberTerritoryManaged',
   priority: 'priority',
   conditions: 'conditions',
   assigneeId: 'assigneeId',
@@ -3372,6 +3377,20 @@ export type EnumSegmentCodeFieldRefInput<$PrismaModel> = FieldRefInputType<$Pris
  * Reference to a field of type 'SegmentCode[]'
  */
 export type ListEnumSegmentCodeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SegmentCode[]'>
+    
+
+
+/**
+ * Reference to a field of type 'OwnerAssignmentMode'
+ */
+export type EnumOwnerAssignmentModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OwnerAssignmentMode'>
+    
+
+
+/**
+ * Reference to a field of type 'OwnerAssignmentMode[]'
+ */
+export type ListEnumOwnerAssignmentModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OwnerAssignmentMode[]'>
     
 
 

@@ -78,6 +78,10 @@ export type UserProfileMinAggregateOutputType = {
   currentSegment: $Enums.SegmentCode | null
   segmentRuleVersion: number | null
   ownerId: string | null
+  ownerAssignmentMode: $Enums.OwnerAssignmentMode | null
+  ownerAssignedAt: Date | null
+  ownerAssignedById: string | null
+  ownerAssignmentReason: string | null
   reasonLabel: string | null
   unsubscribedAt: Date | null
   pausedAt: Date | null
@@ -124,6 +128,10 @@ export type UserProfileMaxAggregateOutputType = {
   currentSegment: $Enums.SegmentCode | null
   segmentRuleVersion: number | null
   ownerId: string | null
+  ownerAssignmentMode: $Enums.OwnerAssignmentMode | null
+  ownerAssignedAt: Date | null
+  ownerAssignedById: string | null
+  ownerAssignmentReason: string | null
   reasonLabel: string | null
   unsubscribedAt: Date | null
   pausedAt: Date | null
@@ -170,6 +178,10 @@ export type UserProfileCountAggregateOutputType = {
   currentSegment: number
   segmentRuleVersion: number
   ownerId: number
+  ownerAssignmentMode: number
+  ownerAssignedAt: number
+  ownerAssignedById: number
+  ownerAssignmentReason: number
   reasonLabel: number
   unsubscribedAt: number
   pausedAt: number
@@ -234,6 +246,10 @@ export type UserProfileMinAggregateInputType = {
   currentSegment?: true
   segmentRuleVersion?: true
   ownerId?: true
+  ownerAssignmentMode?: true
+  ownerAssignedAt?: true
+  ownerAssignedById?: true
+  ownerAssignmentReason?: true
   reasonLabel?: true
   unsubscribedAt?: true
   pausedAt?: true
@@ -280,6 +296,10 @@ export type UserProfileMaxAggregateInputType = {
   currentSegment?: true
   segmentRuleVersion?: true
   ownerId?: true
+  ownerAssignmentMode?: true
+  ownerAssignedAt?: true
+  ownerAssignedById?: true
+  ownerAssignmentReason?: true
   reasonLabel?: true
   unsubscribedAt?: true
   pausedAt?: true
@@ -326,6 +346,10 @@ export type UserProfileCountAggregateInputType = {
   currentSegment?: true
   segmentRuleVersion?: true
   ownerId?: true
+  ownerAssignmentMode?: true
+  ownerAssignedAt?: true
+  ownerAssignedById?: true
+  ownerAssignmentReason?: true
   reasonLabel?: true
   unsubscribedAt?: true
   pausedAt?: true
@@ -459,6 +483,10 @@ export type UserProfileGroupByOutputType = {
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion: number
   ownerId: string | null
+  ownerAssignmentMode: $Enums.OwnerAssignmentMode
+  ownerAssignedAt: Date | null
+  ownerAssignedById: string | null
+  ownerAssignmentReason: string | null
   reasonLabel: string | null
   unsubscribedAt: Date | null
   pausedAt: Date | null
@@ -528,6 +556,10 @@ export type UserProfileWhereInput = {
   currentSegment?: Prisma.EnumSegmentCodeFilter<"UserProfile"> | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFilter<"UserProfile"> | number
   ownerId?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFilter<"UserProfile"> | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  ownerAssignedById?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  ownerAssignmentReason?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   reasonLabel?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   unsubscribedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   pausedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
@@ -537,6 +569,7 @@ export type UserProfileWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"UserProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserProfile"> | Date | string
   owner?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
+  ownerAssignedBy?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   events?: Prisma.UserEventListRelationFilter
   segmentHistory?: Prisma.SegmentHistoryListRelationFilter
   segmentOverrides?: Prisma.SegmentOverrideListRelationFilter
@@ -583,6 +616,10 @@ export type UserProfileOrderByWithRelationInput = {
   currentSegment?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
   ownerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  ownerAssignmentMode?: Prisma.SortOrder
+  ownerAssignedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  ownerAssignedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  ownerAssignmentReason?: Prisma.SortOrderInput | Prisma.SortOrder
   reasonLabel?: Prisma.SortOrderInput | Prisma.SortOrder
   unsubscribedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   pausedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -592,6 +629,7 @@ export type UserProfileOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   owner?: Prisma.MemberOrderByWithRelationInput
+  ownerAssignedBy?: Prisma.MemberOrderByWithRelationInput
   events?: Prisma.UserEventOrderByRelationAggregateInput
   segmentHistory?: Prisma.SegmentHistoryOrderByRelationAggregateInput
   segmentOverrides?: Prisma.SegmentOverrideOrderByRelationAggregateInput
@@ -641,6 +679,10 @@ export type UserProfileWhereUniqueInput = Prisma.AtLeast<{
   currentSegment?: Prisma.EnumSegmentCodeFilter<"UserProfile"> | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFilter<"UserProfile"> | number
   ownerId?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFilter<"UserProfile"> | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  ownerAssignedById?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  ownerAssignmentReason?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   reasonLabel?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   unsubscribedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   pausedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
@@ -650,6 +692,7 @@ export type UserProfileWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"UserProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserProfile"> | Date | string
   owner?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
+  ownerAssignedBy?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   events?: Prisma.UserEventListRelationFilter
   segmentHistory?: Prisma.SegmentHistoryListRelationFilter
   segmentOverrides?: Prisma.SegmentOverrideListRelationFilter
@@ -696,6 +739,10 @@ export type UserProfileOrderByWithAggregationInput = {
   currentSegment?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
   ownerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  ownerAssignmentMode?: Prisma.SortOrder
+  ownerAssignedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  ownerAssignedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  ownerAssignmentReason?: Prisma.SortOrderInput | Prisma.SortOrder
   reasonLabel?: Prisma.SortOrderInput | Prisma.SortOrder
   unsubscribedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   pausedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -750,6 +797,10 @@ export type UserProfileScalarWhereWithAggregatesInput = {
   currentSegment?: Prisma.EnumSegmentCodeWithAggregatesFilter<"UserProfile"> | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntWithAggregatesFilter<"UserProfile"> | number
   ownerId?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeWithAggregatesFilter<"UserProfile"> | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
+  ownerAssignedById?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
+  ownerAssignmentReason?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
   reasonLabel?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
   unsubscribedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
   pausedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
@@ -794,6 +845,9 @@ export type UserProfileCreateInput = {
   anomalyChangedAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -803,6 +857,7 @@ export type UserProfileCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
   events?: Prisma.UserEventCreateNestedManyWithoutUserInput
   segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
@@ -849,6 +904,10 @@ export type UserProfileUncheckedCreateInput = {
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -900,6 +959,9 @@ export type UserProfileUpdateInput = {
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -909,6 +971,7 @@ export type UserProfileUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
   events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
   segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
@@ -955,6 +1018,10 @@ export type UserProfileUncheckedUpdateInput = {
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1008,6 +1075,10 @@ export type UserProfileCreateManyInput = {
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -1052,6 +1123,9 @@ export type UserProfileUpdateManyMutationInput = {
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1098,6 +1172,10 @@ export type UserProfileUncheckedUpdateManyInput = {
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1154,6 +1232,10 @@ export type UserProfileCountOrderByAggregateInput = {
   currentSegment?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
+  ownerAssignmentMode?: Prisma.SortOrder
+  ownerAssignedAt?: Prisma.SortOrder
+  ownerAssignedById?: Prisma.SortOrder
+  ownerAssignmentReason?: Prisma.SortOrder
   reasonLabel?: Prisma.SortOrder
   unsubscribedAt?: Prisma.SortOrder
   pausedAt?: Prisma.SortOrder
@@ -1208,6 +1290,10 @@ export type UserProfileMaxOrderByAggregateInput = {
   currentSegment?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
+  ownerAssignmentMode?: Prisma.SortOrder
+  ownerAssignedAt?: Prisma.SortOrder
+  ownerAssignedById?: Prisma.SortOrder
+  ownerAssignmentReason?: Prisma.SortOrder
   reasonLabel?: Prisma.SortOrder
   unsubscribedAt?: Prisma.SortOrder
   pausedAt?: Prisma.SortOrder
@@ -1254,6 +1340,10 @@ export type UserProfileMinOrderByAggregateInput = {
   currentSegment?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
+  ownerAssignmentMode?: Prisma.SortOrder
+  ownerAssignedAt?: Prisma.SortOrder
+  ownerAssignedById?: Prisma.SortOrder
+  ownerAssignmentReason?: Prisma.SortOrder
   reasonLabel?: Prisma.SortOrder
   unsubscribedAt?: Prisma.SortOrder
   pausedAt?: Prisma.SortOrder
@@ -1289,10 +1379,24 @@ export type UserProfileCreateNestedManyWithoutOwnerInput = {
   connect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
 }
 
+export type UserProfileCreateNestedManyWithoutOwnerAssignedByInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutOwnerAssignedByInput, Prisma.UserProfileUncheckedCreateWithoutOwnerAssignedByInput> | Prisma.UserProfileCreateWithoutOwnerAssignedByInput[] | Prisma.UserProfileUncheckedCreateWithoutOwnerAssignedByInput[]
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutOwnerAssignedByInput | Prisma.UserProfileCreateOrConnectWithoutOwnerAssignedByInput[]
+  createMany?: Prisma.UserProfileCreateManyOwnerAssignedByInputEnvelope
+  connect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+}
+
 export type UserProfileUncheckedCreateNestedManyWithoutOwnerInput = {
   create?: Prisma.XOR<Prisma.UserProfileCreateWithoutOwnerInput, Prisma.UserProfileUncheckedCreateWithoutOwnerInput> | Prisma.UserProfileCreateWithoutOwnerInput[] | Prisma.UserProfileUncheckedCreateWithoutOwnerInput[]
   connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutOwnerInput | Prisma.UserProfileCreateOrConnectWithoutOwnerInput[]
   createMany?: Prisma.UserProfileCreateManyOwnerInputEnvelope
+  connect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+}
+
+export type UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutOwnerAssignedByInput, Prisma.UserProfileUncheckedCreateWithoutOwnerAssignedByInput> | Prisma.UserProfileCreateWithoutOwnerAssignedByInput[] | Prisma.UserProfileUncheckedCreateWithoutOwnerAssignedByInput[]
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutOwnerAssignedByInput | Prisma.UserProfileCreateOrConnectWithoutOwnerAssignedByInput[]
+  createMany?: Prisma.UserProfileCreateManyOwnerAssignedByInputEnvelope
   connect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
 }
 
@@ -1310,6 +1414,20 @@ export type UserProfileUpdateManyWithoutOwnerNestedInput = {
   deleteMany?: Prisma.UserProfileScalarWhereInput | Prisma.UserProfileScalarWhereInput[]
 }
 
+export type UserProfileUpdateManyWithoutOwnerAssignedByNestedInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutOwnerAssignedByInput, Prisma.UserProfileUncheckedCreateWithoutOwnerAssignedByInput> | Prisma.UserProfileCreateWithoutOwnerAssignedByInput[] | Prisma.UserProfileUncheckedCreateWithoutOwnerAssignedByInput[]
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutOwnerAssignedByInput | Prisma.UserProfileCreateOrConnectWithoutOwnerAssignedByInput[]
+  upsert?: Prisma.UserProfileUpsertWithWhereUniqueWithoutOwnerAssignedByInput | Prisma.UserProfileUpsertWithWhereUniqueWithoutOwnerAssignedByInput[]
+  createMany?: Prisma.UserProfileCreateManyOwnerAssignedByInputEnvelope
+  set?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  disconnect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  delete?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  connect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  update?: Prisma.UserProfileUpdateWithWhereUniqueWithoutOwnerAssignedByInput | Prisma.UserProfileUpdateWithWhereUniqueWithoutOwnerAssignedByInput[]
+  updateMany?: Prisma.UserProfileUpdateManyWithWhereWithoutOwnerAssignedByInput | Prisma.UserProfileUpdateManyWithWhereWithoutOwnerAssignedByInput[]
+  deleteMany?: Prisma.UserProfileScalarWhereInput | Prisma.UserProfileScalarWhereInput[]
+}
+
 export type UserProfileUncheckedUpdateManyWithoutOwnerNestedInput = {
   create?: Prisma.XOR<Prisma.UserProfileCreateWithoutOwnerInput, Prisma.UserProfileUncheckedCreateWithoutOwnerInput> | Prisma.UserProfileCreateWithoutOwnerInput[] | Prisma.UserProfileUncheckedCreateWithoutOwnerInput[]
   connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutOwnerInput | Prisma.UserProfileCreateOrConnectWithoutOwnerInput[]
@@ -1321,6 +1439,20 @@ export type UserProfileUncheckedUpdateManyWithoutOwnerNestedInput = {
   connect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
   update?: Prisma.UserProfileUpdateWithWhereUniqueWithoutOwnerInput | Prisma.UserProfileUpdateWithWhereUniqueWithoutOwnerInput[]
   updateMany?: Prisma.UserProfileUpdateManyWithWhereWithoutOwnerInput | Prisma.UserProfileUpdateManyWithWhereWithoutOwnerInput[]
+  deleteMany?: Prisma.UserProfileScalarWhereInput | Prisma.UserProfileScalarWhereInput[]
+}
+
+export type UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutOwnerAssignedByInput, Prisma.UserProfileUncheckedCreateWithoutOwnerAssignedByInput> | Prisma.UserProfileCreateWithoutOwnerAssignedByInput[] | Prisma.UserProfileUncheckedCreateWithoutOwnerAssignedByInput[]
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutOwnerAssignedByInput | Prisma.UserProfileCreateOrConnectWithoutOwnerAssignedByInput[]
+  upsert?: Prisma.UserProfileUpsertWithWhereUniqueWithoutOwnerAssignedByInput | Prisma.UserProfileUpsertWithWhereUniqueWithoutOwnerAssignedByInput[]
+  createMany?: Prisma.UserProfileCreateManyOwnerAssignedByInputEnvelope
+  set?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  disconnect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  delete?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  connect?: Prisma.UserProfileWhereUniqueInput | Prisma.UserProfileWhereUniqueInput[]
+  update?: Prisma.UserProfileUpdateWithWhereUniqueWithoutOwnerAssignedByInput | Prisma.UserProfileUpdateWithWhereUniqueWithoutOwnerAssignedByInput[]
+  updateMany?: Prisma.UserProfileUpdateManyWithWhereWithoutOwnerAssignedByInput | Prisma.UserProfileUpdateManyWithWhereWithoutOwnerAssignedByInput[]
   deleteMany?: Prisma.UserProfileScalarWhereInput | Prisma.UserProfileScalarWhereInput[]
 }
 
@@ -1338,6 +1470,10 @@ export type IntFieldUpdateOperationsInput = {
 
 export type EnumSegmentCodeFieldUpdateOperationsInput = {
   set?: $Enums.SegmentCode
+}
+
+export type EnumOwnerAssignmentModeFieldUpdateOperationsInput = {
+  set?: $Enums.OwnerAssignmentMode
 }
 
 export type UserProfileCreateNestedOneWithoutEventsInput = {
@@ -1516,6 +1652,9 @@ export type UserProfileCreateWithoutOwnerInput = {
   anomalyChangedAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -1524,6 +1663,7 @@ export type UserProfileCreateWithoutOwnerInput = {
   sourceDeletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
   events?: Prisma.UserEventCreateNestedManyWithoutUserInput
   segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
@@ -1569,6 +1709,10 @@ export type UserProfileUncheckedCreateWithoutOwnerInput = {
   anomalyChangedAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -1593,6 +1737,128 @@ export type UserProfileCreateOrConnectWithoutOwnerInput = {
 
 export type UserProfileCreateManyOwnerInputEnvelope = {
   data: Prisma.UserProfileCreateManyOwnerInput | Prisma.UserProfileCreateManyOwnerInput[]
+  skipDuplicates?: boolean
+}
+
+export type UserProfileCreateWithoutOwnerAssignedByInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  ipCountryCode?: string | null
+  ipRegion?: string | null
+  locationSource?: $Enums.LocationAttributionSource | null
+  locationEvaluatedAt?: Date | string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  events?: Prisma.UserEventCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+}
+
+export type UserProfileUncheckedCreateWithoutOwnerAssignedByInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  ipCountryCode?: string | null
+  ipRegion?: string | null
+  locationSource?: $Enums.LocationAttributionSource | null
+  locationRuleId?: string | null
+  locationEvaluatedAt?: Date | string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserProfileCreateOrConnectWithoutOwnerAssignedByInput = {
+  where: Prisma.UserProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutOwnerAssignedByInput, Prisma.UserProfileUncheckedCreateWithoutOwnerAssignedByInput>
+}
+
+export type UserProfileCreateManyOwnerAssignedByInputEnvelope = {
+  data: Prisma.UserProfileCreateManyOwnerAssignedByInput | Prisma.UserProfileCreateManyOwnerAssignedByInput[]
   skipDuplicates?: boolean
 }
 
@@ -1651,6 +1917,10 @@ export type UserProfileScalarWhereInput = {
   currentSegment?: Prisma.EnumSegmentCodeFilter<"UserProfile"> | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFilter<"UserProfile"> | number
   ownerId?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFilter<"UserProfile"> | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  ownerAssignedById?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  ownerAssignmentReason?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   reasonLabel?: Prisma.StringNullableFilter<"UserProfile"> | string | null
   unsubscribedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   pausedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
@@ -1659,6 +1929,22 @@ export type UserProfileScalarWhereInput = {
   sourceDeletedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"UserProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserProfile"> | Date | string
+}
+
+export type UserProfileUpsertWithWhereUniqueWithoutOwnerAssignedByInput = {
+  where: Prisma.UserProfileWhereUniqueInput
+  update: Prisma.XOR<Prisma.UserProfileUpdateWithoutOwnerAssignedByInput, Prisma.UserProfileUncheckedUpdateWithoutOwnerAssignedByInput>
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutOwnerAssignedByInput, Prisma.UserProfileUncheckedCreateWithoutOwnerAssignedByInput>
+}
+
+export type UserProfileUpdateWithWhereUniqueWithoutOwnerAssignedByInput = {
+  where: Prisma.UserProfileWhereUniqueInput
+  data: Prisma.XOR<Prisma.UserProfileUpdateWithoutOwnerAssignedByInput, Prisma.UserProfileUncheckedUpdateWithoutOwnerAssignedByInput>
+}
+
+export type UserProfileUpdateManyWithWhereWithoutOwnerAssignedByInput = {
+  where: Prisma.UserProfileScalarWhereInput
+  data: Prisma.XOR<Prisma.UserProfileUpdateManyMutationInput, Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByInput>
 }
 
 export type UserProfileCreateWithoutEventsInput = {
@@ -1695,6 +1981,9 @@ export type UserProfileCreateWithoutEventsInput = {
   anomalyChangedAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -1704,6 +1993,7 @@ export type UserProfileCreateWithoutEventsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
   segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
@@ -1749,6 +2039,10 @@ export type UserProfileUncheckedCreateWithoutEventsInput = {
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -1815,6 +2109,9 @@ export type UserProfileUpdateWithoutEventsInput = {
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1824,6 +2121,7 @@ export type UserProfileUpdateWithoutEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
   segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
@@ -1869,6 +2167,10 @@ export type UserProfileUncheckedUpdateWithoutEventsInput = {
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1919,6 +2221,9 @@ export type UserProfileCreateWithoutSegmentHistoryInput = {
   anomalyChangedAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -1928,6 +2233,7 @@ export type UserProfileCreateWithoutSegmentHistoryInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
   events?: Prisma.UserEventCreateNestedManyWithoutUserInput
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
@@ -1973,6 +2279,10 @@ export type UserProfileUncheckedCreateWithoutSegmentHistoryInput = {
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -2039,6 +2349,9 @@ export type UserProfileUpdateWithoutSegmentHistoryInput = {
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2048,6 +2361,7 @@ export type UserProfileUpdateWithoutSegmentHistoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
   events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
@@ -2093,6 +2407,10 @@ export type UserProfileUncheckedUpdateWithoutSegmentHistoryInput = {
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2143,6 +2461,9 @@ export type UserProfileCreateWithoutSegmentOverridesInput = {
   anomalyChangedAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -2152,6 +2473,7 @@ export type UserProfileCreateWithoutSegmentOverridesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
   events?: Prisma.UserEventCreateNestedManyWithoutUserInput
   segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
   tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
@@ -2197,6 +2519,10 @@ export type UserProfileUncheckedCreateWithoutSegmentOverridesInput = {
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -2263,6 +2589,9 @@ export type UserProfileUpdateWithoutSegmentOverridesInput = {
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2272,6 +2601,7 @@ export type UserProfileUpdateWithoutSegmentOverridesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
   events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
   segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
   tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
@@ -2317,6 +2647,10 @@ export type UserProfileUncheckedUpdateWithoutSegmentOverridesInput = {
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2367,6 +2701,9 @@ export type UserProfileCreateWithoutNotesInput = {
   anomalyChangedAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -2376,6 +2713,7 @@ export type UserProfileCreateWithoutNotesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
   events?: Prisma.UserEventCreateNestedManyWithoutUserInput
   segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
@@ -2421,6 +2759,10 @@ export type UserProfileUncheckedCreateWithoutNotesInput = {
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -2487,6 +2829,9 @@ export type UserProfileUpdateWithoutNotesInput = {
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2496,6 +2841,7 @@ export type UserProfileUpdateWithoutNotesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
   events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
   segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
@@ -2541,6 +2887,10 @@ export type UserProfileUncheckedUpdateWithoutNotesInput = {
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2591,6 +2941,9 @@ export type UserProfileCreateWithoutLocationRuleInput = {
   anomalyChangedAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -2600,6 +2953,7 @@ export type UserProfileCreateWithoutLocationRuleInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
   events?: Prisma.UserEventCreateNestedManyWithoutUserInput
   segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
@@ -2644,6 +2998,10 @@ export type UserProfileUncheckedCreateWithoutLocationRuleInput = {
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -2721,6 +3079,9 @@ export type UserProfileCreateWithoutTasksInput = {
   anomalyChangedAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -2730,6 +3091,7 @@ export type UserProfileCreateWithoutTasksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
   events?: Prisma.UserEventCreateNestedManyWithoutUserInput
   segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
@@ -2775,6 +3137,10 @@ export type UserProfileUncheckedCreateWithoutTasksInput = {
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -2841,6 +3207,9 @@ export type UserProfileUpdateWithoutTasksInput = {
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2850,6 +3219,7 @@ export type UserProfileUpdateWithoutTasksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
   events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
   segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
@@ -2895,6 +3265,10 @@ export type UserProfileUncheckedUpdateWithoutTasksInput = {
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2945,6 +3319,9 @@ export type UserProfileCreateWithoutMailThreadsInput = {
   anomalyChangedAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -2954,6 +3331,7 @@ export type UserProfileCreateWithoutMailThreadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
   events?: Prisma.UserEventCreateNestedManyWithoutUserInput
   segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
@@ -2999,6 +3377,10 @@ export type UserProfileUncheckedCreateWithoutMailThreadsInput = {
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -3065,6 +3447,9 @@ export type UserProfileUpdateWithoutMailThreadsInput = {
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3074,6 +3459,7 @@ export type UserProfileUpdateWithoutMailThreadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
   events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
   segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
@@ -3119,6 +3505,10 @@ export type UserProfileUncheckedUpdateWithoutMailThreadsInput = {
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3169,6 +3559,9 @@ export type UserProfileCreateWithoutMailMessagesInput = {
   anomalyChangedAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -3178,6 +3571,7 @@ export type UserProfileCreateWithoutMailMessagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
   events?: Prisma.UserEventCreateNestedManyWithoutUserInput
   segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
   segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
@@ -3223,6 +3617,10 @@ export type UserProfileUncheckedCreateWithoutMailMessagesInput = {
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -3289,6 +3687,9 @@ export type UserProfileUpdateWithoutMailMessagesInput = {
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3298,6 +3699,7 @@ export type UserProfileUpdateWithoutMailMessagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
   events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
   segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
@@ -3343,6 +3745,10 @@ export type UserProfileUncheckedUpdateWithoutMailMessagesInput = {
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3394,6 +3800,59 @@ export type UserProfileCreateManyOwnerInput = {
   anomalyChangedAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type UserProfileCreateManyOwnerAssignedByInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  ipCountryCode?: string | null
+  ipRegion?: string | null
+  locationSource?: $Enums.LocationAttributionSource | null
+  locationRuleId?: string | null
+  locationEvaluatedAt?: Date | string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -3438,6 +3897,9 @@ export type UserProfileUpdateWithoutOwnerInput = {
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3446,6 +3908,7 @@ export type UserProfileUpdateWithoutOwnerInput = {
   sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
   events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
   segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
@@ -3491,6 +3954,10 @@ export type UserProfileUncheckedUpdateWithoutOwnerInput = {
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3543,6 +4010,171 @@ export type UserProfileUncheckedUpdateManyWithoutOwnerInput = {
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type UserProfileUpdateWithoutOwnerAssignedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
+  locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+}
+
+export type UserProfileUncheckedUpdateWithoutOwnerAssignedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
+  locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserProfileUncheckedUpdateManyWithoutOwnerAssignedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
+  locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3588,6 +4220,10 @@ export type UserProfileCreateManyLocationRuleInput = {
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
   reasonLabel?: string | null
   unsubscribedAt?: Date | string | null
   pausedAt?: Date | string | null
@@ -3632,6 +4268,9 @@ export type UserProfileUpdateWithoutLocationRuleInput = {
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3641,6 +4280,7 @@ export type UserProfileUpdateWithoutLocationRuleInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
   events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
   segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
   segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
@@ -3685,6 +4325,10 @@ export type UserProfileUncheckedUpdateWithoutLocationRuleInput = {
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3737,6 +4381,10 @@ export type UserProfileUncheckedUpdateManyWithoutLocationRuleInput = {
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3868,6 +4516,10 @@ export type UserProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   currentSegment?: boolean
   segmentRuleVersion?: boolean
   ownerId?: boolean
+  ownerAssignmentMode?: boolean
+  ownerAssignedAt?: boolean
+  ownerAssignedById?: boolean
+  ownerAssignmentReason?: boolean
   reasonLabel?: boolean
   unsubscribedAt?: boolean
   pausedAt?: boolean
@@ -3877,6 +4529,7 @@ export type UserProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   createdAt?: boolean
   updatedAt?: boolean
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
+  ownerAssignedBy?: boolean | Prisma.UserProfile$ownerAssignedByArgs<ExtArgs>
   events?: boolean | Prisma.UserProfile$eventsArgs<ExtArgs>
   segmentHistory?: boolean | Prisma.UserProfile$segmentHistoryArgs<ExtArgs>
   segmentOverrides?: boolean | Prisma.UserProfile$segmentOverridesArgs<ExtArgs>
@@ -3924,6 +4577,10 @@ export type UserProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   currentSegment?: boolean
   segmentRuleVersion?: boolean
   ownerId?: boolean
+  ownerAssignmentMode?: boolean
+  ownerAssignedAt?: boolean
+  ownerAssignedById?: boolean
+  ownerAssignmentReason?: boolean
   reasonLabel?: boolean
   unsubscribedAt?: boolean
   pausedAt?: boolean
@@ -3933,6 +4590,7 @@ export type UserProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   createdAt?: boolean
   updatedAt?: boolean
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
+  ownerAssignedBy?: boolean | Prisma.UserProfile$ownerAssignedByArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
 }, ExtArgs["result"]["userProfile"]>
 
@@ -3972,6 +4630,10 @@ export type UserProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   currentSegment?: boolean
   segmentRuleVersion?: boolean
   ownerId?: boolean
+  ownerAssignmentMode?: boolean
+  ownerAssignedAt?: boolean
+  ownerAssignedById?: boolean
+  ownerAssignmentReason?: boolean
   reasonLabel?: boolean
   unsubscribedAt?: boolean
   pausedAt?: boolean
@@ -3981,6 +4643,7 @@ export type UserProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   createdAt?: boolean
   updatedAt?: boolean
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
+  ownerAssignedBy?: boolean | Prisma.UserProfile$ownerAssignedByArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
 }, ExtArgs["result"]["userProfile"]>
 
@@ -4020,6 +4683,10 @@ export type UserProfileSelectScalar = {
   currentSegment?: boolean
   segmentRuleVersion?: boolean
   ownerId?: boolean
+  ownerAssignmentMode?: boolean
+  ownerAssignedAt?: boolean
+  ownerAssignedById?: boolean
+  ownerAssignmentReason?: boolean
   reasonLabel?: boolean
   unsubscribedAt?: boolean
   pausedAt?: boolean
@@ -4030,9 +4697,10 @@ export type UserProfileSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "externalUserId" | "email" | "emailNormalized" | "displayName" | "registeredAt" | "registrationIpEnc" | "registrationIpHash" | "countryCode" | "region" | "ipCountryCode" | "ipRegion" | "locationSource" | "locationRuleId" | "locationEvaluatedAt" | "language" | "timezone" | "source" | "checkoutStartedAt" | "checkoutChangedAt" | "paymentStatus" | "firstPaidAt" | "totalPaidMinor" | "firstCallAt" | "lastCallAt" | "successfulCallCount" | "balanceMinor" | "balanceCurrency" | "balanceUsdMinor" | "balanceChangedAt" | "anomalyActive" | "anomalyChangedAt" | "currentSegment" | "segmentRuleVersion" | "ownerId" | "reasonLabel" | "unsubscribedAt" | "pausedAt" | "profileChangedAt" | "lastExternalEventAt" | "sourceDeletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProfile"]>
+export type UserProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "externalUserId" | "email" | "emailNormalized" | "displayName" | "registeredAt" | "registrationIpEnc" | "registrationIpHash" | "countryCode" | "region" | "ipCountryCode" | "ipRegion" | "locationSource" | "locationRuleId" | "locationEvaluatedAt" | "language" | "timezone" | "source" | "checkoutStartedAt" | "checkoutChangedAt" | "paymentStatus" | "firstPaidAt" | "totalPaidMinor" | "firstCallAt" | "lastCallAt" | "successfulCallCount" | "balanceMinor" | "balanceCurrency" | "balanceUsdMinor" | "balanceChangedAt" | "anomalyActive" | "anomalyChangedAt" | "currentSegment" | "segmentRuleVersion" | "ownerId" | "ownerAssignmentMode" | "ownerAssignedAt" | "ownerAssignedById" | "ownerAssignmentReason" | "reasonLabel" | "unsubscribedAt" | "pausedAt" | "profileChangedAt" | "lastExternalEventAt" | "sourceDeletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProfile"]>
 export type UserProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
+  ownerAssignedBy?: boolean | Prisma.UserProfile$ownerAssignedByArgs<ExtArgs>
   events?: boolean | Prisma.UserProfile$eventsArgs<ExtArgs>
   segmentHistory?: boolean | Prisma.UserProfile$segmentHistoryArgs<ExtArgs>
   segmentOverrides?: boolean | Prisma.UserProfile$segmentOverridesArgs<ExtArgs>
@@ -4045,10 +4713,12 @@ export type UserProfileInclude<ExtArgs extends runtime.Types.Extensions.Internal
 }
 export type UserProfileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
+  ownerAssignedBy?: boolean | Prisma.UserProfile$ownerAssignedByArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
 }
 export type UserProfileIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
+  ownerAssignedBy?: boolean | Prisma.UserProfile$ownerAssignedByArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
 }
 
@@ -4056,6 +4726,7 @@ export type $UserProfilePayload<ExtArgs extends runtime.Types.Extensions.Interna
   name: "UserProfile"
   objects: {
     owner: Prisma.$MemberPayload<ExtArgs> | null
+    ownerAssignedBy: Prisma.$MemberPayload<ExtArgs> | null
     events: Prisma.$UserEventPayload<ExtArgs>[]
     segmentHistory: Prisma.$SegmentHistoryPayload<ExtArgs>[]
     segmentOverrides: Prisma.$SegmentOverridePayload<ExtArgs>[]
@@ -4101,6 +4772,10 @@ export type $UserProfilePayload<ExtArgs extends runtime.Types.Extensions.Interna
     currentSegment: $Enums.SegmentCode
     segmentRuleVersion: number
     ownerId: string | null
+    ownerAssignmentMode: $Enums.OwnerAssignmentMode
+    ownerAssignedAt: Date | null
+    ownerAssignedById: string | null
+    ownerAssignmentReason: string | null
     reasonLabel: string | null
     unsubscribedAt: Date | null
     pausedAt: Date | null
@@ -4504,6 +5179,7 @@ readonly fields: UserProfileFieldRefs;
 export interface Prisma__UserProfileClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   owner<T extends Prisma.UserProfile$ownerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$ownerArgs<ExtArgs>>): Prisma.Prisma__MemberClient<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  ownerAssignedBy<T extends Prisma.UserProfile$ownerAssignedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$ownerAssignedByArgs<ExtArgs>>): Prisma.Prisma__MemberClient<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   events<T extends Prisma.UserProfile$eventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   segmentHistory<T extends Prisma.UserProfile$segmentHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$segmentHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SegmentHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   segmentOverrides<T extends Prisma.UserProfile$segmentOverridesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$segmentOverridesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SegmentOverridePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4576,6 +5252,10 @@ export interface UserProfileFieldRefs {
   readonly currentSegment: Prisma.FieldRef<"UserProfile", 'SegmentCode'>
   readonly segmentRuleVersion: Prisma.FieldRef<"UserProfile", 'Int'>
   readonly ownerId: Prisma.FieldRef<"UserProfile", 'String'>
+  readonly ownerAssignmentMode: Prisma.FieldRef<"UserProfile", 'OwnerAssignmentMode'>
+  readonly ownerAssignedAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
+  readonly ownerAssignedById: Prisma.FieldRef<"UserProfile", 'String'>
+  readonly ownerAssignmentReason: Prisma.FieldRef<"UserProfile", 'String'>
   readonly reasonLabel: Prisma.FieldRef<"UserProfile", 'String'>
   readonly unsubscribedAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
   readonly pausedAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
@@ -4988,6 +5668,25 @@ export type UserProfileDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
  * UserProfile.owner
  */
 export type UserProfile$ownerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Member
+   */
+  select?: Prisma.MemberSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Member
+   */
+  omit?: Prisma.MemberOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MemberInclude<ExtArgs> | null
+  where?: Prisma.MemberWhereInput
+}
+
+/**
+ * UserProfile.ownerAssignedBy
+ */
+export type UserProfile$ownerAssignedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Member
    */

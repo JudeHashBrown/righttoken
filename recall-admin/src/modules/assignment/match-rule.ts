@@ -2,7 +2,7 @@ import { isIP } from "node:net";
 import { z } from "zod";
 import type {
   AssignmentCondition,
-  AssignmentDecision,
+  RuleAssignmentDecision,
   AssignmentRuleInput,
   AssignmentUserContext,
   AssignmentWorkload,
@@ -182,6 +182,7 @@ export const assignmentRuleInputSchema = z
     id: z.string().min(1).optional(),
     name: z.string().trim().min(1).max(120),
     enabled: z.boolean().default(true),
+    memberTerritoryManaged: z.boolean().default(false),
     priority: z.number().int().min(0),
     conditions: assignmentConditionSchema,
     assigneeId: z.string().min(1).nullable().default(null),
@@ -313,10 +314,10 @@ export function matchRule(
   workload: AssignmentWorkload,
   now = new Date(),
   defaultAssigneeId: string | null = null
-): AssignmentDecision {
+): RuleAssignmentDecision {
   const defaultDecision = (
     reason: string
-  ): AssignmentDecision | null => {
+  ): RuleAssignmentDecision | null => {
     if (
       !defaultAssigneeId ||
       !isAvailable(workload[defaultAssigneeId], null)
