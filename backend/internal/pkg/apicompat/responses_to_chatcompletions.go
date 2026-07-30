@@ -477,15 +477,110 @@ func (a *BufferedResponseAccumulator) BuildOutput() []ResponsesOutput {
 	return out
 }
 
-// SupplementResponseOutput fills resp.Output from accumulated delta content
-// when the terminal event delivered an empty output array. If resp.Output is
-// already populated, this is a no-op (preserves backward compatibility).
+// SupplementResponseOutput fills missing terminal output from accumulated
+// delta content. Some upstreams return a non-empty output array containing an
+// assistant message shell with no output_text. Treating that shell as complete
+// would produce a Chat Completions response with a role but no content.
+//
+// Existing non-empty terminal content always wins. Accumulated items are only
+// used for categories that are absent or incomplete.
 func (a *BufferedResponseAccumulator) SupplementResponseOutput(resp *ResponsesResponse) {
-	if resp == nil || len(resp.Output) > 0 {
+	if resp == nil || !a.HasContent() {
 		return
 	}
-	if !a.HasContent() {
-		return
+
+	accumulated := a.BuildOutput()
+	for _, fallback := range accumulated {
+		switch fallback.Type {
+		case "message":
+			messageIndex := -1
+			hasText := false
+			for i := range resp.Output {
+				if resp.Output[i].Type != "message" {
+					continue
+				}
+				if messageIndex == -1 {
+					messageIndex = i
+				}
+				for _, part := range resp.Output[i].Content {
+					if part.Type == "output_text" && part.Text != "" {
+						hasText = true
+						break
+					}
+				}
+			}
+			if hasText {
+				continue
+			}
+			if messageIndex >= 0 {
+				resp.Output[messageIndex].Content = append(
+					resp.Output[messageIndex].Content,
+					fallback.Content...,
+				)
+				if resp.Output[messageIndex].Role == "" {
+					resp.Output[messageIndex].Role = "assistant"
+				}
+			} else {
+				resp.Output = append(resp.Output, fallback)
+			}
+
+		case "reasoning":
+			reasoningIndex := -1
+			hasSummary := false
+			for i := range resp.Output {
+				if resp.Output[i].Type != "reasoning" {
+					continue
+				}
+				if reasoningIndex == -1 {
+					reasoningIndex = i
+				}
+				for _, summary := range resp.Output[i].Summary {
+					if summary.Type == "summary_text" && summary.Text != "" {
+						hasSummary = true
+						break
+					}
+				}
+			}
+			if hasSummary {
+				continue
+			}
+			if reasoningIndex >= 0 {
+				resp.Output[reasoningIndex].Summary = append(
+					resp.Output[reasoningIndex].Summary,
+					fallback.Summary...,
+				)
+			} else {
+				resp.Output = append(resp.Output, fallback)
+			}
+
+		case "function_call":
+			functionIndex := -1
+			for i := range resp.Output {
+				if resp.Output[i].Type != "function_call" {
+					continue
+				}
+				if fallback.CallID != "" && resp.Output[i].CallID == fallback.CallID {
+					functionIndex = i
+					break
+				}
+				if fallback.CallID == "" && fallback.Name != "" && resp.Output[i].Name == fallback.Name {
+					functionIndex = i
+					break
+				}
+			}
+			if functionIndex == -1 {
+				resp.Output = append(resp.Output, fallback)
+				continue
+			}
+			if resp.Output[functionIndex].CallID == "" {
+				resp.Output[functionIndex].CallID = fallback.CallID
+			}
+			if resp.Output[functionIndex].Name == "" {
+				resp.Output[functionIndex].Name = fallback.Name
+			}
+			if resp.Output[functionIndex].Arguments == "" {
+				resp.Output[functionIndex].Arguments = fallback.Arguments
+			}
+		}
 	}
-	resp.Output = a.BuildOutput()
 }

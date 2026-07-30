@@ -1073,6 +1073,98 @@ func TestBufferedResponseAccumulator_NoSupplementWhenOutputExists(t *testing.T) 
 	assert.Equal(t, "from terminal event", resp.Output[0].Content[0].Text)
 }
 
+func TestBufferedResponseAccumulator_SupplementsEmptyMessageShell(t *testing.T) {
+	acc := NewBufferedResponseAccumulator()
+	acc.ProcessEvent(&ResponsesStreamEvent{Type: "response.output_text.delta", Delta: "Hello from deltas"})
+
+	resp := &ResponsesResponse{
+		ID:     "resp_partial",
+		Status: "completed",
+		Output: []ResponsesOutput{
+			{
+				Type: "message",
+				Role: "assistant",
+			},
+		},
+	}
+
+	acc.SupplementResponseOutput(resp)
+
+	require.Len(t, resp.Output, 1)
+	require.Len(t, resp.Output[0].Content, 1)
+	assert.Equal(t, "output_text", resp.Output[0].Content[0].Type)
+	assert.Equal(t, "Hello from deltas", resp.Output[0].Content[0].Text)
+
+	chatResp := ResponsesToChatCompletions(resp, "gpt-5.6-sol")
+	require.Len(t, chatResp.Choices, 1)
+	assert.JSONEq(t, `"Hello from deltas"`, string(chatResp.Choices[0].Message.Content))
+}
+
+func TestBufferedResponseAccumulator_SupplementsMissingCategoryWithoutOverwritingExistingContent(t *testing.T) {
+	acc := NewBufferedResponseAccumulator()
+	acc.ProcessEvent(&ResponsesStreamEvent{Type: "response.reasoning_summary_text.delta", Delta: "fallback reasoning"})
+	acc.ProcessEvent(&ResponsesStreamEvent{Type: "response.output_text.delta", Delta: "fallback text"})
+
+	resp := &ResponsesResponse{
+		ID:     "resp_mixed_terminal",
+		Status: "completed",
+		Output: []ResponsesOutput{
+			{
+				Type: "message",
+				Role: "assistant",
+				Content: []ResponsesContentPart{
+					{Type: "output_text", Text: "terminal text"},
+				},
+			},
+			{
+				Type: "reasoning",
+			},
+		},
+	}
+
+	acc.SupplementResponseOutput(resp)
+
+	require.Len(t, resp.Output, 2)
+	assert.Equal(t, "terminal text", resp.Output[0].Content[0].Text)
+	require.Len(t, resp.Output[1].Summary, 1)
+	assert.Equal(t, "fallback reasoning", resp.Output[1].Summary[0].Text)
+}
+
+func TestBufferedResponseAccumulator_SupplementsIncompleteFunctionCall(t *testing.T) {
+	acc := NewBufferedResponseAccumulator()
+	acc.ProcessEvent(&ResponsesStreamEvent{
+		Type:        "response.output_item.added",
+		OutputIndex: 0,
+		Item: &ResponsesOutput{
+			Type:   "function_call",
+			CallID: "call_partial",
+			Name:   "lookup",
+		},
+	})
+	acc.ProcessEvent(&ResponsesStreamEvent{
+		Type:        "response.function_call_arguments.delta",
+		OutputIndex: 0,
+		Delta:       `{"id":42}`,
+	})
+
+	resp := &ResponsesResponse{
+		ID:     "resp_function",
+		Status: "completed",
+		Output: []ResponsesOutput{
+			{
+				Type:   "function_call",
+				CallID: "call_partial",
+				Name:   "lookup",
+			},
+		},
+	}
+
+	acc.SupplementResponseOutput(resp)
+
+	require.Len(t, resp.Output, 1)
+	assert.Equal(t, `{"id":42}`, resp.Output[0].Arguments)
+}
+
 func TestBufferedResponseAccumulator_EmptyDeltas(t *testing.T) {
 	acc := NewBufferedResponseAccumulator()
 
