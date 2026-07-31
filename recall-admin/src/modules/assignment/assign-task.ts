@@ -150,32 +150,20 @@ async function decideUserAssignment(
     orderBy: { priority: "asc" }
   });
   const rules = storedRules.map(storedRuleToInput);
-  const defaultOwner = await tx.member.findFirst({
-    where: { role: "PRIMARY_ADMIN", active: true },
-    orderBy: { createdAt: "asc" },
-    select: { id: true }
-  });
   const workload = await loadAssignmentWorkload(
     tx,
-    [
-      ...rules.flatMap((rule) =>
-        [rule.assigneeId, rule.fallbackAssigneeId].filter(
-          (id): id is string => Boolean(id)
-        )
-      ),
-      ...(defaultOwner ? [defaultOwner.id] : [])
-    ]
+    rules.flatMap((rule) =>
+      [rule.assigneeId, rule.fallbackAssigneeId].filter(
+        (id): id is string => Boolean(id)
+      )
+    )
   );
   const decision = matchRule(
     userToAssignmentContext(user),
     rules,
     workload,
-    now,
-    defaultOwner?.id ?? null
+    now
   );
-  if (!decision.assigneeId) {
-    throw new Error("ASSIGNMENT_OWNER_REQUIRED");
-  }
   return {
     ...decision,
     assignmentMode: "AUTO",
@@ -227,7 +215,7 @@ export async function assignUserOwnerInTransaction(
     data: {
       ownerId: decision.assigneeId,
       ownerAssignmentMode: "AUTO",
-      ownerAssignedAt: now,
+      ownerAssignedAt: decision.assigneeId ? now : null,
       ownerAssignedById: null,
       ownerAssignmentReason: decision.assignmentReason
     }
