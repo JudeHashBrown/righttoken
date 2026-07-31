@@ -108,6 +108,10 @@ export function UserTable({
                   name="ownerId"
                   options={[
                     { value: "", label: "全部负责人" },
+                    {
+                      value: "__UNASSIGNED__",
+                      label: "未分配"
+                    },
                     ...headerFilters.owners.map((owner) => ({
                       value: owner.id,
                       label: owner.displayName

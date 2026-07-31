@@ -136,6 +136,9 @@ describe("user and task workspaces", () => {
     expect(
       screen.getByRole("combobox", { name: "筛选负责人" })
     ).toHaveValue("operator-1");
+    expect(
+      screen.getByRole("option", { name: "未分配" })
+    ).toHaveValue("__UNASSIGNED__");
   });
 
   it("shows the concrete current anomaly beneath an F segment", () => {

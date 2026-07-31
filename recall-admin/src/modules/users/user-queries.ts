@@ -18,6 +18,7 @@ export type UserFilters = {
   region?: string;
   locationState?: "unrecognized";
   ownerId?: string;
+  ownerState?: "unassigned";
   source?: string;
   registeredFrom?: Date;
   registeredTo?: Date;
@@ -157,7 +158,11 @@ function buildUserWhere(
             region: null
           }
         : {},
-      filters.ownerId ? { ownerId: filters.ownerId } : {},
+      filters.ownerState === "unassigned"
+        ? { ownerId: null }
+        : filters.ownerId
+          ? { ownerId: filters.ownerId }
+          : {},
       filters.source ? { source: filters.source } : {},
       filters.registeredFrom || filters.registeredTo
         ? {

@@ -254,6 +254,7 @@ describe("user and task workspace scope", () => {
   it("filters only users whose country and region are both unrecognized", async () => {
     const filtered = await findUsers(admin, {
       locationState: "unrecognized",
+      search: "workspace-unrecognized-",
       pageSize: 20
     });
 
@@ -263,6 +264,30 @@ describe("user and task workspace scope", () => {
     expect(filtered.items).not.toContainEqual(
       expect.objectContaining({ id: publicUserId })
     );
+  });
+
+  it("lets administrators filter unassigned users while operators see none", async () => {
+    const adminPage = await findUsers(admin, {
+      ownerState: "unassigned",
+      search: "workspace-",
+      pageSize: 20
+    });
+    const operatorPage = await findUsers(firstOperator, {
+      ownerState: "unassigned",
+      search: "workspace-",
+      pageSize: 20
+    });
+    const unassignedWorkspaceIds = adminPage.items
+      .map((row) => row.id)
+      .filter((id) =>
+        [publicUserId, unrecognizedUserId].includes(id)
+      );
+
+    expect(unassignedWorkspaceIds).toEqual([
+      publicUserId,
+      unrecognizedUserId
+    ]);
+    expect(operatorPage.items).toEqual([]);
   });
 
   it("shows full IP only in an authorized User 360 detail", async () => {

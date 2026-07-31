@@ -12,6 +12,7 @@ type SearchParams = Promise<
 >;
 
 const unrecognizedLocationValue = "__UNRECOGNIZED__";
+const unassignedOwnerValue = "__UNASSIGNED__";
 
 function first(value: string | string[] | undefined): string {
   return Array.isArray(value) ? value[0] ?? "" : value ?? "";
@@ -53,6 +54,7 @@ export default async function UsersPage({
   const registeredFrom = first(params.registeredFrom);
   const registeredTo = first(params.registeredTo);
   const regionFilter = first(params.region);
+  const ownerFilter = first(params.ownerId);
   const page = searchTooShort
     ? { items: [], nextCursor: null }
     : await findUsers(member, {
@@ -70,7 +72,14 @@ export default async function UsersPage({
           regionFilter === unrecognizedLocationValue
             ? "unrecognized"
             : undefined,
-        ownerId: first(params.ownerId) || undefined,
+        ownerId:
+          ownerFilter && ownerFilter !== unassignedOwnerValue
+            ? ownerFilter
+            : undefined,
+        ownerState:
+          ownerFilter === unassignedOwnerValue
+            ? "unassigned"
+            : undefined,
         source: first(params.source) || undefined,
         registeredFrom: registeredFrom
           ? new Date(`${registeredFrom}T00:00:00.000Z`)
@@ -121,11 +130,11 @@ export default async function UsersPage({
         {regionFilter ? (
           <input name="region" type="hidden" value={regionFilter} />
         ) : null}
-        {first(params.ownerId) ? (
+        {ownerFilter ? (
           <input
             name="ownerId"
             type="hidden"
-            value={first(params.ownerId)}
+            value={ownerFilter}
           />
         ) : null}
         <div className={`${styles.field} ${styles.fieldGrow}`}>
@@ -185,7 +194,7 @@ export default async function UsersPage({
             formId: "user-table-filters",
             region: regionFilter,
             regions,
-            ownerId: first(params.ownerId),
+            ownerId: ownerFilter,
             owners
           }}
           members={owners}

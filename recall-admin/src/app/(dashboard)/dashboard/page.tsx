@@ -10,6 +10,7 @@ export default async function DashboardPage(): Promise<React.JSX.Element> {
 
   return (
     <DashboardOverview
+      isAdministrator={member.role !== "OPERATOR"}
       memberName={member.displayName}
       now={now}
       snapshot={snapshot}
