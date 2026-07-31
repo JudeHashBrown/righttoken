@@ -95,12 +95,6 @@ export async function manuallyAssignUserOwner(
     if (user.sourceDeletedAt) {
       throw new UserOwnerError("USER_NOT_FOUND");
     }
-    if (!user.ownerId || !user.ownerAssignedAt) {
-      throw new UserOwnerError(
-        "INITIAL_AUTOMATIC_ASSIGNMENT_REQUIRED"
-      );
-    }
-
     await tx.userProfile.update({
       where: { id: user.id },
       data: {
