@@ -6,6 +6,7 @@ export const JOBS = {
   MAIL_SYNC: "mail-sync",
   USER_RECONCILIATION: "user-reconciliation",
   NOTIFICATION_DELIVERY: "notification-delivery",
+  MAIL_BATCH: "mail-batch",
   SEGMENT_RECALCULATION: "segment-recalculation",
   LOCATION_RECALCULATION: "location-recalculation",
   ASSIGNMENT_RECALCULATION: "assignment-recalculation"

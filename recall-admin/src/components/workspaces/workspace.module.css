@@ -421,6 +421,31 @@
   color: #505cc6;
 }
 
+.anomalyCompact {
+  display: block;
+  min-width: 185px;
+  margin-top: 7px;
+}
+
+.anomalyCompact strong,
+.anomalyCompact span {
+  display: block;
+}
+
+.anomalyCompact strong {
+  color: #b42335;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.anomalyCompact span {
+  margin-top: 3px;
+  color: #7a8498;
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: nowrap;
+}
+
 .status {
   background: #f0f2f7;
   color: #59647b;
@@ -482,6 +507,111 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0;
+}
+
+.anomalyDetail {
+  display: grid;
+  gap: 10px;
+  border-bottom: 1px solid #f1d9dd;
+  background: #fff8f8;
+  padding: 15px 16px;
+}
+
+.anomalyDetail strong {
+  display: block;
+  margin-top: 5px;
+  color: #9f2032;
+  font-size: 15px;
+}
+
+.anomalyDetail p {
+  margin: 5px 0 0;
+  color: #6e5660;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.anomalyMetadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.anomalyMetadata span {
+  border: 1px solid #edcbd1;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #7f4450;
+  padding: 3px 8px;
+  font-size: 12px;
+}
+
+.taskAnomalyHighlight {
+  max-width: 760px;
+  margin-top: 16px;
+  border: 1px solid #e6b84a;
+  border-radius: 12px;
+  background: #fff3bf;
+  box-shadow: 0 8px 20px rgb(123 85 0 / 8%);
+  padding: 14px 16px;
+}
+
+.taskAnomalyLabel {
+  display: inline-flex;
+  border-radius: 999px;
+  background: #f0b429;
+  color: #3f2d00;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.taskAnomalyHighlight > strong {
+  display: block;
+  margin-top: 8px;
+  color: #3d2b00;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.taskAnomalyRaw,
+.taskAnomalySummary {
+  margin: 6px 0 0;
+  color: #5f4a12;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.taskAnomalySummary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.taskAnomalyRaw code {
+  overflow-wrap: anywhere;
+  color: #4b3500;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+  font-weight: 650;
+  white-space: pre-wrap;
+}
+
+.taskAnomalyMetadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 9px;
+}
+
+.taskAnomalyMetadata span {
+  border: 1px solid #d9b552;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 58%);
+  color: #604a10;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 650;
 }
 
 .summaryItem {
@@ -630,6 +760,51 @@
   color: #8991a3;
   font-size: 12px;
   line-height: 1.5;
+}
+
+.mailBatchGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mailBatchCard {
+  display: grid;
+  min-width: 0;
+  gap: 12px;
+  border: 1px solid #e3e6ee;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 16px;
+}
+
+.mailBatchHeading,
+.mailBatchCounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mailBatchHeading {
+  justify-content: space-between;
+  color: #747e93;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.mailBatchSubject {
+  overflow-wrap: anywhere;
+  color: #202a40;
+  font-size: 18px;
+}
+
+.mailBatchCounts span {
+  border-radius: 999px;
+  background: #f2f4f9;
+  color: #667086;
+  padding: 5px 8px;
+  font-size: 12px;
+  font-weight: 650;
 }
 
 .templateBar {
@@ -1961,6 +2136,10 @@
 }
 
 @media (max-width: 760px) {
+  .mailBatchGrid {
+    grid-template-columns: 1fr;
+  }
+
   .page {
     padding: 18px 14px 28px;
   }

@@ -17,7 +17,19 @@ const firstRow = {
   last_call_at: new Date("2026-07-02T00:00:00.000Z"),
   balance_minor: 250n,
   anomaly_active: true,
-  anomaly_changed_at: new Date("2026-07-02T00:15:00.000Z")
+  anomaly_changed_at: new Date("2026-07-02T00:15:00.000Z"),
+  anomaly_error_phase: "upstream",
+  anomaly_error_type: "provider_error",
+  anomaly_error_message:
+    "  no   accounts available  ",
+  anomaly_error_owner: "provider",
+  anomaly_status_code: 502,
+  anomaly_model: "gpt-5",
+  anomaly_platform: "openai",
+  anomaly_request_count: 5n,
+  anomaly_failure_count: 4n,
+  anomaly_consecutive_failures: 3n,
+  anomaly_last_occurred_at: new Date("2026-07-02T00:14:00.000Z")
 };
 
 describe("RightToken database adapter", () => {
@@ -38,7 +50,20 @@ describe("RightToken database adapter", () => {
       successfulCallCount: 3,
       totalPaidCurrency: "USD",
       anomalyActive: true,
-      anomalyChangedAt: new Date("2026-07-02T00:15:00.000Z")
+      anomalyChangedAt: new Date("2026-07-02T00:15:00.000Z"),
+      anomalyDetail: {
+        errorPhase: "upstream",
+        errorType: "provider_error",
+        errorMessage: "no accounts available",
+        errorOwner: "provider",
+        statusCode: 502,
+        model: "gpt-5",
+        platform: "openai",
+        requestCount: 5,
+        failureCount: 4,
+        consecutiveFailures: 3,
+        lastOccurredAt: new Date("2026-07-02T00:14:00.000Z")
+      }
     });
     expect(page.nextCursor).toBeNull();
     expect(query).toHaveBeenCalledTimes(1);
@@ -52,6 +77,27 @@ describe("RightToken database adapter", () => {
     );
     expect(query.mock.calls[0]?.[0]).toContain(
       "event.failure_count * 2 >= event.request_count"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "latest_qualifying_error AS"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "COALESCE(ans.anomaly_last_occurred_at, u.updated_at)"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "error_log.upstream_error_message"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "error_log.error_message"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "error_log.upstream_error_detail"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "NULLIF(error_log.provider_error_code, '')"
+    );
+    expect(query.mock.calls[0]?.[0]).toContain(
+      "NULLIF(error_log.network_error_type, '')"
     );
     expect(query.mock.calls[0]?.[0]).toContain(
       "error_log.status_code >= 400"

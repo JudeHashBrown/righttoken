@@ -266,6 +266,7 @@ export type MailAssetWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"MailAsset"> | Date | string
   templateUsages?: Prisma.MailTemplateAssetListRelationFilter
   messageUsages?: Prisma.MailMessageAssetListRelationFilter
+  batchUsages?: Prisma.MailBatchAssetListRelationFilter
 }
 
 export type MailAssetOrderByWithRelationInput = {
@@ -281,6 +282,7 @@ export type MailAssetOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   templateUsages?: Prisma.MailTemplateAssetOrderByRelationAggregateInput
   messageUsages?: Prisma.MailMessageAssetOrderByRelationAggregateInput
+  batchUsages?: Prisma.MailBatchAssetOrderByRelationAggregateInput
 }
 
 export type MailAssetWhereUniqueInput = Prisma.AtLeast<{
@@ -299,6 +301,7 @@ export type MailAssetWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"MailAsset"> | Date | string
   templateUsages?: Prisma.MailTemplateAssetListRelationFilter
   messageUsages?: Prisma.MailMessageAssetListRelationFilter
+  batchUsages?: Prisma.MailBatchAssetListRelationFilter
 }, "id" | "storageKey">
 
 export type MailAssetOrderByWithAggregationInput = {
@@ -348,6 +351,7 @@ export type MailAssetCreateInput = {
   createdAt?: Date | string
   templateUsages?: Prisma.MailTemplateAssetCreateNestedManyWithoutAssetInput
   messageUsages?: Prisma.MailMessageAssetCreateNestedManyWithoutAssetInput
+  batchUsages?: Prisma.MailBatchAssetCreateNestedManyWithoutAssetInput
 }
 
 export type MailAssetUncheckedCreateInput = {
@@ -363,6 +367,7 @@ export type MailAssetUncheckedCreateInput = {
   createdAt?: Date | string
   templateUsages?: Prisma.MailTemplateAssetUncheckedCreateNestedManyWithoutAssetInput
   messageUsages?: Prisma.MailMessageAssetUncheckedCreateNestedManyWithoutAssetInput
+  batchUsages?: Prisma.MailBatchAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type MailAssetUpdateInput = {
@@ -378,6 +383,7 @@ export type MailAssetUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   templateUsages?: Prisma.MailTemplateAssetUpdateManyWithoutAssetNestedInput
   messageUsages?: Prisma.MailMessageAssetUpdateManyWithoutAssetNestedInput
+  batchUsages?: Prisma.MailBatchAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type MailAssetUncheckedUpdateInput = {
@@ -393,6 +399,7 @@ export type MailAssetUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   templateUsages?: Prisma.MailTemplateAssetUncheckedUpdateManyWithoutAssetNestedInput
   messageUsages?: Prisma.MailMessageAssetUncheckedUpdateManyWithoutAssetNestedInput
+  batchUsages?: Prisma.MailBatchAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type MailAssetCreateManyInput = {
@@ -518,6 +525,20 @@ export type MailAssetUpdateOneRequiredWithoutMessageUsagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MailAssetUpdateToOneWithWhereWithoutMessageUsagesInput, Prisma.MailAssetUpdateWithoutMessageUsagesInput>, Prisma.MailAssetUncheckedUpdateWithoutMessageUsagesInput>
 }
 
+export type MailAssetCreateNestedOneWithoutBatchUsagesInput = {
+  create?: Prisma.XOR<Prisma.MailAssetCreateWithoutBatchUsagesInput, Prisma.MailAssetUncheckedCreateWithoutBatchUsagesInput>
+  connectOrCreate?: Prisma.MailAssetCreateOrConnectWithoutBatchUsagesInput
+  connect?: Prisma.MailAssetWhereUniqueInput
+}
+
+export type MailAssetUpdateOneRequiredWithoutBatchUsagesNestedInput = {
+  create?: Prisma.XOR<Prisma.MailAssetCreateWithoutBatchUsagesInput, Prisma.MailAssetUncheckedCreateWithoutBatchUsagesInput>
+  connectOrCreate?: Prisma.MailAssetCreateOrConnectWithoutBatchUsagesInput
+  upsert?: Prisma.MailAssetUpsertWithoutBatchUsagesInput
+  connect?: Prisma.MailAssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MailAssetUpdateToOneWithWhereWithoutBatchUsagesInput, Prisma.MailAssetUpdateWithoutBatchUsagesInput>, Prisma.MailAssetUncheckedUpdateWithoutBatchUsagesInput>
+}
+
 export type MailAssetCreateWithoutTemplateUsagesInput = {
   id?: string
   storageKey: string
@@ -530,6 +551,7 @@ export type MailAssetCreateWithoutTemplateUsagesInput = {
   createdById?: string | null
   createdAt?: Date | string
   messageUsages?: Prisma.MailMessageAssetCreateNestedManyWithoutAssetInput
+  batchUsages?: Prisma.MailBatchAssetCreateNestedManyWithoutAssetInput
 }
 
 export type MailAssetUncheckedCreateWithoutTemplateUsagesInput = {
@@ -544,6 +566,7 @@ export type MailAssetUncheckedCreateWithoutTemplateUsagesInput = {
   createdById?: string | null
   createdAt?: Date | string
   messageUsages?: Prisma.MailMessageAssetUncheckedCreateNestedManyWithoutAssetInput
+  batchUsages?: Prisma.MailBatchAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type MailAssetCreateOrConnectWithoutTemplateUsagesInput = {
@@ -574,6 +597,7 @@ export type MailAssetUpdateWithoutTemplateUsagesInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messageUsages?: Prisma.MailMessageAssetUpdateManyWithoutAssetNestedInput
+  batchUsages?: Prisma.MailBatchAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type MailAssetUncheckedUpdateWithoutTemplateUsagesInput = {
@@ -588,6 +612,7 @@ export type MailAssetUncheckedUpdateWithoutTemplateUsagesInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messageUsages?: Prisma.MailMessageAssetUncheckedUpdateManyWithoutAssetNestedInput
+  batchUsages?: Prisma.MailBatchAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type MailAssetCreateWithoutMessageUsagesInput = {
@@ -602,6 +627,7 @@ export type MailAssetCreateWithoutMessageUsagesInput = {
   createdById?: string | null
   createdAt?: Date | string
   templateUsages?: Prisma.MailTemplateAssetCreateNestedManyWithoutAssetInput
+  batchUsages?: Prisma.MailBatchAssetCreateNestedManyWithoutAssetInput
 }
 
 export type MailAssetUncheckedCreateWithoutMessageUsagesInput = {
@@ -616,6 +642,7 @@ export type MailAssetUncheckedCreateWithoutMessageUsagesInput = {
   createdById?: string | null
   createdAt?: Date | string
   templateUsages?: Prisma.MailTemplateAssetUncheckedCreateNestedManyWithoutAssetInput
+  batchUsages?: Prisma.MailBatchAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type MailAssetCreateOrConnectWithoutMessageUsagesInput = {
@@ -646,6 +673,7 @@ export type MailAssetUpdateWithoutMessageUsagesInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   templateUsages?: Prisma.MailTemplateAssetUpdateManyWithoutAssetNestedInput
+  batchUsages?: Prisma.MailBatchAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type MailAssetUncheckedUpdateWithoutMessageUsagesInput = {
@@ -660,6 +688,83 @@ export type MailAssetUncheckedUpdateWithoutMessageUsagesInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   templateUsages?: Prisma.MailTemplateAssetUncheckedUpdateManyWithoutAssetNestedInput
+  batchUsages?: Prisma.MailBatchAssetUncheckedUpdateManyWithoutAssetNestedInput
+}
+
+export type MailAssetCreateWithoutBatchUsagesInput = {
+  id?: string
+  storageKey: string
+  fileName: string
+  contentType: string
+  byteSize: number
+  sha256: string
+  width: number
+  height: number
+  createdById?: string | null
+  createdAt?: Date | string
+  templateUsages?: Prisma.MailTemplateAssetCreateNestedManyWithoutAssetInput
+  messageUsages?: Prisma.MailMessageAssetCreateNestedManyWithoutAssetInput
+}
+
+export type MailAssetUncheckedCreateWithoutBatchUsagesInput = {
+  id?: string
+  storageKey: string
+  fileName: string
+  contentType: string
+  byteSize: number
+  sha256: string
+  width: number
+  height: number
+  createdById?: string | null
+  createdAt?: Date | string
+  templateUsages?: Prisma.MailTemplateAssetUncheckedCreateNestedManyWithoutAssetInput
+  messageUsages?: Prisma.MailMessageAssetUncheckedCreateNestedManyWithoutAssetInput
+}
+
+export type MailAssetCreateOrConnectWithoutBatchUsagesInput = {
+  where: Prisma.MailAssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.MailAssetCreateWithoutBatchUsagesInput, Prisma.MailAssetUncheckedCreateWithoutBatchUsagesInput>
+}
+
+export type MailAssetUpsertWithoutBatchUsagesInput = {
+  update: Prisma.XOR<Prisma.MailAssetUpdateWithoutBatchUsagesInput, Prisma.MailAssetUncheckedUpdateWithoutBatchUsagesInput>
+  create: Prisma.XOR<Prisma.MailAssetCreateWithoutBatchUsagesInput, Prisma.MailAssetUncheckedCreateWithoutBatchUsagesInput>
+  where?: Prisma.MailAssetWhereInput
+}
+
+export type MailAssetUpdateToOneWithWhereWithoutBatchUsagesInput = {
+  where?: Prisma.MailAssetWhereInput
+  data: Prisma.XOR<Prisma.MailAssetUpdateWithoutBatchUsagesInput, Prisma.MailAssetUncheckedUpdateWithoutBatchUsagesInput>
+}
+
+export type MailAssetUpdateWithoutBatchUsagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  byteSize?: Prisma.IntFieldUpdateOperationsInput | number
+  sha256?: Prisma.StringFieldUpdateOperationsInput | string
+  width?: Prisma.IntFieldUpdateOperationsInput | number
+  height?: Prisma.IntFieldUpdateOperationsInput | number
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  templateUsages?: Prisma.MailTemplateAssetUpdateManyWithoutAssetNestedInput
+  messageUsages?: Prisma.MailMessageAssetUpdateManyWithoutAssetNestedInput
+}
+
+export type MailAssetUncheckedUpdateWithoutBatchUsagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  byteSize?: Prisma.IntFieldUpdateOperationsInput | number
+  sha256?: Prisma.StringFieldUpdateOperationsInput | string
+  width?: Prisma.IntFieldUpdateOperationsInput | number
+  height?: Prisma.IntFieldUpdateOperationsInput | number
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  templateUsages?: Prisma.MailTemplateAssetUncheckedUpdateManyWithoutAssetNestedInput
+  messageUsages?: Prisma.MailMessageAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 
@@ -670,11 +775,13 @@ export type MailAssetUncheckedUpdateWithoutMessageUsagesInput = {
 export type MailAssetCountOutputType = {
   templateUsages: number
   messageUsages: number
+  batchUsages: number
 }
 
 export type MailAssetCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   templateUsages?: boolean | MailAssetCountOutputTypeCountTemplateUsagesArgs
   messageUsages?: boolean | MailAssetCountOutputTypeCountMessageUsagesArgs
+  batchUsages?: boolean | MailAssetCountOutputTypeCountBatchUsagesArgs
 }
 
 /**
@@ -701,6 +808,13 @@ export type MailAssetCountOutputTypeCountMessageUsagesArgs<ExtArgs extends runti
   where?: Prisma.MailMessageAssetWhereInput
 }
 
+/**
+ * MailAssetCountOutputType without action
+ */
+export type MailAssetCountOutputTypeCountBatchUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MailBatchAssetWhereInput
+}
+
 
 export type MailAssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -715,6 +829,7 @@ export type MailAssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   createdAt?: boolean
   templateUsages?: boolean | Prisma.MailAsset$templateUsagesArgs<ExtArgs>
   messageUsages?: boolean | Prisma.MailAsset$messageUsagesArgs<ExtArgs>
+  batchUsages?: boolean | Prisma.MailAsset$batchUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.MailAssetCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mailAsset"]>
 
@@ -761,6 +876,7 @@ export type MailAssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type MailAssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   templateUsages?: boolean | Prisma.MailAsset$templateUsagesArgs<ExtArgs>
   messageUsages?: boolean | Prisma.MailAsset$messageUsagesArgs<ExtArgs>
+  batchUsages?: boolean | Prisma.MailAsset$batchUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.MailAssetCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MailAssetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -771,6 +887,7 @@ export type $MailAssetPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   objects: {
     templateUsages: Prisma.$MailTemplateAssetPayload<ExtArgs>[]
     messageUsages: Prisma.$MailMessageAssetPayload<ExtArgs>[]
+    batchUsages: Prisma.$MailBatchAssetPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1179,6 +1296,7 @@ export interface Prisma__MailAssetClient<T, Null = never, ExtArgs extends runtim
   readonly [Symbol.toStringTag]: "PrismaPromise"
   templateUsages<T extends Prisma.MailAsset$templateUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailAsset$templateUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailTemplateAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messageUsages<T extends Prisma.MailAsset$messageUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailAsset$messageUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailMessageAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  batchUsages<T extends Prisma.MailAsset$batchUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailAsset$batchUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailBatchAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1656,6 +1774,30 @@ export type MailAsset$messageUsagesArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.MailMessageAssetScalarFieldEnum | Prisma.MailMessageAssetScalarFieldEnum[]
+}
+
+/**
+ * MailAsset.batchUsages
+ */
+export type MailAsset$batchUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailBatchAsset
+   */
+  select?: Prisma.MailBatchAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailBatchAsset
+   */
+  omit?: Prisma.MailBatchAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailBatchAssetInclude<ExtArgs> | null
+  where?: Prisma.MailBatchAssetWhereInput
+  orderBy?: Prisma.MailBatchAssetOrderByWithRelationInput | Prisma.MailBatchAssetOrderByWithRelationInput[]
+  cursor?: Prisma.MailBatchAssetWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MailBatchAssetScalarFieldEnum | Prisma.MailBatchAssetScalarFieldEnum[]
 }
 
 /**

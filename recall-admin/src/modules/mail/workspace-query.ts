@@ -11,6 +11,9 @@ import type {
 import {
   mailSyncStatusText
 } from "@/modules/mail/sync-error";
+import {
+  listMailBatches
+} from "@/modules/mail/mail-batch-query";
 
 const openStatuses: TaskStatus[] = [
   "UNASSIGNED",
@@ -99,7 +102,8 @@ export async function getMailWorkspaceData(
     draftMessages,
     sentMessages,
     failedMessages,
-    templates
+    templates,
+    mailBatches
   ] = await Promise.all([
     prisma.mailThread.count({
       where: threadScope(viewer, false)
@@ -189,7 +193,8 @@ export async function getMailWorkspaceData(
           }
         }
       }
-    })
+    }),
+    listMailBatches(viewer)
   ]);
   const templateSummaries = templates.map((template) => ({
     ...template,
@@ -250,6 +255,7 @@ export async function getMailWorkspaceData(
     },
     items,
     selected,
+    mailBatches,
     templates: templateSummaries,
     mailboxes: mailboxes.map((mailbox) => ({
       ...mailbox,

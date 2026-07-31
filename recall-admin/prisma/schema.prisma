@@ -80,6 +80,34 @@ enum MailAssetDisposition {
   @@schema("recall")
 }
 
+enum MailAudienceMode {
+  USER
+  SEGMENT
+  ALL
+
+  @@schema("recall")
+}
+
+enum MailBatchStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  PARTIAL_FAILURE
+  FAILED
+
+  @@schema("recall")
+}
+
+enum MailBatchRecipientStatus {
+  PENDING
+  SENDING
+  SENT
+  SKIPPED
+  FAILED
+
+  @@schema("recall")
+}
+
 enum NotificationChannel {
   IN_APP
   WECOM_APP
@@ -141,31 +169,32 @@ enum OwnerAssignmentMode {
 }
 
 model Member {
-  id              String     @id @default(cuid())
-  email           String     @unique
+  id               String     @id @default(cuid())
+  email            String     @unique
   rightTokenUserId String?    @unique
-  displayName     String
-  passwordHash    String
-  role            MemberRole
-  active          Boolean    @default(true)
-  twoFactorSecret String?
-  twoFactorOn     Boolean    @default(false)
-  wecomUserId     String?    @unique
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  displayName      String
+  passwordHash     String
+  role             MemberRole
+  active           Boolean    @default(true)
+  twoFactorSecret  String?
+  twoFactorOn      Boolean    @default(false)
+  wecomUserId      String?    @unique
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
 
-  sessions      Session[]
-  assignedTasks RecallTask[]   @relation("TaskAssignee")
-  ownedUsers    UserProfile[]  @relation("UserOwner")
-  notes         UserNote[]
-  auditLogs     AuditLog[]     @relation("AuditActor")
-  recoveryCodes RecoveryCode[]
-  reviewedMailMessages MailMessage[] @relation("MailReviewer")
-  segmentRecalculationRuns SegmentRecalculationRun[] @relation("SegmentRecalculationRequester")
-  locationRecalculationRuns LocationRecalculationRun[] @relation("LocationRecalculationRequester")
+  sessions                    Session[]
+  assignedTasks               RecallTask[]                 @relation("TaskAssignee")
+  ownedUsers                  UserProfile[]                @relation("UserOwner")
+  notes                       UserNote[]
+  auditLogs                   AuditLog[]                   @relation("AuditActor")
+  recoveryCodes               RecoveryCode[]
+  reviewedMailMessages        MailMessage[]                @relation("MailReviewer")
+  segmentRecalculationRuns    SegmentRecalculationRun[]    @relation("SegmentRecalculationRequester")
+  locationRecalculationRuns   LocationRecalculationRun[]   @relation("LocationRecalculationRequester")
   assignmentRecalculationRuns AssignmentRecalculationRun[] @relation("AssignmentRecalculationRequester")
-  ownerAssignmentsMade UserProfile[] @relation("UserOwnerAssigner")
-  locationAssignmentsMade UserProfile[] @relation("UserLocationAssigner")
+  ownerAssignmentsMade        UserProfile[]                @relation("UserOwnerAssigner")
+  locationAssignmentsMade     UserProfile[]                @relation("UserLocationAssigner")
+  createdMailBatches          MailBatch[]                  @relation("MailBatchCreator")
 
   @@schema("recall")
 }
@@ -197,69 +226,81 @@ model Session {
 }
 
 model UserProfile {
-  id                  String      @id @default(cuid())
-  externalUserId      String      @unique
-  email               String
-  emailNormalized     String
-  displayName         String?
-  registeredAt        DateTime
-  registrationIpEnc   String?
-  registrationIpHash  String?
-  countryCode         String?
-  region              String?
-  ipCountryCode       String?
-  ipRegion            String?
-  locationSource      LocationAttributionSource?
-  locationRuleId      String?
-  locationEvaluatedAt DateTime?
-  locationAssignmentMode LocationAssignmentMode @default(AUTO)
-  locationAssignedAt       DateTime?
-  locationAssignedById     String?
-  locationAssignmentReason String?
-  language            String?
-  timezone            String?
-  source              String?
-  checkoutStartedAt   DateTime?
-  checkoutChangedAt   DateTime?
-  paymentStatus       String      @default("NONE")
-  firstPaidAt         DateTime?
-  totalPaidMinor      Int         @default(0)
-  firstCallAt         DateTime?
-  lastCallAt          DateTime?
-  successfulCallCount Int         @default(0)
-  balanceMinor        Int         @default(0)
-  balanceCurrency     String      @default("USD")
-  balanceUsdMinor     Int         @default(0)
-  balanceChangedAt    DateTime?
-  anomalyActive       Boolean     @default(false)
-  anomalyChangedAt    DateTime?
-  currentSegment      SegmentCode
-  segmentRuleVersion  Int         @default(1)
-  ownerId             String?
-  ownerAssignmentMode OwnerAssignmentMode @default(AUTO)
-  ownerAssignedAt     DateTime?
-  ownerAssignedById   String?
-  ownerAssignmentReason String?
-  reasonLabel         String?
-  unsubscribedAt      DateTime?
-  pausedAt            DateTime?
-  profileChangedAt    DateTime?
-  lastExternalEventAt DateTime?
-  sourceDeletedAt     DateTime?
-  createdAt           DateTime    @default(now())
-  updatedAt           DateTime    @updatedAt
+  id                         String                     @id @default(cuid())
+  externalUserId             String                     @unique
+  email                      String
+  emailNormalized            String
+  displayName                String?
+  registeredAt               DateTime
+  registrationIpEnc          String?
+  registrationIpHash         String?
+  countryCode                String?
+  region                     String?
+  ipCountryCode              String?
+  ipRegion                   String?
+  locationSource             LocationAttributionSource?
+  locationRuleId             String?
+  locationEvaluatedAt        DateTime?
+  locationAssignmentMode     LocationAssignmentMode     @default(AUTO)
+  locationAssignedAt         DateTime?
+  locationAssignedById       String?
+  locationAssignmentReason   String?
+  language                   String?
+  timezone                   String?
+  source                     String?
+  checkoutStartedAt          DateTime?
+  checkoutChangedAt          DateTime?
+  paymentStatus              String                     @default("NONE")
+  firstPaidAt                DateTime?
+  totalPaidMinor             Int                        @default(0)
+  firstCallAt                DateTime?
+  lastCallAt                 DateTime?
+  successfulCallCount        Int                        @default(0)
+  balanceMinor               Int                        @default(0)
+  balanceCurrency            String                     @default("USD")
+  balanceUsdMinor            Int                        @default(0)
+  balanceChangedAt           DateTime?
+  anomalyActive              Boolean                    @default(false)
+  anomalyChangedAt           DateTime?
+  anomalyErrorPhase          String?
+  anomalyErrorType           String?
+  anomalyErrorMessage        String?
+  anomalyErrorOwner          String?
+  anomalyStatusCode          Int?
+  anomalyModel               String?
+  anomalyPlatform            String?
+  anomalyRequestCount        Int?
+  anomalyFailureCount        Int?
+  anomalyConsecutiveFailures Int?
+  anomalyLastOccurredAt      DateTime?
+  currentSegment             SegmentCode
+  segmentRuleVersion         Int                        @default(1)
+  ownerId                    String?
+  ownerAssignmentMode        OwnerAssignmentMode        @default(AUTO)
+  ownerAssignedAt            DateTime?
+  ownerAssignedById          String?
+  ownerAssignmentReason      String?
+  reasonLabel                String?
+  unsubscribedAt             DateTime?
+  pausedAt                   DateTime?
+  profileChangedAt           DateTime?
+  lastExternalEventAt        DateTime?
+  sourceDeletedAt            DateTime?
+  createdAt                  DateTime                   @default(now())
+  updatedAt                  DateTime                   @updatedAt
 
-  owner            Member?           @relation("UserOwner", fields: [ownerId], references: [id])
-  ownerAssignedBy  Member?           @relation("UserOwnerAssigner", fields: [ownerAssignedById], references: [id], onDelete: SetNull)
-  events           UserEvent[]
-  segmentHistory   SegmentHistory[]
-  segmentOverrides SegmentOverride[]
-  tasks            RecallTask[]
-  notes            UserNote[]
-  mailThreads      MailThread[]
-  mailMessages     MailMessage[]
-  locationRule     LocationAttributionRule? @relation(fields: [locationRuleId], references: [id], onDelete: SetNull)
-  locationAssignedBy Member? @relation("UserLocationAssigner", fields: [locationAssignedById], references: [id], onDelete: SetNull)
+  owner               Member?                  @relation("UserOwner", fields: [ownerId], references: [id])
+  ownerAssignedBy     Member?                  @relation("UserOwnerAssigner", fields: [ownerAssignedById], references: [id], onDelete: SetNull)
+  events              UserEvent[]
+  segmentHistory      SegmentHistory[]
+  segmentOverrides    SegmentOverride[]
+  tasks               RecallTask[]
+  notes               UserNote[]
+  mailThreads         MailThread[]
+  mailMessages        MailMessage[]
+  mailBatchRecipients MailBatchRecipient[]
+  locationRule        LocationAttributionRule? @relation(fields: [locationRuleId], references: [id], onDelete: SetNull)
+  locationAssignedBy  Member?                  @relation("UserLocationAssigner", fields: [locationAssignedById], references: [id], onDelete: SetNull)
 
   @@index([currentSegment, updatedAt])
   @@index([countryCode, region])
@@ -374,7 +415,7 @@ model SegmentRecalculationRun {
   updatedAt           DateTime            @updatedAt
 
   ruleVersion AutomationRuleVersion @relation(fields: [ruleVersionId], references: [id], onDelete: Restrict)
-  requestedBy Member @relation("SegmentRecalculationRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+  requestedBy Member                @relation("SegmentRecalculationRequester", fields: [requestedById], references: [id], onDelete: Restrict)
 
   @@index([status, createdAt])
   @@index([ruleVersionId, createdAt])
@@ -382,20 +423,20 @@ model SegmentRecalculationRun {
 }
 
 model AssignmentRule {
-  id                 String    @id @default(cuid())
-  name               String
-  enabled            Boolean   @default(true)
-  memberTerritoryManaged Boolean @default(false)
-  priority           Int
-  conditions         Json
-  assigneeId         String?
-  fallbackAssigneeId String?
-  poolKey            String?
-  workloadLimit      Int?
-  effectiveFrom      DateTime?
-  effectiveTo        DateTime?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id                     String    @id @default(cuid())
+  name                   String
+  enabled                Boolean   @default(true)
+  memberTerritoryManaged Boolean   @default(false)
+  priority               Int
+  conditions             Json
+  assigneeId             String?
+  fallbackAssigneeId     String?
+  poolKey                String?
+  workloadLimit          Int?
+  effectiveFrom          DateTime?
+  effectiveTo            DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
 
   @@unique([priority])
   @@index([enabled, priority])
@@ -481,6 +522,7 @@ model RecallTask {
   ruleVersion      Int
   title            String
   reason           String
+  anomalySnapshot  Json?
   priority         TaskPriority
   status           TaskStatus   @default(UNASSIGNED)
   assigneeId       String?
@@ -493,11 +535,12 @@ model RecallTask {
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
 
-  user       UserProfile    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  assignee   Member?        @relation("TaskAssignee", fields: [assigneeId], references: [id])
-  activities TaskActivity[]
-  mailMessages MailMessage[]
+  user                UserProfile          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignee            Member?              @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  activities          TaskActivity[]
+  mailMessages        MailMessage[]
   notificationIntents NotificationIntent[]
+  mailBatchRecipients MailBatchRecipient[]
 
   @@unique([userId, triggerKey, ruleVersion])
   @@index([status, priority, dueAt])
@@ -575,22 +618,23 @@ model RecoveryCode {
 }
 
 model Mailbox {
-  id                 String   @id @default(cuid())
+  id                 String    @id @default(cuid())
   name               String
-  emailAddress       String   @unique
+  emailAddress       String    @unique
   encryptedConfig    String
-  enabled            Boolean  @default(false)
-  trackingEnabled    Boolean  @default(false)
+  enabled            Boolean   @default(false)
+  trackingEnabled    Boolean   @default(false)
   trackingDisclosure String?
   lastSyncedAt       DateTime?
   lastTestedAt       DateTime?
   lastSuccessAt      DateTime?
   lastErrorCode      String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
-  threads  MailThread[]
-  messages MailMessage[]
+  threads     MailThread[]
+  messages    MailMessage[]
+  mailBatches MailBatch[]
 
   @@schema("recall")
 }
@@ -627,8 +671,8 @@ model MailThread {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user     UserProfile  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  mailbox  Mailbox      @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+  user     UserProfile   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mailbox  Mailbox       @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
   messages MailMessage[]
 
   @@index([userId, updatedAt])
@@ -637,41 +681,42 @@ model MailThread {
 }
 
 model MailMessage {
-  id                String            @id @default(cuid())
-  mailboxId         String
-  threadId          String?
-  userId            String?
-  taskId            String?
-  direction         MailDirection
-  status            MailMessageStatus
-  providerMessageId String?           @unique
-  inReplyTo         String?
-  references        String[]
-  fromAddress       String
-  toAddresses       String[]
-  subject           String
-  bodyText          String
-  bodyHtml          String?
-  templateKey       String?
-  templateVersion   Int?
-  reviewedById      String?
-  openedAt          DateTime?
-  firstClickedAt    DateTime?
-  openCount         Int               @default(0)
-  clickCount        Int               @default(0)
-  sentAt            DateTime?
-  receivedAt        DateTime?
-  lastErrorCode     String?
-  externalImagesBlocked Boolean @default(false)
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  id                    String            @id @default(cuid())
+  mailboxId             String
+  threadId              String?
+  userId                String?
+  taskId                String?
+  direction             MailDirection
+  status                MailMessageStatus
+  providerMessageId     String?           @unique
+  inReplyTo             String?
+  references            String[]
+  fromAddress           String
+  toAddresses           String[]
+  subject               String
+  bodyText              String
+  bodyHtml              String?
+  templateKey           String?
+  templateVersion       Int?
+  reviewedById          String?
+  openedAt              DateTime?
+  firstClickedAt        DateTime?
+  openCount             Int               @default(0)
+  clickCount            Int               @default(0)
+  sentAt                DateTime?
+  receivedAt            DateTime?
+  lastErrorCode         String?
+  externalImagesBlocked Boolean           @default(false)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
 
-  mailbox   Mailbox      @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
-  thread    MailThread?  @relation(fields: [threadId], references: [id], onDelete: SetNull)
-  user      UserProfile? @relation(fields: [userId], references: [id], onDelete: SetNull)
-  task      RecallTask?  @relation(fields: [taskId], references: [id], onDelete: SetNull)
-  reviewedBy Member?     @relation("MailReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
-  assets     MailMessageAsset[]
+  mailbox        Mailbox             @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+  thread         MailThread?         @relation(fields: [threadId], references: [id], onDelete: SetNull)
+  user           UserProfile?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  task           RecallTask?         @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  reviewedBy     Member?             @relation("MailReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  assets         MailMessageAsset[]
+  batchRecipient MailBatchRecipient?
 
   @@index([mailboxId, status, createdAt])
   @@index([threadId, createdAt])
@@ -694,6 +739,7 @@ model MailAsset {
 
   templateUsages MailTemplateAsset[]
   messageUsages  MailMessageAsset[]
+  batchUsages    MailBatchAsset[]
 
   @@index([createdById, createdAt])
   @@schema("recall")
@@ -735,6 +781,79 @@ model MailMessageAsset {
   @@schema("recall")
 }
 
+model MailBatch {
+  id                String           @id @default(cuid())
+  mailboxId         String
+  createdById       String
+  audienceMode      MailAudienceMode
+  segment           SegmentCode?
+  subject           String
+  bodyText          String
+  bodyHtml          String
+  idempotencyKey    String           @unique
+  status            MailBatchStatus  @default(PENDING)
+  totalRecipients   Int              @default(0)
+  pendingRecipients Int              @default(0)
+  sentRecipients    Int              @default(0)
+  skippedRecipients Int              @default(0)
+  failedRecipients  Int              @default(0)
+  startedAt         DateTime?
+  completedAt       DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  mailbox    Mailbox              @relation(fields: [mailboxId], references: [id], onDelete: Restrict)
+  createdBy  Member               @relation("MailBatchCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  recipients MailBatchRecipient[]
+  assets     MailBatchAsset[]
+
+  @@index([createdById, createdAt])
+  @@index([status, createdAt])
+  @@schema("recall")
+}
+
+model MailBatchRecipient {
+  id              String                   @id @default(cuid())
+  batchId         String
+  userId          String
+  emailNormalized String
+  status          MailBatchRecipientStatus @default(PENDING)
+  reasonCode      String?
+  messageId       String?                  @unique
+  taskId          String?
+  attempts        Int                      @default(0)
+  claimedAt       DateTime?
+  lastAttemptAt   DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+
+  batch   MailBatch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  user    UserProfile  @relation(fields: [userId], references: [id], onDelete: Restrict)
+  message MailMessage? @relation(fields: [messageId], references: [id], onDelete: SetNull)
+  task    RecallTask?  @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  @@unique([batchId, userId])
+  @@index([batchId, status, id])
+  @@schema("recall")
+}
+
+model MailBatchAsset {
+  id          String               @id @default(cuid())
+  batchId     String
+  assetId     String
+  disposition MailAssetDisposition
+  sortOrder   Int                  @default(0)
+
+  batch MailBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  asset MailAsset @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  @@unique([batchId, assetId])
+  @@index([assetId])
+  @@index([batchId, sortOrder])
+  @@schema("recall")
+}
+
 model SuppressionEntry {
   id              String   @id @default(cuid())
   emailNormalized String   @unique
@@ -763,24 +882,24 @@ model NotificationIntent {
 
   task RecallTask? @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
+  @@unique([taskId, channel, recipient])
   @@index([status, nextAttemptAt, createdAt])
   @@index([recipient, readAt, createdAt])
-  @@unique([taskId, channel, recipient])
   @@schema("recall")
 }
 
 model IntegrationCredential {
-  id              String   @id @default(cuid())
-  kind            String   @unique
+  id              String    @id @default(cuid())
+  kind            String    @unique
   displayName     String
   encryptedConfig String
-  enabled         Boolean  @default(false)
+  enabled         Boolean   @default(false)
   lastTestedAt    DateTime?
   lastSuccessAt   DateTime?
   lastErrorCode   String?
   metadata        Json?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   @@schema("recall")
 }

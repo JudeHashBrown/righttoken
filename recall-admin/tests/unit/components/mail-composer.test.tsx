@@ -235,4 +235,119 @@ describe("MailComposer", () => {
       )
     ).toBeInTheDocument();
   });
+
+  it("switches to one segment without exposing a recipient field", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          label: "F 组全员",
+          total: 12,
+          estimatedSkipped: 2
+        })
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    render(
+      <MailComposer
+        tasks={[task]}
+        mailboxes={[mailbox]}
+        initialSubject="RightToken 服务提醒"
+        initialBody="你好，我们可以协助你。"
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole("radio", { name: "指定分组" })
+    );
+
+    expect(
+      screen.getByLabelText("选择分组")
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByLabelText("最终收件人")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "每位用户将收到独立邮件，无法看到其他收件人邮箱"
+      )
+    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByText("预计 12 人，自动跳过 2 人")
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("creates an all-user batch without sending user ids or emails", async () => {
+    const fetchMock = vi.fn(
+      async (url: string, options?: RequestInit) => {
+        if (
+          url.startsWith(
+            "/api/mail/audience-preview"
+          )
+        ) {
+          return {
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                label: "全部用户",
+                total: 20,
+                estimatedSkipped: 3
+              })
+          };
+        }
+        expect(url).toBe("/api/mail/batches");
+        expect(options?.headers).toEqual(
+          expect.objectContaining({
+            "content-type": "application/json",
+            "idempotency-key": expect.any(String)
+          })
+        );
+        const body = String(options?.body);
+        expect(body).toContain('"mode":"ALL"');
+        expect(body).not.toContain('"recipient"');
+        expect(body).not.toContain('"userId"');
+        expect(body).not.toContain("@example.test");
+        return {
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              id: "batch-1",
+              status: "PENDING"
+            })
+        };
+      }
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    render(
+      <MailComposer
+        tasks={[task]}
+        mailboxes={[mailbox]}
+        initialSubject="RightToken 服务提醒"
+        initialBody="你好，我们可以协助你。"
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole("radio", { name: "全部用户" })
+    );
+    await waitFor(() => {
+      expect(
+        screen.getByText("预计 20 人，自动跳过 3 人")
+      ).toBeInTheDocument();
+    });
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "确认创建群发"
+      })
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          "群发任务已创建，可在下方查看进度"
+        )
+      ).toBeInTheDocument();
+    });
+  });
 });

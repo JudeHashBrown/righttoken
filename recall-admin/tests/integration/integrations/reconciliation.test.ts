@@ -265,6 +265,100 @@ describe("RightToken user reconciliation", () => {
     });
   });
 
+  it("persists active anomaly evidence and clears it after recovery", async () => {
+    const externalUserId = `reconcile-anomaly-detail-${randomUUID()}`;
+    externalUserIds.push(externalUserId);
+    const baseSnapshot = {
+      externalUserId,
+      email: `${externalUserId}@example.test`,
+      displayName: "异常详情测试用户",
+      registeredAt: new Date("2026-07-20T00:00:00.000Z"),
+      updatedAt: new Date("2026-07-24T16:00:00.000Z"),
+      registrationIp: null,
+      countryCode: null,
+      region: null,
+      language: null,
+      timezone: null,
+      source: null,
+      checkoutStartedAt: null,
+      firstPaidAt: new Date("2026-07-20T01:00:00.000Z"),
+      totalPaidMinor: 1_000,
+      successfulCallCount: 5,
+      lastCallAt: new Date("2026-07-24T15:53:00.000Z"),
+      balanceMinor: 1_000,
+      anomalyActive: true,
+      anomalyChangedAt: new Date("2026-07-24T15:53:00.000Z"),
+      anomalyDetail: {
+        errorPhase: "upstream",
+        errorType: "provider_error",
+        errorMessage: "no accounts available",
+        errorOwner: "provider",
+        statusCode: 502,
+        model: "gpt-5",
+        platform: "openai",
+        requestCount: 5,
+        failureCount: 4,
+        consecutiveFailures: 3,
+        lastOccurredAt: new Date("2026-07-24T15:52:00.000Z")
+      }
+    };
+
+    await reconcileRightTokenUsers({
+      adapter: adapter([baseSnapshot]),
+      now: new Date("2026-07-24T16:01:00.000Z")
+    });
+
+    await expect(
+      prisma.userProfile.findUniqueOrThrow({
+        where: { externalUserId }
+      })
+    ).resolves.toMatchObject({
+      anomalyErrorPhase: "upstream",
+      anomalyErrorType: "provider_error",
+      anomalyErrorMessage: "no accounts available",
+      anomalyErrorOwner: "provider",
+      anomalyStatusCode: 502,
+      anomalyModel: "gpt-5",
+      anomalyPlatform: "openai",
+      anomalyRequestCount: 5,
+      anomalyFailureCount: 4,
+      anomalyConsecutiveFailures: 3,
+      anomalyLastOccurredAt: new Date("2026-07-24T15:52:00.000Z")
+    });
+
+    await reconcileRightTokenUsers({
+      adapter: adapter([
+        {
+          ...baseSnapshot,
+          updatedAt: new Date("2026-07-24T16:10:00.000Z"),
+          anomalyActive: false,
+          anomalyChangedAt: new Date("2026-07-24T16:08:00.000Z"),
+          anomalyDetail: null
+        }
+      ]),
+      now: new Date("2026-07-24T16:11:00.000Z")
+    });
+
+    await expect(
+      prisma.userProfile.findUniqueOrThrow({
+        where: { externalUserId }
+      })
+    ).resolves.toMatchObject({
+      anomalyActive: false,
+      anomalyErrorPhase: null,
+      anomalyErrorType: null,
+      anomalyErrorMessage: null,
+      anomalyErrorOwner: null,
+      anomalyStatusCode: null,
+      anomalyModel: null,
+      anomalyPlatform: null,
+      anomalyRequestCount: null,
+      anomalyFailureCount: null,
+      anomalyConsecutiveFailures: null,
+      anomalyLastOccurredAt: null
+    });
+  });
+
   it("tombstones soft-deleted users and cancels their open work", async () => {
     const externalUserId = `reconcile-deleted-${randomUUID()}`;
     externalUserIds.push(externalUserId);

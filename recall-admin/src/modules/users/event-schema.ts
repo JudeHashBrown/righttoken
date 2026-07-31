@@ -13,6 +13,18 @@ const optionalReason = z
   .object({ reason: z.string().trim().min(1).max(500).optional() })
   .strict();
 
+const serviceAnomalyPayload = z
+  .object({
+    reason: z.string().trim().min(1).max(500).optional(),
+    error_message: z
+      .string()
+      .trim()
+      .min(1)
+      .max(500)
+      .optional()
+  })
+  .strict();
+
 export const rightTokenEventSchema = z.discriminatedUnion(
   "event_type",
   [
@@ -126,7 +138,7 @@ export const rightTokenEventSchema = z.discriminatedUnion(
       .object({
         ...commonShape,
         event_type: z.literal("service.anomaly"),
-        payload: optionalReason
+        payload: serviceAnomalyPayload
       })
       .strict(),
     z

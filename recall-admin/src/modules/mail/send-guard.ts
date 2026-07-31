@@ -18,6 +18,7 @@ export type MailSendBlockCode =
   | "REVIEW_REQUIRED"
   | "UNRESOLVED_TEMPLATE_VARIABLE"
   | "CONTACT_FREQUENCY_LIMIT"
+  | "SOURCE_USER_DELETED"
   | "EMPTY_MESSAGE";
 
 export class MailSendBlockedError extends Error {

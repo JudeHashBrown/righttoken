@@ -65,7 +65,17 @@ describe("segment recalculation worker", () => {
         checkoutStartedAt: null,
         currentSegment: "G",
         anomalyActive: true,
-        anomalyChangedAt: new Date("2026-07-24T11:55:00.000Z")
+        anomalyChangedAt: new Date("2026-07-24T11:55:00.000Z"),
+        anomalyErrorPhase: "upstream",
+        anomalyErrorType: "provider_overloaded",
+        anomalyErrorOwner: "provider",
+        anomalyStatusCode: 503,
+        anomalyModel: "gpt-5",
+        anomalyPlatform: "openai",
+        anomalyRequestCount: 6,
+        anomalyFailureCount: 5,
+        anomalyConsecutiveFailures: 4,
+        anomalyLastOccurredAt: new Date("2026-07-24T11:54:00.000Z")
       }
     });
     userId = user.id;
@@ -151,6 +161,8 @@ describe("segment recalculation worker", () => {
       })
     ).toMatchObject({
       currentSegment: "F",
+      reasonLabel:
+        "上游服务异常（HTTP 503），近30分钟6次请求失败5次，错误类型 provider_overloaded，模型 gpt-5，最近发生于07/24 19:54。",
       segmentRuleVersion:
         expect.any(Number)
     });
@@ -185,7 +197,11 @@ describe("segment recalculation worker", () => {
           triggerKey: { startsWith: "F:task:F:" }
         }
       })
-    ).toMatchObject({ priority: "URGENT" });
+    ).toMatchObject({
+      priority: "URGENT",
+      reason:
+        "上游服务异常（HTTP 503），近30分钟6次请求失败5次，错误类型 provider_overloaded，模型 gpt-5，最近发生于07/24 19:54。"
+    });
     expect(
       await prisma.segmentRecalculationRun.findUniqueOrThrow({
         where: { id: runId }

@@ -264,6 +264,18 @@ export async function getTaskDetail(viewer: Viewer, taskId: string) {
           totalPaidMinor: true,
           balanceMinor: true,
           lastCallAt: true,
+          anomalyActive: true,
+          anomalyErrorPhase: true,
+          anomalyErrorType: true,
+          anomalyErrorMessage: true,
+          anomalyErrorOwner: true,
+          anomalyStatusCode: true,
+          anomalyModel: true,
+          anomalyPlatform: true,
+          anomalyRequestCount: true,
+          anomalyFailureCount: true,
+          anomalyConsecutiveFailures: true,
+          anomalyLastOccurredAt: true,
           ownerId: true
         }
       },

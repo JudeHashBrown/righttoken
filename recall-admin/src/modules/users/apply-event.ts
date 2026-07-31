@@ -3,6 +3,7 @@ import {
   Prisma,
   type UserProfile
 } from "@/generated/prisma/client";
+import { clearedServiceAnomalyFields } from "@/modules/anomalies/persistence";
 import { prisma } from "@/lib/db/prisma";
 import type { TransactionClient } from "@/lib/db/transaction";
 import { createFieldCipher } from "@/lib/crypto/field-encryption";
@@ -328,6 +329,15 @@ async function applyFacts(
           data: {
             anomalyActive,
             anomalyChangedAt: occurredAt,
+            ...clearedServiceAnomalyFields,
+            ...(input.event_type === "service.anomaly" &&
+            "error_message" in input.payload &&
+            input.payload.error_message !== undefined
+              ? {
+                  anomalyErrorMessage:
+                    input.payload.error_message
+                }
+              : {}),
             ...("reason" in input.payload &&
             input.payload.reason !== undefined
               ? { reasonLabel: input.payload.reason }

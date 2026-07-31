@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
   type FormEvent
 } from "react";
@@ -43,6 +44,24 @@ type ComposerTemplate = {
   subject: string;
   bodyText: string;
 };
+
+type AudienceMode = "USER" | "SEGMENT" | "ALL";
+
+type AudiencePreview = {
+  label: string;
+  total: number;
+  estimatedSkipped: number;
+};
+
+const segmentOptions = [
+  "F",
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "G"
+] as const;
 
 type MailComposerProps = {
   tasks: ComposerTask[];
@@ -147,6 +166,15 @@ export function MailComposer({
   const [content, setContent] = useState<MailRichContent>(() =>
     initialRichContent(initialBody)
   );
+  const [audienceMode, setAudienceMode] =
+    useState<AudienceMode>("USER");
+  const [segment, setSegment] =
+    useState<(typeof segmentOptions)[number]>("F");
+  const [audiencePreview, setAudiencePreview] =
+    useState<AudiencePreview | null>(null);
+  const [previewLoading, setPreviewLoading] =
+    useState(false);
+  const batchIdempotencyKey = useRef<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -172,17 +200,26 @@ export function MailComposer({
     () => unresolvedVariables(subject, content.bodyText),
     [subject, content.bodyText]
   );
-  const blocked =
-    !selectedUser ||
+  const contentBlocked =
     !mailboxId ||
-    !recipientValid ||
-    selectedUser.suppressed ||
-    selectedUser.paused ||
     unresolved.length > 0 ||
     !subject.trim() ||
     !content.bodyText.trim();
+  const blocked =
+    contentBlocked ||
+    (audienceMode === "USER"
+      ? !selectedUser ||
+        !recipientValid ||
+        selectedUser.suppressed ||
+        selectedUser.paused
+      : previewLoading ||
+        !audiencePreview ||
+        audiencePreview.total === 0);
 
   useEffect(() => {
+    if (audienceMode !== "USER") {
+      return;
+    }
     const query = userQuery.trim();
     if (query.length < 2) {
       return;
@@ -222,39 +259,104 @@ export function MailComposer({
       window.clearTimeout(timer);
       controller.abort();
     };
-  }, [userId, userQuery]);
+  }, [audienceMode, userId, userQuery]);
+
+  useEffect(() => {
+    if (audienceMode === "USER") {
+      return;
+    }
+    const controller = new AbortController();
+    const parameters = new URLSearchParams({
+      mode: audienceMode,
+      ...(audienceMode === "SEGMENT"
+        ? { segment }
+        : {})
+    });
+    fetch(`/api/mail/audience-preview?${parameters}`, {
+      signal: controller.signal
+    })
+      .then(async (response) => {
+        const result = (await response
+          .json()
+          .catch(() => null)) as AudiencePreview | null;
+        if (!response.ok || !result) {
+          throw new Error("MAIL_AUDIENCE_PREVIEW_FAILED");
+        }
+        setAudiencePreview(result);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) {
+          setError("受众人数暂时无法计算，请稍后重试。");
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setPreviewLoading(false);
+        }
+      });
+    return () => controller.abort();
+  }, [audienceMode, segment]);
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>
   ): Promise<void> {
     event.preventDefault();
-    if (blocked || !selectedUser) {
+    if (blocked) {
       return;
     }
     setSubmitting(true);
     setError(null);
     setSuccess(null);
     try {
-      const response = await fetch("/api/mail/send", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          userId: selectedUser.id,
-          ...(taskId ? { taskId } : {}),
-          mailboxId,
-          recipient: normalizedRecipient,
-          subject,
-          bodyText: content.bodyText,
-          bodyHtml: content.bodyHtml,
-          assets: content.assets.map(
-            ({ id, disposition, sortOrder }) => ({
-              id,
-              disposition,
-              sortOrder
-            })
-          )
+      const assets = content.assets.map(
+        ({ id, disposition, sortOrder }) => ({
+          id,
+          disposition,
+          sortOrder
         })
-      });
+      );
+      let response: Response;
+      if (audienceMode === "USER") {
+        if (!selectedUser) {
+          return;
+        }
+        response = await fetch("/api/mail/send", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            userId: selectedUser.id,
+            ...(taskId ? { taskId } : {}),
+            mailboxId,
+            recipient: normalizedRecipient,
+            subject,
+            bodyText: content.bodyText,
+            bodyHtml: content.bodyHtml,
+            assets
+          })
+        });
+      } else {
+        batchIdempotencyKey.current ??=
+          globalThis.crypto?.randomUUID?.() ??
+          `mail-batch-${Date.now()}`;
+        response = await fetch("/api/mail/batches", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "idempotency-key": batchIdempotencyKey.current
+          },
+          body: JSON.stringify({
+            mode: audienceMode,
+            ...(audienceMode === "SEGMENT"
+              ? { segment }
+              : {}),
+            mailboxId,
+            subject,
+            bodyText: content.bodyText,
+            bodyHtml: content.bodyHtml,
+            assets
+          })
+        });
+      }
       const result = (await response.json().catch(() => null)) as {
         code?: string;
         taskId?: string;
@@ -272,7 +374,9 @@ export function MailComposer({
           MAIL_ASSET_TOTAL_TOO_LARGE:
             "图片总大小不能超过 20 MB。",
           MAIL_INLINE_ASSET_MISMATCH:
-            "正文图片与邮件内容不一致，请重新插入。"
+            "正文图片与邮件内容不一致，请重新插入。",
+          EMPTY_MAIL_AUDIENCE: "当前受众没有可发送用户。",
+          MAILBOX_DISABLED: "发件邮箱当前未启用。"
         };
         setError(
           messages[result?.code ?? ""] ??
@@ -283,7 +387,14 @@ export function MailComposer({
       if (result?.taskId) {
         setTaskId(result.taskId);
       }
-      setSuccess("邮件已发送，任务已进入等待用户回复");
+      setSuccess(
+        audienceMode === "USER"
+          ? "邮件已发送，任务已进入等待用户回复"
+          : "群发任务已创建，可在下方查看进度"
+      );
+      if (audienceMode !== "USER") {
+        batchIdempotencyKey.current = null;
+      }
       router.refresh();
     } catch {
       setError("网络连接异常，请稍后重试。");
@@ -305,6 +416,15 @@ export function MailComposer({
     );
     setError(null);
     setSuccess(null);
+  }
+
+  function selectAudienceMode(nextMode: AudienceMode): void {
+    setAudienceMode(nextMode);
+    setAudiencePreview(null);
+    setPreviewLoading(nextMode !== "USER");
+    setError(null);
+    setSuccess(null);
+    batchIdempotencyKey.current = null;
   }
 
   function selectTask(nextTaskId: string): void {
@@ -336,7 +456,7 @@ export function MailComposer({
       <div className={styles.panelHeader}>
         <div>
           <h2>写邮件</h2>
-          <p>选择用户并审核最终收件人、主题和正文</p>
+          <p>选择个人、一个分组或全部用户，并审核最终内容</p>
         </div>
         {closeHref ? (
           <Link
@@ -348,8 +468,71 @@ export function MailComposer({
         ) : null}
       </div>
       <form className={styles.formBody} onSubmit={handleSubmit}>
-        <div className={styles.editorGrid}>
+        <fieldset className={styles.segmentPicker}>
+          <legend>发送对象</legend>
+          {[
+            ["USER", "指定用户"],
+            ["SEGMENT", "指定分组"],
+            ["ALL", "全部用户"]
+          ].map(([mode, label]) => (
+            <label key={mode}>
+              <input
+                type="radio"
+                name="mail-audience-mode"
+                checked={audienceMode === mode}
+                onChange={() =>
+                  selectAudienceMode(mode as AudienceMode)
+                }
+                disabled={submitting}
+              />
+              {label}
+            </label>
+          ))}
+        </fieldset>
+        {audienceMode === "SEGMENT" ? (
           <div className={styles.field}>
+            <label htmlFor="mail-segment">选择分组</label>
+            <select
+              className={styles.select}
+              id="mail-segment"
+              value={segment}
+              onChange={(event) => {
+                const nextSegment = event.target
+                  .value as (typeof segmentOptions)[number];
+                if (nextSegment === segment) {
+                  return;
+                }
+                setSegment(nextSegment);
+                setAudiencePreview(null);
+                setPreviewLoading(true);
+              }}
+              disabled={submitting}
+            >
+              {segmentOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option} 组全员
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : null}
+        {audienceMode !== "USER" ? (
+          <p className={styles.notice}>
+            <strong>
+              每位用户将收到独立邮件，无法看到其他收件人邮箱
+            </strong>
+            <br />
+            {previewLoading
+              ? "正在计算预计人数…"
+              : audiencePreview
+                ? `预计 ${audiencePreview.total} 人，自动跳过 ${audiencePreview.estimatedSkipped} 人`
+                : "尚未取得受众人数"}
+          </p>
+        ) : null}
+        <div className={styles.editorGrid}>
+          {audienceMode === "USER" ? (
+            <>
+              <div className={styles.field}>
             <label htmlFor="mail-user-search">搜索用户</label>
             <input
               className={styles.input}
@@ -360,8 +543,8 @@ export function MailComposer({
               placeholder="输入邮箱、用户编号或姓名"
               value={userQuery}
             />
-          </div>
-          <div className={styles.field}>
+              </div>
+              <div className={styles.field}>
             <label htmlFor="mail-user">选择用户</label>
             <select
               className={styles.select}
@@ -379,8 +562,8 @@ export function MailComposer({
                 </option>
               ))}
             </select>
-          </div>
-          <div className={styles.field}>
+              </div>
+              <div className={styles.field}>
             <label htmlFor="mail-task">关联任务（可选）</label>
             <select
               className={styles.select}
@@ -406,7 +589,9 @@ export function MailComposer({
                 </option>
               ) : null}
             </select>
-          </div>
+              </div>
+            </>
+          ) : null}
           <div className={styles.field}>
             <label htmlFor="mailbox">发件邮箱</label>
             <select
@@ -428,7 +613,8 @@ export function MailComposer({
               ))}
             </select>
           </div>
-          <div className={styles.field}>
+          {audienceMode === "USER" ? (
+            <div className={styles.field}>
             <label htmlFor="mail-recipient">最终收件人</label>
             <input
               className={styles.input}
@@ -441,7 +627,8 @@ export function MailComposer({
               required
               disabled={submitting || !selectedUser}
             />
-          </div>
+            </div>
+          ) : null}
           {templates.length ? (
             <div className={styles.field}>
               <label htmlFor="mail-template">使用模板</label>
@@ -464,7 +651,7 @@ export function MailComposer({
             </div>
           ) : null}
         </div>
-        {recipientOverridden ? (
+        {audienceMode === "USER" && recipientOverridden ? (
           <p className={styles.notice}>
             <strong>已修改收件邮箱</strong>
             <br />
@@ -495,10 +682,11 @@ export function MailComposer({
             模板中仍有待填写内容：{unresolved.join("、")}
           </p>
         ) : null}
-        {selectedUser?.suppressed ? (
+        {audienceMode === "USER" &&
+        selectedUser?.suppressed ? (
           <p className={styles.error}>该用户已退订，禁止发送</p>
         ) : null}
-        {selectedUser?.paused ? (
+        {audienceMode === "USER" && selectedUser?.paused ? (
           <p className={styles.error}>该用户当前已暂停联系</p>
         ) : null}
         {error ? (
@@ -517,7 +705,11 @@ export function MailComposer({
             type="submit"
             disabled={blocked || submitting}
           >
-            {submitting ? "正在发送" : "确认并发送"}
+            {submitting
+              ? "正在发送"
+              : audienceMode === "USER"
+                ? "确认并发送"
+                : "确认创建群发"}
           </button>
         </div>
       </form>

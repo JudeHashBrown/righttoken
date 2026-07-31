@@ -89,6 +89,37 @@ export const MailAssetDisposition = {
 export type MailAssetDisposition = (typeof MailAssetDisposition)[keyof typeof MailAssetDisposition]
 
 
+export const MailAudienceMode = {
+  USER: 'USER',
+  SEGMENT: 'SEGMENT',
+  ALL: 'ALL'
+} as const
+
+export type MailAudienceMode = (typeof MailAudienceMode)[keyof typeof MailAudienceMode]
+
+
+export const MailBatchStatus = {
+  PENDING: 'PENDING',
+  RUNNING: 'RUNNING',
+  COMPLETED: 'COMPLETED',
+  PARTIAL_FAILURE: 'PARTIAL_FAILURE',
+  FAILED: 'FAILED'
+} as const
+
+export type MailBatchStatus = (typeof MailBatchStatus)[keyof typeof MailBatchStatus]
+
+
+export const MailBatchRecipientStatus = {
+  PENDING: 'PENDING',
+  SENDING: 'SENDING',
+  SENT: 'SENT',
+  SKIPPED: 'SKIPPED',
+  FAILED: 'FAILED'
+} as const
+
+export type MailBatchRecipientStatus = (typeof MailBatchRecipientStatus)[keyof typeof MailBatchRecipientStatus]
+
+
 export const NotificationChannel = {
   IN_APP: 'IN_APP',
   WECOM_APP: 'WECOM_APP',

@@ -2,11 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RevokeOverrideButton } from "@/components/users/revoke-override-button";
 import { SegmentOverrideForm } from "@/components/users/segment-override-form";
+import { ServiceAnomalyDetail } from "@/components/users/service-anomaly-detail";
 import { UserNoteForm } from "@/components/users/user-note-form";
 import { UserLocationControl } from "@/components/users/user-location-control";
 import { UserOwnerControl } from "@/components/users/user-owner-control";
 import styles from "@/components/workspaces/workspace.module.css";
 import { prisma } from "@/lib/db/prisma";
+import { presentServiceAnomaly } from "@/modules/anomalies/presentation";
 import {
   mailComposeHref
 } from "@/modules/mail/compose-link";
@@ -101,6 +103,7 @@ export default async function UserDetailPage({
     (override) =>
       !override.revokedAt && override.expiresAt > now
   );
+  const anomaly = presentServiceAnomaly(user);
 
   return (
     <main className={styles.page}>
@@ -140,6 +143,9 @@ export default async function UserDetailPage({
                 </p>
               </div>
             </div>
+            {anomaly ? (
+              <ServiceAnomalyDetail anomaly={anomaly} />
+            ) : null}
             <div className={styles.summaryGrid}>
               <div className={styles.summaryItem}>
                 <span className={styles.detailLabel}>完整邮箱</span>

@@ -51,4 +51,14 @@ export class PgTaskScheduler implements TaskScheduler {
       { singletonKey: input.runId }
     );
   }
+
+  async scheduleMailBatch(
+    input: { batchId: string }
+  ): Promise<void> {
+    await this.boss.upsert(
+      JOBS.MAIL_BATCH,
+      input,
+      { singletonKey: input.batchId }
+    );
+  }
 }

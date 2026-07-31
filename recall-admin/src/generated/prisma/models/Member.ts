@@ -250,6 +250,7 @@ export type MemberWhereInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunListRelationFilter
   ownerAssignmentsMade?: Prisma.UserProfileListRelationFilter
   locationAssignmentsMade?: Prisma.UserProfileListRelationFilter
+  createdMailBatches?: Prisma.MailBatchListRelationFilter
 }
 
 export type MemberOrderByWithRelationInput = {
@@ -277,6 +278,7 @@ export type MemberOrderByWithRelationInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunOrderByRelationAggregateInput
   ownerAssignmentsMade?: Prisma.UserProfileOrderByRelationAggregateInput
   locationAssignmentsMade?: Prisma.UserProfileOrderByRelationAggregateInput
+  createdMailBatches?: Prisma.MailBatchOrderByRelationAggregateInput
 }
 
 export type MemberWhereUniqueInput = Prisma.AtLeast<{
@@ -307,6 +309,7 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<{
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunListRelationFilter
   ownerAssignmentsMade?: Prisma.UserProfileListRelationFilter
   locationAssignmentsMade?: Prisma.UserProfileListRelationFilter
+  createdMailBatches?: Prisma.MailBatchListRelationFilter
 }, "id" | "email" | "rightTokenUserId" | "wecomUserId">
 
 export type MemberOrderByWithAggregationInput = {
@@ -370,6 +373,7 @@ export type MemberCreateInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateInput = {
@@ -397,6 +401,7 @@ export type MemberUncheckedCreateInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUpdateInput = {
@@ -424,6 +429,7 @@ export type MemberUpdateInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateInput = {
@@ -451,6 +457,7 @@ export type MemberUncheckedUpdateInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberCreateManyInput = {
@@ -753,6 +760,20 @@ export type MemberUpdateOneWithoutReviewedMailMessagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MemberUpdateToOneWithWhereWithoutReviewedMailMessagesInput, Prisma.MemberUpdateWithoutReviewedMailMessagesInput>, Prisma.MemberUncheckedUpdateWithoutReviewedMailMessagesInput>
 }
 
+export type MemberCreateNestedOneWithoutCreatedMailBatchesInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutCreatedMailBatchesInput, Prisma.MemberUncheckedCreateWithoutCreatedMailBatchesInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutCreatedMailBatchesInput
+  connect?: Prisma.MemberWhereUniqueInput
+}
+
+export type MemberUpdateOneRequiredWithoutCreatedMailBatchesNestedInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutCreatedMailBatchesInput, Prisma.MemberUncheckedCreateWithoutCreatedMailBatchesInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutCreatedMailBatchesInput
+  upsert?: Prisma.MemberUpsertWithoutCreatedMailBatchesInput
+  connect?: Prisma.MemberWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MemberUpdateToOneWithWhereWithoutCreatedMailBatchesInput, Prisma.MemberUpdateWithoutCreatedMailBatchesInput>, Prisma.MemberUncheckedUpdateWithoutCreatedMailBatchesInput>
+}
+
 export type MemberCreateWithoutSessionsInput = {
   id?: string
   email: string
@@ -777,6 +798,7 @@ export type MemberCreateWithoutSessionsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateWithoutSessionsInput = {
@@ -803,6 +825,7 @@ export type MemberUncheckedCreateWithoutSessionsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberCreateOrConnectWithoutSessionsInput = {
@@ -845,6 +868,7 @@ export type MemberUpdateWithoutSessionsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutSessionsInput = {
@@ -871,6 +895,7 @@ export type MemberUncheckedUpdateWithoutSessionsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberCreateWithoutOwnedUsersInput = {
@@ -897,6 +922,7 @@ export type MemberCreateWithoutOwnedUsersInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateWithoutOwnedUsersInput = {
@@ -923,6 +949,7 @@ export type MemberUncheckedCreateWithoutOwnedUsersInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberCreateOrConnectWithoutOwnedUsersInput = {
@@ -954,6 +981,7 @@ export type MemberCreateWithoutOwnerAssignmentsMadeInput = {
   locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
   locationAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateWithoutOwnerAssignmentsMadeInput = {
@@ -980,6 +1008,7 @@ export type MemberUncheckedCreateWithoutOwnerAssignmentsMadeInput = {
   locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberCreateOrConnectWithoutOwnerAssignmentsMadeInput = {
@@ -1011,6 +1040,7 @@ export type MemberCreateWithoutLocationAssignmentsMadeInput = {
   locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutOwnerAssignedByInput
+  createdMailBatches?: Prisma.MailBatchCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateWithoutLocationAssignmentsMadeInput = {
@@ -1037,6 +1067,7 @@ export type MemberUncheckedCreateWithoutLocationAssignmentsMadeInput = {
   locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput
+  createdMailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberCreateOrConnectWithoutLocationAssignmentsMadeInput = {
@@ -1079,6 +1110,7 @@ export type MemberUpdateWithoutOwnedUsersInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutOwnedUsersInput = {
@@ -1105,6 +1137,7 @@ export type MemberUncheckedUpdateWithoutOwnedUsersInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUpsertWithoutOwnerAssignmentsMadeInput = {
@@ -1142,6 +1175,7 @@ export type MemberUpdateWithoutOwnerAssignmentsMadeInput = {
   locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutOwnerAssignmentsMadeInput = {
@@ -1168,6 +1202,7 @@ export type MemberUncheckedUpdateWithoutOwnerAssignmentsMadeInput = {
   locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUpsertWithoutLocationAssignmentsMadeInput = {
@@ -1205,6 +1240,7 @@ export type MemberUpdateWithoutLocationAssignmentsMadeInput = {
   locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutOwnerAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutLocationAssignmentsMadeInput = {
@@ -1231,6 +1267,7 @@ export type MemberUncheckedUpdateWithoutLocationAssignmentsMadeInput = {
   locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberCreateWithoutNotesInput = {
@@ -1257,6 +1294,7 @@ export type MemberCreateWithoutNotesInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateWithoutNotesInput = {
@@ -1283,6 +1321,7 @@ export type MemberUncheckedCreateWithoutNotesInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberCreateOrConnectWithoutNotesInput = {
@@ -1325,6 +1364,7 @@ export type MemberUpdateWithoutNotesInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutNotesInput = {
@@ -1351,6 +1391,7 @@ export type MemberUncheckedUpdateWithoutNotesInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberCreateWithoutSegmentRecalculationRunsInput = {
@@ -1377,6 +1418,7 @@ export type MemberCreateWithoutSegmentRecalculationRunsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateWithoutSegmentRecalculationRunsInput = {
@@ -1403,6 +1445,7 @@ export type MemberUncheckedCreateWithoutSegmentRecalculationRunsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberCreateOrConnectWithoutSegmentRecalculationRunsInput = {
@@ -1445,6 +1488,7 @@ export type MemberUpdateWithoutSegmentRecalculationRunsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutSegmentRecalculationRunsInput = {
@@ -1471,6 +1515,7 @@ export type MemberUncheckedUpdateWithoutSegmentRecalculationRunsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberCreateWithoutAssignmentRecalculationRunsInput = {
@@ -1497,6 +1542,7 @@ export type MemberCreateWithoutAssignmentRecalculationRunsInput = {
   locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateWithoutAssignmentRecalculationRunsInput = {
@@ -1523,6 +1569,7 @@ export type MemberUncheckedCreateWithoutAssignmentRecalculationRunsInput = {
   locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberCreateOrConnectWithoutAssignmentRecalculationRunsInput = {
@@ -1565,6 +1612,7 @@ export type MemberUpdateWithoutAssignmentRecalculationRunsInput = {
   locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutAssignmentRecalculationRunsInput = {
@@ -1591,6 +1639,7 @@ export type MemberUncheckedUpdateWithoutAssignmentRecalculationRunsInput = {
   locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberCreateWithoutLocationRecalculationRunsInput = {
@@ -1617,6 +1666,7 @@ export type MemberCreateWithoutLocationRecalculationRunsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateWithoutLocationRecalculationRunsInput = {
@@ -1643,6 +1693,7 @@ export type MemberUncheckedCreateWithoutLocationRecalculationRunsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberCreateOrConnectWithoutLocationRecalculationRunsInput = {
@@ -1685,6 +1736,7 @@ export type MemberUpdateWithoutLocationRecalculationRunsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutLocationRecalculationRunsInput = {
@@ -1711,6 +1763,7 @@ export type MemberUncheckedUpdateWithoutLocationRecalculationRunsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberCreateWithoutAssignedTasksInput = {
@@ -1737,6 +1790,7 @@ export type MemberCreateWithoutAssignedTasksInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateWithoutAssignedTasksInput = {
@@ -1763,6 +1817,7 @@ export type MemberUncheckedCreateWithoutAssignedTasksInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberCreateOrConnectWithoutAssignedTasksInput = {
@@ -1805,6 +1860,7 @@ export type MemberUpdateWithoutAssignedTasksInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutAssignedTasksInput = {
@@ -1831,6 +1887,7 @@ export type MemberUncheckedUpdateWithoutAssignedTasksInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberCreateWithoutAuditLogsInput = {
@@ -1857,6 +1914,7 @@ export type MemberCreateWithoutAuditLogsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateWithoutAuditLogsInput = {
@@ -1883,6 +1941,7 @@ export type MemberUncheckedCreateWithoutAuditLogsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberCreateOrConnectWithoutAuditLogsInput = {
@@ -1925,6 +1984,7 @@ export type MemberUpdateWithoutAuditLogsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutAuditLogsInput = {
@@ -1951,6 +2011,7 @@ export type MemberUncheckedUpdateWithoutAuditLogsInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberCreateWithoutRecoveryCodesInput = {
@@ -1977,6 +2038,7 @@ export type MemberCreateWithoutRecoveryCodesInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateWithoutRecoveryCodesInput = {
@@ -2003,6 +2065,7 @@ export type MemberUncheckedCreateWithoutRecoveryCodesInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberCreateOrConnectWithoutRecoveryCodesInput = {
@@ -2045,6 +2108,7 @@ export type MemberUpdateWithoutRecoveryCodesInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutRecoveryCodesInput = {
@@ -2071,6 +2135,7 @@ export type MemberUncheckedUpdateWithoutRecoveryCodesInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberCreateWithoutReviewedMailMessagesInput = {
@@ -2097,6 +2162,7 @@ export type MemberCreateWithoutReviewedMailMessagesInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateWithoutReviewedMailMessagesInput = {
@@ -2123,6 +2189,7 @@ export type MemberUncheckedCreateWithoutReviewedMailMessagesInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput
+  createdMailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberCreateOrConnectWithoutReviewedMailMessagesInput = {
@@ -2165,6 +2232,7 @@ export type MemberUpdateWithoutReviewedMailMessagesInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutReviewedMailMessagesInput = {
@@ -2191,6 +2259,131 @@ export type MemberUncheckedUpdateWithoutReviewedMailMessagesInput = {
   assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
   ownerAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput
   locationAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput
+  createdMailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type MemberCreateWithoutCreatedMailBatchesInput = {
+  id?: string
+  email: string
+  rightTokenUserId?: string | null
+  displayName: string
+  passwordHash: string
+  role: $Enums.MemberRole
+  active?: boolean
+  twoFactorSecret?: string | null
+  twoFactorOn?: boolean
+  wecomUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutMemberInput
+  assignedTasks?: Prisma.RecallTaskCreateNestedManyWithoutAssigneeInput
+  ownedUsers?: Prisma.UserProfileCreateNestedManyWithoutOwnerInput
+  notes?: Prisma.UserNoteCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunCreateNestedManyWithoutRequestedByInput
+  ownerAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutOwnerAssignedByInput
+  locationAssignmentsMade?: Prisma.UserProfileCreateNestedManyWithoutLocationAssignedByInput
+}
+
+export type MemberUncheckedCreateWithoutCreatedMailBatchesInput = {
+  id?: string
+  email: string
+  rightTokenUserId?: string | null
+  displayName: string
+  passwordHash: string
+  role: $Enums.MemberRole
+  active?: boolean
+  twoFactorSecret?: string | null
+  twoFactorOn?: boolean
+  wecomUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutMemberInput
+  assignedTasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutAssigneeInput
+  ownedUsers?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerInput
+  notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutMemberInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutReviewedByInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedCreateNestedManyWithoutRequestedByInput
+  ownerAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutOwnerAssignedByInput
+  locationAssignmentsMade?: Prisma.UserProfileUncheckedCreateNestedManyWithoutLocationAssignedByInput
+}
+
+export type MemberCreateOrConnectWithoutCreatedMailBatchesInput = {
+  where: Prisma.MemberWhereUniqueInput
+  create: Prisma.XOR<Prisma.MemberCreateWithoutCreatedMailBatchesInput, Prisma.MemberUncheckedCreateWithoutCreatedMailBatchesInput>
+}
+
+export type MemberUpsertWithoutCreatedMailBatchesInput = {
+  update: Prisma.XOR<Prisma.MemberUpdateWithoutCreatedMailBatchesInput, Prisma.MemberUncheckedUpdateWithoutCreatedMailBatchesInput>
+  create: Prisma.XOR<Prisma.MemberCreateWithoutCreatedMailBatchesInput, Prisma.MemberUncheckedCreateWithoutCreatedMailBatchesInput>
+  where?: Prisma.MemberWhereInput
+}
+
+export type MemberUpdateToOneWithWhereWithoutCreatedMailBatchesInput = {
+  where?: Prisma.MemberWhereInput
+  data: Prisma.XOR<Prisma.MemberUpdateWithoutCreatedMailBatchesInput, Prisma.MemberUncheckedUpdateWithoutCreatedMailBatchesInput>
+}
+
+export type MemberUpdateWithoutCreatedMailBatchesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutMemberNestedInput
+  assignedTasks?: Prisma.RecallTaskUpdateManyWithoutAssigneeNestedInput
+  ownedUsers?: Prisma.UserProfileUpdateManyWithoutOwnerNestedInput
+  notes?: Prisma.UserNoteUpdateManyWithoutAuthorNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUpdateManyWithoutRequestedByNestedInput
+  ownerAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutOwnerAssignedByNestedInput
+  locationAssignmentsMade?: Prisma.UserProfileUpdateManyWithoutLocationAssignedByNestedInput
+}
+
+export type MemberUncheckedUpdateWithoutCreatedMailBatchesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  rightTokenUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumMemberRoleFieldUpdateOperationsInput | $Enums.MemberRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorOn?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wecomUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutMemberNestedInput
+  assignedTasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+  ownedUsers?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerNestedInput
+  notes?: Prisma.UserNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutMemberNestedInput
+  reviewedMailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutReviewedByNestedInput
+  segmentRecalculationRuns?: Prisma.SegmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  locationRecalculationRuns?: Prisma.LocationRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  assignmentRecalculationRuns?: Prisma.AssignmentRecalculationRunUncheckedUpdateManyWithoutRequestedByNestedInput
+  ownerAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutOwnerAssignedByNestedInput
+  locationAssignmentsMade?: Prisma.UserProfileUncheckedUpdateManyWithoutLocationAssignedByNestedInput
 }
 
 
@@ -2211,6 +2404,7 @@ export type MemberCountOutputType = {
   assignmentRecalculationRuns: number
   ownerAssignmentsMade: number
   locationAssignmentsMade: number
+  createdMailBatches: number
 }
 
 export type MemberCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2226,6 +2420,7 @@ export type MemberCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   assignmentRecalculationRuns?: boolean | MemberCountOutputTypeCountAssignmentRecalculationRunsArgs
   ownerAssignmentsMade?: boolean | MemberCountOutputTypeCountOwnerAssignmentsMadeArgs
   locationAssignmentsMade?: boolean | MemberCountOutputTypeCountLocationAssignmentsMadeArgs
+  createdMailBatches?: boolean | MemberCountOutputTypeCountCreatedMailBatchesArgs
 }
 
 /**
@@ -2322,6 +2517,13 @@ export type MemberCountOutputTypeCountLocationAssignmentsMadeArgs<ExtArgs extend
   where?: Prisma.UserProfileWhereInput
 }
 
+/**
+ * MemberCountOutputType without action
+ */
+export type MemberCountOutputTypeCountCreatedMailBatchesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MailBatchWhereInput
+}
+
 
 export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2348,6 +2550,7 @@ export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   assignmentRecalculationRuns?: boolean | Prisma.Member$assignmentRecalculationRunsArgs<ExtArgs>
   ownerAssignmentsMade?: boolean | Prisma.Member$ownerAssignmentsMadeArgs<ExtArgs>
   locationAssignmentsMade?: boolean | Prisma.Member$locationAssignmentsMadeArgs<ExtArgs>
+  createdMailBatches?: boolean | Prisma.Member$createdMailBatchesArgs<ExtArgs>
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["member"]>
 
@@ -2410,6 +2613,7 @@ export type MemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   assignmentRecalculationRuns?: boolean | Prisma.Member$assignmentRecalculationRunsArgs<ExtArgs>
   ownerAssignmentsMade?: boolean | Prisma.Member$ownerAssignmentsMadeArgs<ExtArgs>
   locationAssignmentsMade?: boolean | Prisma.Member$locationAssignmentsMadeArgs<ExtArgs>
+  createdMailBatches?: boolean | Prisma.Member$createdMailBatchesArgs<ExtArgs>
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MemberIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2430,6 +2634,7 @@ export type $MemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     assignmentRecalculationRuns: Prisma.$AssignmentRecalculationRunPayload<ExtArgs>[]
     ownerAssignmentsMade: Prisma.$UserProfilePayload<ExtArgs>[]
     locationAssignmentsMade: Prisma.$UserProfilePayload<ExtArgs>[]
+    createdMailBatches: Prisma.$MailBatchPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2850,6 +3055,7 @@ export interface Prisma__MemberClient<T, Null = never, ExtArgs extends runtime.T
   assignmentRecalculationRuns<T extends Prisma.Member$assignmentRecalculationRunsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$assignmentRecalculationRunsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentRecalculationRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ownerAssignmentsMade<T extends Prisma.Member$ownerAssignmentsMadeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$ownerAssignmentsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   locationAssignmentsMade<T extends Prisma.Member$locationAssignmentsMadeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$locationAssignmentsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdMailBatches<T extends Prisma.Member$createdMailBatchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$createdMailBatchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailBatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3569,6 +3775,30 @@ export type Member$locationAssignmentsMadeArgs<ExtArgs extends runtime.Types.Ext
   take?: number
   skip?: number
   distinct?: Prisma.UserProfileScalarFieldEnum | Prisma.UserProfileScalarFieldEnum[]
+}
+
+/**
+ * Member.createdMailBatches
+ */
+export type Member$createdMailBatchesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailBatch
+   */
+  select?: Prisma.MailBatchSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailBatch
+   */
+  omit?: Prisma.MailBatchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailBatchInclude<ExtArgs> | null
+  where?: Prisma.MailBatchWhereInput
+  orderBy?: Prisma.MailBatchOrderByWithRelationInput | Prisma.MailBatchOrderByWithRelationInput[]
+  cursor?: Prisma.MailBatchWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MailBatchScalarFieldEnum | Prisma.MailBatchScalarFieldEnum[]
 }
 
 /**

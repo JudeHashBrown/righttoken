@@ -23,6 +23,10 @@ import {
 } from "@/worker/handlers/segment-check";
 import { handleSlaEscalation } from "@/worker/handlers/sla-escalation";
 import { JOBS } from "@/worker/job-names";
+import {
+  handleMailBatch,
+  type MailBatchJobInput
+} from "@/worker/handlers/mail-batch";
 
 export async function registerHandlers(
   boss: PgBoss
@@ -74,6 +78,19 @@ export async function registerHandlers(
         return { skipped: "empty_batch" };
       }
       return handleAssignmentRecalculation(
+        job.data,
+        new Date(),
+        taskScheduler
+      );
+    }
+  );
+  await boss.work<MailBatchJobInput>(
+    JOBS.MAIL_BATCH,
+    async ([job]) => {
+      if (!job) {
+        return { skipped: "empty_batch" };
+      }
+      return handleMailBatch(
         job.data,
         new Date(),
         taskScheduler

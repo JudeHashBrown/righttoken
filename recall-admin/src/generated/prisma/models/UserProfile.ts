@@ -31,6 +31,10 @@ export type UserProfileAvgAggregateOutputType = {
   successfulCallCount: number | null
   balanceMinor: number | null
   balanceUsdMinor: number | null
+  anomalyStatusCode: number | null
+  anomalyRequestCount: number | null
+  anomalyFailureCount: number | null
+  anomalyConsecutiveFailures: number | null
   segmentRuleVersion: number | null
 }
 
@@ -39,6 +43,10 @@ export type UserProfileSumAggregateOutputType = {
   successfulCallCount: number | null
   balanceMinor: number | null
   balanceUsdMinor: number | null
+  anomalyStatusCode: number | null
+  anomalyRequestCount: number | null
+  anomalyFailureCount: number | null
+  anomalyConsecutiveFailures: number | null
   segmentRuleVersion: number | null
 }
 
@@ -79,6 +87,17 @@ export type UserProfileMinAggregateOutputType = {
   balanceChangedAt: Date | null
   anomalyActive: boolean | null
   anomalyChangedAt: Date | null
+  anomalyErrorPhase: string | null
+  anomalyErrorType: string | null
+  anomalyErrorMessage: string | null
+  anomalyErrorOwner: string | null
+  anomalyStatusCode: number | null
+  anomalyModel: string | null
+  anomalyPlatform: string | null
+  anomalyRequestCount: number | null
+  anomalyFailureCount: number | null
+  anomalyConsecutiveFailures: number | null
+  anomalyLastOccurredAt: Date | null
   currentSegment: $Enums.SegmentCode | null
   segmentRuleVersion: number | null
   ownerId: string | null
@@ -133,6 +152,17 @@ export type UserProfileMaxAggregateOutputType = {
   balanceChangedAt: Date | null
   anomalyActive: boolean | null
   anomalyChangedAt: Date | null
+  anomalyErrorPhase: string | null
+  anomalyErrorType: string | null
+  anomalyErrorMessage: string | null
+  anomalyErrorOwner: string | null
+  anomalyStatusCode: number | null
+  anomalyModel: string | null
+  anomalyPlatform: string | null
+  anomalyRequestCount: number | null
+  anomalyFailureCount: number | null
+  anomalyConsecutiveFailures: number | null
+  anomalyLastOccurredAt: Date | null
   currentSegment: $Enums.SegmentCode | null
   segmentRuleVersion: number | null
   ownerId: string | null
@@ -187,6 +217,17 @@ export type UserProfileCountAggregateOutputType = {
   balanceChangedAt: number
   anomalyActive: number
   anomalyChangedAt: number
+  anomalyErrorPhase: number
+  anomalyErrorType: number
+  anomalyErrorMessage: number
+  anomalyErrorOwner: number
+  anomalyStatusCode: number
+  anomalyModel: number
+  anomalyPlatform: number
+  anomalyRequestCount: number
+  anomalyFailureCount: number
+  anomalyConsecutiveFailures: number
+  anomalyLastOccurredAt: number
   currentSegment: number
   segmentRuleVersion: number
   ownerId: number
@@ -211,6 +252,10 @@ export type UserProfileAvgAggregateInputType = {
   successfulCallCount?: true
   balanceMinor?: true
   balanceUsdMinor?: true
+  anomalyStatusCode?: true
+  anomalyRequestCount?: true
+  anomalyFailureCount?: true
+  anomalyConsecutiveFailures?: true
   segmentRuleVersion?: true
 }
 
@@ -219,6 +264,10 @@ export type UserProfileSumAggregateInputType = {
   successfulCallCount?: true
   balanceMinor?: true
   balanceUsdMinor?: true
+  anomalyStatusCode?: true
+  anomalyRequestCount?: true
+  anomalyFailureCount?: true
+  anomalyConsecutiveFailures?: true
   segmentRuleVersion?: true
 }
 
@@ -259,6 +308,17 @@ export type UserProfileMinAggregateInputType = {
   balanceChangedAt?: true
   anomalyActive?: true
   anomalyChangedAt?: true
+  anomalyErrorPhase?: true
+  anomalyErrorType?: true
+  anomalyErrorMessage?: true
+  anomalyErrorOwner?: true
+  anomalyStatusCode?: true
+  anomalyModel?: true
+  anomalyPlatform?: true
+  anomalyRequestCount?: true
+  anomalyFailureCount?: true
+  anomalyConsecutiveFailures?: true
+  anomalyLastOccurredAt?: true
   currentSegment?: true
   segmentRuleVersion?: true
   ownerId?: true
@@ -313,6 +373,17 @@ export type UserProfileMaxAggregateInputType = {
   balanceChangedAt?: true
   anomalyActive?: true
   anomalyChangedAt?: true
+  anomalyErrorPhase?: true
+  anomalyErrorType?: true
+  anomalyErrorMessage?: true
+  anomalyErrorOwner?: true
+  anomalyStatusCode?: true
+  anomalyModel?: true
+  anomalyPlatform?: true
+  anomalyRequestCount?: true
+  anomalyFailureCount?: true
+  anomalyConsecutiveFailures?: true
+  anomalyLastOccurredAt?: true
   currentSegment?: true
   segmentRuleVersion?: true
   ownerId?: true
@@ -367,6 +438,17 @@ export type UserProfileCountAggregateInputType = {
   balanceChangedAt?: true
   anomalyActive?: true
   anomalyChangedAt?: true
+  anomalyErrorPhase?: true
+  anomalyErrorType?: true
+  anomalyErrorMessage?: true
+  anomalyErrorOwner?: true
+  anomalyStatusCode?: true
+  anomalyModel?: true
+  anomalyPlatform?: true
+  anomalyRequestCount?: true
+  anomalyFailureCount?: true
+  anomalyConsecutiveFailures?: true
+  anomalyLastOccurredAt?: true
   currentSegment?: true
   segmentRuleVersion?: true
   ownerId?: true
@@ -508,6 +590,17 @@ export type UserProfileGroupByOutputType = {
   balanceChangedAt: Date | null
   anomalyActive: boolean
   anomalyChangedAt: Date | null
+  anomalyErrorPhase: string | null
+  anomalyErrorType: string | null
+  anomalyErrorMessage: string | null
+  anomalyErrorOwner: string | null
+  anomalyStatusCode: number | null
+  anomalyModel: string | null
+  anomalyPlatform: string | null
+  anomalyRequestCount: number | null
+  anomalyFailureCount: number | null
+  anomalyConsecutiveFailures: number | null
+  anomalyLastOccurredAt: Date | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion: number
   ownerId: string | null
@@ -585,6 +678,17 @@ export type UserProfileWhereInput = {
   balanceChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   anomalyActive?: Prisma.BoolFilter<"UserProfile"> | boolean
   anomalyChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  anomalyErrorPhase?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyErrorType?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyErrorMessage?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyErrorOwner?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyStatusCode?: Prisma.IntNullableFilter<"UserProfile"> | number | null
+  anomalyModel?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyPlatform?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyRequestCount?: Prisma.IntNullableFilter<"UserProfile"> | number | null
+  anomalyFailureCount?: Prisma.IntNullableFilter<"UserProfile"> | number | null
+  anomalyConsecutiveFailures?: Prisma.IntNullableFilter<"UserProfile"> | number | null
+  anomalyLastOccurredAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFilter<"UserProfile"> | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFilter<"UserProfile"> | number
   ownerId?: Prisma.StringNullableFilter<"UserProfile"> | string | null
@@ -609,6 +713,7 @@ export type UserProfileWhereInput = {
   notes?: Prisma.UserNoteListRelationFilter
   mailThreads?: Prisma.MailThreadListRelationFilter
   mailMessages?: Prisma.MailMessageListRelationFilter
+  mailBatchRecipients?: Prisma.MailBatchRecipientListRelationFilter
   locationRule?: Prisma.XOR<Prisma.LocationAttributionRuleNullableScalarRelationFilter, Prisma.LocationAttributionRuleWhereInput> | null
   locationAssignedBy?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
 }
@@ -650,6 +755,17 @@ export type UserProfileOrderByWithRelationInput = {
   balanceChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   anomalyActive?: Prisma.SortOrder
   anomalyChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyErrorPhase?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyErrorType?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyErrorOwner?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyStatusCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyModel?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyPlatform?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyRequestCount?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyFailureCount?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyConsecutiveFailures?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyLastOccurredAt?: Prisma.SortOrderInput | Prisma.SortOrder
   currentSegment?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
   ownerId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -674,6 +790,7 @@ export type UserProfileOrderByWithRelationInput = {
   notes?: Prisma.UserNoteOrderByRelationAggregateInput
   mailThreads?: Prisma.MailThreadOrderByRelationAggregateInput
   mailMessages?: Prisma.MailMessageOrderByRelationAggregateInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientOrderByRelationAggregateInput
   locationRule?: Prisma.LocationAttributionRuleOrderByWithRelationInput
   locationAssignedBy?: Prisma.MemberOrderByWithRelationInput
 }
@@ -718,6 +835,17 @@ export type UserProfileWhereUniqueInput = Prisma.AtLeast<{
   balanceChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   anomalyActive?: Prisma.BoolFilter<"UserProfile"> | boolean
   anomalyChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  anomalyErrorPhase?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyErrorType?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyErrorMessage?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyErrorOwner?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyStatusCode?: Prisma.IntNullableFilter<"UserProfile"> | number | null
+  anomalyModel?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyPlatform?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyRequestCount?: Prisma.IntNullableFilter<"UserProfile"> | number | null
+  anomalyFailureCount?: Prisma.IntNullableFilter<"UserProfile"> | number | null
+  anomalyConsecutiveFailures?: Prisma.IntNullableFilter<"UserProfile"> | number | null
+  anomalyLastOccurredAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFilter<"UserProfile"> | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFilter<"UserProfile"> | number
   ownerId?: Prisma.StringNullableFilter<"UserProfile"> | string | null
@@ -742,6 +870,7 @@ export type UserProfileWhereUniqueInput = Prisma.AtLeast<{
   notes?: Prisma.UserNoteListRelationFilter
   mailThreads?: Prisma.MailThreadListRelationFilter
   mailMessages?: Prisma.MailMessageListRelationFilter
+  mailBatchRecipients?: Prisma.MailBatchRecipientListRelationFilter
   locationRule?: Prisma.XOR<Prisma.LocationAttributionRuleNullableScalarRelationFilter, Prisma.LocationAttributionRuleWhereInput> | null
   locationAssignedBy?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
 }, "id" | "externalUserId">
@@ -783,6 +912,17 @@ export type UserProfileOrderByWithAggregationInput = {
   balanceChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   anomalyActive?: Prisma.SortOrder
   anomalyChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyErrorPhase?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyErrorType?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyErrorOwner?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyStatusCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyModel?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyPlatform?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyRequestCount?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyFailureCount?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyConsecutiveFailures?: Prisma.SortOrderInput | Prisma.SortOrder
+  anomalyLastOccurredAt?: Prisma.SortOrderInput | Prisma.SortOrder
   currentSegment?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
   ownerId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -845,6 +985,17 @@ export type UserProfileScalarWhereWithAggregatesInput = {
   balanceChangedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
   anomalyActive?: Prisma.BoolWithAggregatesFilter<"UserProfile"> | boolean
   anomalyChangedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
+  anomalyErrorPhase?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
+  anomalyErrorType?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
+  anomalyErrorMessage?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
+  anomalyErrorOwner?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
+  anomalyStatusCode?: Prisma.IntNullableWithAggregatesFilter<"UserProfile"> | number | null
+  anomalyModel?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
+  anomalyPlatform?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
+  anomalyRequestCount?: Prisma.IntNullableWithAggregatesFilter<"UserProfile"> | number | null
+  anomalyFailureCount?: Prisma.IntNullableWithAggregatesFilter<"UserProfile"> | number | null
+  anomalyConsecutiveFailures?: Prisma.IntNullableWithAggregatesFilter<"UserProfile"> | number | null
+  anomalyLastOccurredAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProfile"> | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeWithAggregatesFilter<"UserProfile"> | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntWithAggregatesFilter<"UserProfile"> | number
   ownerId?: Prisma.StringNullableWithAggregatesFilter<"UserProfile"> | string | null
@@ -897,6 +1048,17 @@ export type UserProfileCreateInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -919,6 +1081,7 @@ export type UserProfileCreateInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -960,6 +1123,17 @@ export type UserProfileUncheckedCreateInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -982,6 +1156,7 @@ export type UserProfileUncheckedCreateInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileUpdateInput = {
@@ -1019,6 +1194,17 @@ export type UserProfileUpdateInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -1041,6 +1227,7 @@ export type UserProfileUpdateInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -1082,6 +1269,17 @@ export type UserProfileUncheckedUpdateInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1104,6 +1302,7 @@ export type UserProfileUncheckedUpdateInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateManyInput = {
@@ -1143,6 +1342,17 @@ export type UserProfileCreateManyInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -1195,6 +1405,17 @@ export type UserProfileUpdateManyMutationInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -1247,6 +1468,17 @@ export type UserProfileUncheckedUpdateManyInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1311,6 +1543,17 @@ export type UserProfileCountOrderByAggregateInput = {
   balanceChangedAt?: Prisma.SortOrder
   anomalyActive?: Prisma.SortOrder
   anomalyChangedAt?: Prisma.SortOrder
+  anomalyErrorPhase?: Prisma.SortOrder
+  anomalyErrorType?: Prisma.SortOrder
+  anomalyErrorMessage?: Prisma.SortOrder
+  anomalyErrorOwner?: Prisma.SortOrder
+  anomalyStatusCode?: Prisma.SortOrder
+  anomalyModel?: Prisma.SortOrder
+  anomalyPlatform?: Prisma.SortOrder
+  anomalyRequestCount?: Prisma.SortOrder
+  anomalyFailureCount?: Prisma.SortOrder
+  anomalyConsecutiveFailures?: Prisma.SortOrder
+  anomalyLastOccurredAt?: Prisma.SortOrder
   currentSegment?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
@@ -1333,6 +1576,10 @@ export type UserProfileAvgOrderByAggregateInput = {
   successfulCallCount?: Prisma.SortOrder
   balanceMinor?: Prisma.SortOrder
   balanceUsdMinor?: Prisma.SortOrder
+  anomalyStatusCode?: Prisma.SortOrder
+  anomalyRequestCount?: Prisma.SortOrder
+  anomalyFailureCount?: Prisma.SortOrder
+  anomalyConsecutiveFailures?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
 }
 
@@ -1373,6 +1620,17 @@ export type UserProfileMaxOrderByAggregateInput = {
   balanceChangedAt?: Prisma.SortOrder
   anomalyActive?: Prisma.SortOrder
   anomalyChangedAt?: Prisma.SortOrder
+  anomalyErrorPhase?: Prisma.SortOrder
+  anomalyErrorType?: Prisma.SortOrder
+  anomalyErrorMessage?: Prisma.SortOrder
+  anomalyErrorOwner?: Prisma.SortOrder
+  anomalyStatusCode?: Prisma.SortOrder
+  anomalyModel?: Prisma.SortOrder
+  anomalyPlatform?: Prisma.SortOrder
+  anomalyRequestCount?: Prisma.SortOrder
+  anomalyFailureCount?: Prisma.SortOrder
+  anomalyConsecutiveFailures?: Prisma.SortOrder
+  anomalyLastOccurredAt?: Prisma.SortOrder
   currentSegment?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
@@ -1427,6 +1685,17 @@ export type UserProfileMinOrderByAggregateInput = {
   balanceChangedAt?: Prisma.SortOrder
   anomalyActive?: Prisma.SortOrder
   anomalyChangedAt?: Prisma.SortOrder
+  anomalyErrorPhase?: Prisma.SortOrder
+  anomalyErrorType?: Prisma.SortOrder
+  anomalyErrorMessage?: Prisma.SortOrder
+  anomalyErrorOwner?: Prisma.SortOrder
+  anomalyStatusCode?: Prisma.SortOrder
+  anomalyModel?: Prisma.SortOrder
+  anomalyPlatform?: Prisma.SortOrder
+  anomalyRequestCount?: Prisma.SortOrder
+  anomalyFailureCount?: Prisma.SortOrder
+  anomalyConsecutiveFailures?: Prisma.SortOrder
+  anomalyLastOccurredAt?: Prisma.SortOrder
   currentSegment?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
@@ -1449,6 +1718,10 @@ export type UserProfileSumOrderByAggregateInput = {
   successfulCallCount?: Prisma.SortOrder
   balanceMinor?: Prisma.SortOrder
   balanceUsdMinor?: Prisma.SortOrder
+  anomalyStatusCode?: Prisma.SortOrder
+  anomalyRequestCount?: Prisma.SortOrder
+  anomalyFailureCount?: Prisma.SortOrder
+  anomalyConsecutiveFailures?: Prisma.SortOrder
   segmentRuleVersion?: Prisma.SortOrder
 }
 
@@ -1598,6 +1871,14 @@ export type EnumLocationAssignmentModeFieldUpdateOperationsInput = {
 
 export type IntFieldUpdateOperationsInput = {
   set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
   increment?: number
   decrement?: number
   multiply?: number
@@ -1754,6 +2035,20 @@ export type UserProfileUpdateOneWithoutMailMessagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserProfileUpdateToOneWithWhereWithoutMailMessagesInput, Prisma.UserProfileUpdateWithoutMailMessagesInput>, Prisma.UserProfileUncheckedUpdateWithoutMailMessagesInput>
 }
 
+export type UserProfileCreateNestedOneWithoutMailBatchRecipientsInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutMailBatchRecipientsInput, Prisma.UserProfileUncheckedCreateWithoutMailBatchRecipientsInput>
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutMailBatchRecipientsInput
+  connect?: Prisma.UserProfileWhereUniqueInput
+}
+
+export type UserProfileUpdateOneRequiredWithoutMailBatchRecipientsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutMailBatchRecipientsInput, Prisma.UserProfileUncheckedCreateWithoutMailBatchRecipientsInput>
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutMailBatchRecipientsInput
+  upsert?: Prisma.UserProfileUpsertWithoutMailBatchRecipientsInput
+  connect?: Prisma.UserProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserProfileUpdateToOneWithWhereWithoutMailBatchRecipientsInput, Prisma.UserProfileUpdateWithoutMailBatchRecipientsInput>, Prisma.UserProfileUncheckedUpdateWithoutMailBatchRecipientsInput>
+}
+
 export type UserProfileCreateWithoutOwnerInput = {
   id?: string
   externalUserId: string
@@ -1789,6 +2084,17 @@ export type UserProfileCreateWithoutOwnerInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -1810,6 +2116,7 @@ export type UserProfileCreateWithoutOwnerInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -1851,6 +2158,17 @@ export type UserProfileUncheckedCreateWithoutOwnerInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -1872,6 +2190,7 @@ export type UserProfileUncheckedCreateWithoutOwnerInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutOwnerInput = {
@@ -1919,6 +2238,17 @@ export type UserProfileCreateWithoutOwnerAssignedByInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -1940,6 +2270,7 @@ export type UserProfileCreateWithoutOwnerAssignedByInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -1981,6 +2312,17 @@ export type UserProfileUncheckedCreateWithoutOwnerAssignedByInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -2002,6 +2344,7 @@ export type UserProfileUncheckedCreateWithoutOwnerAssignedByInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutOwnerAssignedByInput = {
@@ -2049,6 +2392,17 @@ export type UserProfileCreateWithoutLocationAssignedByInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -2071,6 +2425,7 @@ export type UserProfileCreateWithoutLocationAssignedByInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
 }
 
@@ -2110,6 +2465,17 @@ export type UserProfileUncheckedCreateWithoutLocationAssignedByInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -2132,6 +2498,7 @@ export type UserProfileUncheckedCreateWithoutLocationAssignedByInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutLocationAssignedByInput = {
@@ -2200,6 +2567,17 @@ export type UserProfileScalarWhereInput = {
   balanceChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   anomalyActive?: Prisma.BoolFilter<"UserProfile"> | boolean
   anomalyChangedAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
+  anomalyErrorPhase?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyErrorType?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyErrorMessage?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyErrorOwner?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyStatusCode?: Prisma.IntNullableFilter<"UserProfile"> | number | null
+  anomalyModel?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyPlatform?: Prisma.StringNullableFilter<"UserProfile"> | string | null
+  anomalyRequestCount?: Prisma.IntNullableFilter<"UserProfile"> | number | null
+  anomalyFailureCount?: Prisma.IntNullableFilter<"UserProfile"> | number | null
+  anomalyConsecutiveFailures?: Prisma.IntNullableFilter<"UserProfile"> | number | null
+  anomalyLastOccurredAt?: Prisma.DateTimeNullableFilter<"UserProfile"> | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFilter<"UserProfile"> | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFilter<"UserProfile"> | number
   ownerId?: Prisma.StringNullableFilter<"UserProfile"> | string | null
@@ -2284,6 +2662,17 @@ export type UserProfileCreateWithoutEventsInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -2305,6 +2694,7 @@ export type UserProfileCreateWithoutEventsInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -2346,6 +2736,17 @@ export type UserProfileUncheckedCreateWithoutEventsInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -2367,6 +2768,7 @@ export type UserProfileUncheckedCreateWithoutEventsInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutEventsInput = {
@@ -2420,6 +2822,17 @@ export type UserProfileUpdateWithoutEventsInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -2441,6 +2854,7 @@ export type UserProfileUpdateWithoutEventsInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -2482,6 +2896,17 @@ export type UserProfileUncheckedUpdateWithoutEventsInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2503,6 +2928,7 @@ export type UserProfileUncheckedUpdateWithoutEventsInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutSegmentHistoryInput = {
@@ -2540,6 +2966,17 @@ export type UserProfileCreateWithoutSegmentHistoryInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -2561,6 +2998,7 @@ export type UserProfileCreateWithoutSegmentHistoryInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -2602,6 +3040,17 @@ export type UserProfileUncheckedCreateWithoutSegmentHistoryInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -2623,6 +3072,7 @@ export type UserProfileUncheckedCreateWithoutSegmentHistoryInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutSegmentHistoryInput = {
@@ -2676,6 +3126,17 @@ export type UserProfileUpdateWithoutSegmentHistoryInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -2697,6 +3158,7 @@ export type UserProfileUpdateWithoutSegmentHistoryInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -2738,6 +3200,17 @@ export type UserProfileUncheckedUpdateWithoutSegmentHistoryInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2759,6 +3232,7 @@ export type UserProfileUncheckedUpdateWithoutSegmentHistoryInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutSegmentOverridesInput = {
@@ -2796,6 +3270,17 @@ export type UserProfileCreateWithoutSegmentOverridesInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -2817,6 +3302,7 @@ export type UserProfileCreateWithoutSegmentOverridesInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -2858,6 +3344,17 @@ export type UserProfileUncheckedCreateWithoutSegmentOverridesInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -2879,6 +3376,7 @@ export type UserProfileUncheckedCreateWithoutSegmentOverridesInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutSegmentOverridesInput = {
@@ -2932,6 +3430,17 @@ export type UserProfileUpdateWithoutSegmentOverridesInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -2953,6 +3462,7 @@ export type UserProfileUpdateWithoutSegmentOverridesInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -2994,6 +3504,17 @@ export type UserProfileUncheckedUpdateWithoutSegmentOverridesInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3015,6 +3536,7 @@ export type UserProfileUncheckedUpdateWithoutSegmentOverridesInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutNotesInput = {
@@ -3052,6 +3574,17 @@ export type UserProfileCreateWithoutNotesInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -3073,6 +3606,7 @@ export type UserProfileCreateWithoutNotesInput = {
   tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -3114,6 +3648,17 @@ export type UserProfileUncheckedCreateWithoutNotesInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -3135,6 +3680,7 @@ export type UserProfileUncheckedCreateWithoutNotesInput = {
   tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutNotesInput = {
@@ -3188,6 +3734,17 @@ export type UserProfileUpdateWithoutNotesInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -3209,6 +3766,7 @@ export type UserProfileUpdateWithoutNotesInput = {
   tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -3250,6 +3808,17 @@ export type UserProfileUncheckedUpdateWithoutNotesInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3271,6 +3840,7 @@ export type UserProfileUncheckedUpdateWithoutNotesInput = {
   tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutLocationRuleInput = {
@@ -3308,6 +3878,17 @@ export type UserProfileCreateWithoutLocationRuleInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -3330,6 +3911,7 @@ export type UserProfileCreateWithoutLocationRuleInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
 
@@ -3369,6 +3951,17 @@ export type UserProfileUncheckedCreateWithoutLocationRuleInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -3391,6 +3984,7 @@ export type UserProfileUncheckedCreateWithoutLocationRuleInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutLocationRuleInput = {
@@ -3454,6 +4048,17 @@ export type UserProfileCreateWithoutTasksInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -3475,6 +4080,7 @@ export type UserProfileCreateWithoutTasksInput = {
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -3516,6 +4122,17 @@ export type UserProfileUncheckedCreateWithoutTasksInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -3537,6 +4154,7 @@ export type UserProfileUncheckedCreateWithoutTasksInput = {
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutTasksInput = {
@@ -3590,6 +4208,17 @@ export type UserProfileUpdateWithoutTasksInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -3611,6 +4240,7 @@ export type UserProfileUpdateWithoutTasksInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -3652,6 +4282,17 @@ export type UserProfileUncheckedUpdateWithoutTasksInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3673,6 +4314,7 @@ export type UserProfileUncheckedUpdateWithoutTasksInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutMailThreadsInput = {
@@ -3710,6 +4352,17 @@ export type UserProfileCreateWithoutMailThreadsInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -3731,6 +4384,7 @@ export type UserProfileCreateWithoutMailThreadsInput = {
   tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -3772,6 +4426,17 @@ export type UserProfileUncheckedCreateWithoutMailThreadsInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -3793,6 +4458,7 @@ export type UserProfileUncheckedCreateWithoutMailThreadsInput = {
   tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
   mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutMailThreadsInput = {
@@ -3846,6 +4512,17 @@ export type UserProfileUpdateWithoutMailThreadsInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -3867,6 +4544,7 @@ export type UserProfileUpdateWithoutMailThreadsInput = {
   tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -3908,6 +4586,17 @@ export type UserProfileUncheckedUpdateWithoutMailThreadsInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3929,6 +4618,7 @@ export type UserProfileUncheckedUpdateWithoutMailThreadsInput = {
   tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutMailMessagesInput = {
@@ -3966,6 +4656,17 @@ export type UserProfileCreateWithoutMailMessagesInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -3987,6 +4688,7 @@ export type UserProfileCreateWithoutMailMessagesInput = {
   tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -4028,6 +4730,17 @@ export type UserProfileUncheckedCreateWithoutMailMessagesInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -4049,6 +4762,7 @@ export type UserProfileUncheckedCreateWithoutMailMessagesInput = {
   tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
   mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutMailMessagesInput = {
@@ -4102,6 +4816,17 @@ export type UserProfileUpdateWithoutMailMessagesInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -4123,6 +4848,7 @@ export type UserProfileUpdateWithoutMailMessagesInput = {
   tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -4164,6 +4890,17 @@ export type UserProfileUncheckedUpdateWithoutMailMessagesInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4185,6 +4922,311 @@ export type UserProfileUncheckedUpdateWithoutMailMessagesInput = {
   tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserProfileCreateWithoutMailBatchRecipientsInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  ipCountryCode?: string | null
+  ipRegion?: string | null
+  locationSource?: $Enums.LocationAttributionSource | null
+  locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
+  events?: Prisma.UserEventCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
+}
+
+export type UserProfileUncheckedCreateWithoutMailBatchRecipientsInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  ipCountryCode?: string | null
+  ipRegion?: string | null
+  locationSource?: $Enums.LocationAttributionSource | null
+  locationRuleId?: string | null
+  locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserProfileCreateOrConnectWithoutMailBatchRecipientsInput = {
+  where: Prisma.UserProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutMailBatchRecipientsInput, Prisma.UserProfileUncheckedCreateWithoutMailBatchRecipientsInput>
+}
+
+export type UserProfileUpsertWithoutMailBatchRecipientsInput = {
+  update: Prisma.XOR<Prisma.UserProfileUpdateWithoutMailBatchRecipientsInput, Prisma.UserProfileUncheckedUpdateWithoutMailBatchRecipientsInput>
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutMailBatchRecipientsInput, Prisma.UserProfileUncheckedCreateWithoutMailBatchRecipientsInput>
+  where?: Prisma.UserProfileWhereInput
+}
+
+export type UserProfileUpdateToOneWithWhereWithoutMailBatchRecipientsInput = {
+  where?: Prisma.UserProfileWhereInput
+  data: Prisma.XOR<Prisma.UserProfileUpdateWithoutMailBatchRecipientsInput, Prisma.UserProfileUncheckedUpdateWithoutMailBatchRecipientsInput>
+}
+
+export type UserProfileUpdateWithoutMailBatchRecipientsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
+  locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
+  events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
+}
+
+export type UserProfileUncheckedUpdateWithoutMailBatchRecipientsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
+  locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateManyOwnerInput = {
@@ -4224,6 +5266,17 @@ export type UserProfileCreateManyOwnerInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerAssignmentMode?: $Enums.OwnerAssignmentMode
@@ -4277,6 +5330,17 @@ export type UserProfileCreateManyOwnerAssignedByInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -4329,6 +5393,17 @@ export type UserProfileCreateManyLocationAssignedByInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -4381,6 +5456,17 @@ export type UserProfileUpdateWithoutOwnerInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -4402,6 +5488,7 @@ export type UserProfileUpdateWithoutOwnerInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -4443,6 +5530,17 @@ export type UserProfileUncheckedUpdateWithoutOwnerInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -4464,6 +5562,7 @@ export type UserProfileUncheckedUpdateWithoutOwnerInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateManyWithoutOwnerInput = {
@@ -4503,6 +5602,17 @@ export type UserProfileUncheckedUpdateManyWithoutOwnerInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -4554,6 +5664,17 @@ export type UserProfileUpdateWithoutOwnerAssignedByInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -4575,6 +5696,7 @@ export type UserProfileUpdateWithoutOwnerAssignedByInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -4616,6 +5738,17 @@ export type UserProfileUncheckedUpdateWithoutOwnerAssignedByInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4637,6 +5770,7 @@ export type UserProfileUncheckedUpdateWithoutOwnerAssignedByInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateManyWithoutOwnerAssignedByInput = {
@@ -4676,6 +5810,17 @@ export type UserProfileUncheckedUpdateManyWithoutOwnerAssignedByInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4727,6 +5872,17 @@ export type UserProfileUpdateWithoutLocationAssignedByInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -4749,6 +5905,7 @@ export type UserProfileUpdateWithoutLocationAssignedByInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
 }
 
@@ -4788,6 +5945,17 @@ export type UserProfileUncheckedUpdateWithoutLocationAssignedByInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4810,6 +5978,7 @@ export type UserProfileUncheckedUpdateWithoutLocationAssignedByInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateManyWithoutLocationAssignedByInput = {
@@ -4848,6 +6017,17 @@ export type UserProfileUncheckedUpdateManyWithoutLocationAssignedByInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4901,6 +6081,17 @@ export type UserProfileCreateManyLocationRuleInput = {
   balanceChangedAt?: Date | string | null
   anomalyActive?: boolean
   anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
   currentSegment: $Enums.SegmentCode
   segmentRuleVersion?: number
   ownerId?: string | null
@@ -4953,6 +6144,17 @@ export type UserProfileUpdateWithoutLocationRuleInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
@@ -4975,6 +6177,7 @@ export type UserProfileUpdateWithoutLocationRuleInput = {
   notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
 
@@ -5014,6 +6217,17 @@ export type UserProfileUncheckedUpdateWithoutLocationRuleInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5036,6 +6250,7 @@ export type UserProfileUncheckedUpdateWithoutLocationRuleInput = {
   notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
   mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
   mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateManyWithoutLocationRuleInput = {
@@ -5074,6 +6289,17 @@ export type UserProfileUncheckedUpdateManyWithoutLocationRuleInput = {
   balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
   segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5104,6 +6330,7 @@ export type UserProfileCountOutputType = {
   notes: number
   mailThreads: number
   mailMessages: number
+  mailBatchRecipients: number
 }
 
 export type UserProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5114,6 +6341,7 @@ export type UserProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Exten
   notes?: boolean | UserProfileCountOutputTypeCountNotesArgs
   mailThreads?: boolean | UserProfileCountOutputTypeCountMailThreadsArgs
   mailMessages?: boolean | UserProfileCountOutputTypeCountMailMessagesArgs
+  mailBatchRecipients?: boolean | UserProfileCountOutputTypeCountMailBatchRecipientsArgs
 }
 
 /**
@@ -5175,6 +6403,13 @@ export type UserProfileCountOutputTypeCountMailMessagesArgs<ExtArgs extends runt
   where?: Prisma.MailMessageWhereInput
 }
 
+/**
+ * UserProfileCountOutputType without action
+ */
+export type UserProfileCountOutputTypeCountMailBatchRecipientsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MailBatchRecipientWhereInput
+}
+
 
 export type UserProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -5213,6 +6448,17 @@ export type UserProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   balanceChangedAt?: boolean
   anomalyActive?: boolean
   anomalyChangedAt?: boolean
+  anomalyErrorPhase?: boolean
+  anomalyErrorType?: boolean
+  anomalyErrorMessage?: boolean
+  anomalyErrorOwner?: boolean
+  anomalyStatusCode?: boolean
+  anomalyModel?: boolean
+  anomalyPlatform?: boolean
+  anomalyRequestCount?: boolean
+  anomalyFailureCount?: boolean
+  anomalyConsecutiveFailures?: boolean
+  anomalyLastOccurredAt?: boolean
   currentSegment?: boolean
   segmentRuleVersion?: boolean
   ownerId?: boolean
@@ -5237,6 +6483,7 @@ export type UserProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   notes?: boolean | Prisma.UserProfile$notesArgs<ExtArgs>
   mailThreads?: boolean | Prisma.UserProfile$mailThreadsArgs<ExtArgs>
   mailMessages?: boolean | Prisma.UserProfile$mailMessagesArgs<ExtArgs>
+  mailBatchRecipients?: boolean | Prisma.UserProfile$mailBatchRecipientsArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
   locationAssignedBy?: boolean | Prisma.UserProfile$locationAssignedByArgs<ExtArgs>
   _count?: boolean | Prisma.UserProfileCountOutputTypeDefaultArgs<ExtArgs>
@@ -5279,6 +6526,17 @@ export type UserProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   balanceChangedAt?: boolean
   anomalyActive?: boolean
   anomalyChangedAt?: boolean
+  anomalyErrorPhase?: boolean
+  anomalyErrorType?: boolean
+  anomalyErrorMessage?: boolean
+  anomalyErrorOwner?: boolean
+  anomalyStatusCode?: boolean
+  anomalyModel?: boolean
+  anomalyPlatform?: boolean
+  anomalyRequestCount?: boolean
+  anomalyFailureCount?: boolean
+  anomalyConsecutiveFailures?: boolean
+  anomalyLastOccurredAt?: boolean
   currentSegment?: boolean
   segmentRuleVersion?: boolean
   ownerId?: boolean
@@ -5337,6 +6595,17 @@ export type UserProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   balanceChangedAt?: boolean
   anomalyActive?: boolean
   anomalyChangedAt?: boolean
+  anomalyErrorPhase?: boolean
+  anomalyErrorType?: boolean
+  anomalyErrorMessage?: boolean
+  anomalyErrorOwner?: boolean
+  anomalyStatusCode?: boolean
+  anomalyModel?: boolean
+  anomalyPlatform?: boolean
+  anomalyRequestCount?: boolean
+  anomalyFailureCount?: boolean
+  anomalyConsecutiveFailures?: boolean
+  anomalyLastOccurredAt?: boolean
   currentSegment?: boolean
   segmentRuleVersion?: boolean
   ownerId?: boolean
@@ -5395,6 +6664,17 @@ export type UserProfileSelectScalar = {
   balanceChangedAt?: boolean
   anomalyActive?: boolean
   anomalyChangedAt?: boolean
+  anomalyErrorPhase?: boolean
+  anomalyErrorType?: boolean
+  anomalyErrorMessage?: boolean
+  anomalyErrorOwner?: boolean
+  anomalyStatusCode?: boolean
+  anomalyModel?: boolean
+  anomalyPlatform?: boolean
+  anomalyRequestCount?: boolean
+  anomalyFailureCount?: boolean
+  anomalyConsecutiveFailures?: boolean
+  anomalyLastOccurredAt?: boolean
   currentSegment?: boolean
   segmentRuleVersion?: boolean
   ownerId?: boolean
@@ -5412,7 +6692,7 @@ export type UserProfileSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "externalUserId" | "email" | "emailNormalized" | "displayName" | "registeredAt" | "registrationIpEnc" | "registrationIpHash" | "countryCode" | "region" | "ipCountryCode" | "ipRegion" | "locationSource" | "locationRuleId" | "locationEvaluatedAt" | "locationAssignmentMode" | "locationAssignedAt" | "locationAssignedById" | "locationAssignmentReason" | "language" | "timezone" | "source" | "checkoutStartedAt" | "checkoutChangedAt" | "paymentStatus" | "firstPaidAt" | "totalPaidMinor" | "firstCallAt" | "lastCallAt" | "successfulCallCount" | "balanceMinor" | "balanceCurrency" | "balanceUsdMinor" | "balanceChangedAt" | "anomalyActive" | "anomalyChangedAt" | "currentSegment" | "segmentRuleVersion" | "ownerId" | "ownerAssignmentMode" | "ownerAssignedAt" | "ownerAssignedById" | "ownerAssignmentReason" | "reasonLabel" | "unsubscribedAt" | "pausedAt" | "profileChangedAt" | "lastExternalEventAt" | "sourceDeletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProfile"]>
+export type UserProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "externalUserId" | "email" | "emailNormalized" | "displayName" | "registeredAt" | "registrationIpEnc" | "registrationIpHash" | "countryCode" | "region" | "ipCountryCode" | "ipRegion" | "locationSource" | "locationRuleId" | "locationEvaluatedAt" | "locationAssignmentMode" | "locationAssignedAt" | "locationAssignedById" | "locationAssignmentReason" | "language" | "timezone" | "source" | "checkoutStartedAt" | "checkoutChangedAt" | "paymentStatus" | "firstPaidAt" | "totalPaidMinor" | "firstCallAt" | "lastCallAt" | "successfulCallCount" | "balanceMinor" | "balanceCurrency" | "balanceUsdMinor" | "balanceChangedAt" | "anomalyActive" | "anomalyChangedAt" | "anomalyErrorPhase" | "anomalyErrorType" | "anomalyErrorMessage" | "anomalyErrorOwner" | "anomalyStatusCode" | "anomalyModel" | "anomalyPlatform" | "anomalyRequestCount" | "anomalyFailureCount" | "anomalyConsecutiveFailures" | "anomalyLastOccurredAt" | "currentSegment" | "segmentRuleVersion" | "ownerId" | "ownerAssignmentMode" | "ownerAssignedAt" | "ownerAssignedById" | "ownerAssignmentReason" | "reasonLabel" | "unsubscribedAt" | "pausedAt" | "profileChangedAt" | "lastExternalEventAt" | "sourceDeletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProfile"]>
 export type UserProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserProfile$ownerArgs<ExtArgs>
   ownerAssignedBy?: boolean | Prisma.UserProfile$ownerAssignedByArgs<ExtArgs>
@@ -5423,6 +6703,7 @@ export type UserProfileInclude<ExtArgs extends runtime.Types.Extensions.Internal
   notes?: boolean | Prisma.UserProfile$notesArgs<ExtArgs>
   mailThreads?: boolean | Prisma.UserProfile$mailThreadsArgs<ExtArgs>
   mailMessages?: boolean | Prisma.UserProfile$mailMessagesArgs<ExtArgs>
+  mailBatchRecipients?: boolean | Prisma.UserProfile$mailBatchRecipientsArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
   locationAssignedBy?: boolean | Prisma.UserProfile$locationAssignedByArgs<ExtArgs>
   _count?: boolean | Prisma.UserProfileCountOutputTypeDefaultArgs<ExtArgs>
@@ -5452,6 +6733,7 @@ export type $UserProfilePayload<ExtArgs extends runtime.Types.Extensions.Interna
     notes: Prisma.$UserNotePayload<ExtArgs>[]
     mailThreads: Prisma.$MailThreadPayload<ExtArgs>[]
     mailMessages: Prisma.$MailMessagePayload<ExtArgs>[]
+    mailBatchRecipients: Prisma.$MailBatchRecipientPayload<ExtArgs>[]
     locationRule: Prisma.$LocationAttributionRulePayload<ExtArgs> | null
     locationAssignedBy: Prisma.$MemberPayload<ExtArgs> | null
   }
@@ -5492,6 +6774,17 @@ export type $UserProfilePayload<ExtArgs extends runtime.Types.Extensions.Interna
     balanceChangedAt: Date | null
     anomalyActive: boolean
     anomalyChangedAt: Date | null
+    anomalyErrorPhase: string | null
+    anomalyErrorType: string | null
+    anomalyErrorMessage: string | null
+    anomalyErrorOwner: string | null
+    anomalyStatusCode: number | null
+    anomalyModel: string | null
+    anomalyPlatform: string | null
+    anomalyRequestCount: number | null
+    anomalyFailureCount: number | null
+    anomalyConsecutiveFailures: number | null
+    anomalyLastOccurredAt: Date | null
     currentSegment: $Enums.SegmentCode
     segmentRuleVersion: number
     ownerId: string | null
@@ -5910,6 +7203,7 @@ export interface Prisma__UserProfileClient<T, Null = never, ExtArgs extends runt
   notes<T extends Prisma.UserProfile$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mailThreads<T extends Prisma.UserProfile$mailThreadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$mailThreadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mailMessages<T extends Prisma.UserProfile$mailMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$mailMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  mailBatchRecipients<T extends Prisma.UserProfile$mailBatchRecipientsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$mailBatchRecipientsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailBatchRecipientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   locationRule<T extends Prisma.UserProfile$locationRuleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$locationRuleArgs<ExtArgs>>): Prisma.Prisma__LocationAttributionRuleClient<runtime.Types.Result.GetResult<Prisma.$LocationAttributionRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   locationAssignedBy<T extends Prisma.UserProfile$locationAssignedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$locationAssignedByArgs<ExtArgs>>): Prisma.Prisma__MemberClient<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
@@ -5977,6 +7271,17 @@ export interface UserProfileFieldRefs {
   readonly balanceChangedAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
   readonly anomalyActive: Prisma.FieldRef<"UserProfile", 'Boolean'>
   readonly anomalyChangedAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
+  readonly anomalyErrorPhase: Prisma.FieldRef<"UserProfile", 'String'>
+  readonly anomalyErrorType: Prisma.FieldRef<"UserProfile", 'String'>
+  readonly anomalyErrorMessage: Prisma.FieldRef<"UserProfile", 'String'>
+  readonly anomalyErrorOwner: Prisma.FieldRef<"UserProfile", 'String'>
+  readonly anomalyStatusCode: Prisma.FieldRef<"UserProfile", 'Int'>
+  readonly anomalyModel: Prisma.FieldRef<"UserProfile", 'String'>
+  readonly anomalyPlatform: Prisma.FieldRef<"UserProfile", 'String'>
+  readonly anomalyRequestCount: Prisma.FieldRef<"UserProfile", 'Int'>
+  readonly anomalyFailureCount: Prisma.FieldRef<"UserProfile", 'Int'>
+  readonly anomalyConsecutiveFailures: Prisma.FieldRef<"UserProfile", 'Int'>
+  readonly anomalyLastOccurredAt: Prisma.FieldRef<"UserProfile", 'DateTime'>
   readonly currentSegment: Prisma.FieldRef<"UserProfile", 'SegmentCode'>
   readonly segmentRuleVersion: Prisma.FieldRef<"UserProfile", 'Int'>
   readonly ownerId: Prisma.FieldRef<"UserProfile", 'String'>
@@ -6596,6 +7901,30 @@ export type UserProfile$mailMessagesArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.MailMessageScalarFieldEnum | Prisma.MailMessageScalarFieldEnum[]
+}
+
+/**
+ * UserProfile.mailBatchRecipients
+ */
+export type UserProfile$mailBatchRecipientsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailBatchRecipient
+   */
+  select?: Prisma.MailBatchRecipientSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailBatchRecipient
+   */
+  omit?: Prisma.MailBatchRecipientOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailBatchRecipientInclude<ExtArgs> | null
+  where?: Prisma.MailBatchRecipientWhereInput
+  orderBy?: Prisma.MailBatchRecipientOrderByWithRelationInput | Prisma.MailBatchRecipientOrderByWithRelationInput[]
+  cursor?: Prisma.MailBatchRecipientWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MailBatchRecipientScalarFieldEnum | Prisma.MailBatchRecipientScalarFieldEnum[]
 }
 
 /**
