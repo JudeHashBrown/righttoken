@@ -79,7 +79,9 @@ function escapeHtml(value: string): string {
   return value
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function simplifiedVisualHtml(
@@ -107,25 +109,46 @@ function hydrateHtml(
   assets: MailEditorAsset[]
 ): string {
   if (typeof document === "undefined") return bodyHtml;
-  const template = document.createElement("template");
-  template.innerHTML = bodyHtml;
-  for (const image of template.content.querySelectorAll("img")) {
-    const id = image.getAttribute("data-mail-asset-id");
-    if (!id) {
-      const source = image.getAttribute("src") ?? "";
-      if (!source.startsWith("https://")) {
+  const hydrateImages = (root: ParentNode): void => {
+    for (const image of root.querySelectorAll("img")) {
+      const id = image.getAttribute("data-mail-asset-id");
+      if (!id) {
+        const source = image.getAttribute("src") ?? "";
+        if (!source.startsWith("https://")) {
+          image.remove();
+        }
+        continue;
+      }
+      const asset = assets.find((item) => item.id === id);
+      if (asset) {
+        image.setAttribute("src", asset.previewUrl);
+        image.setAttribute(
+          "alt",
+          image.getAttribute("alt") || asset.fileName
+        );
+      } else {
         image.remove();
       }
-      continue;
     }
-    const asset = assets.find((item) => item.id === id);
-    if (asset) {
-      image.setAttribute("src", asset.previewUrl);
-      image.setAttribute("alt", image.getAttribute("alt") || asset.fileName);
-    } else {
-      image.remove();
-    }
+  };
+  const isCompleteDocument =
+    /^\s*<!doctype\s+html\s*>/i.test(bodyHtml) ||
+    /<(?:html|head|body)\b/i.test(bodyHtml);
+  if (isCompleteDocument) {
+    const parsed = new DOMParser().parseFromString(
+      bodyHtml,
+      "text/html"
+    );
+    hydrateImages(parsed);
+    const doctype = parsed.doctype
+      ? `<!DOCTYPE ${parsed.doctype.name}>`
+      : "";
+    return `${doctype}${parsed.documentElement.outerHTML}`;
   }
+
+  const template = document.createElement("template");
+  template.innerHTML = bodyHtml;
+  hydrateImages(template.content);
   return template.innerHTML;
 }
 
@@ -179,6 +202,9 @@ export function MailRichEditor({
   const [mode, setMode] = useState<EditorMode>(() =>
     isComplexHtml(value.bodyHtml) ? "SOURCE" : "VISUAL"
   );
+  const [lastBodyHtml, setLastBodyHtml] = useState(
+    value.bodyHtml
+  );
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] =
@@ -187,14 +213,23 @@ export function MailRichEditor({
   const [previewError, setPreviewError] =
     useState<string | null>(null);
 
-  valueRef.current = value;
-  onChangeRef.current = onChange;
+  if (lastBodyHtml !== value.bodyHtml) {
+    setLastBodyHtml(value.bodyHtml);
+    if (mode === "VISUAL" && isComplexHtml(value.bodyHtml)) {
+      setMode("SOURCE");
+    }
+  }
   const assetFingerprint = value.assets
     .map(
       (asset) =>
         `${asset.id}:${asset.disposition}:${asset.sortOrder}`
     )
     .join("|");
+
+  useEffect(() => {
+    valueRef.current = value;
+    onChangeRef.current = onChange;
+  }, [onChange, value]);
 
   useEffect(() => {
     const editor = editorRef.current;
@@ -210,12 +245,6 @@ export function MailRichEditor({
       editor.innerHTML = hydrated;
     }
   }, [mode, value.assets, value.bodyHtml]);
-
-  useEffect(() => {
-    if (mode === "VISUAL" && isComplexHtml(value.bodyHtml)) {
-      setMode("SOURCE");
-    }
-  }, [mode, value.bodyHtml]);
 
   useEffect(() => {
     if (mode === "VISUAL") {

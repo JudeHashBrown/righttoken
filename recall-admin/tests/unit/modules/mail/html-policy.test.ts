@@ -72,6 +72,23 @@ describe("processMailHtml", () => {
     expect(result.diagnostics.blockedUrls).toBe(2);
   });
 
+  it("rejects local and private-network HTTPS sources", () => {
+    const result = processMailHtml(`
+      <img src="https://localhost/tracker.png">
+      <img src="https://127.0.0.1/tracker.png">
+      <img src="https://192.168.1.10/tracker.png">
+      <style>
+        .private { background-image: url("https://10.0.0.8/bg.png"); }
+      </style>
+    `);
+
+    expect(result.html).not.toMatch(
+      /localhost|127\.0\.0\.1|192\.168\.1\.10|10\.0\.0\.8/
+    );
+    expect(result.diagnostics.externalImageCount).toBe(0);
+    expect(result.diagnostics.blockedUrls).toBe(4);
+  });
+
   it("removes non-https CSS URLs while keeping safe styles", () => {
     const result = processMailHtml(`
       <style>

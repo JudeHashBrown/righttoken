@@ -308,6 +308,74 @@ describe("MailRichEditor", () => {
     );
   });
 
+  it("preserves the complete document while hydrating preview images", async () => {
+    const completeHtml =
+      '<!DOCTYPE html><html><head><style>.hero{display:block}</style></head><body><img class="hero" data-mail-asset-id="asset-document" alt="主图"></body></html>';
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            html: completeHtml,
+            text: "主图",
+            diagnostics: {
+              removedTags: [],
+              removedAttributes: [],
+              blockedUrls: 0,
+              externalImageCount: 0,
+              hasDangerousContent: false
+            },
+            visualEditorCompatible: false,
+            unresolvedVariables: [],
+            canSend: true
+          })
+      })
+    );
+    render(
+      <Harness
+        initialValue={{
+          bodyHtml: completeHtml,
+          bodyText: "主图",
+          assets: [
+            {
+              id: "asset-document",
+              fileName: "hero.png",
+              contentType: "image/png",
+              byteSize: 300,
+              width: 80,
+              height: 60,
+              previewUrl: "/api/mail/assets/asset-document",
+              disposition: "INLINE",
+              cid: "asset-document@righttoken",
+              sortOrder: 0
+            }
+          ]
+        }}
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "发送预览" })
+    );
+    const frame = await screen.findByTitle(
+      "HTML 邮件发送预览"
+    );
+    expect(frame.getAttribute("srcdoc")).toMatch(
+      /^<!DOCTYPE html><html>/i
+    );
+    expect(frame).toHaveAttribute(
+      "srcdoc",
+      expect.stringContaining("<head>")
+    );
+    expect(frame).toHaveAttribute(
+      "srcdoc",
+      expect.stringContaining(
+        'src="/api/mail/assets/asset-document"'
+      )
+    );
+  });
+
   it("warns before a complex source is simplified in visual mode", async () => {
     const confirm = vi.fn().mockReturnValue(false);
     vi.stubGlobal("confirm", confirm);
@@ -333,7 +401,29 @@ describe("MailRichEditor", () => {
           })
       })
     );
-    render(<Harness />);
+    const unsafeFileName = 'hero" onerror="alert(1).png';
+    render(
+      <Harness
+        initialValue={{
+          bodyHtml: "<p>初始正文</p>",
+          bodyText: "初始正文",
+          assets: [
+            {
+              id: "asset-lossy",
+              fileName: unsafeFileName,
+              contentType: "image/png",
+              byteSize: 300,
+              width: 80,
+              height: 60,
+              previewUrl: "/api/mail/assets/asset-lossy",
+              disposition: "INLINE",
+              cid: "asset-lossy@righttoken",
+              sortOrder: 0
+            }
+          ]
+        }}
+      />
+    );
 
     fireEvent.click(
       screen.getByRole("button", { name: "HTML 源码" })
@@ -365,6 +455,10 @@ describe("MailRichEditor", () => {
     expect(
       screen.queryByLabelText("HTML 邮件源码")
     ).not.toBeInTheDocument();
+    const simplifiedImage = await screen.findByAltText(
+      unsafeFileName
+    );
+    expect(simplifiedImage).not.toHaveAttribute("onerror");
   });
 
   it("imports a local HTML document into source mode", async () => {

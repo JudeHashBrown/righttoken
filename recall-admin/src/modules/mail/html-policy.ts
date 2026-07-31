@@ -62,26 +62,6 @@ const allowedTags = [
 ] as const;
 
 const allowedTagSet = new Set<string>(allowedTags);
-const activeTags = new Set([
-  "script",
-  "iframe",
-  "frame",
-  "frameset",
-  "object",
-  "embed",
-  "form",
-  "input",
-  "button",
-  "select",
-  "option",
-  "textarea",
-  "video",
-  "audio",
-  "svg",
-  "math",
-  "link",
-  "base"
-]);
 const assetIdPattern = /^[A-Za-z0-9_-]{1,128}$/;
 const dangerousCssPattern =
   /expression\s*\(|javascript\s*:|vbscript\s*:|behavior\s*:|-moz-binding\s*:|@import\b/i;
@@ -93,10 +73,46 @@ function uniqueSorted(values: Iterable<string>): string[] {
   return [...new Set(values)].sort();
 }
 
+function isPublicExternalHostname(hostname: string): boolean {
+  const normalized = hostname.toLowerCase().replace(/\.$/, "");
+  if (
+    normalized === "localhost" ||
+    normalized.endsWith(".localhost") ||
+    normalized.endsWith(".local") ||
+    normalized.includes(":")
+  ) {
+    return false;
+  }
+  const octets = normalized.split(".").map(Number);
+  if (
+    octets.length !== 4 ||
+    octets.some(
+      (octet) =>
+        !Number.isInteger(octet) || octet < 0 || octet > 255
+    )
+  ) {
+    return true;
+  }
+  const [first, second] = octets;
+  return !(
+    first === 0 ||
+    first === 10 ||
+    first === 127 ||
+    first >= 224 ||
+    (first === 100 && second >= 64 && second <= 127) ||
+    (first === 169 && second === 254) ||
+    (first === 172 && second >= 16 && second <= 31) ||
+    (first === 192 && second === 168)
+  );
+}
+
 function isSafeHttpsUrl(value: string): boolean {
   try {
     const url = new URL(value);
-    return url.protocol === "https:";
+    return (
+      url.protocol === "https:" &&
+      isPublicExternalHostname(url.hostname)
+    );
   } catch {
     return false;
   }
