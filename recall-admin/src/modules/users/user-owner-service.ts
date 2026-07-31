@@ -8,7 +8,7 @@ import { transferOpenUserTasks } from "@/modules/users/transfer-open-user-tasks"
 export type OwnerChangeResult = {
   userId: string;
   previousOwnerId: string | null;
-  ownerId: string;
+  ownerId: string | null;
   mode: "AUTO" | "MANUAL";
   transferredTasks: number;
 };
@@ -177,9 +177,6 @@ export async function restoreAutomaticUserOwner(
       now,
       { forceAutomatic: true }
     );
-    if (!decision.assigneeId) {
-      throw new Error("ASSIGNMENT_OWNER_REQUIRED");
-    }
     const reason = "管理员恢复系统自动分配";
     const transferredTasks = await transferOpenUserTasks(tx, {
       userId: user.id,

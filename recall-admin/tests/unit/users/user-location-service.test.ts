@@ -186,6 +186,35 @@ describe("user location service", () => {
     expect(mocks.tx.recallTask.findMany).not.toHaveBeenCalled();
   });
 
+  it("unassigns open work when the new location has no available owner", async () => {
+    mocks.assignUserOwnerInTransaction.mockResolvedValue({
+      assigneeId: null,
+      assignmentMode: "AUTO",
+      skippedManual: false,
+      assignmentReason: "没有规则命中；进入公共池",
+      matchedRuleId: null
+    });
+
+    await expect(
+      manuallyAssignUserLocation({
+        userId: "user-1",
+        actorId: "admin-1",
+        countryCode: "DE",
+        reason: "客户在沟通中确认",
+        now
+      })
+    ).resolves.toMatchObject({
+      ownerId: null,
+      ownerRecalculated: true,
+      transferredTasks: 1
+    });
+
+    expect(mocks.tx.recallTask.updateMany).toHaveBeenCalledWith({
+      where: { id: { in: ["task-1"] } },
+      data: { assigneeId: null }
+    });
+  });
+
   it("restores automatic location from stored source facts", async () => {
     mocks.tx.userProfile.findUniqueOrThrow.mockResolvedValue({
       id: "user-1",

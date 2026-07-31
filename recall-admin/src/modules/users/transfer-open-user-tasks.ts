@@ -6,7 +6,7 @@ export async function transferOpenUserTasks(
   input: {
     userId: string;
     actorId: string;
-    ownerId: string;
+    ownerId: string | null;
     reason: string;
     now: Date;
     source?: "user_owner_change" | "user_location_change";
