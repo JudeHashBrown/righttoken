@@ -11,6 +11,7 @@ import {
 import type { Permission } from "@/modules/auth/permissions";
 import {
   mailAssetIdsInHtml,
+  mailHtmlToText,
   plainTextToMailHtml,
   sanitizeMailHtml
 } from "@/modules/mail/rich-content";
@@ -169,7 +170,7 @@ export async function createMailTemplate(
         name: input.name.trim(),
         locale: input.locale?.trim() || "zh-CN",
         subject: input.subject.trim(),
-        bodyText: input.bodyText.trim(),
+        bodyText: mailHtmlToText(bodyHtml),
         bodyHtml,
         active: true,
         createdById: input.actorId,
@@ -220,7 +221,7 @@ export async function publishMailTemplateVersion(
           name: input.name.trim(),
           locale: latest.locale,
           subject: input.subject.trim(),
-          bodyText: input.bodyText.trim(),
+          bodyText: mailHtmlToText(bodyHtml),
           bodyHtml,
           segment: latest.segment,
           active: true,

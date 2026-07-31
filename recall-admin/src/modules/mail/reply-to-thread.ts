@@ -19,6 +19,9 @@ import type {
 import {
   plainTextToMailHtml
 } from "@/modules/mail/rich-content";
+import {
+  processMailHtml
+} from "@/modules/mail/html-policy";
 
 export type ThreadReplyInput = {
   actorId: string;
@@ -54,6 +57,11 @@ export async function replyToMailThread(
 ): Promise<MailMessage> {
   const now = input.now ?? new Date();
   const recipient = input.recipient.trim().toLowerCase();
+  const outboundHtml =
+    input.bodyHtml?.trim() ||
+    plainTextToMailHtml(input.bodyText);
+  const reviewedBodyText =
+    processMailHtml(outboundHtml).text;
   const [actor, mailbox, task, thread, template] =
     await Promise.all([
       prisma.member.findUniqueOrThrow({
@@ -170,7 +178,7 @@ export async function replyToMailThread(
     {
       reviewedById: actor.id,
       subject: input.subject,
-      bodyText: input.bodyText,
+      bodyText: reviewedBodyText,
       lastSentAt: lastSent?.sentAt ?? null,
       minimumContactIntervalMinutes:
         input.minimumContactIntervalMinutes
@@ -187,9 +195,7 @@ export async function replyToMailThread(
   ]);
   const richContent = await resolveOutboundMailAssets(
     {
-      bodyHtml:
-        input.bodyHtml?.trim() ||
-        plainTextToMailHtml(input.bodyText),
+      bodyHtml: outboundHtml,
       assets: input.assets ?? []
     },
     {
@@ -212,7 +218,7 @@ export async function replyToMailThread(
       fromAddress: mailbox.emailAddress,
       toAddresses: [recipient],
       subject: input.subject.trim(),
-      bodyText: input.bodyText.trim(),
+      bodyText: richContent.bodyText,
       bodyHtml: richContent.bodyHtml,
       templateKey: template?.key ?? null,
       templateVersion: template?.version ?? null,

@@ -119,8 +119,8 @@ describe("mail batch creation", () => {
       },
       mailboxId,
       subject: "服务提醒",
-      bodyText: "请查看说明。",
-      bodyHtml: "<p>请查看说明。</p>",
+      bodyText: "旧的纯文本内容",
+      bodyHtml: "<p>请查看最新说明。</p>",
       assets: [],
       idempotencyKey,
       scheduler,
@@ -142,6 +142,7 @@ describe("mail batch creation", () => {
       });
 
     expect(second.id).toBe(first.id);
+    expect(first.bodyText).toBe("请查看最新说明。");
     expect(scheduled).toEqual([first.id]);
     expect(first.totalRecipients).toBeGreaterThanOrEqual(2);
     expect(first.pendingRecipients).toBeGreaterThanOrEqual(1);

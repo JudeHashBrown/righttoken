@@ -6,9 +6,11 @@ import type {
   MailAssetStorage
 } from "@/modules/mail/assets/types";
 import {
-  mailAssetIdsInHtml,
-  sanitizeMailHtml
+  mailAssetIdsInHtml
 } from "@/modules/mail/rich-content";
+import {
+  processMailHtml
+} from "@/modules/mail/html-policy";
 
 export type OutboundAssetReference = {
   id: string;
@@ -67,7 +69,8 @@ export async function resolveOutboundMailAssets(
       "MAIL_ASSET_LIMIT_EXCEEDED"
     );
   }
-  const safeHtml = sanitizeMailHtml(input.bodyHtml);
+  const processed = processMailHtml(input.bodyHtml);
+  const safeHtml = processed.html;
   const inlineIds = new Set(
     input.assets
       .filter((asset) => asset.disposition === "INLINE")
@@ -85,6 +88,7 @@ export async function resolveOutboundMailAssets(
   if (input.assets.length === 0) {
     return {
       bodyHtml: safeHtml,
+      bodyText: processed.text,
       html: safeHtml,
       attachments: [],
       messageAssets: []
@@ -165,6 +169,7 @@ export async function resolveOutboundMailAssets(
 
   return {
     bodyHtml: safeHtml,
+    bodyText: processed.text,
     html: deliveryHtml,
     attachments: resolved.map((item) => item.attachment),
     messageAssets: resolved.map((item) => ({

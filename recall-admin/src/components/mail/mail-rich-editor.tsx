@@ -611,7 +611,11 @@ export function MailRichEditor({
         <MailHtmlPreview
           diagnostics={preview?.diagnostics ?? null}
           error={previewError}
-          html={preview?.html ?? ""}
+          html={
+            preview
+              ? hydrateHtml(preview.html, value.assets)
+              : ""
+          }
           loading={previewLoading}
           unresolvedVariables={
             preview?.unresolvedVariables ?? []

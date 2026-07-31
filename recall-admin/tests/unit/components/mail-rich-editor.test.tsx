@@ -14,12 +14,17 @@ import {
   type MailRichContent
 } from "@/components/mail/mail-rich-editor";
 
-function Harness(): React.JSX.Element {
-  const [value, setValue] = React.useState<MailRichContent>({
+function Harness({
+  initialValue = {
     bodyHtml: "<p>初始正文</p>",
     bodyText: "初始正文",
     assets: []
-  });
+  }
+}: {
+  initialValue?: MailRichContent;
+} = {}): React.JSX.Element {
+  const [value, setValue] =
+    React.useState<MailRichContent>(initialValue);
   return (
     <>
       <MailRichEditor
@@ -241,6 +246,66 @@ describe("MailRichEditor", () => {
     expect(
       screen.getByText("含 1 张 HTTPS 外链图片")
     ).toBeInTheDocument();
+  });
+
+  it("hydrates uploaded images in the final browser preview", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            html:
+              '<p>图片说明</p><img data-mail-asset-id="asset-preview" alt="预览图">',
+            text: "图片说明",
+            diagnostics: {
+              removedTags: [],
+              removedAttributes: [],
+              blockedUrls: 0,
+              externalImageCount: 0,
+              hasDangerousContent: false
+            },
+            visualEditorCompatible: true,
+            unresolvedVariables: [],
+            canSend: true
+          })
+      })
+    );
+    render(
+      <Harness
+        initialValue={{
+          bodyHtml:
+            '<p>图片说明</p><img data-mail-asset-id="asset-preview" alt="预览图">',
+          bodyText: "图片说明",
+          assets: [
+            {
+              id: "asset-preview",
+              fileName: "preview.png",
+              contentType: "image/png",
+              byteSize: 300,
+              width: 80,
+              height: 60,
+              previewUrl: "/api/mail/assets/asset-preview",
+              disposition: "INLINE",
+              cid: "asset-preview@righttoken",
+              sortOrder: 0
+            }
+          ]
+        }}
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "发送预览" })
+    );
+    expect(
+      await screen.findByTitle("HTML 邮件发送预览")
+    ).toHaveAttribute(
+      "srcdoc",
+      expect.stringContaining(
+        'src="/api/mail/assets/asset-preview"'
+      )
+    );
   });
 
   it("warns before a complex source is simplified in visual mode", async () => {

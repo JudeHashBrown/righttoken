@@ -220,7 +220,8 @@ function collectDiagnostics(input: string): MailHtmlDiagnostics {
 
 function transformAttributes(
   tagName: string,
-  attributes: Record<string, string>
+  attributes: Record<string, string>,
+  allowExternalImages: boolean
 ): Record<string, string> {
   const next = { ...attributes };
   for (const name of Object.keys(next)) {
@@ -245,7 +246,10 @@ function transformAttributes(
   if (tagName === "img") {
     const assetId = next["data-mail-asset-id"] ?? "";
     const safeAsset = assetIdPattern.test(assetId);
-    const safeExternal = next.src && isSafeHttpsUrl(next.src);
+    const safeExternal =
+      allowExternalImages &&
+      next.src &&
+      isSafeHttpsUrl(next.src);
     if (!safeAsset) {
       delete next["data-mail-asset-id"];
     }
@@ -284,7 +288,12 @@ function mailHtmlToPlainText(html: string): string {
     .join("\n");
 }
 
-export function processMailHtml(input: string): ProcessedMailHtml {
+export function processMailHtml(
+  input: string,
+  options: { allowExternalImages?: boolean } = {}
+): ProcessedMailHtml {
+  const allowExternalImages =
+    options.allowExternalImages ?? true;
   const source = input.trim();
   const hasDoctype = /^<!doctype\s+html\s*>/i.test(source);
   const withoutDoctype = source.replace(
@@ -341,7 +350,11 @@ export function processMailHtml(input: string): ProcessedMailHtml {
     transformTags: {
       "*": (tagName, attributes) => ({
         tagName,
-        attribs: transformAttributes(tagName, attributes)
+        attribs: transformAttributes(
+          tagName,
+          attributes,
+          allowExternalImages
+        )
       })
     },
     exclusiveFilter: (frame) =>
