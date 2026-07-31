@@ -54,6 +54,7 @@ type Handlers struct {
 	Payment        *PaymentHandler
 	PaymentWebhook *PaymentWebhookHandler
 	RecallSSO      *RecallSSOHandler
+	Analytics      *AnalyticsHandler
 }
 
 // BuildInfo contains build-time information

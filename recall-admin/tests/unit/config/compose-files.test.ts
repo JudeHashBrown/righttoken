@@ -69,6 +69,17 @@ describe("recall Compose environments", () => {
       "GEOIP_RIR_PATH: ${RECALL_GEOIP_RIR_PATH"
     );
     expect(compose).toContain("DEPLOYMENT_ENV: production");
+    for (const mapping of [
+      "MAIL_ASSET_STORAGE: ${RECALL_MAIL_ASSET_STORAGE",
+      "MAIL_ASSET_S3_BUCKET: ${RECALL_MAIL_ASSET_S3_BUCKET",
+      "MAIL_ASSET_S3_REGION: ${RECALL_MAIL_ASSET_S3_REGION",
+      "MAIL_ASSET_S3_ENDPOINT: ${RECALL_MAIL_ASSET_S3_ENDPOINT",
+      "MAIL_ASSET_S3_FORCE_PATH_STYLE: ${RECALL_MAIL_ASSET_S3_FORCE_PATH_STYLE",
+      "MAIL_ASSET_S3_ACCESS_KEY_ID: ${RECALL_MAIL_ASSET_S3_ACCESS_KEY_ID",
+      "MAIL_ASSET_S3_SECRET_ACCESS_KEY: ${RECALL_MAIL_ASSET_S3_SECRET_ACCESS_KEY"
+    ]) {
+      expect(compose).toContain(mapping);
+    }
     expect(
       readRepository("deploy/recall.env.example")
     ).toContain(

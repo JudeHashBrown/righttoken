@@ -119,6 +119,85 @@ describe("MailComposer", () => {
     expect(request.body).toContain('"assets":[]');
   });
 
+  it("preserves complete HTML when a template is selected", async () => {
+    const templateHtml =
+      '<!DOCTYPE html><html><head><style>.hero{color:#2563eb}</style></head><body><h1 class="hero">欢迎使用</h1></body></html>';
+    const fetchMock = vi.fn().mockImplementation(
+      async (url: string) => {
+        if (url === "/api/mail/preview") {
+          return {
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                html: templateHtml,
+                text: "欢迎使用",
+                diagnostics: {
+                  removedTags: [],
+                  removedAttributes: [],
+                  blockedUrls: 0,
+                  externalImageCount: 0,
+                  hasDangerousContent: false
+                },
+                visualEditorCompatible: false,
+                unresolvedVariables: [],
+                canSend: true
+              })
+          };
+        }
+        return {
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              message: { id: "message-html", status: "SENT" }
+            })
+        };
+      }
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    render(
+      <MailComposer
+        tasks={[task]}
+        mailboxes={[mailbox]}
+        templates={[
+          {
+            id: "template-html",
+            name: "完整 HTML",
+            subject: "欢迎",
+            bodyText: "欢迎使用",
+            bodyHtml: templateHtml,
+            assets: []
+          }
+        ]}
+        initialSubject=""
+        initialBody=""
+      />
+    );
+
+    fireEvent.change(screen.getByLabelText("使用模板"), {
+      target: { value: "template-html" }
+    });
+    expect(await screen.findByLabelText("HTML 邮件源码")).toHaveValue(
+      templateHtml
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "确认并发送" })
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          "邮件已发送，任务已进入等待用户回复"
+        )
+      ).toBeInTheDocument()
+    );
+    const request = fetchMock.mock.calls.find(
+      ([url]) => url === "/api/mail/send"
+    )?.[1] as RequestInit;
+    expect(request.body).toContain(
+      JSON.stringify(templateHtml).slice(1, -1)
+    );
+  });
+
   it("submits an edited recipient and resets it when the task changes", async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,

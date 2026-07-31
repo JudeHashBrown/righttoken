@@ -43,6 +43,11 @@ export type UserProfile = Prisma.UserProfileModel
  */
 export type UserEvent = Prisma.UserEventModel
 /**
+ * Model SiteVisit
+ *
+ */
+export type SiteVisit = Prisma.SiteVisitModel
+/**
  * Model SegmentHistory
  *
  */

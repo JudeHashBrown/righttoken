@@ -4,7 +4,6 @@ export type UserOwnerErrorCode =
   | "TARGET_OWNER_INACTIVE"
   | "TARGET_OWNER_INVALID"
   | "REASON_REQUIRED"
-  | "INITIAL_AUTOMATIC_ASSIGNMENT_REQUIRED"
   | "OWNER_ALREADY_AUTOMATIC";
 
 export class UserOwnerError extends Error {

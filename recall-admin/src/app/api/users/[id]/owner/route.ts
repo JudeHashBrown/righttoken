@@ -62,10 +62,7 @@ function errorResponse(error: unknown): NextResponse {
   }
   if (
     error instanceof UserOwnerError &&
-    [
-      "INITIAL_AUTOMATIC_ASSIGNMENT_REQUIRED",
-      "OWNER_ALREADY_AUTOMATIC"
-    ].includes(error.code)
+    error.code === "OWNER_ALREADY_AUTOMATIC"
   ) {
     return NextResponse.json(
       { code: error.code },

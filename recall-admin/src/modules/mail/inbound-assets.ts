@@ -12,9 +12,11 @@ import type {
   MailAssetStorage
 } from "@/modules/mail/assets/types";
 import {
-  plainTextToMailHtml,
-  sanitizeMailHtml
+  plainTextToMailHtml
 } from "@/modules/mail/rich-content";
+import {
+  processMailHtml
+} from "@/modules/mail/html-policy";
 import type {
   MailboxMessage
 } from "@/modules/mail/types";
@@ -171,7 +173,9 @@ export async function prepareInboundMailAssets(
   }
 
   return {
-    bodyHtml: sanitizeMailHtml(html),
+    bodyHtml: processMailHtml(html, {
+      allowExternalImages: false
+    }).html,
     externalImagesBlocked,
     assets: prepared
   };

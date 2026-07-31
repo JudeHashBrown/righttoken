@@ -43,6 +43,7 @@ export type DashboardSnapshot = {
     overdue: number;
     urgent: number;
     awaitingReply: number;
+    unassignedUsers: number;
     sevenDayRecallRate: number | null;
   };
   priorityTasks: DashboardTask[];
@@ -123,7 +124,8 @@ export async function getDashboardSnapshot(
     sevenDayCompleted,
     taskRows,
     segmentRows,
-    workloadRows
+    workloadRows,
+    unassignedUsers
   ] = await Promise.all([
     prisma.recallTask.count({
       where: {
@@ -195,7 +197,15 @@ export async function getDashboardSnapshot(
       by: ["assigneeId"],
       where: openWhere,
       _count: { _all: true }
-    })
+    }),
+    member.role === "OPERATOR"
+      ? Promise.resolve(0)
+      : prisma.userProfile.count({
+          where: {
+            sourceDeletedAt: null,
+            ownerId: null
+          }
+        })
   ]);
 
   const liveFacts = await getProductionRightTokenUserFactsByIds(
@@ -262,6 +272,7 @@ export async function getDashboardSnapshot(
       overdue,
       urgent,
       awaitingReply,
+      unassignedUsers,
       sevenDayRecallRate:
         sevenDayTasks === 0
           ? null

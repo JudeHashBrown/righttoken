@@ -20,6 +20,9 @@ import type {
 import {
   plainTextToMailHtml
 } from "@/modules/mail/rich-content";
+import {
+  processMailHtml
+} from "@/modules/mail/html-policy";
 
 export type ReviewedMailInput = {
   actorId: string;
@@ -46,6 +49,11 @@ export async function sendReviewedMail(
 ): Promise<{ message: MailMessage; taskId: string }> {
   const now = input.now ?? new Date();
   const recipient = input.recipient.trim().toLowerCase();
+  const outboundHtml =
+    input.bodyHtml?.trim() ||
+    plainTextToMailHtml(input.bodyText);
+  const reviewedBodyText =
+    processMailHtml(outboundHtml).text;
   const [
     actor,
     mailbox,
@@ -176,7 +184,7 @@ export async function sendReviewedMail(
     {
       reviewedById: actor.id,
       subject: input.subject,
-      bodyText: input.bodyText,
+      bodyText: reviewedBodyText,
       lastSentAt: lastSent?.sentAt ?? null,
       minimumContactIntervalMinutes:
         input.minimumContactIntervalMinutes
@@ -229,9 +237,7 @@ export async function sendReviewedMail(
     }));
   const richContent = await resolveOutboundMailAssets(
     {
-      bodyHtml:
-        input.bodyHtml?.trim() ||
-        plainTextToMailHtml(input.bodyText),
+      bodyHtml: outboundHtml,
       assets: input.assets ?? []
     },
     {
@@ -253,7 +259,7 @@ export async function sendReviewedMail(
       fromAddress: mailbox.emailAddress,
       toAddresses: [recipient],
       subject: input.subject.trim(),
-      bodyText: input.bodyText.trim(),
+      bodyText: richContent.bodyText,
       bodyHtml: richContent.bodyHtml,
       reviewedById: actor.id,
       assets: {

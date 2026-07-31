@@ -115,27 +115,42 @@ describe("user owner service", () => {
     });
   });
 
-  it("rejects manual assignment before automatic assignment", async () => {
+  it("allows an administrator to assign an initially unassigned user", async () => {
     mocks.tx.userProfile.findUniqueOrThrow.mockResolvedValue({
       id: "user-1",
       ownerId: null,
       ownerAssignmentMode: "AUTO",
       ownerAssignedAt: null,
-      countryCode: null,
+      countryCode: "DE",
       region: null,
       sourceDeletedAt: null
     });
+    mocks.tx.recallTask.findMany.mockResolvedValue([]);
 
     await expect(
       manuallyAssignUserOwner({
         userId: "user-1",
         actorId: "admin-1",
         targetOwnerId: "operator-2",
-        reason: "尝试跳过系统分配",
+        reason: "德国暂由运营乙负责",
         now
       })
-    ).rejects.toMatchObject({
-      code: "INITIAL_AUTOMATIC_ASSIGNMENT_REQUIRED"
+    ).resolves.toEqual({
+      userId: "user-1",
+      previousOwnerId: null,
+      ownerId: "operator-2",
+      mode: "MANUAL",
+      transferredTasks: 0
+    });
+    expect(mocks.tx.userProfile.update).toHaveBeenCalledWith({
+      where: { id: "user-1" },
+      data: {
+        ownerId: "operator-2",
+        ownerAssignmentMode: "MANUAL",
+        ownerAssignedAt: now,
+        ownerAssignedById: "admin-1",
+        ownerAssignmentReason: "德国暂由运营乙负责"
+      }
     });
   });
 
@@ -178,6 +193,50 @@ describe("user owner service", () => {
     expect(mocks.tx.recallTask.updateMany).toHaveBeenCalledWith({
       where: { id: { in: ["task-1", "task-2"] } },
       data: { assigneeId: "operator-1" }
+    });
+  });
+
+  it("restores automatic assignment to unassigned when no rule matches", async () => {
+    mocks.tx.member.findUniqueOrThrow.mockReset();
+    mocks.tx.member.findUniqueOrThrow.mockResolvedValue({
+      id: "admin-1",
+      role: "ADMIN",
+      active: true
+    });
+    mocks.tx.userProfile.findUniqueOrThrow.mockResolvedValue({
+      id: "user-1",
+      ownerId: "operator-2",
+      ownerAssignmentMode: "MANUAL",
+      ownerAssignedAt: now,
+      countryCode: "DE",
+      region: null,
+      sourceDeletedAt: null
+    });
+    mocks.assignUserOwnerInTransaction.mockResolvedValue({
+      assigneeId: null,
+      assignmentMode: "AUTO",
+      skippedManual: false,
+      assignmentReason: "没有规则命中；进入公共池",
+      matchedRuleId: null
+    });
+
+    await expect(
+      restoreAutomaticUserOwner({
+        userId: "user-1",
+        actorId: "admin-1",
+        now
+      })
+    ).resolves.toEqual({
+      userId: "user-1",
+      previousOwnerId: "operator-2",
+      ownerId: null,
+      mode: "AUTO",
+      transferredTasks: 2
+    });
+
+    expect(mocks.tx.recallTask.updateMany).toHaveBeenCalledWith({
+      where: { id: { in: ["task-1", "task-2"] } },
+      data: { assigneeId: null }
     });
   });
 });

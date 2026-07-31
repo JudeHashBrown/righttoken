@@ -110,26 +110,50 @@ test("every administrator navigation item opens a real page", async ({
       const segmentButtons = segmentGroup.getByRole("button");
 
       await expect(segmentGroup).toBeVisible();
+      await expect(page.getByLabel("筛选地区")).toBeVisible();
+      await expect(page.getByLabel("筛选负责人")).toBeVisible();
+      await expect(
+        page
+          .getByLabel("筛选负责人")
+          .getByRole("option", { name: "未分配" })
+      ).toHaveAttribute("value", "__UNASSIGNED__");
       await expect(segmentButtons).toHaveText([
-        "全部",
-        "F",
-        "A",
-        "B",
-        "C",
-        "D",
-        "E",
-        "G"
+        "全部全部用户",
+        "F服务异常",
+        "A注册未支付",
+        "B支付未完成",
+        "C充值未调用",
+        "D长期未调用",
+        "E余额不足",
+        "G健康或其他"
       ]);
       await expect(segmentGroup.getByRole("combobox")).toHaveCount(0);
-      await expect(segmentButtons.first()).toHaveCSS("height", "36px");
+      await expect(segmentButtons.first()).toHaveCSS(
+        "min-height",
+        "48px"
+      );
 
+      await page
+        .getByLabel("筛选负责人")
+        .selectOption("__UNASSIGNED__");
+      await expect(page).toHaveURL(/ownerId=__UNASSIGNED__/);
       await page.getByLabel("国家").fill("CN");
-      await segmentGroup.getByRole("button", { name: "F" }).click();
+      await segmentGroup
+        .getByRole("button", { name: "F 服务异常" })
+        .click();
       await expect(page).toHaveURL(/segment=F/);
       await expect(page).toHaveURL(/countryCode=CN/);
       await expect(
-        page.getByRole("button", { name: "F" })
+        page.getByRole("button", { name: "F 服务异常" })
       ).toHaveAttribute("aria-pressed", "true");
+    }
+    if (route.path === "/tasks") {
+      const segmentFilter = page.getByLabel("筛选分组");
+
+      await expect(segmentFilter).toBeVisible();
+      await expect(page.getByLabel("筛选负责人")).toBeVisible();
+      await segmentFilter.selectOption("B");
+      await expect(page).toHaveURL(/segment=B/);
     }
     if (route.path === "/automation/assignment") {
       await expect(

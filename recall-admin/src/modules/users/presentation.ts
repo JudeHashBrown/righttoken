@@ -98,5 +98,5 @@ export function ownerAssignmentLabel(
 export function ownerDisplayName(
   owner: { displayName: string } | null
 ): string {
-  return owner?.displayName || "主管理员暂管";
+  return owner?.displayName || "未分配";
 }

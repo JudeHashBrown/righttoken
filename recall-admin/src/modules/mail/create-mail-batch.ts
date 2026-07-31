@@ -206,7 +206,7 @@ export async function createMailBatch(
             ? input.audience.segment
             : null,
         subject: input.subject.trim(),
-        bodyText: input.bodyText.trim(),
+        bodyText: richContent.bodyText,
         bodyHtml: richContent.bodyHtml,
         idempotencyKey,
         totalRecipients: recipients.length,

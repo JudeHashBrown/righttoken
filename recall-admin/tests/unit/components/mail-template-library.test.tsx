@@ -65,9 +65,11 @@ describe("MailTemplateLibrary", () => {
     body.innerHTML =
       '<p>你好，请查看说明。</p><img data-mail-asset-id="asset-1" alt="说明图">';
     fireEvent.input(body);
-    fireEvent.click(
-      screen.getByRole("button", { name: "保存模板修改" })
-    );
+    const saveButton = screen.getByRole("button", {
+      name: "保存模板修改"
+    });
+    await waitFor(() => expect(saveButton).toBeEnabled());
+    fireEvent.click(saveButton);
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
@@ -98,5 +100,76 @@ describe("MailTemplateLibrary", () => {
     expect(
       screen.getByText("新建公共模板")
     ).toBeInTheDocument();
+  });
+
+  it("keeps a complete HTML document when publishing a version", async () => {
+    const bodyHtml =
+      '<!DOCTYPE html><html><head><style>.card{width:100%}</style></head><body><table class="card"><tbody><tr><td>模板正文</td></tr></tbody></table></body></html>';
+    const fetchMock = vi.fn().mockImplementation(
+      async (url: string) => {
+        if (url === "/api/mail/preview") {
+          return {
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                html: bodyHtml,
+                text: "模板正文",
+                diagnostics: {
+                  removedTags: [],
+                  removedAttributes: [],
+                  blockedUrls: 0,
+                  externalImageCount: 0,
+                  hasDangerousContent: false
+                },
+                visualEditorCompatible: false,
+                unresolvedVariables: [],
+                canSend: true
+              })
+          };
+        }
+        return { ok: true, json: () => Promise.resolve({}) };
+      }
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    render(
+      <MailTemplateLibrary
+        templates={[
+          {
+            ...inactiveTemplate,
+            bodyText: "模板正文",
+            bodyHtml
+          }
+        ]}
+      />
+    );
+
+    const source = screen.getByLabelText("HTML 邮件源码");
+    expect(source).toHaveValue(
+      bodyHtml
+    );
+    const updatedBodyHtml = bodyHtml.replace(
+      "模板正文",
+      "模板正文已更新"
+    );
+    fireEvent.change(source, {
+      target: { value: updatedBodyHtml }
+    });
+    const publishButton = screen.getByRole("button", {
+      name: "保存模板修改"
+    });
+    await waitFor(() => expect(publishButton).toBeEnabled());
+    fireEvent.click(publishButton);
+    await waitFor(() =>
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/mail/templates/payment/versions",
+        expect.objectContaining({ method: "POST" })
+      )
+    );
+    const request = fetchMock.mock.calls.find(
+      ([url]) => url === "/api/mail/templates/payment/versions"
+    )?.[1] as RequestInit;
+    expect(request.body).toContain(
+      JSON.stringify(updatedBodyHtml).slice(1, -1)
+    );
   });
 });

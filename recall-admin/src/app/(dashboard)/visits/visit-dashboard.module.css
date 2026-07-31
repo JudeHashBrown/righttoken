@@ -1,0 +1,325 @@
+.rangeTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rangeTab {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  border: 1px solid #dbe0eb;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #4f5a72;
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    color 160ms ease-out;
+}
+
+.rangeTab:hover {
+  border-color: #bdc5d8;
+  background: #f7f8fb;
+}
+
+.rangeTab:focus-visible {
+  outline: 3px solid rgb(102 117 232 / 22%);
+  outline-offset: 2px;
+}
+
+.rangeTabActive,
+.rangeTabActive:hover {
+  border-color: #5967d7;
+  background: #eef0ff;
+  color: #4d59c5;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 16px;
+  border: 1px solid #e3e6ee;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.metric {
+  min-width: 0;
+  border-right: 1px solid #eef0f5;
+  padding: 18px;
+}
+
+.metric:last-child {
+  border-right: 0;
+}
+
+.metric span {
+  display: block;
+  color: #667087;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.metric strong {
+  display: block;
+  margin-top: 9px;
+  color: #202a40;
+  font-size: 25px;
+  line-height: 1.2;
+}
+
+.metric small {
+  display: block;
+  margin-top: 6px;
+  color: #7d8699;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #e3e6ee;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.panelHeader {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #eef0f5;
+  padding: 14px 16px;
+}
+
+.panelHeader h2 {
+  margin: 0;
+  color: #252d42;
+  font-size: 16px;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+
+.panelHeader p {
+  margin: 4px 0 0;
+  color: #707b91;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  color: #667087;
+  font-size: 12px;
+  font-weight: 620;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend i {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+}
+
+.legendUv {
+  background: #9aa4ee;
+}
+
+.legendPv {
+  background: #5967d7;
+}
+
+.chartScroll {
+  overflow-x: auto;
+  padding: 20px 18px 14px;
+}
+
+.chart {
+  display: grid;
+  min-width: max(620px, calc(var(--day-count) * 20px));
+  height: 238px;
+  grid-template-columns: repeat(var(--day-count), minmax(14px, 1fr));
+  align-items: end;
+  gap: 4px;
+  border-bottom: 1px solid #dfe3ed;
+}
+
+.day {
+  display: grid;
+  min-width: 0;
+  height: 100%;
+  grid-template-rows: minmax(0, 1fr) 28px;
+  gap: 7px;
+}
+
+.bars {
+  display: flex;
+  height: 100%;
+  align-items: end;
+  justify-content: center;
+  gap: 2px;
+}
+
+.bars span {
+  width: min(8px, 42%);
+  min-height: 2px;
+  border-radius: 3px 3px 0 0;
+}
+
+.uvBar {
+  background: #9aa4ee;
+}
+
+.pvBar {
+  background: #5967d7;
+}
+
+.dayLabel {
+  overflow: visible;
+  color: #7b8497;
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.geographyGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.tableScroll {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 500px;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid #eef0f5;
+  padding: 12px 14px;
+  text-align: right;
+  vertical-align: middle;
+}
+
+.table th {
+  background: #fafbfc;
+  color: #68738a;
+  font-size: 12px;
+  font-weight: 680;
+  white-space: nowrap;
+}
+
+.table th:first-child,
+.table td:first-child {
+  text-align: left;
+}
+
+.table td {
+  color: #4d576f;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table tbody tr:hover {
+  background: #fafbfe;
+}
+
+.table td strong {
+  color: #293249;
+  font-size: 14px;
+}
+
+.table td small {
+  margin-left: 7px;
+  color: #858da0;
+  font-size: 11px;
+}
+
+.dataNote {
+  margin: 0;
+  border-top: 1px solid #eef0f5;
+  background: #fafbfc;
+  color: #69748a;
+  padding: 10px 14px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@media (max-width: 1120px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metric:nth-child(2) {
+    border-right: 0;
+  }
+
+  .metric:nth-child(-n + 2) {
+    border-bottom: 1px solid #eef0f5;
+  }
+
+  .geographyGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .rangeTabs {
+    margin-top: 14px;
+  }
+
+  .panelHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .chartScroll {
+    padding-inline: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .metric,
+  .metric:nth-child(2) {
+    border-right: 0;
+  }
+
+  .metric:not(:last-child) {
+    border-bottom: 1px solid #eef0f5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rangeTab {
+    transition: none;
+  }
+}

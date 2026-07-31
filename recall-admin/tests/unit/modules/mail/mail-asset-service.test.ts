@@ -3,8 +3,30 @@ import {
   createMailAsset,
   readMailAsset
 } from "@/modules/mail/assets/asset-service";
+import * as storageFactory from "@/modules/mail/assets/storage-factory";
 
 describe("mail asset service", () => {
+  it("translates storage initialization failures", async () => {
+    vi.spyOn(storageFactory, "getMailAssetStorage").mockImplementation(
+      () => {
+        throw new Error("MAIL_ASSET_LOCAL_STORAGE_FORBIDDEN");
+      }
+    );
+
+    await expect(
+      createMailAsset({
+        actorId: "operator-1",
+        file: new File([Buffer.from("source")], "guide.png", {
+          type: "image/png"
+        })
+      })
+    ).rejects.toMatchObject({
+      code: "MAIL_ASSET_STORAGE_UNAVAILABLE"
+    });
+
+    vi.restoreAllMocks();
+  });
+
   it("writes normalized bytes before recording private metadata", async () => {
     const storage = {
       put: vi.fn().mockResolvedValue(undefined),
@@ -58,6 +80,49 @@ describe("mail asset service", () => {
       })
     });
     expect(asset.id).toBe("asset-1");
+  });
+
+  it("translates object storage write failures", async () => {
+    const storage = {
+      put: vi.fn().mockRejectedValue(new Error("S3 unavailable")),
+      get: vi.fn(),
+      delete: vi.fn(),
+      exists: vi.fn()
+    };
+    const database = {
+      mailAsset: {
+        create: vi.fn(),
+        findFirst: vi.fn()
+      }
+    };
+
+    await expect(
+      createMailAsset(
+        {
+          actorId: "operator-1",
+          file: new File([Buffer.from("source")], "guide.png", {
+            type: "image/png"
+          })
+        },
+        {
+          database,
+          storage,
+          normalize: vi.fn().mockResolvedValue({
+            bytes: Buffer.from("normalized"),
+            contentType: "image/png",
+            extension: "png",
+            byteSize: 10,
+            width: 100,
+            height: 100,
+            sha256: "c".repeat(64)
+          }),
+          randomId: () => "unavailable-id"
+        }
+      )
+    ).rejects.toMatchObject({
+      code: "MAIL_ASSET_STORAGE_UNAVAILABLE"
+    });
+    expect(database.mailAsset.create).not.toHaveBeenCalled();
   });
 
   it("removes stored bytes when metadata persistence fails", async () => {

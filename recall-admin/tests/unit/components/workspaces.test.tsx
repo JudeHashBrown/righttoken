@@ -107,6 +107,65 @@ describe("user and task workspaces", () => {
     expect(screen.queryByText(/203\.0\.113/)).not.toBeInTheDocument();
   });
 
+  it("offers region and owner filters in the user table headers", () => {
+    render(
+      <form>
+        <UserTable
+          users={[user]}
+          headerFilters={{
+            region: "California",
+            regions: ["California", "广东"],
+            ownerId: "operator-1",
+            owners: [
+              {
+                id: "operator-1",
+                displayName: "Operator One"
+              }
+            ]
+          }}
+        />
+      </form>
+    );
+
+    expect(
+      screen.getByRole("combobox", { name: "筛选地区" })
+    ).toHaveValue("California");
+    expect(
+      screen.getByRole("option", { name: "全部地区" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("combobox", { name: "筛选负责人" })
+    ).toHaveValue("operator-1");
+    expect(
+      screen.getByRole("option", { name: "未分配" })
+    ).toHaveValue("__UNASSIGNED__");
+  });
+
+  it("offers administrators an immediate action for an unassigned user", () => {
+    render(
+      <UserTable
+        canManageOwners
+        members={[
+          { id: "operator-1", displayName: "Operator One" }
+        ]}
+        users={[
+          {
+            ...user,
+            ownerId: null,
+            owner: null,
+            ownerAssignedAt: null,
+            ownerAssignmentReason: "没有规则命中；进入公共池"
+          }
+        ]}
+      />
+    );
+
+    expect(screen.getByText("未分配")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "立即分配" })
+    ).toBeInTheDocument();
+  });
+
   it("shows the concrete current anomaly beneath an F segment", () => {
     render(
       <UserTable
@@ -191,6 +250,34 @@ describe("user and task workspaces", () => {
       "href",
       "/mail?view=replies&compose=1&userId=user-1&taskId=task-1"
     );
+  });
+
+  it("offers segment and assignee filters in the task table headers", () => {
+    render(
+      <form>
+        <TaskTable
+          headerFilters={{
+            segment: "B",
+            assigneeId: "operator-1",
+            assignees: [
+              {
+                id: "operator-1",
+                displayName: "Operator One"
+              }
+            ]
+          }}
+          tasks={[task]}
+          now={new Date("2026-07-24T07:00:00Z")}
+        />
+      </form>
+    );
+
+    expect(
+      screen.getByRole("combobox", { name: "筛选分组" })
+    ).toHaveValue("B");
+    expect(
+      screen.getByRole("combobox", { name: "筛选负责人" })
+    ).toHaveValue("operator-1");
   });
 
   it("offers only claim for an unassigned public task to an operator", () => {

@@ -7,6 +7,7 @@ import {
   Bot,
   ChevronRight,
   CircleUserRound,
+  Globe2,
   LayoutDashboard,
   Mail,
   Settings,
@@ -112,6 +113,12 @@ export function AppSidebar({
           label: "数据报表",
           href: "/reports",
           icon: BarChart3
+        },
+        {
+          label: "访问看板",
+          href: "/visits",
+          icon: Globe2,
+          administratorOnly: true
         },
         {
           label: "成员与权限",

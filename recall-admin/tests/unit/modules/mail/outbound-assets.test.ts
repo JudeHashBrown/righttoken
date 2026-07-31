@@ -24,10 +24,62 @@ describe("resolveOutboundMailAssets", () => {
       })
     ).resolves.toEqual({
       bodyHtml: "<p>纯文字邮件</p>",
+      bodyText: "纯文字邮件",
       html: "<p>纯文字邮件</p>",
       attachments: [],
       messageAssets: []
     });
+  });
+
+  it("keeps an HTTPS image while converting an uploaded image to CID", async () => {
+    const storage = {
+      put: vi.fn(),
+      get: vi.fn().mockResolvedValue(Buffer.from("inline")),
+      delete: vi.fn(),
+      exists: vi.fn()
+    };
+    const database = {
+      mailAsset: {
+        findMany: vi.fn().mockResolvedValue([
+          {
+            id: "inline-1",
+            storageKey: "mail-assets/inline.png",
+            fileName: "inline.png",
+            contentType: "image/png",
+            byteSize: 100
+          }
+        ])
+      }
+    };
+
+    const resolved = await resolveOutboundMailAssets(
+      {
+        bodyHtml: `
+          <p>图文说明</p>
+          <img src="https://cdn.example.test/external.png" alt="外链图">
+          <img data-mail-asset-id="inline-1" alt="内嵌图">
+        `,
+        assets: [
+          {
+            id: "inline-1",
+            disposition: "INLINE",
+            sortOrder: 0
+          }
+        ]
+      },
+      { database, storage }
+    );
+
+    expect(resolved.bodyHtml).toContain(
+      'src="https://cdn.example.test/external.png"'
+    );
+    expect(resolved.html).toContain(
+      'src="https://cdn.example.test/external.png"'
+    );
+    expect(resolved.html).toContain(
+      'src="cid:inline-1@righttoken"'
+    );
+    expect(resolved.bodyText).toBe("图文说明");
   });
 
   it("loads private bytes and converts controlled image markers to CID", async () => {

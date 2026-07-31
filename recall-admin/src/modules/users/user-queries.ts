@@ -18,6 +18,7 @@ export type UserFilters = {
   region?: string;
   locationState?: "unrecognized";
   ownerId?: string;
+  ownerState?: "unassigned";
   source?: string;
   registeredFrom?: Date;
   registeredTo?: Date;
@@ -157,7 +158,11 @@ function buildUserWhere(
             region: null
           }
         : {},
-      filters.ownerId ? { ownerId: filters.ownerId } : {},
+      filters.ownerState === "unassigned"
+        ? { ownerId: null }
+        : filters.ownerId
+          ? { ownerId: filters.ownerId }
+          : {},
       filters.source ? { source: filters.source } : {},
       filters.registeredFrom || filters.registeredTo
         ? {
@@ -275,7 +280,16 @@ export async function findUsers(
         filters,
         liveSearchExternalIds
       ),
-      orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
+      orderBy: [
+        {
+          lastExternalEventAt: {
+            sort: "desc",
+            nulls: "last"
+          }
+        },
+        { registeredAt: "desc" },
+        { id: "desc" }
+      ],
       take: databaseMode ? Math.max(100, take + 1) : take + 1,
       ...(cursor
         ? {

@@ -75,7 +75,7 @@ describe("AssignmentRuleEditor", () => {
     fireEvent.click(screen.getByRole("button", { name: "预览分配" }));
     await waitFor(() => {
       expect(screen.getByText("已查看最近 83 位用户")).toBeInTheDocument();
-      expect(screen.getByText("由主管理员暂管 33 人")).toBeInTheDocument();
+      expect(screen.getByText("待分配用户 33 人")).toBeInTheDocument();
     });
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/automation/assignment-rules/preview",

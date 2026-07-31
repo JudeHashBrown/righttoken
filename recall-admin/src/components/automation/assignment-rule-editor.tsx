@@ -411,14 +411,14 @@ export function AssignmentRuleEditor({
       ) : (
         <div className={styles.empty}>
           <strong>尚未设置负责人分配条件</strong>
-          <p>新增第一项条件；暂时无法分配的任务将交给主管理员。</p>
+          <p>新增第一项条件；暂时无法匹配的用户将保持未分配。</p>
         </div>
       )}
 
       {preview ? (
         <div className={styles.previewResult} role="status">
           <strong>已查看最近 {preview.sampledUsers} 位用户</strong>
-          <span>由主管理员暂管 {preview.publicPool} 人</span>
+          <span>待分配用户 {preview.publicPool} 人</span>
           <span>暂未找到负责人 {preview.unmatchedConditions} 人</span>
         </div>
       ) : null}

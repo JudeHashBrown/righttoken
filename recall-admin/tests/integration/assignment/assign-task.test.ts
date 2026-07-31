@@ -19,8 +19,26 @@ describe("configurable task assignment", () => {
   let usTaskId: string;
   let southTaskId: string;
   const ruleIds: string[] = [];
+  const existingRuleStates: Array<{
+    id: string;
+    enabled: boolean;
+  }> = [];
+  let priorityBase: number;
 
   beforeAll(async () => {
+    existingRuleStates.push(
+      ...(await prisma.assignmentRule.findMany({
+        select: { id: true, enabled: true }
+      }))
+    );
+    await prisma.assignmentRule.updateMany({
+      data: { enabled: false }
+    });
+    const highestPriority = await prisma.assignmentRule.aggregate({
+      _max: { priority: true }
+    });
+    priorityBase = (highestPriority._max.priority ?? 0) + 100;
+
     const [usOperator, southOperator] = await Promise.all([
       prisma.member.create({
         data: {
@@ -109,7 +127,7 @@ describe("configurable task assignment", () => {
       prisma.assignmentRule.create({
         data: {
           name: "美国 B 组",
-          priority: 10,
+          priority: priorityBase + 10,
           conditions: {
             countryCodes: ["US"],
             segments: ["B"]
@@ -121,7 +139,7 @@ describe("configurable task assignment", () => {
       prisma.assignmentRule.create({
         data: {
           name: "华南用户",
-          priority: 20,
+          priority: priorityBase + 20,
           conditions: {
             regionIncludes: ["广东"]
           },
@@ -132,7 +150,7 @@ describe("configurable task assignment", () => {
       prisma.assignmentRule.create({
         data: {
           name: "公共池",
-          priority: 999,
+          priority: priorityBase + 999,
           conditions: {},
           poolKey: "public"
         }
@@ -174,6 +192,14 @@ describe("configurable task assignment", () => {
     await prisma.assignmentRule.deleteMany({
       where: { id: { in: ruleIds } }
     });
+    await Promise.all(
+      existingRuleStates.map((rule) =>
+        prisma.assignmentRule.update({
+          where: { id: rule.id },
+          data: { enabled: rule.enabled }
+        })
+      )
+    );
     await prisma.userProfile.deleteMany({
       where: {
         id: {
@@ -199,7 +225,7 @@ describe("configurable task assignment", () => {
 
     expect(decision).toMatchObject({
       assigneeId: usOperatorId,
-      matchedRulePriority: 10
+      matchedRulePriority: priorityBase + 10
     });
     expect(decision.assignmentReason).toBe(
       "规则“美国 B 组”命中：国家=US，分组=B；负责人当前未完成任务 6/20"
@@ -220,7 +246,7 @@ describe("configurable task assignment", () => {
 
     expect(decision).toMatchObject({
       assigneeId: southOperatorId,
-      matchedRulePriority: 20
+      matchedRulePriority: priorityBase + 20
     });
     expect(decision.assignmentReason).toContain(
       "规则“华南用户”命中：地区包含=广东"
@@ -237,7 +263,7 @@ describe("configurable task assignment", () => {
 
     expect(decision).toMatchObject({
       assigneeId: usOperatorId,
-      matchedRulePriority: 10,
+      matchedRulePriority: priorityBase + 10,
       assignmentMode: "AUTO",
       skippedManual: false
     });
@@ -256,10 +282,7 @@ describe("configurable task assignment", () => {
     ).resolves.toBe(0);
   });
 
-  it("assigns the primary administrator when geography has no matching owner", async () => {
-    const primary = await prisma.member.findFirstOrThrow({
-      where: { role: "PRIMARY_ADMIN", active: true }
-    });
+  it("keeps the user unassigned when geography has no matching owner", async () => {
     const email = `assignment-unknown-${randomUUID()}@example.test`;
     const user = await prisma.userProfile.create({
       data: {
@@ -275,17 +298,57 @@ describe("configurable task assignment", () => {
       const decision = await assignUserOwner(user.id);
 
       expect(decision).toMatchObject({
-        assigneeId: primary.id,
+        assigneeId: null,
         assignmentMode: "AUTO",
         skippedManual: false
       });
+      expect(decision.assignmentReason).toContain("进入公共池");
+      await expect(
+        prisma.userProfile.findUniqueOrThrow({
+        where: { id: user.id }
+      })
+    ).resolves.toMatchObject({
+        ownerId: null,
+        ownerAssignmentMode: "AUTO",
+        ownerAssignedAt: null,
+        ownerAssignedById: null
+      });
+    } finally {
+      await prisma.userProfile.delete({ where: { id: user.id } });
+    }
+  });
+
+  it("clears a previous automatic owner when no rule matches anymore", async () => {
+    const email = `assignment-stale-${randomUUID()}@example.test`;
+    const user = await prisma.userProfile.create({
+      data: {
+        externalUserId: `assignment-stale-${randomUUID()}`,
+        email,
+        emailNormalized: email,
+        registeredAt: new Date(),
+        currentSegment: "G",
+        countryCode: "DE",
+        ownerId: usOperatorId,
+        ownerAssignmentMode: "AUTO",
+        ownerAssignedAt: new Date()
+      }
+    });
+
+    try {
+      const decision = await assignUserOwner(user.id, new Date(), {
+        forceAutomatic: true
+      });
+
+      expect(decision.assigneeId).toBeNull();
       await expect(
         prisma.userProfile.findUniqueOrThrow({
           where: { id: user.id }
         })
       ).resolves.toMatchObject({
-        ownerId: primary.id,
-        ownerAssignmentMode: "AUTO"
+        ownerId: null,
+        ownerAssignmentMode: "AUTO",
+        ownerAssignedAt: null,
+        ownerAssignedById: null
       });
     } finally {
       await prisma.userProfile.delete({ where: { id: user.id } });

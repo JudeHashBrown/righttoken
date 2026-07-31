@@ -67,7 +67,11 @@ describe("user and task workspace scope", () => {
           region: "California",
           source: "righttoken-web",
           currentSegment: "B",
-          ownerId: firstOperator.id
+          ownerId: firstOperator.id,
+          lastExternalEventAt: new Date(
+            "2026-07-25T08:00:00.000Z"
+          ),
+          updatedAt: new Date("2026-07-20T08:00:00.000Z")
         }
       }),
       prisma.userProfile.create({
@@ -81,7 +85,11 @@ describe("user and task workspace scope", () => {
           region: "广东",
           source: "partner",
           currentSegment: "A",
-          ownerId: secondOperator.id
+          ownerId: secondOperator.id,
+          lastExternalEventAt: new Date(
+            "2026-07-24T08:00:00.000Z"
+          ),
+          updatedAt: new Date("2026-07-26T08:00:00.000Z")
         }
       }),
       prisma.userProfile.create({
@@ -93,7 +101,11 @@ describe("user and task workspace scope", () => {
           registeredAt: new Date("2026-07-22T08:00:00.000Z"),
           countryCode: "SG",
           source: "righttoken-web",
-          currentSegment: "C"
+          currentSegment: "C",
+          lastExternalEventAt: new Date(
+            "2026-07-23T08:00:00.000Z"
+          ),
+          updatedAt: new Date("2026-07-23T08:00:00.000Z")
         }
       }),
       prisma.userProfile.create({
@@ -106,7 +118,8 @@ describe("user and task workspace scope", () => {
           countryCode: null,
           region: null,
           source: "righttoken-web",
-          currentSegment: "G"
+          currentSegment: "G",
+          updatedAt: new Date("2026-07-27T08:00:00.000Z")
         }
       })
     ]);
@@ -133,7 +146,8 @@ describe("user and task workspace scope", () => {
           priority: "IMPORTANT",
           status: "TODO",
           assigneeId: firstOperator.id,
-          dueAt: new Date("2026-07-24T09:00:00.000Z")
+          dueAt: new Date("2026-07-24T09:00:00.000Z"),
+          createdAt: new Date("2026-07-23T12:00:00.000Z")
         },
         {
           userId: otherUserId,
@@ -145,7 +159,8 @@ describe("user and task workspace scope", () => {
           priority: "NORMAL",
           status: "TODO",
           assigneeId: secondOperator.id,
-          dueAt: new Date("2026-07-24T10:00:00.000Z")
+          dueAt: new Date("2026-07-24T10:00:00.000Z"),
+          createdAt: new Date("2026-07-23T10:00:00.000Z")
         },
         {
           userId: publicUserId,
@@ -156,7 +171,8 @@ describe("user and task workspace scope", () => {
           reason: "Available to claim",
           priority: "URGENT",
           status: "UNASSIGNED",
-          dueAt: new Date("2026-07-24T08:00:00.000Z")
+          dueAt: new Date("2026-07-24T08:00:00.000Z"),
+          createdAt: new Date("2026-07-23T08:00:00.000Z")
         }
       ]
     });
@@ -219,9 +235,26 @@ describe("user and task workspace scope", () => {
     expect(secondPage.items[0]?.id).not.toBe(firstPage.items[0]?.id);
   });
 
+  it("orders users by their latest external event instead of profile updates", async () => {
+    const page = await findUsers(admin, {
+      search: "workspace-",
+      pageSize: 20
+    });
+    const workspaceIds = page.items
+      .map((row) => row.id)
+      .filter((id) => userIds.includes(id));
+
+    expect(workspaceIds.slice(0, 3)).toEqual([
+      ownedUserId,
+      otherUserId,
+      publicUserId
+    ]);
+  });
+
   it("filters only users whose country and region are both unrecognized", async () => {
     const filtered = await findUsers(admin, {
       locationState: "unrecognized",
+      search: "workspace-unrecognized-",
       pageSize: 20
     });
 
@@ -231,6 +264,30 @@ describe("user and task workspace scope", () => {
     expect(filtered.items).not.toContainEqual(
       expect.objectContaining({ id: publicUserId })
     );
+  });
+
+  it("lets administrators filter unassigned users while operators see none", async () => {
+    const adminPage = await findUsers(admin, {
+      ownerState: "unassigned",
+      search: "workspace-",
+      pageSize: 20
+    });
+    const operatorPage = await findUsers(firstOperator, {
+      ownerState: "unassigned",
+      search: "workspace-",
+      pageSize: 20
+    });
+    const unassignedWorkspaceIds = adminPage.items
+      .map((row) => row.id)
+      .filter((id) =>
+        [publicUserId, unrecognizedUserId].includes(id)
+      );
+
+    expect(unassignedWorkspaceIds).toEqual([
+      publicUserId,
+      unrecognizedUserId
+    ]);
+    expect(operatorPage.items).toEqual([]);
   });
 
   it("shows full IP only in an authorized User 360 detail", async () => {
@@ -267,10 +324,7 @@ describe("user and task workspace scope", () => {
         ["Public task", "Owned task", "Other task"].includes(title)
       );
 
-    expect(workspaceTitles).toEqual([
-      "Public task",
-      "Owned task"
-    ]);
+    expect(workspaceTitles).toEqual(["Owned task", "Public task"]);
     expect(page.items).not.toContainEqual(
       expect.objectContaining({ title: "Other task" })
     );

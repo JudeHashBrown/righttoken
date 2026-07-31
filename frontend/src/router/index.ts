@@ -9,6 +9,7 @@ import { useAppStore } from '@/stores/app'
 import { useAdminSettingsStore } from '@/stores/adminSettings'
 import { useNavigationLoadingState } from '@/composables/useNavigationLoading'
 import { useRoutePrefetch } from '@/composables/useRoutePrefetch'
+import { reportSuccessfulVisit } from '@/api/analytics'
 import { resolveDocumentTitle } from './title'
 
 /**
@@ -794,9 +795,10 @@ router.beforeEach((to, _from, next) => {
 /**
  * Navigation guard: End loading and trigger prefetch
  */
-router.afterEach((to) => {
+router.afterEach((to, _from, failure) => {
   // 结束导航加载状态
   navigationLoading.endNavigation()
+  reportSuccessfulVisit(to.path, failure)
 
   // 懒初始化预加载（首次导航时创建，传入 router 实例）
   if (!routePrefetch) {

@@ -57,6 +57,7 @@ const serverEnvSchema = z
         (value) => Buffer.from(value, "base64").length === 32,
         "must decode to 32 bytes"
       ),
+    VISITOR_HASH_KEY: z.string().min(32),
     APP_URL: z.string().url(),
     AUTH_MODE: z
       .enum(["development", "righttoken"])
@@ -112,6 +113,16 @@ const serverEnvSchema = z
       emptyStringToUndefined,
       z.string().email().optional()
     ),
+    MAIL_ASSET_STORAGE: z
+      .enum(["local", "s3"])
+      .default("local"),
+    MAIL_ASSET_LOCAL_DIR: optionalString,
+    MAIL_ASSET_S3_BUCKET: optionalString,
+    MAIL_ASSET_S3_REGION: optionalString,
+    MAIL_ASSET_S3_ENDPOINT: optionalUrl,
+    MAIL_ASSET_S3_FORCE_PATH_STYLE: optionalEnvBoolean,
+    MAIL_ASSET_S3_ACCESS_KEY_ID: optionalString,
+    MAIL_ASSET_S3_SECRET_ACCESS_KEY: optionalString,
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development")
@@ -142,6 +153,33 @@ const serverEnvSchema = z
             code: "custom",
             path: [field],
             message: `${field} is required when AUTH_MODE=righttoken`
+          });
+        }
+      }
+    }
+
+    const production =
+      value.DEPLOYMENT_ENV === "production" ||
+      value.NODE_ENV === "production";
+    if (production && value.MAIL_ASSET_STORAGE !== "s3") {
+      context.addIssue({
+        code: "custom",
+        path: ["MAIL_ASSET_STORAGE"],
+        message: "MAIL_ASSET_STORAGE=s3 is required in production"
+      });
+    }
+    if (value.MAIL_ASSET_STORAGE === "s3") {
+      for (const field of [
+        "MAIL_ASSET_S3_BUCKET",
+        "MAIL_ASSET_S3_REGION",
+        "MAIL_ASSET_S3_ACCESS_KEY_ID",
+        "MAIL_ASSET_S3_SECRET_ACCESS_KEY"
+      ] as const) {
+        if (!value[field]) {
+          context.addIssue({
+            code: "custom",
+            path: [field],
+            message: `${field} is required when MAIL_ASSET_STORAGE=s3`
           });
         }
       }

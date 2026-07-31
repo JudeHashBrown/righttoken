@@ -2,7 +2,8 @@ import {
   AlarmClock,
   MailQuestion,
   Siren,
-  TrendingUp
+  TrendingUp,
+  UserRoundPlus
 } from "lucide-react";
 import type { DashboardSnapshot } from "@/modules/reports/dashboard-query";
 import { ChannelHealth } from "./channel-health";
@@ -13,6 +14,7 @@ import { TeamWorkload } from "./team-workload";
 import styles from "./dashboard.module.css";
 
 type DashboardOverviewProps = {
+  isAdministrator: boolean;
   memberName: string;
   now: Date;
   snapshot: DashboardSnapshot;
@@ -43,6 +45,7 @@ function dateLabel(now: Date): string {
 }
 
 export function DashboardOverview({
+  isAdministrator,
   memberName,
   now,
   snapshot
@@ -89,6 +92,20 @@ export function DashboardOverview({
           tone="warning"
           href="/tasks?view=all&origin=EMAIL_REPLY&scope=open"
         />
+        {isAdministrator ? (
+          <MetricCard
+            label="待分配用户"
+            value={metrics.unassignedUsers.toLocaleString("zh-CN")}
+            note={
+              metrics.unassignedUsers
+                ? "需要确认地区或指定运营"
+                : "所有用户均已有负责人"
+            }
+            icon={UserRoundPlus}
+            tone={metrics.unassignedUsers ? "warning" : "positive"}
+            href="/users?ownerId=__UNASSIGNED__"
+          />
+        ) : null}
         <MetricCard
           label="7 日召回转化"
           value={

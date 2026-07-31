@@ -108,6 +108,28 @@ describe("mail asset routes", () => {
     });
   });
 
+  it("returns service unavailable when asset storage is not configured", async () => {
+    mocks.createMailAsset.mockRejectedValue(
+      new mocks.MailAssetServiceError(
+        "MAIL_ASSET_STORAGE_UNAVAILABLE"
+      )
+    );
+    const { POST } = await import("@/app/api/mail/assets/route");
+
+    const response = await POST(
+      uploadRequest(
+        new File([Buffer.from("png")], "guide.png", {
+          type: "image/png"
+        })
+      )
+    );
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({
+      code: "MAIL_ASSET_STORAGE_UNAVAILABLE"
+    });
+  });
+
   it("streams an authorized asset with safe headers", async () => {
     mocks.readMailAsset.mockResolvedValue({
       asset: {

@@ -5,7 +5,7 @@ import {
 } from "@/modules/mail/rich-content";
 
 describe("safe mail HTML", () => {
-  it("keeps useful formatting and controlled inline assets", () => {
+  it("keeps useful formatting, inline assets, and HTTPS images", () => {
     const result = sanitizeMailHtml(`
       <p>你好，<strong>欢迎使用</strong></p>
       <ul><li>第一步</li></ul>
@@ -21,21 +21,21 @@ describe("safe mail HTML", () => {
     expect(result).toContain("<ul><li>第一步</li></ul>");
     expect(result).toContain('data-mail-asset-id="asset-1"');
     expect(result).toContain('alt="操作说明"');
-    expect(result).not.toContain("tracker.example");
+    expect(result).toContain("https://tracker.example/pixel");
     expect(result).not.toContain("onerror");
   });
 
-  it("removes scripts, forms, iframes, styles, and unsafe links", () => {
+  it("removes active content, unsafe styles, and unsafe links", () => {
     const result = sanitizeMailHtml(`
       <script>alert(1)</script>
       <form><input value="secret"></form>
       <iframe src="https://unsafe.example"></iframe>
-      <p style="position:fixed">正文</p>
+      <p style="background:expression(alert(2))">正文</p>
       <a href="javascript:alert(1)">危险链接</a>
     `);
 
     expect(result).not.toMatch(
-      /script|form|input|iframe|style=|javascript:/i
+      /script|form|input|iframe|expression|javascript:/i
     );
     expect(result).toContain("正文");
     expect(result).toContain("危险链接");

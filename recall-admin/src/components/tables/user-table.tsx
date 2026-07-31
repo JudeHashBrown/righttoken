@@ -1,7 +1,11 @@
 import Link from "next/link";
 import type { UserListItem } from "@/modules/users/user-queries";
 import styles from "@/components/workspaces/workspace.module.css";
+import { UserAssignmentControl } from "@/components/users/user-assignment-control";
 import { UserOwnerControl } from "@/components/users/user-owner-control";
+import {
+  TableHeaderFilter
+} from "@/components/tables/table-header-filter";
 import { presentServiceAnomaly } from "@/modules/anomalies/presentation";
 import {
   locationAssignmentLabel,
@@ -18,6 +22,16 @@ type UserTableProps = {
     id: string;
     displayName: string;
   }>;
+  headerFilters?: {
+    formId?: string;
+    region: string;
+    regions: string[];
+    ownerId: string;
+    owners: Array<{
+      id: string;
+      displayName: string;
+    }>;
+  };
 };
 
 function dateTime(value: Date | null): string {
@@ -43,7 +57,8 @@ function money(minor: number): string {
 export function UserTable({
   users,
   canManageOwners = false,
-  members = []
+  members = [],
+  headerFilters
 }: UserTableProps): React.JSX.Element {
   if (users.length === 0) {
     return (
@@ -61,10 +76,54 @@ export function UserTable({
           <tr>
             <th>分组</th>
             <th>用户</th>
-            <th>地区</th>
+            <th>
+              {headerFilters ? (
+                <TableHeaderFilter
+                  formId={headerFilters.formId}
+                  label="地区"
+                  name="region"
+                  options={[
+                    { value: "", label: "全部地区" },
+                    {
+                      value: "__UNRECOGNIZED__",
+                      label: "未识别"
+                    },
+                    ...headerFilters.regions.map((region) => ({
+                      value: region,
+                      label: region
+                    }))
+                  ]}
+                  value={headerFilters.region}
+                />
+              ) : (
+                "地区"
+              )}
+            </th>
             <th>支付与余额</th>
             <th>调用情况</th>
-            <th>负责人</th>
+            <th>
+              {headerFilters?.owners.length ? (
+                <TableHeaderFilter
+                  formId={headerFilters.formId}
+                  label="负责人"
+                  name="ownerId"
+                  options={[
+                    { value: "", label: "全部负责人" },
+                    {
+                      value: "__UNASSIGNED__",
+                      label: "未分配"
+                    },
+                    ...headerFilters.owners.map((owner) => ({
+                      value: owner.id,
+                      label: owner.displayName
+                    }))
+                  ]}
+                  value={headerFilters.ownerId}
+                />
+              ) : (
+                "负责人"
+              )}
+            </th>
             <th>下一任务</th>
             <th>最后事件</th>
           </tr>
@@ -135,17 +194,26 @@ export function UserTable({
                 <td>
                   <strong>{ownerDisplayName(user.owner)}</strong>
                   <span className={styles.secondaryText}>
-                    {ownerAssignmentLabel(
-                      user.ownerAssignmentMode
-                    )}
+                    {user.ownerId
+                      ? ownerAssignmentLabel(
+                          user.ownerAssignmentMode
+                        )
+                      : "等待管理员分配"}
                   </span>
-                  {canManageOwners ? (
+                  {canManageOwners && user.ownerId ? (
                     <UserOwnerControl
                       compact
                       userId={user.id}
                       currentOwnerId={user.ownerId}
                       currentOwnerName={ownerDisplayName(user.owner)}
                       assignmentMode={user.ownerAssignmentMode}
+                      members={members}
+                    />
+                  ) : canManageOwners ? (
+                    <UserAssignmentControl
+                      userId={user.id}
+                      currentCountryCode={user.countryCode}
+                      currentRegion={user.region}
                       members={members}
                     />
                   ) : null}

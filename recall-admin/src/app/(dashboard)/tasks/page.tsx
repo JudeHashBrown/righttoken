@@ -30,6 +30,16 @@ function first(value: string | string[] | undefined): string {
   return Array.isArray(value) ? value[0] ?? "" : value ?? "";
 }
 
+function preservedParams(
+  params: Record<string, string | string[] | undefined>,
+  excluded: string[]
+): Array<[string, string]> {
+  return Object.entries(params).flatMap(([key, value]) => {
+    const item = first(value);
+    return item && !excluded.includes(key) ? [[key, item]] : [];
+  });
+}
+
 function tabHref(
   params: Record<string, string | string[] | undefined>,
   view: TaskView
@@ -135,6 +145,16 @@ export default async function TasksPage({
 
       <form className={styles.filterBar}>
         <input name="view" type="hidden" value={view} />
+        {segment ? (
+          <input name="segment" type="hidden" value={segment} />
+        ) : null}
+        {first(params.assigneeId) ? (
+          <input
+            name="assigneeId"
+            type="hidden"
+            value={first(params.assigneeId)}
+          />
+        ) : null}
         {first(params.due) ? (
           <input
             name="due"
@@ -198,42 +218,6 @@ export default async function TasksPage({
             <option value="CANCELLED">已取消</option>
           </select>
         </div>
-        <div className={styles.field}>
-          <label htmlFor="task-segment">分组</label>
-          <select
-            className={styles.select}
-            defaultValue={segment}
-            id="task-segment"
-            name="segment"
-          >
-            <option value="">全部分组</option>
-            {(["A", "B", "C", "D", "E", "F", "G"] as const).map(
-              (value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              )
-            )}
-          </select>
-        </div>
-        {operators.length ? (
-          <div className={styles.field}>
-            <label htmlFor="task-assignee">负责人</label>
-            <select
-              className={styles.select}
-              defaultValue={first(params.assigneeId)}
-              id="task-assignee"
-              name="assigneeId"
-            >
-              <option value="">全部负责人</option>
-              {operators.map((operator) => (
-                <option key={operator.id} value={operator.id}>
-                  {operator.displayName}
-                </option>
-              ))}
-            </select>
-          </div>
-        ) : null}
         <button className={styles.button} type="submit">
           应用筛选
         </button>
@@ -252,7 +236,28 @@ export default async function TasksPage({
             <p>本页 {page.items.length} 项任务</p>
           </div>
         </div>
-        <TaskTable now={now} tasks={page.items} />
+        <form action="/tasks" id="task-table-filters">
+          {preservedParams(params, [
+            "cursor",
+            "segment",
+            "assigneeId"
+          ]).map(([name, value]) => (
+            <input key={name} name={name} type="hidden" value={value} />
+          ))}
+          {!first(params.view) ? (
+            <input name="view" type="hidden" value={view} />
+          ) : null}
+        </form>
+        <TaskTable
+          headerFilters={{
+            formId: "task-table-filters",
+            segment,
+            assigneeId: first(params.assigneeId),
+            assignees: operators
+          }}
+          now={now}
+          tasks={page.items}
+        />
       </section>
 
       {page.nextCursor ? (

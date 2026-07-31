@@ -93,9 +93,9 @@ export default async function AssignmentRulesPage(): Promise<React.JSX.Element> 
           <small>包含管理员和运营人员</small>
         </div>
         <div className={styles.statCard}>
-          <span>主管理员暂管</span>
+          <span>待分配任务</span>
           <strong>{overview.publicPoolTasks}</strong>
-          <small>历史任务或资料异常时交由主管理员</small>
+          <small>尚未匹配运营人员的任务</small>
         </div>
       </div>
 

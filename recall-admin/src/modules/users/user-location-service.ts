@@ -149,13 +149,12 @@ async function recalculateAutomaticOwner(
     { forceAutomatic: true }
   );
   const ownerChanged =
-    Boolean(decision.assigneeId) &&
     decision.assigneeId !== input.user.ownerId;
   const transferredTasks = ownerChanged
     ? await transferOpenUserTasks(tx, {
         userId: input.user.id,
         actorId: input.actorId,
-        ownerId: decision.assigneeId!,
+        ownerId: decision.assigneeId,
         reason: input.reason,
         now: input.now,
         source: "user_location_change"

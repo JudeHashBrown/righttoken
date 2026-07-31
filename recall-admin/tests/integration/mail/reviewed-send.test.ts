@@ -173,6 +173,39 @@ describe("reviewed user mail", () => {
     });
   });
 
+  it("derives the SMTP text alternative from sanitized HTML", async () => {
+    const adapter = {
+      send: vi.fn().mockResolvedValue({
+        providerMessageId: "<canonical-text@example.test>"
+      })
+    };
+
+    const { message } = await sendReviewedMail(
+      {
+        actorId: memberId,
+        mailboxId,
+        userId,
+        taskId,
+        recipient: userEmail,
+        subject: "HTML 文本版本检查",
+        bodyText: "这段旧文本不应发送",
+        bodyHtml:
+          "<!DOCTYPE html><html><body><h1>实际 HTML 正文</h1><script>alert(1)</script></body></html>",
+        minimumContactIntervalMinutes: 0,
+        now: new Date("2026-07-24T09:30:00.000Z")
+      },
+      adapter
+    );
+
+    expect(adapter.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: "实际 HTML 正文",
+        html: expect.not.stringContaining("<script")
+      })
+    );
+    expect(message.bodyText).toBe("实际 HTML 正文");
+  });
+
   it("blocks a manually entered address on the suppression list", async () => {
     const recipient = `suppressed-${randomUUID()}@example.test`;
     await prisma.suppressionEntry.create({
