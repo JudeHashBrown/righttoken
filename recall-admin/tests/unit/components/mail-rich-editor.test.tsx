@@ -157,4 +157,199 @@ describe("MailRichEditor", () => {
       "初始正文"
     );
   });
+
+  it("edits complete HTML source and derives text through preview", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          html:
+            "<!DOCTYPE html><html><body><h1>欢迎回来</h1></body></html>",
+          text: "欢迎回来",
+          diagnostics: {
+            removedTags: [],
+            removedAttributes: [],
+            blockedUrls: 0,
+            externalImageCount: 0,
+            hasDangerousContent: false
+          },
+          visualEditorCompatible: false,
+          unresolvedVariables: [],
+          canSend: true
+        })
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<Harness />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "HTML 源码" })
+    );
+    fireEvent.change(screen.getByLabelText("HTML 邮件源码"), {
+      target: {
+        value:
+          "<!DOCTYPE html><html><body><h1>欢迎回来</h1></body></html>"
+      }
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("value")).toHaveTextContent(
+        '"bodyText":"欢迎回来"'
+      );
+    });
+    expect(screen.getByTestId("value")).toHaveTextContent(
+      "<!DOCTYPE html>"
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/mail/preview",
+      expect.objectContaining({ method: "POST" })
+    );
+  });
+
+  it("shows the server-rendered preview in a scriptless iframe", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            html: "<p>最终内容</p>",
+            text: "最终内容",
+            diagnostics: {
+              removedTags: ["script"],
+              removedAttributes: [],
+              blockedUrls: 0,
+              externalImageCount: 1,
+              hasDangerousContent: true
+            },
+            visualEditorCompatible: true,
+            unresolvedVariables: [],
+            canSend: true
+          })
+      })
+    );
+    render(<Harness />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "发送预览" })
+    );
+
+    const frame = await screen.findByTitle(
+      "HTML 邮件发送预览"
+    );
+    expect(frame).toHaveAttribute("sandbox", "");
+    expect(frame).toHaveAttribute("srcdoc", "<p>最终内容</p>");
+    expect(
+      screen.getByText("含 1 张 HTTPS 外链图片")
+    ).toBeInTheDocument();
+  });
+
+  it("warns before a complex source is simplified in visual mode", async () => {
+    const confirm = vi.fn().mockReturnValue(false);
+    vi.stubGlobal("confirm", confirm);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            html:
+              "<html><head><style>.x{color:red}</style></head><body><table><tbody><tr><td>复杂</td></tr></tbody></table></body></html>",
+            text: "复杂",
+            diagnostics: {
+              removedTags: [],
+              removedAttributes: [],
+              blockedUrls: 0,
+              externalImageCount: 0,
+              hasDangerousContent: false
+            },
+            visualEditorCompatible: false,
+            unresolvedVariables: [],
+            canSend: true
+          })
+      })
+    );
+    render(<Harness />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "HTML 源码" })
+    );
+    fireEvent.change(screen.getByLabelText("HTML 邮件源码"), {
+      target: {
+        value:
+          "<html><head><style>.x{color:red}</style></head><body><table><tr><td>复杂</td></tr></table></body></html>"
+      }
+    });
+    await waitFor(() =>
+      expect(screen.getByTestId("value")).toHaveTextContent(
+        '"bodyText":"复杂"'
+      )
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "可视化编辑" })
+    );
+    expect(confirm).toHaveBeenCalled();
+    expect(
+      screen.getByLabelText("HTML 邮件源码")
+    ).toBeInTheDocument();
+
+    confirm.mockReturnValue(true);
+    fireEvent.click(
+      screen.getByRole("button", { name: "可视化编辑" })
+    );
+    expect(
+      screen.queryByLabelText("HTML 邮件源码")
+    ).not.toBeInTheDocument();
+  });
+
+  it("imports a local HTML document into source mode", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            html:
+              "<!DOCTYPE html><html><body><p>导入内容</p></body></html>",
+            text: "导入内容",
+            diagnostics: {
+              removedTags: [],
+              removedAttributes: [],
+              blockedUrls: 0,
+              externalImageCount: 0,
+              hasDangerousContent: false
+            },
+            visualEditorCompatible: false,
+            unresolvedVariables: [],
+            canSend: true
+          })
+      })
+    );
+    render(<Harness />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "HTML 源码" })
+    );
+
+    fireEvent.change(screen.getByLabelText("选择 HTML 文件"), {
+      target: {
+        files: [
+          new File(
+            [
+              "<!DOCTYPE html><html><body><p>导入内容</p></body></html>"
+            ],
+            "welcome.html",
+            { type: "text/html" }
+          )
+        ]
+      }
+    });
+
+    await waitFor(() =>
+      expect(
+        screen.getByLabelText("HTML 邮件源码")
+      ).toHaveValue(
+        "<!DOCTYPE html><html><body><p>导入内容</p></body></html>"
+      )
+    );
+  });
 });
