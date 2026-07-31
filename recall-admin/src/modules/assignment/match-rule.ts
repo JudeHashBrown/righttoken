@@ -312,29 +312,8 @@ export function matchRule(
   user: AssignmentUserContext,
   rules: AssignmentRuleInput[],
   workload: AssignmentWorkload,
-  now = new Date(),
-  defaultAssigneeId: string | null = null
+  now = new Date()
 ): RuleAssignmentDecision {
-  const defaultDecision = (
-    reason: string
-  ): RuleAssignmentDecision | null => {
-    if (
-      !defaultAssigneeId ||
-      !isAvailable(workload[defaultAssigneeId], null)
-    ) {
-      return null;
-    }
-    return {
-      assigneeId: defaultAssigneeId,
-      poolKey: "default-owner",
-      matchedRuleId: null,
-      matchedRuleName: null,
-      matchedRulePriority: null,
-      usedFallback: true,
-      matchedConditions: [],
-      assignmentReason: `${reason}；转交系统默认负责人`
-    };
-  };
   const geographicSpecificity = (
     rule: AssignmentRuleInput
   ): number =>
@@ -409,8 +388,7 @@ export function matchRule(
       };
     }
 
-    return (
-      defaultDecision(`${baseReason}；规则负责人当前不可用`) ?? {
+    return {
       assigneeId: null,
       poolKey: rule.poolKey ?? "public",
       matchedRuleId: rule.id ?? null,
@@ -419,12 +397,10 @@ export function matchRule(
       usedFallback: false,
       matchedConditions: descriptions,
       assignmentReason: `${baseReason}；进入公共池`
-      }
-    );
+    };
   }
 
-  return (
-    defaultDecision("没有规则命中") ?? {
+  return {
     assigneeId: null,
     poolKey: "public",
     matchedRuleId: null,
@@ -433,6 +409,5 @@ export function matchRule(
     usedFallback: false,
     matchedConditions: [],
     assignmentReason: "没有规则命中；进入公共池"
-    }
-  );
+  };
 }

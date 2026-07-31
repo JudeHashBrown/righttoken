@@ -54,26 +54,19 @@ function workload(
 }
 
 describe("ordered assignment rule matching", () => {
-  it("assigns unmatched users to the system default owner", () => {
+  it("keeps unmatched users unassigned", () => {
     expect(
       matchRule(
         user({ countryCode: "ZZ" }),
         [],
-        {
-          "primary-admin": {
-            active: true,
-            withinWorkHours: true,
-            openTaskCount: 3
-          }
-        },
-        new Date("2026-07-25T00:00:00.000Z"),
-        "primary-admin"
+        {},
+        new Date("2026-07-25T00:00:00.000Z")
       )
     ).toMatchObject({
-      assigneeId: "primary-admin",
-      poolKey: "default-owner",
-      usedFallback: true,
-      assignmentReason: expect.stringContaining("系统默认负责人")
+      assigneeId: null,
+      poolKey: "public",
+      usedFallback: false,
+      assignmentReason: "没有规则命中；进入公共池"
     });
   });
 
