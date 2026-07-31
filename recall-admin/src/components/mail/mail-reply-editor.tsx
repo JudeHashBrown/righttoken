@@ -310,6 +310,8 @@ export function MailReplyEditor({
       {showTemplateCreator ? (
         <MailTemplateManager
           initialBody={content.bodyText}
+          initialHtml={content.bodyHtml}
+          initialAssets={content.assets}
           initialSubject={subject}
           onClose={() => setShowTemplateCreator(false)}
           onSaved={() => router.refresh()}
@@ -337,6 +339,7 @@ export function MailReplyEditor({
             setContent(nextContent);
             setDirty(true);
           }}
+          subject={subject}
           value={content}
         />
         {suppressed ? (

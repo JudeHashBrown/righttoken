@@ -43,6 +43,8 @@ type ComposerTemplate = {
   name: string;
   subject: string;
   bodyText: string;
+  bodyHtml: string;
+  assets: MailRichContent["assets"];
 };
 
 type AudienceMode = "USER" | "SEGMENT" | "ALL";
@@ -448,7 +450,11 @@ export function MailComposer({
       return;
     }
     setSubject(template.subject);
-    setContent(initialRichContent(template.bodyText));
+    setContent({
+      bodyHtml: template.bodyHtml,
+      bodyText: template.bodyText,
+      assets: template.assets
+    });
   }
 
   return (
@@ -674,6 +680,7 @@ export function MailComposer({
           idPrefix="mail"
           label="邮件正文"
           onChange={setContent}
+          subject={subject}
           value={content}
         />
 

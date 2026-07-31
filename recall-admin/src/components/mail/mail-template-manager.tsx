@@ -4,12 +4,15 @@ import { useState, type FormEvent } from "react";
 import styles from "@/components/workspaces/workspace.module.css";
 import {
   MailRichEditor,
+  type MailEditorAsset,
   type MailRichContent
 } from "@/components/mail/mail-rich-editor";
 
 type Props = {
   initialSubject: string;
   initialBody: string;
+  initialHtml?: string;
+  initialAssets?: MailEditorAsset[];
   onClose(): void;
   onSaved(): void;
 };
@@ -17,20 +20,24 @@ type Props = {
 export function MailTemplateManager({
   initialSubject,
   initialBody,
+  initialHtml,
+  initialAssets = [],
   onClose,
   onSaved
 }: Props): React.JSX.Element {
   const [name, setName] = useState("");
   const [subject, setSubject] = useState(initialSubject);
   const [content, setContent] = useState<MailRichContent>({
-    bodyHtml: initialBody
-      ? `<p>${initialBody
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")}</p>`
-      : "",
+    bodyHtml:
+      initialHtml ??
+      (initialBody
+        ? `<p>${initialBody
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")}</p>`
+        : ""),
     bodyText: initialBody,
-    assets: []
+    assets: initialAssets
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -115,6 +122,7 @@ export function MailTemplateManager({
         idPrefix="new-template"
         label="邮件正文"
         onChange={setContent}
+        subject={subject}
         value={content}
       />
       {error ? (

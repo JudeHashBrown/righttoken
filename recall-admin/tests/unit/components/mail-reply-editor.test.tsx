@@ -191,4 +191,75 @@ describe("MailReplyEditor", () => {
       screen.getByRole("button", { name: "发送回复" })
     ).toBeDisabled();
   });
+
+  it("preserves a complete HTML template when replying", async () => {
+    const bodyHtml =
+      '<!DOCTYPE html><html><head><style>.reply{color:#2563eb}</style></head><body><table><tbody><tr><td class="reply">完整回复</td></tr></tbody></table></body></html>';
+    const fetchMock = vi.fn().mockImplementation(
+      async (url: string) => {
+        if (url === "/api/mail/preview") {
+          return {
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                html: bodyHtml,
+                text: "完整回复",
+                diagnostics: {
+                  removedTags: [],
+                  removedAttributes: [],
+                  blockedUrls: 0,
+                  externalImageCount: 0,
+                  hasDangerousContent: false
+                },
+                visualEditorCompatible: false,
+                unresolvedVariables: [],
+                canSend: true
+              })
+          };
+        }
+        return {
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              message: { id: "sent-html", status: "SENT" }
+            })
+        };
+      }
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    render(
+      <MailReplyEditor
+        thread={thread}
+        templates={[
+          {
+            ...templates[0],
+            bodyText: "完整回复",
+            bodyHtml,
+            assets: []
+          }
+        ]}
+        canArchiveTemplates={false}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("tab", { name: "支付协助" }));
+    expect(screen.getByLabelText("HTML 邮件源码")).toHaveValue(
+      bodyHtml
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "发送回复" })
+    );
+    await waitFor(() =>
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/mail/reply",
+        expect.objectContaining({ method: "POST" })
+      )
+    );
+    const request = fetchMock.mock.calls.find(
+      ([url]) => url === "/api/mail/reply"
+    )?.[1] as RequestInit;
+    expect(request.body).toContain(
+      JSON.stringify(bodyHtml).slice(1, -1)
+    );
+  });
 });

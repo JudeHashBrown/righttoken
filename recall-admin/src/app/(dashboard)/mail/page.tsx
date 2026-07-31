@@ -134,7 +134,9 @@ export default async function MailPage({
                   id: template.id,
                   name: template.name,
                   subject: template.subject,
-                  bodyText: template.bodyText
+                  bodyText: template.bodyText,
+                  bodyHtml: template.bodyHtml,
+                  assets: template.assets
                 }))}
               initialUserId={
                 composeContext.selectedUser?.id ?? null

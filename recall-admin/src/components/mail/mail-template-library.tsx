@@ -280,6 +280,7 @@ export function MailTemplateLibrary({
                 idPrefix="library-template"
                 label="邮件正文"
                 onChange={changeContent}
+                subject={subject}
                 value={content}
               />
               {error ? (
