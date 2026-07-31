@@ -174,7 +174,9 @@ function uploadError(code: string | undefined): string {
       "图片格式不支持，请上传 JPG、PNG 或 WebP",
     MAIL_IMAGE_TOO_LARGE: "单张图片不能超过 5 MB",
     MAIL_IMAGE_INVALID: "图片无法识别，请重新选择",
-    MAIL_ASSET_INVALID_FILE: "请选择有效的图片文件"
+    MAIL_ASSET_INVALID_FILE: "请选择有效的图片文件",
+    MAIL_ASSET_STORAGE_UNAVAILABLE:
+      "图片存储暂不可用，请联系管理员"
   };
   return messages[code ?? ""] ?? "图片上传失败，请重试";
 }

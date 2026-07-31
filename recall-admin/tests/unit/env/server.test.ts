@@ -141,6 +141,34 @@ describe("parseServerEnv", () => {
     ).toThrow("AUTH_MODE=development is forbidden in production");
   });
 
+  it("requires complete S3 mail asset storage in production", () => {
+    const production = {
+      ...baseEnv,
+      DEPLOYMENT_ENV: "production",
+      NODE_ENV: "production",
+      AUTH_MODE: "righttoken",
+      RIGHTTOKEN_ISSUER: "https://righttoken.ai",
+      RIGHTTOKEN_AUDIENCE: "righttoken-recall",
+      RIGHTTOKEN_SSO_SECRET: "r".repeat(32),
+      RIGHTTOKEN_ADMIN_URL: "https://righttoken.ai/user-operations"
+    };
+
+    expect(() => parseServerEnv(production)).toThrow(
+      "MAIL_ASSET_STORAGE=s3 is required in production"
+    );
+
+    expect(() =>
+      parseServerEnv({
+        ...production,
+        MAIL_ASSET_STORAGE: "s3",
+        MAIL_ASSET_S3_BUCKET: "righttoken-private-mail-assets",
+        MAIL_ASSET_S3_REGION: "ap-southeast-1",
+        MAIL_ASSET_S3_ACCESS_KEY_ID: "access-key",
+        MAIL_ASSET_S3_SECRET_ACCESS_KEY: "secret-key"
+      })
+    ).not.toThrow();
+  });
+
   it("rejects the removed HTTP source mode", () => {
     expect(() =>
       parseServerEnv({
@@ -203,7 +231,14 @@ describe("parseServerEnv", () => {
       "RECALL_RIGHTTOKEN_DASHBOARD_URL",
       "RECALL_RECONCILE_ENABLED",
       "RECALL_GEOIP_MMDB_PATH",
-      "RECALL_GEOIP_RIR_PATH"
+      "RECALL_GEOIP_RIR_PATH",
+      "RECALL_MAIL_ASSET_STORAGE",
+      "RECALL_MAIL_ASSET_S3_BUCKET",
+      "RECALL_MAIL_ASSET_S3_REGION",
+      "RECALL_MAIL_ASSET_S3_ENDPOINT",
+      "RECALL_MAIL_ASSET_S3_FORCE_PATH_STYLE",
+      "RECALL_MAIL_ASSET_S3_ACCESS_KEY_ID",
+      "RECALL_MAIL_ASSET_S3_SECRET_ACCESS_KEY"
     ]) {
       expect(productionExample).toContain(`${name}=`);
     }

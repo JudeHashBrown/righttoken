@@ -163,6 +163,34 @@ describe("MailRichEditor", () => {
     );
   });
 
+  it("explains when image storage is unavailable", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        json: () =>
+          Promise.resolve({
+            code: "MAIL_ASSET_STORAGE_UNAVAILABLE"
+          })
+      })
+    );
+    render(<Harness />);
+
+    fireEvent.change(screen.getByLabelText("选择图片附件"), {
+      target: {
+        files: [
+          new File([Buffer.from("image")], "receipt.png", {
+            type: "image/png"
+          })
+        ]
+      }
+    });
+
+    expect(
+      await screen.findByText("图片存储暂不可用，请联系管理员")
+    ).toBeInTheDocument();
+  });
+
   it("edits complete HTML source and derives text through preview", async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,

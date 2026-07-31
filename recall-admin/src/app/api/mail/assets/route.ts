@@ -25,7 +25,9 @@ function errorResponse(error: unknown): NextResponse {
   }
   if (error instanceof MailAssetServiceError) {
     const status =
-      error.code === "MAIL_IMAGE_UNSUPPORTED"
+      error.code === "MAIL_ASSET_STORAGE_UNAVAILABLE"
+        ? 503
+        : error.code === "MAIL_IMAGE_UNSUPPORTED"
         ? 415
         : error.code === "MAIL_IMAGE_TOO_LARGE"
           ? 413

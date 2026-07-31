@@ -92,6 +92,22 @@ RECALL_SSO_BASE_URL=https://recall.righttoken.ai
 `RIGHTTOKEN_SOURCE_MODE=database` 和 `DEPLOYMENT_ENV=production`；
 发现 `AUTH_MODE=development` 时应用会拒绝启动。
 
+生产邮件正文图片和图片附件必须写入私有 S3 或 S3 兼容对象存储：
+
+```text
+RECALL_MAIL_ASSET_STORAGE=s3
+RECALL_MAIL_ASSET_S3_BUCKET=righttoken-private-mail-assets
+RECALL_MAIL_ASSET_S3_REGION=ap-southeast-1
+RECALL_MAIL_ASSET_S3_ENDPOINT=
+RECALL_MAIL_ASSET_S3_FORCE_PATH_STYLE=false
+RECALL_MAIL_ASSET_S3_ACCESS_KEY_ID=<对象存储访问密钥>
+RECALL_MAIL_ASSET_S3_SECRET_ACCESS_KEY=<对象存储访问密钥 Secret>
+```
+
+存储桶保持私有，只授予召回后台对 `mail-assets/` 前缀执行 PutObject、
+GetObject、HeadObject 和 DeleteObject 的权限。使用 AWS S3 时 endpoint 留空；
+使用兼容服务时填写 HTTPS endpoint，并按服务要求设置 path-style。
+
 ## 5. 数据库迁移与部署
 
 镜像必须使用不可变 Git SHA，不使用 `latest`：
@@ -110,6 +126,10 @@ docker compose \
   -f deploy/docker-compose.recall.yml \
   config --quiet
 ```
+
+该命令必须在缺少任一邮件资产必填变量时失败。服务启动后，使用内部测试邮件
+分别上传一张正文图片和一张图片附件，再打开预览确认两者均可读取；失败时先
+检查 `recall-web` 日志和对象存储权限，不要改为公开桶或生产本地目录。
 
 先只运行数据库迁移：
 

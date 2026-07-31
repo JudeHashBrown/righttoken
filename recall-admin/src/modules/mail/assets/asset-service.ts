@@ -21,6 +21,7 @@ export type MailAssetServiceErrorCode =
   | "MAIL_IMAGE_TOO_LARGE"
   | "MAIL_IMAGE_INVALID"
   | "MAIL_ASSET_INVALID_FILE"
+  | "MAIL_ASSET_STORAGE_UNAVAILABLE"
   | "MAIL_ASSET_NOT_FOUND"
   | "MAIL_ASSET_MISSING";
 
@@ -103,12 +104,19 @@ export async function createMailAsset(
   },
   dependencies?: CreateDependencies
 ): Promise<AssetRecord> {
-  const runtime: CreateDependencies = dependencies ?? {
-    database: prisma,
-    storage: getMailAssetStorage(),
-    normalize: normalizeMailImage,
-    randomId: randomUUID
-  };
+  let runtime: CreateDependencies;
+  try {
+    runtime = dependencies ?? {
+      database: prisma,
+      storage: getMailAssetStorage(),
+      normalize: normalizeMailImage,
+      randomId: randomUUID
+    };
+  } catch {
+    throw new MailAssetServiceError(
+      "MAIL_ASSET_STORAGE_UNAVAILABLE"
+    );
+  }
   if (!(input.file instanceof File) || input.file.size === 0) {
     throw new MailAssetServiceError("MAIL_ASSET_INVALID_FILE");
   }
@@ -127,11 +135,17 @@ export async function createMailAsset(
   const storageKey = `mail-assets/${runtime.randomId()}.${
     normalized.extension
   }`;
-  await runtime.storage.put(
-    storageKey,
-    normalized.bytes,
-    normalized.contentType
-  );
+  try {
+    await runtime.storage.put(
+      storageKey,
+      normalized.bytes,
+      normalized.contentType
+    );
+  } catch {
+    throw new MailAssetServiceError(
+      "MAIL_ASSET_STORAGE_UNAVAILABLE"
+    );
+  }
   try {
     return await runtime.database.mailAsset.create({
       data: {
