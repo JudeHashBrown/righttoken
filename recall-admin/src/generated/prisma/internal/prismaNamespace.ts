@@ -402,6 +402,7 @@ export const ModelName = {
   Session: 'Session',
   UserProfile: 'UserProfile',
   UserEvent: 'UserEvent',
+  SiteVisit: 'SiteVisit',
   SegmentHistory: 'SegmentHistory',
   SegmentOverride: 'SegmentOverride',
   UserNote: 'UserNote',
@@ -445,7 +446,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "member" | "ssoTicketRedemption" | "session" | "userProfile" | "userEvent" | "segmentHistory" | "segmentOverride" | "userNote" | "automationRuleVersion" | "segmentRecalculationRun" | "assignmentRule" | "assignmentRecalculationRun" | "locationAttributionRule" | "locationRecalculationRun" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "mailAsset" | "mailTemplateAsset" | "mailMessageAsset" | "mailBatch" | "mailBatchRecipient" | "mailBatchAsset" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
+    modelProps: "member" | "ssoTicketRedemption" | "session" | "userProfile" | "userEvent" | "siteVisit" | "segmentHistory" | "segmentOverride" | "userNote" | "automationRuleVersion" | "segmentRecalculationRun" | "assignmentRule" | "assignmentRecalculationRun" | "locationAttributionRule" | "locationRecalculationRun" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "mailAsset" | "mailTemplateAsset" | "mailMessageAsset" | "mailBatch" | "mailBatchRecipient" | "mailBatchAsset" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -816,6 +817,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserEventCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserEventCountAggregateOutputType> | number
+        }
+      }
+    }
+    SiteVisit: {
+      payload: Prisma.$SiteVisitPayload<ExtArgs>
+      fields: Prisma.SiteVisitFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SiteVisitFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteVisitPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SiteVisitFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteVisitPayload>
+        }
+        findFirst: {
+          args: Prisma.SiteVisitFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteVisitPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SiteVisitFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteVisitPayload>
+        }
+        findMany: {
+          args: Prisma.SiteVisitFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteVisitPayload>[]
+        }
+        create: {
+          args: Prisma.SiteVisitCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteVisitPayload>
+        }
+        createMany: {
+          args: Prisma.SiteVisitCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SiteVisitCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteVisitPayload>[]
+        }
+        delete: {
+          args: Prisma.SiteVisitDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteVisitPayload>
+        }
+        update: {
+          args: Prisma.SiteVisitUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteVisitPayload>
+        }
+        deleteMany: {
+          args: Prisma.SiteVisitDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SiteVisitUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SiteVisitUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteVisitPayload>[]
+        }
+        upsert: {
+          args: Prisma.SiteVisitUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteVisitPayload>
+        }
+        aggregate: {
+          args: Prisma.SiteVisitAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSiteVisit>
+        }
+        groupBy: {
+          args: Prisma.SiteVisitGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SiteVisitGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SiteVisitCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SiteVisitCountAggregateOutputType> | number
         }
       }
     }
@@ -3055,6 +3130,21 @@ export const UserEventScalarFieldEnum = {
 export type UserEventScalarFieldEnum = (typeof UserEventScalarFieldEnum)[keyof typeof UserEventScalarFieldEnum]
 
 
+export const SiteVisitScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  occurredAt: 'occurredAt',
+  visitDate: 'visitDate',
+  visitorHash: 'visitorHash',
+  countryCode: 'countryCode',
+  region: 'region',
+  path: 'path',
+  createdAt: 'createdAt'
+} as const
+
+export type SiteVisitScalarFieldEnum = (typeof SiteVisitScalarFieldEnum)[keyof typeof SiteVisitScalarFieldEnum]
+
+
 export const SegmentHistoryScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -4070,6 +4160,7 @@ export type GlobalOmitConfig = {
   session?: Prisma.SessionOmit
   userProfile?: Prisma.UserProfileOmit
   userEvent?: Prisma.UserEventOmit
+  siteVisit?: Prisma.SiteVisitOmit
   segmentHistory?: Prisma.SegmentHistoryOmit
   segmentOverride?: Prisma.SegmentOverrideOmit
   userNote?: Prisma.UserNoteOmit

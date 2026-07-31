@@ -330,6 +330,23 @@ model UserEvent {
   @@schema("recall")
 }
 
+model SiteVisit {
+  id          String   @id @default(cuid())
+  eventId     String   @unique
+  occurredAt  DateTime
+  visitDate   DateTime @db.Date
+  visitorHash String
+  countryCode String   @default("ZZ")
+  region      String?
+  path        String
+  createdAt   DateTime @default(now())
+
+  @@index([visitDate, visitorHash])
+  @@index([visitDate, countryCode])
+  @@index([visitDate, countryCode, region])
+  @@schema("recall")
+}
+
 model SegmentHistory {
   id          String       @id @default(cuid())
   userId      String
