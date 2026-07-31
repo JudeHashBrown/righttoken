@@ -57,6 +57,7 @@ const serverEnvSchema = z
         (value) => Buffer.from(value, "base64").length === 32,
         "must decode to 32 bytes"
       ),
+    VISITOR_HASH_KEY: z.string().min(32),
     APP_URL: z.string().url(),
     AUTH_MODE: z
       .enum(["development", "righttoken"])

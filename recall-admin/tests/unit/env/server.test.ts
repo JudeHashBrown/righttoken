@@ -8,6 +8,7 @@ const baseEnv = {
   JOB_DATABASE_URL: "postgresql://app:app@db:5432/righttoken_recall",
   SESSION_COOKIE_SECRET: "s".repeat(32),
   APP_ENCRYPTION_KEY: Buffer.alloc(32).toString("base64"),
+  VISITOR_HASH_KEY: "v".repeat(32),
   APP_URL: "https://recall.righttoken.ai",
   AUTH_MODE: "development",
   DEPLOYMENT_ENV: "local",
