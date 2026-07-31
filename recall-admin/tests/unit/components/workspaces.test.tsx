@@ -23,6 +23,7 @@ const user = {
   registeredAt: new Date("2026-07-20T08:00:00.000Z"),
   countryCode: "US",
   region: "California",
+  locationAssignmentMode: "AUTO",
   source: "righttoken-web",
   paymentStatus: "NONE",
   totalPaidMinor: 0,
@@ -31,6 +32,18 @@ const user = {
   balanceMinor: 0,
   currentSegment: "B",
   reasonLabel: "checkout unpaid",
+  anomalyActive: false,
+  anomalyErrorPhase: null,
+  anomalyErrorType: null,
+  anomalyErrorMessage: null,
+  anomalyErrorOwner: null,
+  anomalyStatusCode: null,
+  anomalyModel: null,
+  anomalyPlatform: null,
+  anomalyRequestCount: null,
+  anomalyFailureCount: null,
+  anomalyConsecutiveFailures: null,
+  anomalyLastOccurredAt: null,
   ownerId: "operator-1",
   ownerAssignmentMode: "AUTO",
   ownerAssignedAt: new Date("2026-07-23T08:00:00.000Z"),
@@ -92,6 +105,39 @@ describe("user and task workspaces", () => {
       screen.getByRole("link", { name: /rt-user-1/i })
     ).toHaveAttribute("href", "/users/user-1");
     expect(screen.queryByText(/203\.0\.113/)).not.toBeInTheDocument();
+  });
+
+  it("shows the concrete current anomaly beneath an F segment", () => {
+    render(
+      <UserTable
+        users={[
+          {
+            ...user,
+            currentSegment: "F",
+            anomalyActive: true,
+            anomalyErrorPhase: "upstream",
+            anomalyErrorType: "provider_error",
+            anomalyErrorOwner: "provider",
+            anomalyStatusCode: 502,
+            anomalyModel: "gpt-5",
+            anomalyPlatform: "openai",
+            anomalyRequestCount: 5,
+            anomalyFailureCount: 4,
+            anomalyConsecutiveFailures: 3,
+            anomalyLastOccurredAt: new Date(
+              "2026-07-23T09:54:00.000Z"
+            )
+          } as UserListItem
+        ]}
+      />
+    );
+
+    expect(
+      screen.getByText("上游服务异常 · HTTP 502")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/近30分钟失败 4\/5/)
+    ).toBeInTheDocument();
   });
 
   it("derives available buttons from an in-progress task", () => {

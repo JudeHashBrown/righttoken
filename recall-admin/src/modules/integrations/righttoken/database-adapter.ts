@@ -24,6 +24,17 @@ export type RightTokenUserFactRow = {
   balance_minor: bigint | number | string;
   anomaly_active: boolean;
   anomaly_changed_at: DateValue | null;
+  anomaly_error_phase: string | null;
+  anomaly_error_type: string | null;
+  anomaly_error_message: string | null;
+  anomaly_error_owner: string | null;
+  anomaly_status_code: number | null;
+  anomaly_model: string | null;
+  anomaly_platform: string | null;
+  anomaly_request_count: bigint | number | string | null;
+  anomaly_failure_count: bigint | number | string | null;
+  anomaly_consecutive_failures: bigint | number | string | null;
+  anomaly_last_occurred_at: DateValue | null;
 };
 
 export type RightTokenDatabaseQuery = (
@@ -89,23 +100,26 @@ first_usage_ip AS (
     WHERE NULLIF(ul.ip_address, '') IS NOT NULL
     ORDER BY ul.user_id, ul.created_at ASC, ul.id ASC
 ),
-final_request_events AS (
-    SELECT
-        ul.user_id,
-        ul.created_at,
-        ul.id AS event_id,
-        0 AS source_order,
-        false AS failed
-    FROM public.usage_logs ul
-    JOIN changed_user_ids changed ON changed.user_id = ul.user_id
-    WHERE ul.created_at >= NOW() - INTERVAL '24 hours 30 minutes'
-    UNION ALL
+qualifying_error_logs AS (
     SELECT
         error_log.user_id,
         error_log.created_at,
-        error_log.id AS event_id,
-        1 AS source_order,
-        true AS failed
+        error_log.id,
+        error_log.error_phase,
+        COALESCE(
+            NULLIF(error_log.provider_error_code, ''),
+            NULLIF(error_log.network_error_type, ''),
+            error_log.error_type
+        ) AS error_type,
+        COALESCE(
+            NULLIF(BTRIM(error_log.upstream_error_message), ''),
+            NULLIF(BTRIM(error_log.error_message), ''),
+            NULLIF(BTRIM(error_log.upstream_error_detail), '')
+        ) AS error_message,
+        error_log.error_owner,
+        error_log.status_code,
+        error_log.model,
+        error_log.platform
     FROM public.ops_error_logs error_log
     JOIN changed_user_ids changed
       ON changed.user_id = error_log.user_id
@@ -121,6 +135,25 @@ final_request_events AS (
           'billing_error',
           'subscription_error'
       )
+),
+final_request_events AS (
+    SELECT
+        ul.user_id,
+        ul.created_at,
+        ul.id AS event_id,
+        0 AS source_order,
+        false AS failed
+    FROM public.usage_logs ul
+    JOIN changed_user_ids changed ON changed.user_id = ul.user_id
+    WHERE ul.created_at >= NOW() - INTERVAL '24 hours 30 minutes'
+    UNION ALL
+    SELECT
+        error_event.user_id,
+        error_event.created_at,
+        error_event.id AS event_id,
+        1 AS source_order,
+        true AS failed
+    FROM qualifying_error_logs error_event
 ),
 request_event_transitions AS (
     SELECT
@@ -182,6 +215,9 @@ request_state_markers AS (
         event.created_at,
         event.source_order,
         event.event_id,
+        event.request_count,
+        event.failure_count,
+        event.consecutive_failures,
         CASE
             WHEN event.failed
               AND (
@@ -204,7 +240,10 @@ latest_anomaly_state AS (
     SELECT DISTINCT ON (marker.user_id)
         marker.user_id,
         marker.anomaly_active,
-        marker.created_at AS anomaly_changed_at
+        marker.created_at AS anomaly_changed_at,
+        marker.request_count,
+        marker.failure_count,
+        marker.consecutive_failures
     FROM request_state_markers marker
     WHERE marker.anomaly_active IS NOT NULL
     ORDER BY
@@ -213,14 +252,56 @@ latest_anomaly_state AS (
         marker.source_order DESC,
         marker.event_id DESC
 ),
+latest_qualifying_error AS (
+    SELECT DISTINCT ON (error_event.user_id)
+        error_event.user_id,
+        error_event.created_at,
+        error_event.error_phase,
+        error_event.error_type,
+        error_event.error_message,
+        error_event.error_owner,
+        error_event.status_code,
+        error_event.model,
+        error_event.platform
+    FROM qualifying_error_logs error_event
+    ORDER BY
+        error_event.user_id,
+        error_event.created_at DESC,
+        error_event.id DESC
+),
 anomaly_stats AS (
     SELECT
         state.user_id,
         state.anomaly_active
           AND state.anomaly_changed_at >= NOW() - INTERVAL '24 hours'
           AS anomaly_active,
-        state.anomaly_changed_at
+        state.anomaly_changed_at,
+        CASE WHEN state.anomaly_active
+          THEN latest.error_phase END AS anomaly_error_phase,
+        CASE WHEN state.anomaly_active
+          THEN latest.error_type END AS anomaly_error_type,
+        CASE WHEN state.anomaly_active
+          THEN latest.error_message END AS anomaly_error_message,
+        CASE WHEN state.anomaly_active
+          THEN latest.error_owner END AS anomaly_error_owner,
+        CASE WHEN state.anomaly_active
+          THEN latest.status_code END AS anomaly_status_code,
+        CASE WHEN state.anomaly_active
+          THEN latest.model END AS anomaly_model,
+        CASE WHEN state.anomaly_active
+          THEN latest.platform END AS anomaly_platform,
+        CASE WHEN state.anomaly_active
+          THEN state.request_count END AS anomaly_request_count,
+        CASE WHEN state.anomaly_active
+          THEN state.failure_count END AS anomaly_failure_count,
+        CASE WHEN state.anomaly_active
+          THEN state.consecutive_failures
+          END AS anomaly_consecutive_failures,
+        CASE WHEN state.anomaly_active
+          THEN latest.created_at END AS anomaly_last_occurred_at
     FROM latest_anomaly_state state
+    LEFT JOIN latest_qualifying_error latest
+      ON latest.user_id = state.user_id
 ),
 snapshots AS (
     SELECT
@@ -233,7 +314,8 @@ snapshots AS (
             u.updated_at,
             COALESCE(ps.payment_updated_at, u.updated_at),
             COALESCE(us.last_call_at, u.updated_at),
-            COALESCE(ans.anomaly_changed_at, u.updated_at)
+            COALESCE(ans.anomaly_changed_at, u.updated_at),
+            COALESCE(ans.anomaly_last_occurred_at, u.updated_at)
         ) AS effective_updated_at,
         COALESCE(
             NULLIF(u.registration_ip, ''),
@@ -250,7 +332,18 @@ snapshots AS (
         us.last_call_at,
         ROUND(u.balance * 100)::bigint AS balance_minor,
         COALESCE(ans.anomaly_active, false) AS anomaly_active,
-        ans.anomaly_changed_at
+        ans.anomaly_changed_at,
+        ans.anomaly_error_phase,
+        ans.anomaly_error_type,
+        ans.anomaly_error_message,
+        ans.anomaly_error_owner,
+        ans.anomaly_status_code,
+        ans.anomaly_model,
+        ans.anomaly_platform,
+        ans.anomaly_request_count,
+        ans.anomaly_failure_count,
+        ans.anomaly_consecutive_failures,
+        ans.anomaly_last_occurred_at
     FROM public.users u
     JOIN changed_user_ids changed ON changed.user_id = u.id
     LEFT JOIN payment_stats ps ON ps.user_id = u.id
@@ -275,7 +368,18 @@ SELECT
     last_call_at,
     balance_minor,
     anomaly_active,
-    anomaly_changed_at
+    anomaly_changed_at,
+    anomaly_error_phase,
+    anomaly_error_type,
+    anomaly_error_message,
+    anomaly_error_owner,
+    anomaly_status_code,
+    anomaly_model,
+    anomaly_platform,
+    anomaly_request_count,
+    anomaly_failure_count,
+    anomaly_consecutive_failures,
+    anomaly_last_occurred_at
 FROM snapshots
 ${finalClause}`;
 }
@@ -353,6 +457,11 @@ function safeInteger(value: bigint | number | string): number {
   return result;
 }
 
+function normalizeErrorMessage(value: string | null): string | null {
+  const normalized = value?.replace(/\s+/gu, " ").trim();
+  return normalized ? normalized.slice(0, 500) : null;
+}
+
 function userIdValue(value: bigint | number | string): bigint {
   try {
     return BigInt(value);
@@ -394,6 +503,26 @@ function decodeCursor(raw: string): {
 }
 
 function snapshotFromRow(row: RightTokenUserFactRow): RightTokenUserSnapshot {
+  const anomalyDetail =
+    row.anomaly_active && row.anomaly_last_occurred_at
+      ? {
+          errorPhase: row.anomaly_error_phase,
+          errorType: row.anomaly_error_type,
+          errorMessage: normalizeErrorMessage(
+            row.anomaly_error_message
+          ),
+          errorOwner: row.anomaly_error_owner,
+          statusCode: row.anomaly_status_code,
+          model: row.anomaly_model,
+          platform: row.anomaly_platform,
+          requestCount: safeInteger(row.anomaly_request_count ?? 0),
+          failureCount: safeInteger(row.anomaly_failure_count ?? 0),
+          consecutiveFailures: safeInteger(
+            row.anomaly_consecutive_failures ?? 0
+          ),
+          lastOccurredAt: dateValue(row.anomaly_last_occurred_at)
+        }
+      : null;
   return {
     externalUserId: userIdValue(row.id).toString(),
     email: row.email,
@@ -418,7 +547,8 @@ function snapshotFromRow(row: RightTokenUserFactRow): RightTokenUserSnapshot {
     balanceCurrency: "USD",
     balanceUsdMinor: safeInteger(row.balance_minor),
     anomalyActive: row.anomaly_active,
-    anomalyChangedAt: nullableDateValue(row.anomaly_changed_at)
+    anomalyChangedAt: nullableDateValue(row.anomaly_changed_at),
+    anomalyDetail
   };
 }
 

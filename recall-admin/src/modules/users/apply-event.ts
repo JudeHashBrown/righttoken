@@ -3,6 +3,7 @@ import {
   Prisma,
   type UserProfile
 } from "@/generated/prisma/client";
+import { clearedServiceAnomalyFields } from "@/modules/anomalies/persistence";
 import { prisma } from "@/lib/db/prisma";
 import type { TransactionClient } from "@/lib/db/transaction";
 import { createFieldCipher } from "@/lib/crypto/field-encryption";
@@ -143,6 +144,8 @@ async function applyFacts(
     case "user.profile_updated": {
       if (!user.profileChangedAt || occurredAt >= user.profileChangedAt) {
         const payload = input.payload;
+        const canUpdateOperationalLocation =
+          user.locationAssignmentMode === "AUTO";
         const registrationFields =
           input.event_type === "user.registered" &&
           "registration_ip" in payload
@@ -160,25 +163,31 @@ async function applyFacts(
             ...(payload.display_name !== undefined
               ? { displayName: payload.display_name }
               : {}),
-            ...(registrationLocation?.countryCode ||
-            payload.country_code !== undefined
+            ...(canUpdateOperationalLocation &&
+            (registrationLocation?.countryCode ||
+              payload.country_code !== undefined)
               ? {
                   countryCode:
                     registrationLocation?.countryCode ??
                     payload.country_code
-                }
+                  }
               : {}),
-            ...(registrationLocation?.region ||
-            payload.region !== undefined
+            ...(canUpdateOperationalLocation &&
+            (registrationLocation?.region ||
+              payload.region !== undefined)
               ? {
                   region:
                     registrationLocation?.region ?? payload.region
-                }
+                  }
               : {}),
             ...(registrationLocation
               ? {
                   ipCountryCode: registrationLocation.ipCountryCode,
-                  ipRegion: registrationLocation.ipRegion,
+                  ipRegion: registrationLocation.ipRegion
+                }
+              : {}),
+            ...(canUpdateOperationalLocation && registrationLocation
+              ? {
                   locationSource: registrationLocation.source,
                   locationRuleId: registrationLocation.ruleId,
                   locationEvaluatedAt: new Date()
@@ -320,6 +329,15 @@ async function applyFacts(
           data: {
             anomalyActive,
             anomalyChangedAt: occurredAt,
+            ...clearedServiceAnomalyFields,
+            ...(input.event_type === "service.anomaly" &&
+            "error_message" in input.payload &&
+            input.payload.error_message !== undefined
+              ? {
+                  anomalyErrorMessage:
+                    input.payload.error_message
+                }
+              : {}),
             ...("reason" in input.payload &&
             input.payload.reason !== undefined
               ? { reasonLabel: input.payload.reason }

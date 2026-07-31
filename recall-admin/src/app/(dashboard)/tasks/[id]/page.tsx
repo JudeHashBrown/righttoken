@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { TaskActions } from "@/components/tasks/task-actions";
+import {
+  TaskAnomalyHighlight
+} from "@/components/tasks/task-anomaly-highlight";
 import { UserNoteForm } from "@/components/users/user-note-form";
 import styles from "@/components/workspaces/workspace.module.css";
 import { prisma } from "@/lib/db/prisma";
@@ -19,6 +22,9 @@ import {
   presentTaskStatus
 } from "@/modules/presentation/status";
 import { presentAssignmentReason } from "@/modules/presentation/tasks";
+import {
+  presentTaskServiceAnomaly
+} from "@/modules/anomalies/task-presentation";
 import { presentSegmentReason } from "@/modules/segmentation/present-reason";
 
 function dateTime(value: Date | null): string {
@@ -76,6 +82,12 @@ export default async function TaskDetailPage({
   const actorNames = new Map(
     actors.map((actor) => [actor.id, actor.displayName])
   );
+  const anomaly = presentTaskServiceAnomaly({
+    triggerKey: task.triggerKey,
+    title: task.title,
+    anomalySnapshot: task.anomalySnapshot,
+    user: task.user
+  });
 
   return (
     <main className={styles.page}>
@@ -86,6 +98,9 @@ export default async function TaskDetailPage({
           </Link>
           <h1>{task.title}</h1>
           <p>{presentSegmentReason(task.reason)}</p>
+          {anomaly ? (
+            <TaskAnomalyHighlight anomaly={anomaly} />
+          ) : null}
         </div>
         <div className={styles.headingActions}>
           <span className={styles.status}>

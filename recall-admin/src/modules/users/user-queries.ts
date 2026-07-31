@@ -16,6 +16,7 @@ export type UserFilters = {
   segments?: SegmentCode[];
   countryCode?: string;
   region?: string;
+  locationState?: "unrecognized";
   ownerId?: string;
   source?: string;
   registeredFrom?: Date;
@@ -32,6 +33,7 @@ const userListSelect = {
   registeredAt: true,
   countryCode: true,
   region: true,
+  locationAssignmentMode: true,
   source: true,
   paymentStatus: true,
   totalPaidMinor: true,
@@ -40,6 +42,18 @@ const userListSelect = {
   balanceMinor: true,
   currentSegment: true,
   reasonLabel: true,
+  anomalyActive: true,
+  anomalyErrorPhase: true,
+  anomalyErrorType: true,
+  anomalyErrorMessage: true,
+  anomalyErrorOwner: true,
+  anomalyStatusCode: true,
+  anomalyModel: true,
+  anomalyPlatform: true,
+  anomalyRequestCount: true,
+  anomalyFailureCount: true,
+  anomalyConsecutiveFailures: true,
+  anomalyLastOccurredAt: true,
   ownerId: true,
   ownerAssignmentMode: true,
   ownerAssignedAt: true,
@@ -135,6 +149,12 @@ function buildUserWhere(
               contains: filters.region,
               mode: "insensitive"
             }
+          }
+        : {},
+      filters.locationState === "unrecognized"
+        ? {
+            countryCode: null,
+            region: null
           }
         : {},
       filters.ownerId ? { ownerId: filters.ownerId } : {},
@@ -331,6 +351,12 @@ export async function getUser360(viewer: Viewer, userId: string) {
         }
       },
       ownerAssignedBy: {
+        select: {
+          id: true,
+          displayName: true
+        }
+      },
+      locationAssignedBy: {
         select: {
           id: true,
           displayName: true

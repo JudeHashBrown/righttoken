@@ -30,6 +30,8 @@ describe("scoped mail workspace query", () => {
   let mailboxId: string;
   let ownThreadId: string;
   let otherThreadId: string;
+  let ownSentMessageId: string;
+  let otherSentMessageId: string;
   let templateId: string;
   let inactiveTemplateKey: string;
 
@@ -148,6 +150,43 @@ describe("scoped mail workspace query", () => {
         }
       ]
     });
+    const [ownSentMessage, otherSentMessage] =
+      await Promise.all([
+        prisma.mailMessage.create({
+          data: {
+            mailboxId,
+            threadId: ownThreadId,
+            userId: ownUserId,
+            direction: "OUTBOUND",
+            status: "SENT",
+            providerMessageId: `<workspace-own-sent-${randomUUID()}@example.test>`,
+            references: [],
+            fromAddress: mailbox.emailAddress,
+            toAddresses: [ownEmail],
+            subject: "已发送给当前运营用户",
+            bodyText: "这是当前运营已经发送的完整邮件正文。",
+            sentAt: new Date("2026-07-27T10:00:00.000Z")
+          }
+        }),
+        prisma.mailMessage.create({
+          data: {
+            mailboxId,
+            threadId: otherThreadId,
+            userId: otherUserId,
+            direction: "OUTBOUND",
+            status: "SENT",
+            providerMessageId: `<workspace-other-sent-${randomUUID()}@example.test>`,
+            references: [],
+            fromAddress: mailbox.emailAddress,
+            toAddresses: [otherEmail],
+            subject: "已发送给其他运营用户",
+            bodyText: "这是其他运营已经发送的邮件正文。",
+            sentAt: new Date("2026-07-27T10:30:00.000Z")
+          }
+        })
+      ]);
+    ownSentMessageId = ownSentMessage.id;
+    otherSentMessageId = otherSentMessage.id;
     await prisma.recallTask.createMany({
       data: [
         {
@@ -292,12 +331,12 @@ describe("scoped mail workspace query", () => {
       kind: "thread",
       thread: {
         id: ownThreadId,
-        messages: [
-          {
+        messages: expect.arrayContaining([
+          expect.objectContaining({
             bodyText:
               "这是当前运营负责用户的完整来信正文。"
-          }
-        ]
+          })
+        ])
       }
     });
     expect(
@@ -317,6 +356,53 @@ describe("scoped mail workspace query", () => {
         (template) => template.key === inactiveTemplateKey
       )
     ).toHaveLength(1);
+  });
+
+  it("lists sent messages within scope and returns the selected full message", async () => {
+    const operatorData = await getMailWorkspaceData(
+      { id: operatorId, role: "OPERATOR" },
+      {
+        view: "sent",
+        selectedId: ownSentMessageId,
+        ...noCompose
+      }
+    );
+
+    expect(
+      operatorData.items.some(
+        (item) => item.id === ownSentMessageId
+      )
+    ).toBe(true);
+    expect(
+      operatorData.items.some(
+        (item) => item.id === otherSentMessageId
+      )
+    ).toBe(false);
+    expect(operatorData.stats.sentMessages).toBe(
+      operatorData.items.length
+    );
+    expect(operatorData.selected).toMatchObject({
+      kind: "message",
+      message: {
+        id: ownSentMessageId,
+        bodyText: "这是当前运营已经发送的完整邮件正文。",
+        sentAt: "2026-07-27T10:00:00.000Z"
+      }
+    });
+
+    const adminData = await getMailWorkspaceData(
+      { id: adminId, role: "ADMIN" },
+      {
+        view: "sent",
+        selectedId: null,
+        ...noCompose
+      }
+    );
+    expect(
+      adminData.items.some(
+        (item) => item.id === otherSentMessageId
+      )
+    ).toBe(true);
   });
 
   it("returns operational mailbox status and selected recovery detail", async () => {

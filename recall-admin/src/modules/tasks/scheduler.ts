@@ -32,6 +32,9 @@ export interface TaskScheduler {
   scheduleAssignmentRecalculation?(
     input: { runId: string }
   ): Promise<void>;
+  scheduleMailBatch?(
+    input: { batchId: string }
+  ): Promise<void>;
 }
 
 export const noopTaskScheduler: TaskScheduler = {

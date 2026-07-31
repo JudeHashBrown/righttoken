@@ -2,8 +2,8 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import type { TransactionClient } from "@/lib/db/transaction";
 import { assignUserOwnerInTransaction } from "@/modules/assignment/assign-task";
-import { openTaskStatuses } from "@/modules/tasks/close-obsolete-tasks";
 import { UserOwnerError } from "@/modules/users/owner-errors";
+import { transferOpenUserTasks } from "@/modules/users/transfer-open-user-tasks";
 
 export type OwnerChangeResult = {
   userId: string;
@@ -43,49 +43,6 @@ async function lockUser(
       FOR UPDATE
     `
   );
-}
-
-async function transferOpenTasks(
-  tx: TransactionClient,
-  input: {
-    userId: string;
-    actorId: string;
-    ownerId: string;
-    reason: string;
-    now: Date;
-  }
-): Promise<number> {
-  const tasks = await tx.recallTask.findMany({
-    where: {
-      userId: input.userId,
-      status: { in: openTaskStatuses }
-    },
-    select: { id: true, assigneeId: true }
-  });
-  if (tasks.length === 0) {
-    return 0;
-  }
-
-  const taskIds = tasks.map((task) => task.id);
-  await tx.recallTask.updateMany({
-    where: { id: { in: taskIds } },
-    data: { assigneeId: input.ownerId }
-  });
-  await tx.taskActivity.createMany({
-    data: tasks.map((task) => ({
-      taskId: task.id,
-      actorId: input.actorId,
-      action: "task.transferred",
-      detail: {
-        fromAssigneeId: task.assigneeId,
-        toAssigneeId: input.ownerId,
-        reason: input.reason,
-        source: "user_owner_change",
-        transferredAt: input.now.toISOString()
-      }
-    }))
-  });
-  return tasks.length;
 }
 
 export async function manuallyAssignUserOwner(
@@ -154,7 +111,7 @@ export async function manuallyAssignUserOwner(
         ownerAssignmentReason: reason
       }
     });
-    const transferredTasks = await transferOpenTasks(tx, {
+    const transferredTasks = await transferOpenUserTasks(tx, {
       userId: user.id,
       actorId: actor.id,
       ownerId: target.id,
@@ -230,7 +187,7 @@ export async function restoreAutomaticUserOwner(
       throw new Error("ASSIGNMENT_OWNER_REQUIRED");
     }
     const reason = "管理员恢复系统自动分配";
-    const transferredTasks = await transferOpenTasks(tx, {
+    const transferredTasks = await transferOpenUserTasks(tx, {
       userId: user.id,
       actorId: actor.id,
       ownerId: decision.assigneeId,

@@ -207,6 +207,46 @@ describe("reviewed user mail", () => {
     }
   });
 
+  it("does not create a task when a proactive recipient is skipped", async () => {
+    const recipient =
+      `suppressed-proactive-${randomUUID()}@example.test`;
+    await prisma.suppressionEntry.create({
+      data: {
+        emailNormalized: recipient,
+        reason: "integration test",
+        source: "test"
+      }
+    });
+    const tasksBefore = await prisma.recallTask.count({
+      where: { userId }
+    });
+    try {
+      await expect(
+        sendReviewedMail(
+          {
+            actorId: memberId,
+            mailboxId,
+            userId,
+            recipient,
+            subject: "不可发送的主动联系",
+            bodyText: "被跳过时不应创建任务。",
+            minimumContactIntervalMinutes: 0
+          },
+          { send: vi.fn() }
+        )
+      ).rejects.toMatchObject({
+        code: "RECIPIENT_SUPPRESSED"
+      });
+      await expect(
+        prisma.recallTask.count({ where: { userId } })
+      ).resolves.toBe(tasksBefore);
+    } finally {
+      await prisma.suppressionEntry.delete({
+        where: { emailNormalized: recipient }
+      });
+    }
+  });
+
   it("creates a tracked manual task when proactive mail has no task", async () => {
     const now = new Date("2026-07-24T10:00:00.000Z");
     const result = await sendReviewedMail(

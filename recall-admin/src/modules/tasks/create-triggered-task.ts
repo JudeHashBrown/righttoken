@@ -9,6 +9,9 @@ import {
   type TriggerPolicy
 } from "@/modules/tasks/trigger-policy";
 import { createTaskNotificationIntents } from "@/modules/notifications/notification-service";
+import {
+  serializeServiceAnomalySnapshot
+} from "@/modules/anomalies/task-presentation";
 
 const taskTitles: Record<SegmentCode, string> = {
   A: "注册后尚未完成首单支付",
@@ -63,7 +66,21 @@ export async function createTriggeredTask(
           id: input.userId,
           sourceDeletedAt: null
         },
-        select: { id: true }
+        select: {
+          id: true,
+          anomalyActive: true,
+          anomalyErrorPhase: true,
+          anomalyErrorType: true,
+          anomalyErrorMessage: true,
+          anomalyErrorOwner: true,
+          anomalyStatusCode: true,
+          anomalyModel: true,
+          anomalyPlatform: true,
+          anomalyRequestCount: true,
+          anomalyFailureCount: true,
+          anomalyConsecutiveFailures: true,
+          anomalyLastOccurredAt: true
+        }
       });
       if (!activeUser) {
         throw new Error("RIGHTTOKEN_USER_DELETED");
@@ -76,6 +93,10 @@ export async function createTriggeredTask(
           ruleVersion: input.ruleVersion,
           title: taskTitles[input.segment],
           reason,
+          anomalySnapshot:
+            input.segment === "F"
+              ? serializeServiceAnomalySnapshot(activeUser)
+              : undefined,
           priority: policy.priority,
           dueAt: new Date(
             now.getTime() +

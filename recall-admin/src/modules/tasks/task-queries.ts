@@ -2,6 +2,7 @@ import {
   Prisma,
   type Member,
   type SegmentCode,
+  type TaskOrigin,
   type TaskPriority,
   type TaskStatus
 } from "@/generated/prisma/client";
@@ -21,12 +22,14 @@ export type TaskFilters = {
   search?: string;
   statuses?: TaskStatus[];
   priorities?: TaskPriority[];
+  origins?: TaskOrigin[];
   segments?: SegmentCode[];
   countryCode?: string;
   source?: string;
   assigneeId?: string;
   dueFrom?: Date;
   dueTo?: Date;
+  dueBefore?: Date;
   cursor?: string | null;
   pageSize?: number;
   now?: Date;
@@ -133,14 +136,20 @@ function buildTaskWhere(
       filters.priorities?.length
         ? { priority: { in: filters.priorities } }
         : {},
+      filters.origins?.length
+        ? { origin: { in: filters.origins } }
+        : {},
       filters.assigneeId
         ? { assigneeId: filters.assigneeId }
         : {},
-      filters.dueFrom || filters.dueTo
+      filters.dueFrom || filters.dueTo || filters.dueBefore
         ? {
             dueAt: {
               ...(filters.dueFrom ? { gte: filters.dueFrom } : {}),
-              ...(filters.dueTo ? { lte: filters.dueTo } : {})
+              ...(filters.dueTo ? { lte: filters.dueTo } : {}),
+              ...(filters.dueBefore
+                ? { lt: filters.dueBefore }
+                : {})
             }
           }
         : {},
@@ -255,6 +264,18 @@ export async function getTaskDetail(viewer: Viewer, taskId: string) {
           totalPaidMinor: true,
           balanceMinor: true,
           lastCallAt: true,
+          anomalyActive: true,
+          anomalyErrorPhase: true,
+          anomalyErrorType: true,
+          anomalyErrorMessage: true,
+          anomalyErrorOwner: true,
+          anomalyStatusCode: true,
+          anomalyModel: true,
+          anomalyPlatform: true,
+          anomalyRequestCount: true,
+          anomalyFailureCount: true,
+          anomalyConsecutiveFailures: true,
+          anomalyLastOccurredAt: true,
           ownerId: true
         }
       },

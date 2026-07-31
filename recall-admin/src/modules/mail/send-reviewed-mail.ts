@@ -1,7 +1,10 @@
 import { randomUUID } from "node:crypto";
 import type { MailMessage } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
-import { assertMemberPermission, ForbiddenError } from "@/modules/auth/guards";
+import {
+  assertMemberPermission,
+  ForbiddenError
+} from "@/modules/auth/authorization";
 import type { MailboxAdapter } from "@/modules/mail/types";
 import {
   assertMailSendAllowed,
@@ -29,6 +32,8 @@ export type ReviewedMailInput = {
   bodyHtml?: string;
   assets?: OutboundAssetReference[];
   minimumContactIntervalMinutes: number;
+  authorizationScope?: "CURRENT" | "BATCH_SNAPSHOT";
+  batchRecipientId?: string;
   now?: Date;
 };
 
@@ -41,7 +46,13 @@ export async function sendReviewedMail(
 ): Promise<{ message: MailMessage; taskId: string }> {
   const now = input.now ?? new Date();
   const recipient = input.recipient.trim().toLowerCase();
-  const [actor, mailbox, user, existingTask] =
+  const [
+    actor,
+    mailbox,
+    user,
+    existingTask,
+    batchRecipient
+  ] =
     await Promise.all([
     prisma.member.findUniqueOrThrow({
       where: { id: input.actorId },
@@ -59,7 +70,8 @@ export async function sendReviewedMail(
         email: true,
         emailNormalized: true,
         unsubscribedAt: true,
-        pausedAt: true
+        pausedAt: true,
+        sourceDeletedAt: true
       }
     }),
     input.taskId
@@ -73,12 +85,40 @@ export async function sendReviewedMail(
             startedAt: true
           }
         })
+      : null,
+    input.batchRecipientId
+      ? prisma.mailBatchRecipient.findUnique({
+          where: { id: input.batchRecipientId },
+          select: {
+            id: true,
+            userId: true,
+            status: true,
+            batch: {
+              select: {
+                createdById: true,
+                mailboxId: true
+              }
+            }
+          }
+        })
       : null
     ]);
   if (!actor.active) {
     throw new ForbiddenError("mail:send-reviewed");
   }
   assertMemberPermission(actor, "mail:send-reviewed");
+  const authorizedBatchSnapshot =
+    input.authorizationScope === "BATCH_SNAPSHOT" &&
+    Boolean(batchRecipient) &&
+    batchRecipient?.userId === user.id &&
+    batchRecipient.batch.createdById === actor.id &&
+    batchRecipient.batch.mailboxId === mailbox.id;
+  if (
+    input.authorizationScope === "BATCH_SNAPSHOT" &&
+    !authorizedBatchSnapshot
+  ) {
+    throw new ForbiddenError("mail:send-reviewed");
+  }
   if (
     existingTask &&
     (existingTask.userId !== user.id ||
@@ -89,6 +129,7 @@ export async function sendReviewedMail(
   }
   if (
     actor.role === "OPERATOR" &&
+    !authorizedBatchSnapshot &&
     existingTask?.assigneeId !== actor.id &&
     user.ownerId !== actor.id &&
     user.ownerId !== null
@@ -98,34 +139,12 @@ export async function sendReviewedMail(
   if (!mailbox.enabled) {
     throw new MailSendBlockedError("EMPTY_MESSAGE");
   }
+  if (user.sourceDeletedAt) {
+    throw new MailSendBlockedError(
+      "SOURCE_USER_DELETED"
+    );
+  }
 
-  const task =
-    existingTask ??
-    (await prisma.recallTask.create({
-      data: {
-        userId: user.id,
-        origin: "MANUAL",
-        triggerKey: `manual-mail:${randomUUID()}`,
-        ruleVersion: 1,
-        title: `主动联系：${input.subject.trim()}`.slice(0, 200),
-        reason: "运营人员主动联系用户",
-        priority: "NORMAL",
-        status: "IN_PROGRESS",
-        assigneeId: actor.id,
-        assignmentReason: "由发件运营人员创建",
-        dueAt: new Date(
-          now.getTime() + 24 * 60 * 60 * 1000
-        ),
-        startedAt: now
-      },
-      select: {
-        id: true,
-        userId: true,
-        assigneeId: true,
-        status: true,
-        startedAt: true
-      }
-    }));
   const [userSuppressed, recipientSuppressed, lastSent] =
     await Promise.all([
     prisma.suppressionEntry.findUnique({
@@ -165,6 +184,33 @@ export async function sendReviewedMail(
     now
   );
 
+  const task =
+    existingTask ??
+    (await prisma.recallTask.create({
+      data: {
+        userId: user.id,
+        origin: "MANUAL",
+        triggerKey: `manual-mail:${randomUUID()}`,
+        ruleVersion: 1,
+        title: `主动联系：${input.subject.trim()}`.slice(0, 200),
+        reason: "运营人员主动联系用户",
+        priority: "NORMAL",
+        status: "IN_PROGRESS",
+        assigneeId: actor.id,
+        assignmentReason: "由发件运营人员创建",
+        dueAt: new Date(
+          now.getTime() + 24 * 60 * 60 * 1000
+        ),
+        startedAt: now
+      },
+      select: {
+        id: true,
+        userId: true,
+        assigneeId: true,
+        status: true,
+        startedAt: true
+      }
+    }));
   const thread =
     (await prisma.mailThread.findFirst({
       where: {
@@ -246,6 +292,18 @@ export async function sendReviewedMail(
         lastErrorCode: null
       }
     });
+    if (input.batchRecipientId) {
+      await tx.mailBatchRecipient.update({
+        where: { id: input.batchRecipientId },
+        data: {
+          status: "SENT",
+          reasonCode: null,
+          messageId: sent.id,
+          taskId: task.id,
+          completedAt: now
+        }
+      });
+    }
     await tx.recallTask.update({
       where: { id: task.id },
       data: {

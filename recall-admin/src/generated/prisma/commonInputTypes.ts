@@ -172,6 +172,13 @@ export type EnumLocationAttributionSourceNullableFilter<$PrismaModel = never> = 
   not?: Prisma.NestedEnumLocationAttributionSourceNullableFilter<$PrismaModel> | $Enums.LocationAttributionSource | null
 }
 
+export type EnumLocationAssignmentModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.LocationAssignmentMode | Prisma.EnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  in?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLocationAssignmentModeFilter<$PrismaModel> | $Enums.LocationAssignmentMode
+}
+
 export type IntFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
@@ -181,6 +188,17 @@ export type IntFilter<$PrismaModel = never> = {
   gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
   gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
   not?: Prisma.NestedIntFilter<$PrismaModel> | number
+}
+
+export type IntNullableFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
+  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
+  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntNullableFilter<$PrismaModel> | number | null
 }
 
 export type EnumSegmentCodeFilter<$PrismaModel = never> = {
@@ -207,6 +225,16 @@ export type EnumLocationAttributionSourceNullableWithAggregatesFilter<$PrismaMod
   _max?: Prisma.NestedEnumLocationAttributionSourceNullableFilter<$PrismaModel>
 }
 
+export type EnumLocationAssignmentModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.LocationAssignmentMode | Prisma.EnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  in?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLocationAssignmentModeWithAggregatesFilter<$PrismaModel> | $Enums.LocationAssignmentMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumLocationAssignmentModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumLocationAssignmentModeFilter<$PrismaModel>
+}
+
 export type IntWithAggregatesFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
@@ -221,6 +249,22 @@ export type IntWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedIntFilter<$PrismaModel>
   _max?: Prisma.NestedIntFilter<$PrismaModel>
+}
+
+export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
+  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
+  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _sum?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedIntNullableFilter<$PrismaModel>
 }
 
 export type EnumSegmentCodeWithAggregatesFilter<$PrismaModel = never> = {
@@ -379,33 +423,6 @@ export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
   _max?: Prisma.NestedJsonNullableFilter<$PrismaModel>
 }
 
-export type IntNullableFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
-  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
-  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
-  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedIntNullableFilter<$PrismaModel> | number | null
-}
-
-export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
-  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
-  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
-  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
-  _avg?: Prisma.NestedFloatNullableFilter<$PrismaModel>
-  _sum?: Prisma.NestedIntNullableFilter<$PrismaModel>
-  _min?: Prisma.NestedIntNullableFilter<$PrismaModel>
-  _max?: Prisma.NestedIntNullableFilter<$PrismaModel>
-}
-
 export type EnumLocationRuleMatchTypeFilter<$PrismaModel = never> = {
   equals?: $Enums.LocationRuleMatchType | Prisma.EnumLocationRuleMatchTypeFieldRefInput<$PrismaModel>
   in?: $Enums.LocationRuleMatchType[] | Prisma.ListEnumLocationRuleMatchTypeFieldRefInput<$PrismaModel>
@@ -523,6 +540,57 @@ export type EnumMailAssetDispositionWithAggregatesFilter<$PrismaModel = never> =
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumMailAssetDispositionFilter<$PrismaModel>
   _max?: Prisma.NestedEnumMailAssetDispositionFilter<$PrismaModel>
+}
+
+export type EnumMailAudienceModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailAudienceMode | Prisma.EnumMailAudienceModeFieldRefInput<$PrismaModel>
+  in?: $Enums.MailAudienceMode[] | Prisma.ListEnumMailAudienceModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailAudienceMode[] | Prisma.ListEnumMailAudienceModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailAudienceModeFilter<$PrismaModel> | $Enums.MailAudienceMode
+}
+
+export type EnumMailBatchStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailBatchStatus | Prisma.EnumMailBatchStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.MailBatchStatus[] | Prisma.ListEnumMailBatchStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailBatchStatus[] | Prisma.ListEnumMailBatchStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailBatchStatusFilter<$PrismaModel> | $Enums.MailBatchStatus
+}
+
+export type EnumMailAudienceModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailAudienceMode | Prisma.EnumMailAudienceModeFieldRefInput<$PrismaModel>
+  in?: $Enums.MailAudienceMode[] | Prisma.ListEnumMailAudienceModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailAudienceMode[] | Prisma.ListEnumMailAudienceModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailAudienceModeWithAggregatesFilter<$PrismaModel> | $Enums.MailAudienceMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMailAudienceModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMailAudienceModeFilter<$PrismaModel>
+}
+
+export type EnumMailBatchStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailBatchStatus | Prisma.EnumMailBatchStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.MailBatchStatus[] | Prisma.ListEnumMailBatchStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailBatchStatus[] | Prisma.ListEnumMailBatchStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailBatchStatusWithAggregatesFilter<$PrismaModel> | $Enums.MailBatchStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMailBatchStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMailBatchStatusFilter<$PrismaModel>
+}
+
+export type EnumMailBatchRecipientStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailBatchRecipientStatus | Prisma.EnumMailBatchRecipientStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.MailBatchRecipientStatus[] | Prisma.ListEnumMailBatchRecipientStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailBatchRecipientStatus[] | Prisma.ListEnumMailBatchRecipientStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailBatchRecipientStatusFilter<$PrismaModel> | $Enums.MailBatchRecipientStatus
+}
+
+export type EnumMailBatchRecipientStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailBatchRecipientStatus | Prisma.EnumMailBatchRecipientStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.MailBatchRecipientStatus[] | Prisma.ListEnumMailBatchRecipientStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailBatchRecipientStatus[] | Prisma.ListEnumMailBatchRecipientStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailBatchRecipientStatusWithAggregatesFilter<$PrismaModel> | $Enums.MailBatchRecipientStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMailBatchRecipientStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMailBatchRecipientStatusFilter<$PrismaModel>
 }
 
 export type EnumNotificationChannelFilter<$PrismaModel = never> = {
@@ -730,6 +798,13 @@ export type NestedEnumLocationAttributionSourceNullableFilter<$PrismaModel = nev
   not?: Prisma.NestedEnumLocationAttributionSourceNullableFilter<$PrismaModel> | $Enums.LocationAttributionSource | null
 }
 
+export type NestedEnumLocationAssignmentModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.LocationAssignmentMode | Prisma.EnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  in?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLocationAssignmentModeFilter<$PrismaModel> | $Enums.LocationAssignmentMode
+}
+
 export type NestedEnumSegmentCodeFilter<$PrismaModel = never> = {
   equals?: $Enums.SegmentCode | Prisma.EnumSegmentCodeFieldRefInput<$PrismaModel>
   in?: $Enums.SegmentCode[] | Prisma.ListEnumSegmentCodeFieldRefInput<$PrismaModel>
@@ -752,6 +827,16 @@ export type NestedEnumLocationAttributionSourceNullableWithAggregatesFilter<$Pri
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumLocationAttributionSourceNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumLocationAttributionSourceNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumLocationAssignmentModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.LocationAssignmentMode | Prisma.EnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  in?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LocationAssignmentMode[] | Prisma.ListEnumLocationAssignmentModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLocationAssignmentModeWithAggregatesFilter<$PrismaModel> | $Enums.LocationAssignmentMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumLocationAssignmentModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumLocationAssignmentModeFilter<$PrismaModel>
 }
 
 export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -779,6 +864,33 @@ export type NestedFloatFilter<$PrismaModel = never> = {
   gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
   gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
   not?: Prisma.NestedFloatFilter<$PrismaModel> | number
+}
+
+export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
+  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
+  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _sum?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedIntNullableFilter<$PrismaModel>
+}
+
+export type NestedFloatNullableFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null
+  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null
+  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatNullableFilter<$PrismaModel> | number | null
 }
 
 export type NestedEnumSegmentCodeWithAggregatesFilter<$PrismaModel = never> = {
@@ -881,33 +993,6 @@ export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
   gt?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   gte?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter
-}
-
-export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
-  in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
-  notIn?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
-  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
-  _avg?: Prisma.NestedFloatNullableFilter<$PrismaModel>
-  _sum?: Prisma.NestedIntNullableFilter<$PrismaModel>
-  _min?: Prisma.NestedIntNullableFilter<$PrismaModel>
-  _max?: Prisma.NestedIntNullableFilter<$PrismaModel>
-}
-
-export type NestedFloatNullableFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null
-  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null
-  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null
-  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
-  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
-  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
-  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedFloatNullableFilter<$PrismaModel> | number | null
 }
 
 export type NestedEnumLocationRuleMatchTypeFilter<$PrismaModel = never> = {
@@ -1027,6 +1112,57 @@ export type NestedEnumMailAssetDispositionWithAggregatesFilter<$PrismaModel = ne
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumMailAssetDispositionFilter<$PrismaModel>
   _max?: Prisma.NestedEnumMailAssetDispositionFilter<$PrismaModel>
+}
+
+export type NestedEnumMailAudienceModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailAudienceMode | Prisma.EnumMailAudienceModeFieldRefInput<$PrismaModel>
+  in?: $Enums.MailAudienceMode[] | Prisma.ListEnumMailAudienceModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailAudienceMode[] | Prisma.ListEnumMailAudienceModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailAudienceModeFilter<$PrismaModel> | $Enums.MailAudienceMode
+}
+
+export type NestedEnumMailBatchStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailBatchStatus | Prisma.EnumMailBatchStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.MailBatchStatus[] | Prisma.ListEnumMailBatchStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailBatchStatus[] | Prisma.ListEnumMailBatchStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailBatchStatusFilter<$PrismaModel> | $Enums.MailBatchStatus
+}
+
+export type NestedEnumMailAudienceModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailAudienceMode | Prisma.EnumMailAudienceModeFieldRefInput<$PrismaModel>
+  in?: $Enums.MailAudienceMode[] | Prisma.ListEnumMailAudienceModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailAudienceMode[] | Prisma.ListEnumMailAudienceModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailAudienceModeWithAggregatesFilter<$PrismaModel> | $Enums.MailAudienceMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMailAudienceModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMailAudienceModeFilter<$PrismaModel>
+}
+
+export type NestedEnumMailBatchStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailBatchStatus | Prisma.EnumMailBatchStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.MailBatchStatus[] | Prisma.ListEnumMailBatchStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailBatchStatus[] | Prisma.ListEnumMailBatchStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailBatchStatusWithAggregatesFilter<$PrismaModel> | $Enums.MailBatchStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMailBatchStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMailBatchStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumMailBatchRecipientStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailBatchRecipientStatus | Prisma.EnumMailBatchRecipientStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.MailBatchRecipientStatus[] | Prisma.ListEnumMailBatchRecipientStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailBatchRecipientStatus[] | Prisma.ListEnumMailBatchRecipientStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailBatchRecipientStatusFilter<$PrismaModel> | $Enums.MailBatchRecipientStatus
+}
+
+export type NestedEnumMailBatchRecipientStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailBatchRecipientStatus | Prisma.EnumMailBatchRecipientStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.MailBatchRecipientStatus[] | Prisma.ListEnumMailBatchRecipientStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailBatchRecipientStatus[] | Prisma.ListEnumMailBatchRecipientStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailBatchRecipientStatusWithAggregatesFilter<$PrismaModel> | $Enums.MailBatchRecipientStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMailBatchRecipientStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMailBatchRecipientStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumNotificationChannelFilter<$PrismaModel = never> = {

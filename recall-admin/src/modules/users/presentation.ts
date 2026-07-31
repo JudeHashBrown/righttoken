@@ -78,6 +78,12 @@ export function locationSourceLabel(source: string): string {
   return locationSourceCopy[source] ?? "注册来源信息";
 }
 
+export function locationAssignmentLabel(
+  mode: "AUTO" | "MANUAL"
+): string {
+  return mode === "MANUAL" ? "人工确认" : "系统判定";
+}
+
 export function userSourceLabel(source: string | null): string {
   void source;
   return "RightToken 主站";

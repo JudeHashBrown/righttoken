@@ -92,6 +92,21 @@ describe("DashboardOverview", () => {
     expect(screen.getByText("A–G 用户分组")).toBeInTheDocument();
     expect(screen.getByText("联系渠道")).toBeInTheDocument();
     expect(screen.getByText("团队工作量")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /今日待处理 28/ })
+    ).toHaveAttribute("href", "/tasks?view=all&due=today");
+    expect(
+      screen.getByRole("link", { name: /紧急任务 3/ })
+    ).toHaveAttribute(
+      "href",
+      "/tasks?view=all&priority=URGENT&scope=open"
+    );
+    expect(
+      screen.getByRole("link", { name: /用户待回复 17/ })
+    ).toHaveAttribute(
+      "href",
+      "/tasks?view=all&origin=EMAIL_REPLY&scope=open"
+    );
     expect(screen.queryByText(/A 方案展开/)).not.toBeInTheDocument();
     expect(screen.queryByText("用户中心", { exact: true })).not.toBeInTheDocument();
     expect(screen.queryByText("任务与邮件", { exact: true })).not.toBeInTheDocument();

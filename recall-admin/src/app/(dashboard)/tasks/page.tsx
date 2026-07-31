@@ -12,6 +12,7 @@ import {
   findTasks,
   type TaskView
 } from "@/modules/tasks/task-queries";
+import { taskShortcutFilters } from "@/modules/tasks/task-shortcut";
 
 type SearchParams = Promise<
   Record<string, string | string[] | undefined>
@@ -61,15 +62,33 @@ export default async function TasksPage({
   const priority = first(params.priority);
   const segment = first(params.segment);
   const now = new Date();
+  const shortcut = taskShortcutFilters(
+    {
+      due: first(params.due),
+      origin: first(params.origin),
+      scope: first(params.scope)
+    },
+    now
+  );
+  const shortcutLabel =
+    priority === "URGENT" &&
+    shortcut.label === "尚未完成的任务"
+      ? "尚未完成的紧急任务"
+      : shortcut.label;
   const page = await findTasks(member, {
     view,
     search: first(params.search),
-    statuses: status ? [status as TaskStatus] : undefined,
+    statuses: status
+      ? [status as TaskStatus]
+      : shortcut.statuses,
     priorities: priority ? [priority as TaskPriority] : undefined,
+    origins: shortcut.origins,
     segments: /^[A-G]$/.test(segment)
       ? [segment as SegmentCode]
       : undefined,
     assigneeId: first(params.assigneeId) || undefined,
+    dueFrom: shortcut.dueFrom,
+    dueBefore: shortcut.dueBefore,
     cursor: first(params.cursor) || undefined,
     pageSize: 30,
     now
@@ -110,8 +129,33 @@ export default async function TasksPage({
         ))}
       </nav>
 
+      {shortcutLabel ? (
+        <p className={styles.notice}>当前筛选：{shortcutLabel}</p>
+      ) : null}
+
       <form className={styles.filterBar}>
         <input name="view" type="hidden" value={view} />
+        {first(params.due) ? (
+          <input
+            name="due"
+            type="hidden"
+            value={first(params.due)}
+          />
+        ) : null}
+        {first(params.origin) ? (
+          <input
+            name="origin"
+            type="hidden"
+            value={first(params.origin)}
+          />
+        ) : null}
+        {first(params.scope) ? (
+          <input
+            name="scope"
+            type="hidden"
+            value={first(params.scope)}
+          />
+        ) : null}
         <div className={`${styles.field} ${styles.fieldGrow}`}>
           <label htmlFor="task-search">搜索任务</label>
           <input

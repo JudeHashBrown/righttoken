@@ -78,6 +78,9 @@ export const ModelName = {
   MailAsset: 'MailAsset',
   MailTemplateAsset: 'MailTemplateAsset',
   MailMessageAsset: 'MailMessageAsset',
+  MailBatch: 'MailBatch',
+  MailBatchRecipient: 'MailBatchRecipient',
+  MailBatchAsset: 'MailBatchAsset',
   SuppressionEntry: 'SuppressionEntry',
   NotificationIntent: 'NotificationIntent',
   IntegrationCredential: 'IntegrationCredential'
@@ -157,6 +160,10 @@ export const UserProfileScalarFieldEnum = {
   locationSource: 'locationSource',
   locationRuleId: 'locationRuleId',
   locationEvaluatedAt: 'locationEvaluatedAt',
+  locationAssignmentMode: 'locationAssignmentMode',
+  locationAssignedAt: 'locationAssignedAt',
+  locationAssignedById: 'locationAssignedById',
+  locationAssignmentReason: 'locationAssignmentReason',
   language: 'language',
   timezone: 'timezone',
   source: 'source',
@@ -174,6 +181,17 @@ export const UserProfileScalarFieldEnum = {
   balanceChangedAt: 'balanceChangedAt',
   anomalyActive: 'anomalyActive',
   anomalyChangedAt: 'anomalyChangedAt',
+  anomalyErrorPhase: 'anomalyErrorPhase',
+  anomalyErrorType: 'anomalyErrorType',
+  anomalyErrorMessage: 'anomalyErrorMessage',
+  anomalyErrorOwner: 'anomalyErrorOwner',
+  anomalyStatusCode: 'anomalyStatusCode',
+  anomalyModel: 'anomalyModel',
+  anomalyPlatform: 'anomalyPlatform',
+  anomalyRequestCount: 'anomalyRequestCount',
+  anomalyFailureCount: 'anomalyFailureCount',
+  anomalyConsecutiveFailures: 'anomalyConsecutiveFailures',
+  anomalyLastOccurredAt: 'anomalyLastOccurredAt',
   currentSegment: 'currentSegment',
   segmentRuleVersion: 'segmentRuleVersion',
   ownerId: 'ownerId',
@@ -375,6 +393,7 @@ export const RecallTaskScalarFieldEnum = {
   ruleVersion: 'ruleVersion',
   title: 'title',
   reason: 'reason',
+  anomalySnapshot: 'anomalySnapshot',
   priority: 'priority',
   status: 'status',
   assigneeId: 'assigneeId',
@@ -579,6 +598,62 @@ export const MailMessageAssetScalarFieldEnum = {
 } as const
 
 export type MailMessageAssetScalarFieldEnum = (typeof MailMessageAssetScalarFieldEnum)[keyof typeof MailMessageAssetScalarFieldEnum]
+
+
+export const MailBatchScalarFieldEnum = {
+  id: 'id',
+  mailboxId: 'mailboxId',
+  createdById: 'createdById',
+  audienceMode: 'audienceMode',
+  segment: 'segment',
+  subject: 'subject',
+  bodyText: 'bodyText',
+  bodyHtml: 'bodyHtml',
+  idempotencyKey: 'idempotencyKey',
+  status: 'status',
+  totalRecipients: 'totalRecipients',
+  pendingRecipients: 'pendingRecipients',
+  sentRecipients: 'sentRecipients',
+  skippedRecipients: 'skippedRecipients',
+  failedRecipients: 'failedRecipients',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MailBatchScalarFieldEnum = (typeof MailBatchScalarFieldEnum)[keyof typeof MailBatchScalarFieldEnum]
+
+
+export const MailBatchRecipientScalarFieldEnum = {
+  id: 'id',
+  batchId: 'batchId',
+  userId: 'userId',
+  emailNormalized: 'emailNormalized',
+  status: 'status',
+  reasonCode: 'reasonCode',
+  messageId: 'messageId',
+  taskId: 'taskId',
+  attempts: 'attempts',
+  claimedAt: 'claimedAt',
+  lastAttemptAt: 'lastAttemptAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MailBatchRecipientScalarFieldEnum = (typeof MailBatchRecipientScalarFieldEnum)[keyof typeof MailBatchRecipientScalarFieldEnum]
+
+
+export const MailBatchAssetScalarFieldEnum = {
+  id: 'id',
+  batchId: 'batchId',
+  assetId: 'assetId',
+  disposition: 'disposition',
+  sortOrder: 'sortOrder'
+} as const
+
+export type MailBatchAssetScalarFieldEnum = (typeof MailBatchAssetScalarFieldEnum)[keyof typeof MailBatchAssetScalarFieldEnum]
 
 
 export const SuppressionEntryScalarFieldEnum = {

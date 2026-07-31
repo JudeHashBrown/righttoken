@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { UserProfile } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
+import { presentServiceAnomaly } from "@/modules/anomalies/presentation";
 import {
   assignTask,
   assignUserOwnerInTransaction
@@ -69,6 +70,21 @@ function currentFactTimestamp(
   }
 }
 
+function taskReason(
+  user: UserProfile,
+  segment: UserProfile["currentSegment"],
+  fallback: string
+): string {
+  if (segment !== "F") {
+    return fallback;
+  }
+  return (
+    presentServiceAnomaly(user)?.taskReason ??
+    user.reasonLabel ??
+    fallback
+  );
+}
+
 export async function handleSegmentCheck(
   rawInput: SegmentCheckInput,
   now = new Date(),
@@ -134,7 +150,11 @@ export async function handleSegmentCheck(
           policyKey: input.boundaryKey,
           windowStart: input.runAt,
           ruleVersion: outcome.ruleVersion,
-          reason: `规则边界命中：${input.boundaryKey}`,
+          reason: taskReason(
+            outcome.user,
+            outcome.segment,
+            `规则边界命中：${input.boundaryKey}`
+          ),
           policy,
           now
         });
@@ -209,6 +229,7 @@ export async function handleSegmentCheck(
     );
     await assignUserOwnerInTransaction(tx, user.id, now);
     return {
+      user,
       segment: segmentChange.currentSegment,
       ruleVersion: segmentChange.ruleVersion
     };
@@ -231,7 +252,11 @@ export async function handleSegmentCheck(
     policyKey: input.reasonKey,
     windowStart: new Date(input.expectedFactTimestamp),
     ruleVersion: outcome.ruleVersion,
-    reason: `定时检查命中：${input.reasonKey}`,
+    reason: taskReason(
+      outcome.user,
+      outcome.segment,
+      `定时检查命中：${input.reasonKey}`
+    ),
     now
   });
   if (task.status === "UNASSIGNED" || task.status === "TODO") {

@@ -8,6 +8,21 @@ const common = {
 };
 
 describe("RightToken event contract", () => {
+  it("accepts a safe raw error message for service anomalies", () => {
+    expect(
+      rightTokenEventSchema.parse({
+        ...common,
+        event_type: "service.anomaly",
+        payload: {
+          reason: "连续调用失败",
+          error_message: "no accounts available"
+        }
+      }).payload
+    ).toMatchObject({
+      error_message: "no accounts available"
+    });
+  });
+
   it("parses a typed registration event", () => {
     const parsed = rightTokenEventSchema.parse({
       ...common,

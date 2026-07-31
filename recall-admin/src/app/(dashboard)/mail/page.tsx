@@ -4,6 +4,9 @@ import {
   MailTemplateLibrary
 } from "@/components/mail/mail-template-library";
 import { MailComposer } from "@/components/mail/mail-composer";
+import {
+  MailBatchList
+} from "@/components/mail/mail-batch-list";
 import { MailWorkbench } from "@/components/mail/mail-workbench";
 import styles from "@/components/workspaces/workspace.module.css";
 import {
@@ -144,6 +147,8 @@ export default async function MailPage({
               closeHref={`/mail?view=${filter.view}`}
             />
           ) : null}
+
+          <MailBatchList batches={data.mailBatches} />
 
           <MailStatLinks stats={data.stats} />
 

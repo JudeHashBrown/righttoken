@@ -2,7 +2,9 @@ import Link from "next/link";
 import type { UserListItem } from "@/modules/users/user-queries";
 import styles from "@/components/workspaces/workspace.module.css";
 import { UserOwnerControl } from "@/components/users/user-owner-control";
+import { presentServiceAnomaly } from "@/modules/anomalies/presentation";
 import {
+  locationAssignmentLabel,
   operationalLocationDisplay,
   ownerAssignmentLabel,
   ownerDisplayName,
@@ -71,12 +73,19 @@ export function UserTable({
           {users.map((user) => {
             const nextTask = user.tasks[0];
             const location = operationalLocationDisplay(user);
+            const anomaly = presentServiceAnomaly(user);
             return (
               <tr key={user.id}>
                 <td>
                   <span className={styles.segment}>
                     {user.currentSegment}
                   </span>
+                  {anomaly ? (
+                    <span className={styles.anomalyCompact}>
+                      <strong>{anomaly.title}</strong>
+                      <span>{anomaly.summary}</span>
+                    </span>
+                  ) : null}
                 </td>
                 <td>
                   <Link
@@ -99,6 +108,13 @@ export function UserTable({
                   <span className={styles.secondaryText}>
                     {location.secondary}
                   </span>
+                  {user.locationAssignmentMode === "MANUAL" ? (
+                    <span className={styles.secondaryText}>
+                      {locationAssignmentLabel(
+                        user.locationAssignmentMode
+                      )}
+                    </span>
+                  ) : null}
                 </td>
                 <td>
                   {paymentStatusLabel(

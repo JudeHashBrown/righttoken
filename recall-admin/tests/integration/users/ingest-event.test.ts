@@ -186,14 +186,67 @@ describe("idempotent user event ingestion", () => {
     ).toBe(false);
   });
 
-  it("moves checkout B → paid C → successful call G with history", async () => {
-    const userId = `journey-${randomUUID()}`;
+  it("does not overwrite a manually confirmed location from a later profile event", async () => {
+    const userId = `manual-location-${randomUUID()}`;
     externalUserIds.push(userId);
     await ingestUserEvent(
       event(
         userId,
         "user.registered",
         "2026-07-23T08:00:00.000Z",
+        {
+          email: `${userId}@example.test`,
+          country_code: "US",
+          region: "California"
+        }
+      )
+    );
+    await prisma.userProfile.update({
+      where: { externalUserId: userId },
+      data: {
+        countryCode: "CN",
+        region: "广东",
+        locationAssignmentMode: "MANUAL",
+        locationAssignmentReason: "客户在沟通中确认"
+      }
+    });
+
+    await ingestUserEvent(
+      event(
+        userId,
+        "user.profile_updated",
+        "2026-07-23T09:00:00.000Z",
+        {
+          display_name: "地区已人工确认",
+          country_code: "DE",
+          region: "Berlin"
+        }
+      )
+    );
+
+    await expect(
+      prisma.userProfile.findUniqueOrThrow({
+        where: { externalUserId: userId }
+      })
+    ).resolves.toMatchObject({
+      displayName: "地区已人工确认",
+      countryCode: "CN",
+      region: "广东",
+      locationAssignmentMode: "MANUAL"
+    });
+  });
+
+  it("moves checkout B → paid C → successful call G with history", async () => {
+    const userId = `journey-${randomUUID()}`;
+    const journeyNow = Date.now();
+    externalUserIds.push(userId);
+    await ingestUserEvent(
+      event(
+        userId,
+        "user.registered",
+        new Date(
+          journeyNow - 3 * 60 * 60_000
+        ).toISOString(),
         { email: `${userId}@example.test` }
       )
     );
@@ -201,7 +254,9 @@ describe("idempotent user event ingestion", () => {
       event(
         userId,
         "checkout.started",
-        "2026-07-23T09:00:00.000Z",
+        new Date(
+          journeyNow - 2 * 60 * 60_000
+        ).toISOString(),
         { checkout_id: "checkout-test" }
       )
     );
@@ -210,7 +265,9 @@ describe("idempotent user event ingestion", () => {
       event(
         userId,
         "payment.succeeded",
-        "2026-07-23T10:00:00.000Z",
+        new Date(
+          journeyNow - 60 * 60_000
+        ).toISOString(),
         { payment_id: "payment-test", amount_minor: 5_000 }
       )
     );
@@ -224,7 +281,9 @@ describe("idempotent user event ingestion", () => {
       event(
         userId,
         "api_call.succeeded",
-        "2026-07-23T10:05:00.000Z",
+        new Date(
+          journeyNow - 55 * 60_000
+        ).toISOString(),
         { call_id: "call-test" }
       )
     );
@@ -265,10 +324,79 @@ describe("idempotent user event ingestion", () => {
           userId,
           "service.anomaly",
           anomalyAt.toISOString(),
-          { reason: "synthetic outage" }
+          {
+            reason: "synthetic outage",
+            error_message: "no accounts available"
+          }
         )
       )
     ).resolves.toMatchObject({ currentSegment: "F" });
+    await expect(
+      prisma.userProfile.findUniqueOrThrow({
+        where: { externalUserId: userId }
+      })
+    ).resolves.toMatchObject({
+      anomalyErrorMessage: "no accounts available"
+    });
+    await prisma.userProfile.update({
+      where: { externalUserId: userId },
+      data: {
+        anomalyErrorPhase: "upstream",
+        anomalyErrorType: "provider_overloaded",
+        anomalyErrorOwner: "provider",
+        anomalyStatusCode: 503,
+        anomalyModel: "gpt-5",
+        anomalyPlatform: "openai",
+        anomalyRequestCount: 5,
+        anomalyFailureCount: 4,
+        anomalyConsecutiveFailures: 3,
+        anomalyLastOccurredAt: anomalyAt
+      }
+    });
+    await expect(
+      ingestUserEvent(
+        event(
+          userId,
+          "service.anomaly",
+          new Date(anomalyAt.getTime() + 2 * 60_000).toISOString(),
+          { reason: "new outage without structured evidence" }
+        )
+      )
+    ).resolves.toMatchObject({ currentSegment: "F" });
+    await expect(
+      prisma.userProfile.findUniqueOrThrow({
+        where: { externalUserId: userId }
+      })
+    ).resolves.toMatchObject({
+      anomalyActive: true,
+      anomalyErrorPhase: null,
+      anomalyErrorType: null,
+      anomalyErrorMessage: null,
+      anomalyErrorOwner: null,
+      anomalyStatusCode: null,
+      anomalyModel: null,
+      anomalyPlatform: null,
+      anomalyRequestCount: null,
+      anomalyFailureCount: null,
+      anomalyConsecutiveFailures: null,
+      anomalyLastOccurredAt: null
+    });
+    await prisma.userProfile.update({
+      where: { externalUserId: userId },
+      data: {
+        anomalyErrorPhase: "routing",
+        anomalyErrorType: "route_unavailable",
+        anomalyErrorMessage: "no accounts available",
+        anomalyErrorOwner: "platform",
+        anomalyStatusCode: 503,
+        anomalyModel: "gpt-5",
+        anomalyPlatform: "openai",
+        anomalyRequestCount: 4,
+        anomalyFailureCount: 3,
+        anomalyConsecutiveFailures: 3,
+        anomalyLastOccurredAt: anomalyAt
+      }
+    });
     await expect(
       ingestUserEvent(
         event(
@@ -279,5 +407,23 @@ describe("idempotent user event ingestion", () => {
         )
       )
     ).resolves.toMatchObject({ currentSegment: "A" });
+    await expect(
+      prisma.userProfile.findUniqueOrThrow({
+        where: { externalUserId: userId }
+      })
+    ).resolves.toMatchObject({
+      anomalyActive: false,
+      anomalyErrorPhase: null,
+      anomalyErrorType: null,
+      anomalyErrorMessage: null,
+      anomalyErrorOwner: null,
+      anomalyStatusCode: null,
+      anomalyModel: null,
+      anomalyPlatform: null,
+      anomalyRequestCount: null,
+      anomalyFailureCount: null,
+      anomalyConsecutiveFailures: null,
+      anomalyLastOccurredAt: null
+    });
   });
 });

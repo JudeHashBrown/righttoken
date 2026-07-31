@@ -89,6 +89,34 @@ export function MailWorkbench({
               users={data.assignableUsers}
             />
           </>
+        ) : data.selected?.kind === "message" ? (
+          <>
+            <header className={styles.mailDetailHeader}>
+              <div>
+                <h2>{data.selected.message.subject}</h2>
+                <p>
+                  {data.selected.message.fromAddress} →{" "}
+                  {data.selected.message.toAddresses.join("、")}
+                </p>
+              </div>
+              <time
+                dateTime={
+                  data.selected.message.sentAt ??
+                  data.selected.message.createdAt
+                }
+              >
+                {dateTime(
+                  data.selected.message.sentAt ??
+                    data.selected.message.createdAt
+                )}
+              </time>
+            </header>
+            <div className={styles.unmatchedBody}>
+              <MailMessageContent
+                message={data.selected.message}
+              />
+            </div>
+          </>
         ) : (
           <div className={styles.mailSelectionEmpty}>
             <strong>选择一封邮件开始处理</strong>

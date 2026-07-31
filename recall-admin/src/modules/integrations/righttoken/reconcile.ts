@@ -6,6 +6,7 @@ import type { TransactionClient } from "@/lib/db/transaction";
 import { createGeoIpResolver } from "@/modules/geoip/http-resolver";
 import type { GeoIpResolver } from "@/modules/geoip/types";
 import { assignUserOwnerInTransaction } from "@/modules/assignment/assign-task";
+import { clearedServiceAnomalyFields } from "@/modules/anomalies/persistence";
 import {
   rightTokenUserSnapshotSchema,
   type RightTokenAdapter,
@@ -69,6 +70,23 @@ function registrationIpFields(
 }
 
 function sourceFacts(snapshot: RightTokenUserSnapshot) {
+  const anomaly =
+    snapshot.anomalyActive ? snapshot.anomalyDetail ?? null : null;
+  const anomalyFields = anomaly
+    ? {
+        anomalyErrorPhase: anomaly.errorPhase,
+        anomalyErrorType: anomaly.errorType,
+        anomalyErrorMessage: anomaly.errorMessage,
+        anomalyErrorOwner: anomaly.errorOwner,
+        anomalyStatusCode: anomaly.statusCode,
+        anomalyModel: anomaly.model,
+        anomalyPlatform: anomaly.platform,
+        anomalyRequestCount: anomaly.requestCount,
+        anomalyFailureCount: anomaly.failureCount,
+        anomalyConsecutiveFailures: anomaly.consecutiveFailures,
+        anomalyLastOccurredAt: anomaly.lastOccurredAt
+      }
+    : clearedServiceAnomalyFields;
   return {
     email: snapshot.email.toLowerCase(),
     emailNormalized: snapshot.email.toLowerCase(),
@@ -98,6 +116,7 @@ function sourceFacts(snapshot: RightTokenUserSnapshot) {
     balanceChangedAt: snapshot.updatedAt,
     anomalyActive: snapshot.anomalyActive,
     anomalyChangedAt: snapshot.anomalyChangedAt,
+    ...anomalyFields,
     profileChangedAt: snapshot.updatedAt,
     lastExternalEventAt: snapshot.updatedAt,
     sourceDeletedAt: snapshot.deletedAt ?? null,

@@ -95,6 +95,41 @@ describe("recall task lifecycle", () => {
     ).toBe(1);
   });
 
+  it("stores the anomaly evidence on an F task", async () => {
+    await prisma.userProfile.update({
+      where: { id: userId },
+      data: {
+        currentSegment: "F",
+        anomalyActive: true,
+        anomalyErrorPhase: "upstream",
+        anomalyErrorType: "no_available_account",
+        anomalyErrorMessage: "no accounts available",
+        anomalyErrorOwner: "provider",
+        anomalyStatusCode: 503,
+        anomalyRequestCount: 12,
+        anomalyFailureCount: 12,
+        anomalyConsecutiveFailures: 5,
+        anomalyLastOccurredAt: now
+      }
+    });
+
+    const task = await createTriggeredTask({
+      userId,
+      segment: "F",
+      policyKey: `active_anomaly_${randomUUID()}`,
+      windowStart: now,
+      ruleVersion: 1,
+      reason: "上游无可用账号",
+      now
+    });
+
+    expect(task.anomalySnapshot).toMatchObject({
+      anomalyErrorMessage: "no accounts available",
+      anomalyStatusCode: 503,
+      anomalyLastOccurredAt: now.toISOString()
+    });
+  });
+
   it("cancels an old-segment automation task but keeps manual tasks", async () => {
     const automationTask = await createTriggeredTask({
       userId,

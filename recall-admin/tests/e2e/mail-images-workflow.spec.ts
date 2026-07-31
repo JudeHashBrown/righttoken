@@ -317,3 +317,66 @@ test("template images flow into replies and incoming images remain private", asy
   );
   expect(captured.replyPayload?.assets).toHaveLength(2);
 });
+
+test("group mail sends only the audience selector to the server", async ({
+  context,
+  page
+}) => {
+  await context.addCookies([
+    {
+      name: "rt_recall_session",
+      value: sessionToken,
+      url: `http://127.0.0.1:${e2ePort}`
+    }
+  ]);
+
+  let batchPayload: Record<string, unknown> | null = null;
+  await page.route(
+    "**/api/mail/audience-preview**",
+    async (route) => {
+      await route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({
+          label: "F 组全员",
+          total: 12,
+          estimatedSkipped: 2
+        })
+      });
+    }
+  );
+  await page.route("**/api/mail/batches", async (route) => {
+    batchPayload = route.request().postDataJSON();
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ batch: { id: "batch-e2e" } })
+    });
+  });
+
+  await page.goto("/mail?view=replies&compose=1");
+  await page
+    .getByRole("radio", { name: "指定分组" })
+    .click();
+  await page.getByLabel("选择分组").selectOption("F");
+  await expect(
+    page.getByText("预计 12 人，自动跳过 2 人")
+  ).toBeVisible();
+  await page.getByLabel("邮件主题").fill("F 组服务提醒");
+  await page
+    .getByRole("textbox", { name: "邮件正文" })
+    .fill("这是一封独立投递的测试邮件。");
+  await page
+    .getByRole("button", { name: "确认创建群发" })
+    .click();
+
+  await expect.poll(() => batchPayload).not.toBeNull();
+  expect(batchPayload).toMatchObject({
+    mode: "SEGMENT",
+    segment: "F"
+  });
+  expect(batchPayload).not.toHaveProperty("recipient");
+  expect(batchPayload).not.toHaveProperty("userId");
+  expect(batchPayload).not.toHaveProperty("emails");
+  await expect(
+    page.getByText("群发任务已创建，可在下方查看进度")
+  ).toBeVisible();
+});

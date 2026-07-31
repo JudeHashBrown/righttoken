@@ -100,6 +100,17 @@ export async function handleLocationRecalculation(
   let batchFailed = 0;
   for (const user of users) {
     try {
+      if (user.locationAssignmentMode === "MANUAL") {
+        await prisma.locationRecalculationRun.update({
+          where: { id: run.id },
+          data: {
+            processedUsers: { increment: 1 },
+            succeededUsers: { increment: 1 },
+            lastProcessedUserId: user.id
+          }
+        });
+        continue;
+      }
       const result = await recalculateStoredUserLocation(
         {
           email: user.email,

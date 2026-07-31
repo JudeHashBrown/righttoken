@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import Link from "next/link";
 import styles from "./dashboard.module.css";
 
 type MetricCardProps = {
@@ -7,6 +8,7 @@ type MetricCardProps = {
   note: string;
   icon: LucideIcon;
   tone: "neutral" | "danger" | "warning" | "positive";
+  href?: string;
 };
 
 export function MetricCard({
@@ -14,10 +16,11 @@ export function MetricCard({
   value,
   note,
   icon: Icon,
-  tone
+  tone,
+  href
 }: MetricCardProps): React.JSX.Element {
-  return (
-    <article className={styles.metric}>
+  const content = (
+    <>
       <div className={`${styles.metricIcon} ${styles[tone]}`}>
         <Icon aria-hidden="true" size={18} strokeWidth={1.9} />
       </div>
@@ -26,6 +29,16 @@ export function MetricCard({
         <strong>{value}</strong>
         <small>{note}</small>
       </div>
-    </article>
+    </>
+  );
+  return href ? (
+    <Link
+      className={`${styles.metric} ${styles.metricInteractive}`}
+      href={href}
+    >
+      {content}
+    </Link>
+  ) : (
+    <article className={styles.metric}>{content}</article>
   );
 }

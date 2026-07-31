@@ -1,5 +1,6 @@
 import type { UserProfile } from "@/generated/prisma/client";
 import type { TransactionClient } from "@/lib/db/transaction";
+import { presentServiceAnomaly } from "@/modules/anomalies/presentation";
 import { classifyUser } from "@/modules/segmentation/classify-user";
 import { loadActiveSegmentRuleSet } from "@/modules/segmentation/rule-config";
 import { closeObsoleteAutomationTasks } from "@/modules/tasks/close-obsolete-tasks";
@@ -72,12 +73,17 @@ export async function resegmentUser(
   }
 
   const changed = decision.segment !== user.currentSegment;
+  const resolvedReason =
+    decision.segment === "F"
+      ? presentServiceAnomaly(currentUser)?.taskReason ??
+        decision.reason
+      : decision.reason;
   await tx.userProfile.update({
     where: { id: user.id },
     data: {
       currentSegment: decision.segment,
       segmentRuleVersion: ruleVersion,
-      reasonLabel: decision.reason
+      reasonLabel: resolvedReason
     }
   });
 
@@ -94,7 +100,7 @@ export async function resegmentUser(
         fromSegment: user.currentSegment,
         toSegment: decision.segment,
         ruleVersion,
-        reason: `${reason}: ${decision.reason}`
+        reason: `${reason}: ${resolvedReason}`
       }
     });
   }
@@ -103,7 +109,7 @@ export async function resegmentUser(
     previousSegment: user.currentSegment,
     currentSegment: decision.segment,
     changed,
-    reason: decision.reason,
+    reason: resolvedReason,
     ruleVersion,
     segmentChanged: changed
       ? {

@@ -5,6 +5,7 @@ export const mailWorkspaceViews = [
   "mailboxes",
   "unmatched",
   "drafts",
+  "sent",
   "failed",
   "sync",
   "templates"

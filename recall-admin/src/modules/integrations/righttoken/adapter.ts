@@ -1,5 +1,19 @@
 import { z } from "zod";
 
+export type RightTokenAnomalyDetail = {
+  errorPhase: string | null;
+  errorType: string | null;
+  errorMessage: string | null;
+  errorOwner: string | null;
+  statusCode: number | null;
+  model: string | null;
+  platform: string | null;
+  requestCount: number;
+  failureCount: number;
+  consecutiveFailures: number;
+  lastOccurredAt: Date;
+};
+
 export type RightTokenUserSnapshot = {
   externalUserId: string;
   email: string;
@@ -25,7 +39,22 @@ export type RightTokenUserSnapshot = {
   balanceUsdMinor?: number;
   anomalyActive: boolean;
   anomalyChangedAt: Date | null;
+  anomalyDetail?: RightTokenAnomalyDetail | null;
 };
+
+const rightTokenAnomalyDetailSchema = z.object({
+  errorPhase: z.string().trim().max(32).nullable(),
+  errorType: z.string().trim().max(64).nullable(),
+  errorMessage: z.string().trim().max(500).nullable(),
+  errorOwner: z.string().trim().max(32).nullable(),
+  statusCode: z.number().int().min(100).max(599).nullable(),
+  model: z.string().trim().max(100).nullable(),
+  platform: z.string().trim().max(32).nullable(),
+  requestCount: z.number().int().nonnegative(),
+  failureCount: z.number().int().nonnegative(),
+  consecutiveFailures: z.number().int().nonnegative(),
+  lastOccurredAt: z.coerce.date()
+});
 
 export const rightTokenUserSnapshotSchema = z.object({
   externalUserId: z.string().min(1).max(191),
@@ -60,7 +89,8 @@ export const rightTokenUserSnapshotSchema = z.object({
     .default("USD"),
   balanceUsdMinor: z.number().int().optional(),
   anomalyActive: z.boolean(),
-  anomalyChangedAt: z.coerce.date().nullable()
+  anomalyChangedAt: z.coerce.date().nullable(),
+  anomalyDetail: rightTokenAnomalyDetailSchema.nullable().optional()
 }).transform((snapshot) => ({
   ...snapshot,
   balanceUsdMinor:

@@ -5,6 +5,7 @@ import {
   assignTask,
   assignUserOwner
 } from "@/modules/assignment/assign-task";
+import { presentServiceAnomaly } from "@/modules/anomalies/presentation";
 import { evaluateRuleSet } from "@/modules/segmentation/evaluate-rule-set";
 import { getNextRuleBoundary } from "@/modules/segmentation/next-rule-boundary";
 import { parseSegmentRuleConfig } from "@/modules/segmentation/rule-config";
@@ -133,6 +134,11 @@ export async function handleSegmentRecalculation(
             reason = `manual override: ${override.reason}`;
           }
         }
+        if (segment === "F") {
+          reason =
+            presentServiceAnomaly(currentUser)?.taskReason ??
+            reason;
+        }
         const cancelledTasks =
           await cancelSupersededAutomationTasks(
             tx,
@@ -203,7 +209,10 @@ export async function handleSegmentRecalculation(
           policyKey: boundary.boundaryKey,
           windowStart: boundary.runAt,
           ruleVersion: run.ruleVersionNumber,
-          reason: `规则发布后命中：${outcome.reason}`,
+          reason:
+            outcome.updated.currentSegment === "F"
+              ? outcome.reason
+              : `规则发布后命中：${outcome.reason}`,
           policy: getTaskPolicy(
             ruleSet,
             outcome.updated.currentSegment
