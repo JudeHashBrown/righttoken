@@ -3299,6 +3299,18 @@ func (s *OpenAIGatewayService) handleErrorResponse(
 	setOpsUpstreamError(c, resp.StatusCode, upstreamMsg, upstreamDetail)
 	logOpenAIInstructionsRequiredDebug(ctx, c, account, resp.StatusCode, upstreamMsg, requestBody, body)
 
+	if isMissingToolOutputError(resp.StatusCode, upstreamMsg) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": gin.H{
+				"type":    "invalid_request_error",
+				"code":    "incomplete_tool_call_state",
+				"param":   "input",
+				"message": "Conversation state is incomplete because a tool call is missing its output. Start a new task or clear the current conversation, then try again.",
+			},
+		})
+		return nil, fmt.Errorf("upstream invalid conversation state: %s", upstreamMsg)
+	}
+
 	if s.cfg != nil && s.cfg.Gateway.LogUpstreamErrorBody {
 		logger.LegacyPrintf("service.openai_gateway",
 			"OpenAI upstream error %d (account=%d platform=%s type=%s): %s",
@@ -3423,6 +3435,15 @@ func (s *OpenAIGatewayService) handleErrorResponse(
 		return nil, fmt.Errorf("upstream error: %d", resp.StatusCode)
 	}
 	return nil, fmt.Errorf("upstream error: %d message=%s", resp.StatusCode, upstreamMsg)
+}
+
+func isMissingToolOutputError(upstreamStatus int, upstreamMessage string) bool {
+	if upstreamStatus != http.StatusBadRequest {
+		return false
+	}
+	message := strings.ToLower(strings.TrimSpace(upstreamMessage))
+	return strings.Contains(message, "no tool output found for tool") &&
+		strings.Contains(message, "call")
 }
 
 // compatErrorWriter is the signature for format-specific error writers used by

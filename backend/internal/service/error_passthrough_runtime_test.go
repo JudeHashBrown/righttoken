@@ -88,6 +88,50 @@ func TestOpenAIHandleErrorResponse_NoRuleKeepsDefault(t *testing.T) {
 	assert.Equal(t, "Upstream request failed", errField["message"])
 }
 
+func TestOpenAIHandleErrorResponse_MissingToolOutputReturnsActionableBadRequest(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	rec := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(rec)
+
+	svc := &OpenAIGatewayService{}
+	respBody := []byte(`{"error":{"message":"No tool output found for tool search call fcbMSnjhMWQTGEzA1eUGqxLVva.","param":"input","type":"invalid_request_error"}}`)
+	resp := &http.Response{
+		StatusCode: http.StatusBadRequest,
+		Body:       io.NopCloser(bytes.NewReader(respBody)),
+		Header:     http.Header{},
+	}
+	account := &Account{ID: 12, Platform: PlatformOpenAI, Type: AccountTypeAPIKey}
+
+	_, err := svc.handleErrorResponse(context.Background(), resp, c, account, nil)
+	require.Error(t, err)
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+
+	var payload map[string]any
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &payload))
+	errField, ok := payload["error"].(map[string]any)
+	require.True(t, ok)
+	assert.Equal(t, "invalid_request_error", errField["type"])
+	assert.Equal(t, "incomplete_tool_call_state", errField["code"])
+	assert.Equal(t, "input", errField["param"])
+	assert.Contains(t, errField["message"], "Start a new task")
+	assert.NotContains(t, rec.Body.String(), "fcbMSnjhMWQTGEzA1eUGqxLVva")
+}
+
+func TestIsMissingToolOutputError(t *testing.T) {
+	assert.True(t, isMissingToolOutputError(
+		http.StatusBadRequest,
+		"No tool output found for tool search call call_123.",
+	))
+	assert.False(t, isMissingToolOutputError(
+		http.StatusBadGateway,
+		"No tool output found for tool search call call_123.",
+	))
+	assert.False(t, isMissingToolOutputError(
+		http.StatusBadRequest,
+		"Invalid schema for field input",
+	))
+}
+
 func TestGeminiWriteGeminiMappedError_NoRuleKeepsDefault(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	rec := httptest.NewRecorder()
