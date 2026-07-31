@@ -98,6 +98,7 @@ func ProvideHandlers(
 	paymentHandler *PaymentHandler,
 	paymentWebhookHandler *PaymentWebhookHandler,
 	recallSSOHandler *RecallSSOHandler,
+	analyticsHandler *AnalyticsHandler,
 	_ *service.IdempotencyCoordinator,
 	_ *service.IdempotencyCleanupService,
 	_ service.ReferralWiring,
@@ -119,6 +120,7 @@ func ProvideHandlers(
 		Payment:        paymentHandler,
 		PaymentWebhook: paymentWebhookHandler,
 		RecallSSO:      recallSSOHandler,
+		Analytics:      analyticsHandler,
 	}
 }
 
@@ -140,6 +142,7 @@ var ProviderSet = wire.NewSet(
 	NewPaymentHandler,
 	NewPaymentWebhookHandler,
 	NewRecallSSOHandler,
+	NewAnalyticsHandler,
 
 	// Admin handlers
 	admin.NewDashboardHandler,
