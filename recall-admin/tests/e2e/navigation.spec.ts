@@ -112,6 +112,11 @@ test("every administrator navigation item opens a real page", async ({
       await expect(segmentGroup).toBeVisible();
       await expect(page.getByLabel("筛选地区")).toBeVisible();
       await expect(page.getByLabel("筛选负责人")).toBeVisible();
+      await expect(
+        page
+          .getByLabel("筛选负责人")
+          .getByRole("option", { name: "未分配" })
+      ).toHaveAttribute("value", "__UNASSIGNED__");
       await expect(segmentButtons).toHaveText([
         "全部全部用户",
         "F服务异常",
@@ -128,6 +133,10 @@ test("every administrator navigation item opens a real page", async ({
         "48px"
       );
 
+      await page
+        .getByLabel("筛选负责人")
+        .selectOption("__UNASSIGNED__");
+      await expect(page).toHaveURL(/ownerId=__UNASSIGNED__/);
       await page.getByLabel("国家").fill("CN");
       await segmentGroup
         .getByRole("button", { name: "F 服务异常" })

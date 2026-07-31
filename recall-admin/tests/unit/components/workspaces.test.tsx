@@ -141,6 +141,31 @@ describe("user and task workspaces", () => {
     ).toHaveValue("__UNASSIGNED__");
   });
 
+  it("offers administrators an immediate action for an unassigned user", () => {
+    render(
+      <UserTable
+        canManageOwners
+        members={[
+          { id: "operator-1", displayName: "Operator One" }
+        ]}
+        users={[
+          {
+            ...user,
+            ownerId: null,
+            owner: null,
+            ownerAssignedAt: null,
+            ownerAssignmentReason: "没有规则命中；进入公共池"
+          }
+        ]}
+      />
+    );
+
+    expect(screen.getByText("未分配")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "立即分配" })
+    ).toBeInTheDocument();
+  });
+
   it("shows the concrete current anomaly beneath an F segment", () => {
     render(
       <UserTable

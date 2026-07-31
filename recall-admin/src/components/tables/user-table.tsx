@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { UserListItem } from "@/modules/users/user-queries";
 import styles from "@/components/workspaces/workspace.module.css";
+import { UserAssignmentControl } from "@/components/users/user-assignment-control";
 import { UserOwnerControl } from "@/components/users/user-owner-control";
 import {
   TableHeaderFilter
@@ -193,17 +194,26 @@ export function UserTable({
                 <td>
                   <strong>{ownerDisplayName(user.owner)}</strong>
                   <span className={styles.secondaryText}>
-                    {ownerAssignmentLabel(
-                      user.ownerAssignmentMode
-                    )}
+                    {user.ownerId
+                      ? ownerAssignmentLabel(
+                          user.ownerAssignmentMode
+                        )
+                      : "等待管理员分配"}
                   </span>
-                  {canManageOwners ? (
+                  {canManageOwners && user.ownerId ? (
                     <UserOwnerControl
                       compact
                       userId={user.id}
                       currentOwnerId={user.ownerId}
                       currentOwnerName={ownerDisplayName(user.owner)}
                       assignmentMode={user.ownerAssignmentMode}
+                      members={members}
+                    />
+                  ) : canManageOwners ? (
+                    <UserAssignmentControl
+                      userId={user.id}
+                      currentCountryCode={user.countryCode}
+                      currentRegion={user.region}
                       members={members}
                     />
                   ) : null}

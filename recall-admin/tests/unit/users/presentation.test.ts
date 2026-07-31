@@ -86,8 +86,8 @@ describe("owner assignment labels", () => {
     expect(ownerAssignmentLabel("MANUAL")).toBe("人工分配");
   });
 
-  it("uses the primary administrator fallback instead of pool language", () => {
-    expect(ownerDisplayName(null)).toBe("主管理员暂管");
+  it("shows users without an owner as unassigned", () => {
+    expect(ownerDisplayName(null)).toBe("未分配");
     expect(
       ownerDisplayName({ displayName: "运营甲" })
     ).toBe("运营甲");
