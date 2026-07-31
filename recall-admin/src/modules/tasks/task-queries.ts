@@ -221,11 +221,7 @@ export async function findTasks(
   const take = pageSize(filters.pageSize);
   const rows = await prisma.recallTask.findMany({
     where: buildTaskWhere(viewer, filters),
-    orderBy: [
-      { priority: "asc" },
-      { dueAt: "asc" },
-      { id: "asc" }
-    ],
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: take + 1,
     ...(filters.cursor
       ? {

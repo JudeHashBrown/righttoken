@@ -275,7 +275,16 @@ export async function findUsers(
         filters,
         liveSearchExternalIds
       ),
-      orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
+      orderBy: [
+        {
+          lastExternalEventAt: {
+            sort: "desc",
+            nulls: "last"
+          }
+        },
+        { registeredAt: "desc" },
+        { id: "desc" }
+      ],
       take: databaseMode ? Math.max(100, take + 1) : take + 1,
       ...(cursor
         ? {
