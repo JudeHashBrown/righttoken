@@ -110,6 +110,8 @@ test("every administrator navigation item opens a real page", async ({
       const segmentButtons = segmentGroup.getByRole("button");
 
       await expect(segmentGroup).toBeVisible();
+      await expect(page.getByLabel("筛选地区")).toBeVisible();
+      await expect(page.getByLabel("筛选负责人")).toBeVisible();
       await expect(segmentButtons).toHaveText([
         "全部全部用户",
         "F服务异常",
@@ -135,6 +137,14 @@ test("every administrator navigation item opens a real page", async ({
       await expect(
         page.getByRole("button", { name: "F 服务异常" })
       ).toHaveAttribute("aria-pressed", "true");
+    }
+    if (route.path === "/tasks") {
+      const segmentFilter = page.getByLabel("筛选分组");
+
+      await expect(segmentFilter).toBeVisible();
+      await expect(page.getByLabel("筛选负责人")).toBeVisible();
+      await segmentFilter.selectOption("B");
+      await expect(page).toHaveURL(/segment=B/);
     }
     if (route.path === "/automation/assignment") {
       await expect(
