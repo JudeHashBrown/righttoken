@@ -17,6 +17,16 @@ function first(value: string | string[] | undefined): string {
   return Array.isArray(value) ? value[0] ?? "" : value ?? "";
 }
 
+function preservedParams(
+  params: Record<string, string | string[] | undefined>,
+  excluded: string[]
+): Array<[string, string]> {
+  return Object.entries(params).flatMap(([key, value]) => {
+    const item = first(value);
+    return item && !excluded.includes(key) ? [[key, item]] : [];
+  });
+}
+
 function nextHref(
   params: Record<string, string | string[] | undefined>,
   cursor: string
@@ -108,6 +118,16 @@ export default async function UsersPage({
       </header>
 
       <form className={`${styles.filterBar} ${styles.userFilterBar}`}>
+        {regionFilter ? (
+          <input name="region" type="hidden" value={regionFilter} />
+        ) : null}
+        {first(params.ownerId) ? (
+          <input
+            name="ownerId"
+            type="hidden"
+            value={first(params.ownerId)}
+          />
+        ) : null}
         <div className={`${styles.field} ${styles.fieldGrow}`}>
           <label htmlFor="user-search">搜索用户</label>
           <input
@@ -130,41 +150,6 @@ export default async function UsersPage({
             placeholder="例如 中国或 CN"
           />
         </div>
-        <div className={`${styles.field} ${styles.userFilterCompact}`}>
-          <label htmlFor="user-region">地区</label>
-          <select
-            className={styles.select}
-            defaultValue={first(params.region)}
-            id="user-region"
-            name="region"
-          >
-            <option value="">全部地区</option>
-            <option value={unrecognizedLocationValue}>未识别</option>
-            {regions.map((region) => (
-              <option key={region} value={region}>
-                {region}
-              </option>
-            ))}
-          </select>
-        </div>
-        {owners.length ? (
-          <div className={`${styles.field} ${styles.userFilterOwner}`}>
-            <label htmlFor="user-owner">负责人</label>
-            <select
-              className={styles.select}
-              defaultValue={first(params.ownerId)}
-              id="user-owner"
-              name="ownerId"
-            >
-              <option value="">全部负责人</option>
-              {owners.map((owner) => (
-                <option key={owner.id} value={owner.id}>
-                  {owner.displayName}
-                </option>
-              ))}
-            </select>
-          </div>
-        ) : null}
         <button className={styles.button} type="submit">
           应用筛选
         </button>
@@ -184,9 +169,25 @@ export default async function UsersPage({
             </p>
           </div>
         </div>
+        <form action="/users" id="user-table-filters">
+          {preservedParams(params, [
+            "cursor",
+            "region",
+            "ownerId"
+          ]).map(([name, value]) => (
+            <input key={name} name={name} type="hidden" value={value} />
+          ))}
+        </form>
         <UserTable
           users={page.items}
           canManageOwners={member.role !== "OPERATOR"}
+          headerFilters={{
+            formId: "user-table-filters",
+            region: regionFilter,
+            regions,
+            ownerId: first(params.ownerId),
+            owners
+          }}
           members={owners}
         />
       </section>

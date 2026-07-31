@@ -2,6 +2,9 @@ import Link from "next/link";
 import type { TaskListItem } from "@/modules/tasks/task-queries";
 import styles from "@/components/workspaces/workspace.module.css";
 import {
+  TableHeaderFilter
+} from "@/components/tables/table-header-filter";
+import {
   mailComposeHref
 } from "@/modules/mail/compose-link";
 import {
@@ -13,6 +16,15 @@ import { presentSegmentReason } from "@/modules/segmentation/present-reason";
 type TaskTableProps = {
   tasks: TaskListItem[];
   now: Date;
+  headerFilters?: {
+    formId?: string;
+    segment: string;
+    assigneeId: string;
+    assignees: Array<{
+      id: string;
+      displayName: string;
+    }>;
+  };
 };
 
 function dateTime(value: Date): string {
@@ -44,7 +56,8 @@ function dueLabel(dueAt: Date, now: Date): string {
 
 export function TaskTable({
   tasks,
-  now
+  now,
+  headerFilters
 }: TaskTableProps): React.JSX.Element {
   if (tasks.length === 0) {
     return (
@@ -63,9 +76,47 @@ export function TaskTable({
             <th>优先级</th>
             <th>任务</th>
             <th>用户</th>
-            <th>分组</th>
+            <th>
+              {headerFilters ? (
+                <TableHeaderFilter
+                  formId={headerFilters.formId}
+                  label="分组"
+                  name="segment"
+                  options={[
+                    { value: "", label: "全部分组" },
+                    ...(["A", "B", "C", "D", "E", "F", "G"] as const).map(
+                      (segment) => ({
+                        value: segment,
+                        label: segment
+                      })
+                    )
+                  ]}
+                  value={headerFilters.segment}
+                />
+              ) : (
+                "分组"
+              )}
+            </th>
             <th>状态</th>
-            <th>负责人</th>
+            <th>
+              {headerFilters?.assignees.length ? (
+                <TableHeaderFilter
+                  formId={headerFilters.formId}
+                  label="负责人"
+                  name="assigneeId"
+                  options={[
+                    { value: "", label: "全部负责人" },
+                    ...headerFilters.assignees.map((assignee) => ({
+                      value: assignee.id,
+                      label: assignee.displayName
+                    }))
+                  ]}
+                  value={headerFilters.assigneeId}
+                />
+              ) : (
+                "负责人"
+              )}
+            </th>
             <th>剩余时间</th>
           </tr>
         </thead>
