@@ -198,7 +198,7 @@ func (c *Cryptomus) post(ctx context.Context, path string, payload map[string]an
 	if err != nil {
 		return fmt.Errorf("cryptomus request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	responseBody, err := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
 	if err != nil {
 		return fmt.Errorf("cryptomus read response: %w", err)
