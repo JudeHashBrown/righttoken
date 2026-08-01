@@ -315,6 +315,18 @@ docker compose \
 预期 `recall-web`、`recall-worker` 健康，
 `recall-migrate` 退出码为 0，且没有 `recall-db`。
 
+### 邮件自动同步排查
+
+“测试连接”只验证 SMTP 和 IMAP，不会收取邮件。首次同步可在邮箱工作台点击
+“立即收取邮件”。自动同步由 `recall-worker` 每两分钟执行。
+
+页面持续显示“尚未运行同步”或“自动同步可能未运行”时：
+
+1. 使用生产 Compose 配置检查 `recall-worker` 是否为运行且健康状态。
+2. 查看 `recall-worker` 日志中的 `mail_sync_failed` 分类错误。
+3. 同时重新创建 `recall-web` 和 `recall-worker`，不能只更新 Web。
+4. 手动收取成功后等待两到四分钟并刷新，确认最近成功同步时间继续推进。
+
 ## 9. 回滚
 
 1. 保留发布前数据库备份。
