@@ -44,13 +44,17 @@ describe("MailboxActions", () => {
     fireEvent.click(screen.getByRole("button", { name: "测试连接" }));
     await waitFor(() => {
       expect(
-        screen.getByText("收信和发信连接均正常")
+        screen.getByText(
+          "收信和发信连接均正常；测试连接不会收取邮件。"
+        )
       ).toBeInTheDocument();
     });
     fireEvent.click(screen.getByRole("button", { name: "立即收取邮件" }));
     await waitFor(() => {
       expect(
-        screen.getByText("收信完成：收到 2 封，已关联 1 封")
+        screen.getByText(
+          "收信完成：收到 2 封，已关联 1 封，未匹配 1 封"
+        )
       ).toBeInTheDocument();
     });
   });

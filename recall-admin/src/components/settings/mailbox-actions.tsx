@@ -33,7 +33,9 @@ export function MailboxActions({
         setError(mailSyncStatusText(result?.code ?? null));
         return;
       }
-      setMessage("收信和发信连接均正常");
+      setMessage(
+        "收信和发信连接均正常；测试连接不会收取邮件。"
+      );
       router.refresh();
     } catch {
       setError("网络连接异常。");
@@ -56,13 +58,14 @@ export function MailboxActions({
         code?: string;
         received?: number;
         matched?: number;
+        unmatched?: number;
       } | null;
       if (!response.ok) {
         setError(mailSyncStatusText(result?.code ?? null));
         return;
       }
       setMessage(
-        `收信完成：收到 ${result?.received ?? 0} 封，已关联 ${result?.matched ?? 0} 封`
+        `收信完成：收到 ${result?.received ?? 0} 封，已关联 ${result?.matched ?? 0} 封，未匹配 ${result?.unmatched ?? 0} 封`
       );
       router.refresh();
     } catch {

@@ -464,7 +464,6 @@ async function selectedItem(
         emailAddress: true,
         enabled: true,
         lastTestedAt: true,
-        lastSuccessAt: true,
         lastSyncedAt: true,
         lastErrorCode: true
       }
@@ -482,7 +481,6 @@ async function selectedItem(
               lastSyncedAt: mailbox.lastSyncedAt
             }),
             lastTestedAt: iso(mailbox.lastTestedAt),
-            lastSuccessAt: iso(mailbox.lastSuccessAt),
             lastSyncedAt: iso(mailbox.lastSyncedAt)
           }
         }
