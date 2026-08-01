@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   classifyMailSyncError,
+  mailboxSyncStatusText,
   mailSyncStatusText
 } from "@/modules/mail/sync-error";
 
@@ -53,5 +54,49 @@ describe("mail sync error classification", () => {
     expect(mailSyncStatusText("SECRET_PROVIDER_FAILURE")).toBe(
       "邮箱同步未完成，请重新测试连接"
     );
+  });
+});
+
+describe("mailbox sync status", () => {
+  const now = new Date("2026-08-01T05:00:00.000Z");
+
+  it("reports a mailbox that has never synchronized", () => {
+    expect(
+      mailboxSyncStatusText({
+        lastErrorCode: null,
+        lastSyncedAt: null,
+        now
+      })
+    ).toBe("尚未运行同步，请点击立即收取邮件");
+  });
+
+  it("warns when automatic synchronization is stale", () => {
+    expect(
+      mailboxSyncStatusText({
+        lastErrorCode: null,
+        lastSyncedAt: new Date("2026-08-01T04:49:59.999Z"),
+        now
+      })
+    ).toBe("自动同步可能未运行，请检查后台 Worker");
+  });
+
+  it("reports a recent synchronization as healthy", () => {
+    expect(
+      mailboxSyncStatusText({
+        lastErrorCode: null,
+        lastSyncedAt: new Date("2026-08-01T04:52:00.000Z"),
+        now
+      })
+    ).toBe("同步正常");
+  });
+
+  it("prioritizes a classified error over synchronization time", () => {
+    expect(
+      mailboxSyncStatusText({
+        lastErrorCode: "IMAP_AUTH_FAILED",
+        lastSyncedAt: new Date("2026-08-01T04:59:00.000Z"),
+        now
+      })
+    ).toBe("邮箱账号、密码或授权未通过");
   });
 });

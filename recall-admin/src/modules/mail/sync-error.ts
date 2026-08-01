@@ -21,6 +21,8 @@ const statusCopy: Record<MailSyncErrorCode, string> = {
   MAIL_SYNC_FAILED: "邮箱同步未完成，请重新测试连接"
 };
 
+const MAIL_SYNC_STALE_AFTER_MS = 10 * 60 * 1000;
+
 function errorProperty(
   error: unknown,
   property: string
@@ -95,4 +97,28 @@ export function mailSyncStatusText(
     statusCopy[code as MailSyncErrorCode] ??
     "邮箱同步未完成，请重新测试连接"
   );
+}
+
+export function mailboxSyncStatusText({
+  lastErrorCode,
+  lastSyncedAt,
+  now = new Date()
+}: {
+  lastErrorCode: string | null;
+  lastSyncedAt: Date | null;
+  now?: Date;
+}): string {
+  if (lastErrorCode) {
+    return mailSyncStatusText(lastErrorCode);
+  }
+  if (!lastSyncedAt) {
+    return "尚未运行同步，请点击立即收取邮件";
+  }
+  if (
+    now.getTime() - lastSyncedAt.getTime() >
+    MAIL_SYNC_STALE_AFTER_MS
+  ) {
+    return "自动同步可能未运行，请检查后台 Worker";
+  }
+  return "同步正常";
 }
