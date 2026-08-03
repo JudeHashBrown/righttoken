@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/db/prisma";
 import { getIntegrationCredential } from "@/modules/integrations/credential-store";
 import { getMailboxRuntimeConfig } from "@/modules/mail/mailbox-credentials";
+import {
+  configuredMailboxWhere
+} from "@/modules/mail/mailbox-availability";
 import { createOperatorEmailAdapter } from "@/modules/notifications/adapters/operator-email";
 import {
   createWecomAppAdapter,
@@ -25,7 +28,7 @@ export async function handleNotificationDelivery(
     getIntegrationCredential("WECOM_APP"),
     getIntegrationCredential("WECOM_ROBOT"),
     prisma.mailbox.findFirst({
-      where: { enabled: true },
+      where: { ...configuredMailboxWhere, enabled: true },
       orderBy: { createdAt: "asc" },
       select: { id: true }
     })

@@ -9,6 +9,9 @@ import {
 } from "@/modules/auth/guards";
 import { smtpImapConfigSchema } from "@/modules/mail/adapters/smtp-imap";
 import { saveMailboxCredential } from "@/modules/mail/mailbox-credentials";
+import {
+  configuredMailboxWhere
+} from "@/modules/mail/mailbox-availability";
 
 const mailboxSchema = z
   .object({
@@ -25,6 +28,7 @@ export async function GET(
   try {
     await requireRequestPermission(request, "integrations:manage");
     const mailboxes = await prisma.mailbox.findMany({
+      where: configuredMailboxWhere,
       orderBy: { createdAt: "asc" },
       select: {
         id: true,

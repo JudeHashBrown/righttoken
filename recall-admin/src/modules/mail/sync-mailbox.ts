@@ -1,5 +1,8 @@
 import { prisma } from "@/lib/db/prisma";
 import {
+  configuredMailboxWhere
+} from "@/modules/mail/mailbox-availability";
+import {
   matchInboundReply,
   type OutboundReplyCandidate
 } from "@/modules/mail/reply-matcher";
@@ -36,8 +39,8 @@ export async function syncMailbox(
     storage?: MailAssetStorage;
   } = {}
 ): Promise<SyncResult> {
-  const mailbox = await prisma.mailbox.findUniqueOrThrow({
-    where: { id: mailboxId },
+  const mailbox = await prisma.mailbox.findFirstOrThrow({
+    where: { id: mailboxId, ...configuredMailboxWhere },
     select: {
       id: true,
       emailAddress: true,

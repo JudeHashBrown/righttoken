@@ -7,6 +7,9 @@ import type {
   TaskStatus
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
+import {
+  configuredMailboxWhere
+} from "@/modules/mail/mailbox-availability";
 import { getProductionRightTokenUserFactsByIds } from "@/modules/users/righttoken-facts";
 import {
   defaultSegmentRuleSet
@@ -109,6 +112,7 @@ export async function getMailWorkspaceOverview(
         }
       }),
       prisma.mailbox.findMany({
+        where: configuredMailboxWhere,
         orderBy: { createdAt: "asc" },
         select: {
           id: true,
@@ -471,6 +475,7 @@ export async function getSettingsWorkspaceOverview() {
 
   const [mailboxes, integrationCredentials] = await Promise.all([
     prisma.mailbox.findMany({
+      where: configuredMailboxWhere,
       orderBy: { createdAt: "asc" },
       select: {
         id: true,

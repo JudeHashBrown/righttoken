@@ -8,6 +8,9 @@ import {
   smtpImapConfigSchema,
   type SmtpImapConfig
 } from "@/modules/mail/adapters/smtp-imap";
+import {
+  configuredMailboxWhere
+} from "@/modules/mail/mailbox-availability";
 
 type MailboxCredentialInput = {
   name: string;
@@ -59,6 +62,7 @@ export async function saveMailboxCredential(
     update: {
       name,
       encryptedConfig,
+      configurationDeletedAt: null,
       enabled: input.enabled,
       lastErrorCode: null
     },
@@ -91,10 +95,13 @@ export async function saveMailboxCredential(
 export async function getMailboxRuntimeConfig(
   mailboxId: string
 ): Promise<SmtpImapConfig> {
-  const mailbox = await prisma.mailbox.findUniqueOrThrow({
-    where: { id: mailboxId },
+  const mailbox = await prisma.mailbox.findFirstOrThrow({
+    where: { id: mailboxId, ...configuredMailboxWhere },
     select: { encryptedConfig: true }
   });
+  if (!mailbox.encryptedConfig) {
+    throw new Error("MAILBOX_CONFIGURATION_REMOVED");
+  }
   const decrypted = credentialCipher().decrypt(
     mailbox.encryptedConfig
   );

@@ -6,6 +6,9 @@ import {
 } from "@/modules/mail/sync-error";
 import { syncMailbox } from "@/modules/mail/sync-mailbox";
 import type { MailboxAdapter } from "@/modules/mail/types";
+import {
+  configuredMailboxWhere
+} from "@/modules/mail/mailbox-availability";
 
 type AdapterFactory = (
   mailboxId: string
@@ -26,6 +29,7 @@ export async function handleMailSync(
 ) {
   const mailboxes = await prisma.mailbox.findMany({
     where: {
+      ...configuredMailboxWhere,
       enabled: true,
       ...(options.mailboxIds
         ? { id: { in: options.mailboxIds } }

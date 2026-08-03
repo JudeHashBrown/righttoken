@@ -5,6 +5,9 @@ import type {
   TaskStatus
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
+import {
+  configuredMailboxWhere
+} from "@/modules/mail/mailbox-availability";
 import type {
   MailWorkspaceFilter
 } from "@/modules/mail/workspace-filter";
@@ -117,6 +120,7 @@ export async function getMailWorkspaceData(
       }
     }),
     prisma.mailbox.findMany({
+      where: configuredMailboxWhere,
       orderBy: { createdAt: "asc" },
       select: {
         id: true,
@@ -302,6 +306,7 @@ async function listItems(
   }
   if (filter.view === "mailboxes" || filter.view === "sync") {
     const rows = await prisma.mailbox.findMany({
+      where: configuredMailboxWhere,
       orderBy: { createdAt: "asc" },
       select: {
         id: true,
@@ -456,8 +461,11 @@ async function selectedItem(
       filter.view === "sync") &&
     filter.selectedId
   ) {
-    const mailbox = await prisma.mailbox.findUnique({
-      where: { id: filter.selectedId },
+    const mailbox = await prisma.mailbox.findFirst({
+      where: {
+        id: filter.selectedId,
+        ...configuredMailboxWhere
+      },
       select: {
         id: true,
         name: true,

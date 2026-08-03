@@ -5,6 +5,9 @@ import type {
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import {
+  configuredMailboxWhere
+} from "@/modules/mail/mailbox-availability";
+import {
   assertMemberPermission,
   ForbiddenError
 } from "@/modules/auth/guards";
@@ -120,8 +123,11 @@ export async function createMailBatch(
         where: { id: input.actorId },
         select: { id: true, role: true, active: true }
       }),
-      tx.mailbox.findUniqueOrThrow({
-        where: { id: input.mailboxId },
+      tx.mailbox.findFirstOrThrow({
+        where: {
+          id: input.mailboxId,
+          ...configuredMailboxWhere
+        },
         select: { id: true, enabled: true }
       })
     ]);
