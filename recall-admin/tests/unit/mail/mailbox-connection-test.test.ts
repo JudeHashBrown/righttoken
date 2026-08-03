@@ -22,8 +22,27 @@ vi.mock("nodemailer", () => ({
 
 import {
   createSmtpImapAdapter,
-  namecheapMailboxConfig
+  smtpImapConfigSchema
 } from "@/modules/mail/adapters/smtp-imap";
+
+function mailboxConfig() {
+  return smtpImapConfigSchema.parse({
+    emailAddress: "support@righttoken.test",
+    displayName: "RightToken 客服",
+    username: "support@righttoken.test",
+    password: "development-only-password",
+    smtp: {
+      host: "smtp.example.test",
+      port: 465,
+      secure: true
+    },
+    imap: {
+      host: "imap.example.test",
+      port: 993,
+      secure: true
+    }
+  });
+}
 
 describe("mailbox connection test", () => {
   beforeEach(() => {
@@ -38,12 +57,7 @@ describe("mailbox connection test", () => {
 
   it("verifies both incoming and outgoing connections", async () => {
     const adapter = createSmtpImapAdapter(
-      namecheapMailboxConfig({
-        emailAddress: "support@righttoken.test",
-        displayName: "RightToken 客服",
-        username: "support@righttoken.test",
-        password: "development-only-password"
-      })
+      mailboxConfig()
     );
 
     await expect(adapter.testConnection()).resolves.toEqual({

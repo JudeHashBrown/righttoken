@@ -1,11 +1,29 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   collectFetchedMessages,
-  namecheapMailboxConfig,
   parsedMailToMailboxMessage,
   smtpImapConfigSchema
 } from "@/modules/mail/adapters/smtp-imap";
 import { sendSmtpMessage } from "@/modules/integrations/email/smtp-sender";
+
+function mailboxConfig() {
+  return smtpImapConfigSchema.parse({
+    emailAddress: "support@righttoken.test",
+    displayName: "RightToken 客服",
+    username: "support@righttoken.test",
+    password: "development-only-password",
+    smtp: {
+      host: "smtp.example.test",
+      port: 465,
+      secure: true
+    },
+    imap: {
+      host: "imap.example.test",
+      port: 993,
+      secure: true
+    }
+  });
+}
 
 describe("SMTP/IMAP mailbox adapter", () => {
   it("continues after one malformed fetched message without logging its content", async () => {
@@ -114,28 +132,6 @@ describe("SMTP/IMAP mailbox adapter", () => {
     });
   });
 
-  it("uses Namecheap Private Email SSL defaults", () => {
-    expect(
-      namecheapMailboxConfig({
-        emailAddress: "support@righttoken.test",
-        displayName: "RightToken 客服",
-        username: "support@righttoken.test",
-        password: "development-only-password"
-      })
-    ).toMatchObject({
-      smtp: {
-        host: "mail.privateemail.com",
-        port: 465,
-        secure: true
-      },
-      imap: {
-        host: "mail.privateemail.com",
-        port: 993,
-        secure: true
-      }
-    });
-  });
-
   it("rejects incomplete server configuration", () => {
     expect(() =>
       smtpImapConfigSchema.parse({
@@ -149,12 +145,7 @@ describe("SMTP/IMAP mailbox adapter", () => {
       messageId: "<provider-message-id@example.test>"
     });
     const createTransport = vi.fn().mockReturnValue({ sendMail });
-    const config = namecheapMailboxConfig({
-      emailAddress: "support@righttoken.test",
-      displayName: "RightToken 客服",
-      username: "support@righttoken.test",
-      password: "development-only-password"
-    });
+    const config = mailboxConfig();
 
     await expect(
       sendSmtpMessage(
@@ -170,7 +161,7 @@ describe("SMTP/IMAP mailbox adapter", () => {
       providerMessageId: "<provider-message-id@example.test>"
     });
     expect(createTransport).toHaveBeenCalledWith({
-      host: "mail.privateemail.com",
+      host: "smtp.example.test",
       port: 465,
       secure: true,
       auth: {
@@ -187,12 +178,7 @@ describe("SMTP/IMAP mailbox adapter", () => {
     const sendMail = vi.fn().mockResolvedValue({
       messageId: "<reply@example.test>"
     });
-    const config = namecheapMailboxConfig({
-      emailAddress: "support@righttoken.test",
-      displayName: "RightToken 客服",
-      username: "support@righttoken.test",
-      password: "development-only-password"
-    });
+    const config = mailboxConfig();
 
     await sendSmtpMessage(
       config,
@@ -224,12 +210,7 @@ describe("SMTP/IMAP mailbox adapter", () => {
     const sendMail = vi.fn().mockResolvedValue({
       messageId: "<rich-mail@example.test>"
     });
-    const config = namecheapMailboxConfig({
-      emailAddress: "support@righttoken.test",
-      displayName: "RightToken 客服",
-      username: "support@righttoken.test",
-      password: "development-only-password"
-    });
+    const config = mailboxConfig();
 
     await sendSmtpMessage(
       config,

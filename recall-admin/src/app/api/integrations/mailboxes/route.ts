@@ -17,7 +17,7 @@ const mailboxSchema = z
   .object({
     name: z.string().trim().min(1).max(120),
     enabled: z.boolean(),
-    provider: z.enum(["NAMECHEAP", "WECOM_MAIL", "CUSTOM"]),
+    provider: z.enum(["WECOM_MAIL", "CUSTOM"]),
     config: smtpImapConfigSchema
   })
   .strict();

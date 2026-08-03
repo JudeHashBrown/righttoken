@@ -37,21 +37,21 @@ describe("encrypted mailbox credentials", () => {
 
   it("stores the password encrypted and only returns safe metadata", async () => {
     const saved = await saveMailboxCredential(adminId, {
-      name: "Namecheap 客服邮箱",
+      name: "企业微信邮箱",
       enabled: true,
-      provider: "NAMECHEAP",
+      provider: "WECOM_MAIL",
       config: {
         emailAddress: `support-${randomUUID()}@righttoken.test`,
         displayName: "RightToken 客服",
         username: "support@righttoken.test",
         password: "mailbox-secret-password",
         smtp: {
-          host: "mail.privateemail.com",
+          host: "smtp.exmail.qq.com",
           port: 465,
           secure: true
         },
         imap: {
-          host: "mail.privateemail.com",
+          host: "imap.exmail.qq.com",
           port: 993,
           secure: true
         }

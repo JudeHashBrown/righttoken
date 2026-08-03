@@ -6,6 +6,12 @@ import type {
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { getProductionRightTokenUserFactsByIds } from "@/modules/users/righttoken-facts";
+import {
+  configuredMailboxWhere
+} from "@/modules/mail/mailbox-availability";
+import {
+  buildMailboxChannelHealth
+} from "@/modules/admin/settings-overview";
 
 const OPEN_TASK_STATUSES: TaskStatus[] = [
   "UNASSIGNED",
@@ -265,6 +271,26 @@ export async function getDashboardSnapshot(
     1,
     workloadRows.reduce((total, row) => total + row._count._all, 0)
   );
+  const [mailboxes, integrationCredentials] = await Promise.all([
+    prisma.mailbox.findMany({
+      where: configuredMailboxWhere,
+      select: { enabled: true }
+    }),
+    prisma.integrationCredential.findMany({
+      where: { kind: { in: ["WECOM_APP", "WECOM_ROBOT"] } },
+      select: { kind: true, enabled: true }
+    })
+  ]);
+  const configuredCredentials = new Set(
+    integrationCredentials
+      .filter((credential) => credential.enabled)
+      .map((credential) => credential.kind)
+  );
+  const wecomAppConfigured =
+    configuredCredentials.has("WECOM_APP");
+  const wecomRobotConfigured =
+    configuredCredentials.has("WECOM_ROBOT") ||
+    Boolean(process.env.WECOM_WEBHOOK_URL);
 
   return {
     metrics: {
@@ -286,20 +312,16 @@ export async function getDashboardSnapshot(
       count: segmentCounts.get(segment) ?? 0
     })),
     channelHealth: [
+      buildMailboxChannelHealth(mailboxes),
       {
-        channel: "Namecheap 客服邮箱",
-        state: "warning",
-        detail: "等待配置"
-      },
-      {
-        channel: "企业微信邮箱",
-        state: "warning",
-        detail: "等待配置"
+        channel: "企业微信应用",
+        state: wecomAppConfigured ? "healthy" : "warning",
+        detail: wecomAppConfigured ? "已经连接" : "尚未连接"
       },
       {
         channel: "企微群机器人",
-        state: "warning",
-        detail: "等待配置"
+        state: wecomRobotConfigured ? "healthy" : "warning",
+        detail: wecomRobotConfigured ? "已经连接" : "尚未连接"
       }
     ],
     teamWorkload: workloadRows

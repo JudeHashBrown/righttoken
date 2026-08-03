@@ -15,7 +15,7 @@ import {
 type MailboxCredentialInput = {
   name: string;
   enabled: boolean;
-  provider: "NAMECHEAP" | "WECOM_MAIL" | "CUSTOM";
+  provider: "WECOM_MAIL" | "CUSTOM";
   config: SmtpImapConfig;
 };
 
