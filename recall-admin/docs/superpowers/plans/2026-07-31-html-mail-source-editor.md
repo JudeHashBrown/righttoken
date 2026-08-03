@@ -631,4 +631,3 @@ Expected: all commands exit 0 with no new warnings.
 git add tests/e2e/html-mail-workflow.spec.ts README.md
 git commit -m "test: cover HTML mail authoring workflow"
 ```
-
