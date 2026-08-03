@@ -1,7 +1,14 @@
 import "dotenv/config";
 
 import { randomUUID } from "node:crypto";
-import { afterAll, describe, expect, it } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  describe,
+  expect,
+  it,
+  vi
+} from "vitest";
 import { NextRequest } from "next/server";
 import { DELETE } from "@/app/api/integrations/mailboxes/[id]/route";
 import { prisma } from "@/lib/db/prisma";
@@ -11,11 +18,49 @@ import {
   SESSION_COOKIE_NAME
 } from "@/modules/auth/session";
 import {
+  getMailboxRuntimeConfig,
   removeMailboxConfiguration,
   saveMailboxCredential
 } from "@/modules/mail/mailbox-credentials";
 
+function useProductionAuth(): void {
+  vi.stubEnv("AUTH_MODE", "production");
+  vi.stubEnv("DEPLOYMENT_ENV", "production");
+  vi.stubEnv("APP_URL", "http://127.0.0.1:3000");
+}
+
+function deleteRequest(input: {
+  mailboxId: string;
+  configurationVersion?: number;
+  sessionToken?: string;
+  origin?: string;
+}): NextRequest {
+  return new NextRequest(
+    `http://127.0.0.1:3000/api/integrations/mailboxes/${input.mailboxId}`,
+    {
+      method: "DELETE",
+      headers: {
+        origin: input.origin ?? "http://127.0.0.1:3000",
+        "content-type": "application/json",
+        ...(input.sessionToken
+          ? {
+              cookie:
+                `${SESSION_COOKIE_NAME}=${input.sessionToken}`
+            }
+          : {})
+      },
+      body: JSON.stringify({
+        configurationVersion: input.configurationVersion ?? 1
+      })
+    }
+  );
+}
+
 describe("mailbox configuration removal", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   afterAll(async () => {
     await prisma.$disconnect();
   });
@@ -105,6 +150,9 @@ describe("mailbox configuration removal", () => {
       expect(updated.lastTestedAt).toBeNull();
       expect(updated.lastSuccessAt).toBeNull();
       expect(updated.lastSyncedAt).toBeNull();
+      await expect(
+        getMailboxRuntimeConfig(mailbox.id)
+      ).rejects.toThrow();
       expect(
         await prisma.mailThread.count({
           where: { mailboxId: mailbox.id }
@@ -300,6 +348,174 @@ describe("mailbox configuration removal", () => {
       await prisma.member.deleteMany({
         where: { id: admin.id }
       });
+    }
+  });
+
+  it("rolls back credential removal when its audit insert fails", async () => {
+    const token = randomUUID();
+    const indexName =
+      `mailbox_delete_rollback_${token.replaceAll("-", "")}`;
+    const admin = await prisma.member.create({
+      data: {
+        email: `mailbox-rollback-admin-${token}@example.test`,
+        displayName: "Mailbox Rollback Admin",
+        passwordHash: "not-used",
+        role: "ADMIN"
+      }
+    });
+    const mailbox = await prisma.mailbox.create({
+      data: {
+        name: "回滚删除邮箱",
+        emailAddress: `mailbox-rollback-${token}@example.test`,
+        encryptedConfig: "encrypted-rollback-configuration",
+        enabled: true
+      }
+    });
+    await prisma.auditLog.create({
+      data: {
+        actorId: admin.id,
+        action: "mailbox.configuration_deleted",
+        entityType: "Mailbox",
+        entityId: mailbox.id,
+        metadata: { fixture: true }
+      }
+    });
+    if (!/^[a-z0-9_]+$/.test(indexName)) {
+      throw new Error("unsafe rollback fixture index name");
+    }
+    if (!/^[a-z0-9]+$/.test(mailbox.id)) {
+      throw new Error("unsafe rollback fixture mailbox id");
+    }
+    await prisma.$executeRawUnsafe(`
+      CREATE UNIQUE INDEX "${indexName}"
+      ON "recall"."AuditLog" ("entityId")
+      WHERE "action" = 'mailbox.configuration_deleted'
+        AND "entityId" = '${mailbox.id}'
+    `);
+
+    try {
+      await expect(
+        removeMailboxConfiguration(
+          admin.id,
+          mailbox.id,
+          mailbox.configurationVersion
+        )
+      ).rejects.toThrow();
+      await expect(
+        prisma.mailbox.findUniqueOrThrow({
+          where: { id: mailbox.id },
+          select: {
+            encryptedConfig: true,
+            configurationDeletedAt: true,
+            configurationVersion: true,
+            enabled: true
+          }
+        })
+      ).resolves.toEqual({
+        encryptedConfig: "encrypted-rollback-configuration",
+        configurationDeletedAt: null,
+        configurationVersion: 1,
+        enabled: true
+      });
+      expect(
+        await prisma.auditLog.count({
+          where: {
+            action: "mailbox.configuration_deleted",
+            entityId: mailbox.id
+          }
+        })
+      ).toBe(1);
+    } finally {
+      await prisma.$executeRawUnsafe(
+        `DROP INDEX IF EXISTS "recall"."${indexName}"`
+      );
+      await prisma.auditLog.deleteMany({
+        where: { entityId: mailbox.id }
+      });
+      await prisma.mailbox.deleteMany({
+        where: { id: mailbox.id }
+      });
+      await prisma.member.deleteMany({
+        where: { id: admin.id }
+      });
+    }
+  });
+
+  it("rejects an unauthenticated deletion request", async () => {
+    useProductionAuth();
+    const mailboxId = `missing-${randomUUID()}`;
+
+    const response = await DELETE(
+      deleteRequest({ mailboxId }),
+      { params: Promise.resolve({ id: mailboxId }) }
+    );
+
+    expect(response.status).toBe(401);
+    await expect(response.json()).resolves.toEqual({
+      code: "UNAUTHORIZED"
+    });
+  });
+
+  it("rejects a deletion request from an operator", async () => {
+    useProductionAuth();
+    const token = randomUUID();
+    const operator = await prisma.member.create({
+      data: {
+        email: `mailbox-delete-operator-${token}@example.test`,
+        displayName: "Mailbox Delete Operator",
+        passwordHash: "not-used",
+        role: "OPERATOR"
+      }
+    });
+    const session = await createSession(operator.id);
+    const mailboxId = `missing-${randomUUID()}`;
+
+    try {
+      const response = await DELETE(
+        deleteRequest({
+          mailboxId,
+          sessionToken: session.token
+        }),
+        { params: Promise.resolve({ id: mailboxId }) }
+      );
+
+      expect(response.status).toBe(403);
+      await expect(response.json()).resolves.toEqual({
+        code: "FORBIDDEN"
+      });
+    } finally {
+      await revokeSessionByToken(session.token);
+      await prisma.member.deleteMany({
+        where: { id: operator.id }
+      });
+    }
+  });
+
+  it("rejects a cross-site deletion request", async () => {
+    useProductionAuth();
+    const admin = await prisma.member.findFirstOrThrow({
+      where: { role: "PRIMARY_ADMIN", active: true },
+      select: { id: true }
+    });
+    const session = await createSession(admin.id);
+    const mailboxId = `missing-${randomUUID()}`;
+
+    try {
+      const response = await DELETE(
+        deleteRequest({
+          mailboxId,
+          sessionToken: session.token,
+          origin: "https://attacker.example"
+        }),
+        { params: Promise.resolve({ id: mailboxId }) }
+      );
+
+      expect(response.status).toBe(400);
+      await expect(response.json()).resolves.toEqual({
+        code: "MAILBOX_CONFIGURATION_DELETE_FAILED"
+      });
+    } finally {
+      await revokeSessionByToken(session.token);
     }
   });
 
