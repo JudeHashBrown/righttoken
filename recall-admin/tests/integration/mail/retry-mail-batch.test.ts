@@ -22,10 +22,12 @@ describe("mail batch retry", () => {
   let batchId: string;
   const userIds: string[] = [];
   const scheduled: string[] = [];
+  const scheduledRunAts: Array<Date | undefined> = [];
   const scheduler: TaskScheduler = {
     async scheduleSegmentCheck() {},
-    async scheduleMailBatch({ batchId: scheduledBatchId }) {
+    async scheduleMailBatch({ batchId: scheduledBatchId, runAt }) {
       scheduled.push(scheduledBatchId);
+      scheduledRunAts.push(runAt);
     }
   };
 
@@ -153,5 +155,6 @@ describe("mail batch retry", () => {
       failedRecipients: 0
     });
     expect(scheduled).toEqual([batchId]);
+    expect(scheduledRunAts).toEqual([undefined]);
   });
 });

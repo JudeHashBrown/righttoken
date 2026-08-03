@@ -21,6 +21,11 @@ export type SegmentCheckSchedule =
   | LegacySegmentCheckSchedule
   | StructuredSegmentCheckSchedule;
 
+export type MailBatchSchedule = {
+  batchId: string;
+  runAt?: Date;
+};
+
 export interface TaskScheduler {
   scheduleSegmentCheck(input: SegmentCheckSchedule): Promise<void>;
   scheduleSegmentRecalculation?(
@@ -33,7 +38,7 @@ export interface TaskScheduler {
     input: { runId: string }
   ): Promise<void>;
   scheduleMailBatch?(
-    input: { batchId: string }
+    input: MailBatchSchedule
   ): Promise<void>;
 }
 

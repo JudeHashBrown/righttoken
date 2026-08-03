@@ -29,7 +29,7 @@ describe("mail batch delivery", () => {
 
   const scheduler: TaskScheduler = {
     async scheduleSegmentCheck() {},
-    async scheduleMailBatch() {}
+    async scheduleMailBatch(_input) {}
   };
 
   beforeAll(async () => {
