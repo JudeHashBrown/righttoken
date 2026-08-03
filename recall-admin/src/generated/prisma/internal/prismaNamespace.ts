@@ -3395,6 +3395,7 @@ export const MailboxScalarFieldEnum = {
   name: 'name',
   emailAddress: 'emailAddress',
   encryptedConfig: 'encryptedConfig',
+  configurationDeletedAt: 'configurationDeletedAt',
   enabled: 'enabled',
   trackingEnabled: 'trackingEnabled',
   trackingDisclosure: 'trackingDisclosure',

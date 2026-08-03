@@ -638,7 +638,8 @@ model Mailbox {
   id                 String    @id @default(cuid())
   name               String
   emailAddress       String    @unique
-  encryptedConfig    String
+  encryptedConfig    String?
+  configurationDeletedAt DateTime?
   enabled            Boolean   @default(false)
   trackingEnabled    Boolean   @default(false)
   trackingDisclosure String?
@@ -653,6 +654,7 @@ model Mailbox {
   messages    MailMessage[]
   mailBatches MailBatch[]
 
+  @@index([configurationDeletedAt, enabled])
   @@schema("recall")
 }
 
