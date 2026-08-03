@@ -98,4 +98,114 @@ describe("mail sync worker", () => {
     );
     expect(JSON.stringify(stored)).not.toContain(secret);
   });
+
+  it("does not restore success status after the configuration is deleted in flight", async () => {
+    const mailbox = await prisma.mailbox.create({
+      data: {
+        name: "同步中删除配置邮箱",
+        emailAddress: `deleted-in-flight-${randomUUID()}@righttoken.test`,
+        encryptedConfig: "encrypted-test-value",
+        enabled: true
+      }
+    });
+    mailboxIds.push(mailbox.id);
+    const adapter = {
+      testConnection: vi.fn(),
+      send: vi.fn(),
+      listMessagesSince: vi.fn().mockImplementation(async () => {
+        await prisma.mailbox.update({
+          where: { id: mailbox.id },
+          data: {
+            encryptedConfig: null,
+            configurationDeletedAt: new Date(
+              "2026-08-04T02:00:00.000Z"
+            ),
+            configurationVersion: { increment: 1 },
+            enabled: false,
+            lastSyncedAt: null,
+            lastSuccessAt: null,
+            lastErrorCode: null
+          }
+        });
+        return [];
+      })
+    };
+
+    await expect(
+      handleMailSync(
+        new Date("2026-08-04T02:01:00.000Z"),
+        async () => adapter,
+        { mailboxIds: [mailbox.id] }
+      )
+    ).resolves.toMatchObject({ failed: 0 });
+
+    await expect(
+      prisma.mailbox.findUniqueOrThrow({
+        where: { id: mailbox.id },
+        select: {
+          configurationVersion: true,
+          lastSyncedAt: true,
+          lastSuccessAt: true,
+          lastErrorCode: true
+        }
+      })
+    ).resolves.toEqual({
+      configurationVersion: 2,
+      lastSyncedAt: null,
+      lastSuccessAt: null,
+      lastErrorCode: null
+    });
+  });
+
+  it("does not write an old adapter failure onto a re-saved configuration", async () => {
+    const mailbox = await prisma.mailbox.create({
+      data: {
+        name: "同步中重配邮箱",
+        emailAddress: `reconfigured-in-flight-${randomUUID()}@righttoken.test`,
+        encryptedConfig: "old-encrypted-test-value",
+        enabled: true
+      }
+    });
+    mailboxIds.push(mailbox.id);
+    const adapter = {
+      testConnection: vi.fn(),
+      send: vi.fn(),
+      listMessagesSince: vi.fn().mockImplementation(async () => {
+        await prisma.mailbox.update({
+          where: { id: mailbox.id },
+          data: {
+            encryptedConfig: "new-encrypted-test-value",
+            configurationDeletedAt: null,
+            configurationVersion: { increment: 1 },
+            enabled: true,
+            lastErrorCode: "NEW_CONFIGURATION_STATUS"
+          }
+        });
+        throw Object.assign(new Error("old adapter timed out"), {
+          code: "ETIMEDOUT"
+        });
+      })
+    };
+
+    await expect(
+      handleMailSync(
+        new Date("2026-08-04T03:01:00.000Z"),
+        async () => adapter,
+        { mailboxIds: [mailbox.id] }
+      )
+    ).resolves.toMatchObject({ failed: 1 });
+
+    await expect(
+      prisma.mailbox.findUniqueOrThrow({
+        where: { id: mailbox.id },
+        select: {
+          configurationVersion: true,
+          lastErrorCode: true
+        }
+      })
+    ).resolves.toEqual({
+      configurationVersion: 2,
+      lastErrorCode: "NEW_CONFIGURATION_STATUS"
+    });
+  });
 });

@@ -94,12 +94,25 @@ export async function saveMailboxCredential(
   return mailbox;
 }
 
-export async function getMailboxRuntimeConfig(
-  mailboxId: string
-): Promise<SmtpImapConfig> {
+export async function getMailboxRuntimeConfiguration(
+  mailboxId: string,
+  expectedConfigurationVersion?: number
+): Promise<{
+  config: SmtpImapConfig;
+  configurationVersion: number;
+}> {
   const mailbox = await prisma.mailbox.findFirstOrThrow({
-    where: { id: mailboxId, ...configuredMailboxWhere },
-    select: { encryptedConfig: true }
+    where: {
+      id: mailboxId,
+      ...configuredMailboxWhere,
+      ...(expectedConfigurationVersion === undefined
+        ? {}
+        : { configurationVersion: expectedConfigurationVersion })
+    },
+    select: {
+      encryptedConfig: true,
+      configurationVersion: true
+    }
   });
   if (!mailbox.encryptedConfig) {
     throw new Error("MAILBOX_CONFIGURATION_REMOVED");
@@ -110,7 +123,16 @@ export async function getMailboxRuntimeConfig(
   const parsed = JSON.parse(decrypted) as Record<string, unknown>;
   const { provider: _provider, ...config } = parsed;
   void _provider;
-  return smtpImapConfigSchema.parse(config);
+  return {
+    config: smtpImapConfigSchema.parse(config),
+    configurationVersion: mailbox.configurationVersion
+  };
+}
+
+export async function getMailboxRuntimeConfig(
+  mailboxId: string
+): Promise<SmtpImapConfig> {
+  return (await getMailboxRuntimeConfiguration(mailboxId)).config;
 }
 
 export class MailboxConfigurationNotFoundError extends Error {

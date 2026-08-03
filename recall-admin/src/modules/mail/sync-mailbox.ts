@@ -34,13 +34,18 @@ type SyncResult = {
 export async function syncMailbox(
   mailboxId: string,
   adapter: Pick<MailboxAdapter, "listMessagesSince">,
+  configurationVersion: number,
   now = new Date(),
   dependencies: {
     storage?: MailAssetStorage;
   } = {}
 ): Promise<SyncResult> {
   const mailbox = await prisma.mailbox.findFirstOrThrow({
-    where: { id: mailboxId, ...configuredMailboxWhere },
+    where: {
+      id: mailboxId,
+      configurationVersion,
+      ...configuredMailboxWhere
+    },
     select: {
       id: true,
       emailAddress: true,
@@ -287,8 +292,14 @@ export async function syncMailbox(
         result.replyTasksCreated += 1;
       }
     }
-    await tx.mailbox.update({
-      where: { id: mailboxId },
+    await tx.mailbox.updateMany({
+      where: {
+        id: mailboxId,
+        configurationVersion,
+        encryptedConfig: { not: null },
+        configurationDeletedAt: null,
+        enabled: true
+      },
       data: {
         lastSyncedAt: now,
         lastSuccessAt: now,

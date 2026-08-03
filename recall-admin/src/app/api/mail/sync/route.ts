@@ -8,7 +8,9 @@ import {
   UnauthorizedError
 } from "@/modules/auth/guards";
 import { createSmtpImapAdapter } from "@/modules/mail/adapters/smtp-imap";
-import { getMailboxRuntimeConfig } from "@/modules/mail/mailbox-credentials";
+import {
+  getMailboxRuntimeConfiguration
+} from "@/modules/mail/mailbox-credentials";
 import {
   classifyMailSyncError
 } from "@/modules/mail/sync-error";
@@ -22,6 +24,7 @@ export async function POST(
   request: NextRequest
 ): Promise<NextResponse> {
   let mailboxId: string | null = null;
+  let configurationVersion: number | null = null;
   try {
     assertSameOrigin(request);
     await requireRequestPermission(request, "integrations:manage");
@@ -35,13 +38,15 @@ export async function POST(
       );
     }
     mailboxId = parsed.data.mailboxId;
-    const config = await getMailboxRuntimeConfig(
+    const runtime = await getMailboxRuntimeConfiguration(
       mailboxId
     );
+    configurationVersion = runtime.configurationVersion;
     return NextResponse.json(
       await syncMailbox(
         mailboxId,
-        createSmtpImapAdapter(config)
+        createSmtpImapAdapter(runtime.config),
+        configurationVersion
       )
     );
   } catch (error) {
@@ -58,10 +63,16 @@ export async function POST(
       );
     }
     const code = classifyMailSyncError(error);
-    if (mailboxId) {
+    if (mailboxId && configurationVersion !== null) {
       await prisma.mailbox
-        .update({
-          where: { id: mailboxId },
+        .updateMany({
+          where: {
+            id: mailboxId,
+            configurationVersion,
+            encryptedConfig: { not: null },
+            configurationDeletedAt: null,
+            enabled: true
+          },
           data: { lastErrorCode: code }
         })
         .catch(() => undefined);
