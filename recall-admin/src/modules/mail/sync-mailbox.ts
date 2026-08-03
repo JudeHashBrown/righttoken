@@ -28,6 +28,11 @@ type SyncResult = {
   replyTasksReopened: number;
 };
 
+const MAIL_SYNC_TRANSACTION_OPTIONS = {
+  maxWait: 10_000,
+  timeout: 120_000
+} as const;
+
 export async function syncMailbox(
   mailboxId: string,
   adapter: Pick<MailboxAdapter, "listMessagesSince">,
@@ -293,7 +298,7 @@ export async function syncMailbox(
       }
     });
       return result;
-    });
+    }, MAIL_SYNC_TRANSACTION_OPTIONS);
   } catch (error) {
     await discardPreparedInboundAssets(
       [...preparedByProviderId.values()],
