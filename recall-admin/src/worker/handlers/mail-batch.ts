@@ -21,8 +21,7 @@ export async function handleMailBatch(
   input: MailBatchJobInput,
   now: Date,
   scheduler: TaskScheduler,
-  dependencies?: MailBatchDeliveryDependencies,
-  batchSize = 25
+  dependencies?: MailBatchDeliveryDependencies
 ) {
   let resolvedDependencies = dependencies;
   if (!resolvedDependencies) {
@@ -41,7 +40,6 @@ export async function handleMailBatch(
     input,
     now,
     scheduler,
-    resolvedDependencies,
-    batchSize
+    resolvedDependencies
   );
 }

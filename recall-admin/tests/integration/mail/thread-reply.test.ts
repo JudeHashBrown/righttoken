@@ -22,6 +22,7 @@ describe("threaded user mail replies", () => {
   let taskId: string;
   let templateId: string;
   let assetId: string;
+  let senderDomain: string;
 
   beforeAll(async () => {
     const [operator, otherOperator] = await Promise.all([
@@ -56,10 +57,12 @@ describe("threaded user mail replies", () => {
       }
     });
     userId = user.id;
+    senderDomain =
+      `thread-reply-${randomUUID()}.righttoken.test`;
     const mailbox = await prisma.mailbox.create({
       data: {
         name: "线程回复测试邮箱",
-        emailAddress: `thread-support-${randomUUID()}@righttoken.test`,
+        emailAddress: `support@${senderDomain}`,
         encryptedConfig: "encrypted-test-value",
         enabled: true
       }
@@ -170,6 +173,9 @@ describe("threaded user mail replies", () => {
       where: { id: templateId }
     });
     await prisma.recallTask.deleteMany({ where: { id: taskId } });
+    await prisma.mailDomainThrottle.deleteMany({
+      where: { senderDomain }
+    });
     await prisma.mailbox.deleteMany({ where: { id: mailboxId } });
     await prisma.mailAsset.deleteMany({
       where: { id: assetId }
@@ -255,6 +261,11 @@ describe("threaded user mail replies", () => {
         }
       })
     ).resolves.toBe(1);
+    await expect(
+      prisma.mailDomainThrottle.findUnique({
+        where: { senderDomain }
+      })
+    ).resolves.toBeNull();
   });
 
   it("blocks an operator from replying to another operator's user", async () => {

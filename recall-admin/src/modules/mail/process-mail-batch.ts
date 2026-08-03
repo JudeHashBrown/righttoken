@@ -9,6 +9,10 @@ import {
   MailSendBlockedError
 } from "@/modules/mail/send-guard";
 import {
+  reserveBulkMailRecipient,
+  senderDomainFromAddress
+} from "@/modules/mail/bulk-mail-throttle";
+import {
   sendReviewedMail
 } from "@/modules/mail/send-reviewed-mail";
 import type {
@@ -24,6 +28,7 @@ export type MailBatchJobInput = {
 
 export type MailBatchDeliveryDependencies = {
   adapter: Pick<MailboxAdapter, "send">;
+  random?: () => number;
 };
 
 type MailBatchCounts = {
@@ -89,29 +94,14 @@ async function finishRecipient(
   });
 }
 
-export async function processMailBatchRecipient(
+async function deliverClaimedMailBatchRecipient(
   recipientId: string,
   now: Date,
   dependencies: MailBatchDeliveryDependencies
-): Promise<"SENT" | "SKIPPED" | "FAILED" | "IGNORED"> {
-  const claimed = await prisma.mailBatchRecipient.updateMany({
-    where: {
-      id: recipientId,
-      status: "PENDING"
-    },
-    data: {
-      status: "SENDING",
-      claimedAt: now,
-      lastAttemptAt: now,
-      attempts: { increment: 1 }
-    }
-  });
-  if (claimed.count === 0) {
-    return "IGNORED";
-  }
+): Promise<"SENT" | "SKIPPED" | "FAILED"> {
   const recipient =
-    await prisma.mailBatchRecipient.findUniqueOrThrow({
-      where: { id: recipientId },
+    await prisma.mailBatchRecipient.findFirstOrThrow({
+      where: { id: recipientId, status: "SENDING" },
       select: {
         id: true,
         userId: true,
@@ -200,8 +190,7 @@ export async function processMailBatch(
   input: MailBatchJobInput,
   now: Date,
   scheduler: TaskScheduler,
-  dependencies: MailBatchDeliveryDependencies,
-  batchSize = 25
+  dependencies: MailBatchDeliveryDependencies
 ): Promise<{
   completed: boolean;
   sent: number;
@@ -215,7 +204,7 @@ export async function processMailBatch(
     where: {
       batchId: input.batchId,
       status: "SENDING",
-      claimedAt: { lt: staleBefore }
+      claimedAt: { lte: staleBefore }
     },
     data: {
       status: "FAILED",
@@ -234,18 +223,26 @@ export async function processMailBatch(
     where: { id: input.batchId },
     data: { status: "RUNNING" }
   });
-  const recipients = await prisma.mailBatchRecipient.findMany({
-    where: {
-      batchId: input.batchId,
-      status: "PENDING"
-    },
-    orderBy: { id: "asc" },
-    take: batchSize,
-    select: { id: true }
+  const batch = await prisma.mailBatch.findUniqueOrThrow({
+    where: { id: input.batchId },
+    select: {
+      mailbox: { select: { emailAddress: true } }
+    }
   });
-  for (const recipient of recipients) {
-    await processMailBatchRecipient(
-      recipient.id,
+  const senderDomain = senderDomainFromAddress(
+    batch.mailbox.emailAddress
+  );
+  const reservation = await prisma.$transaction((tx) =>
+    reserveBulkMailRecipient(tx, {
+      batchId: input.batchId,
+      senderDomain,
+      now,
+      random: dependencies.random
+    })
+  );
+  if (reservation.status === "CLAIMED") {
+    await deliverClaimedMailBatchRecipient(
+      reservation.recipientId,
       now,
       dependencies
     );
@@ -273,8 +270,33 @@ export async function processMailBatch(
     }
   });
   if (!completed) {
+    let nextRunAt =
+      reservation.status === "EMPTY"
+        ? undefined
+        : reservation.runAt;
+    if (
+      reservation.status === "EMPTY" &&
+      counts.sending > 0
+    ) {
+      const earliestClaim =
+        await prisma.mailBatchRecipient.findFirst({
+          where: {
+            batchId: input.batchId,
+            status: "SENDING",
+            claimedAt: { not: null }
+          },
+          orderBy: { claimedAt: "asc" },
+          select: { claimedAt: true }
+        });
+      nextRunAt = new Date(
+        (earliestClaim?.claimedAt?.getTime() ??
+          now.getTime()) +
+          30 * 60_000
+      );
+    }
     await scheduler.scheduleMailBatch?.({
-      batchId: input.batchId
+      batchId: input.batchId,
+      runAt: nextRunAt
     });
   }
   return {
