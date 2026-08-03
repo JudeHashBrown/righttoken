@@ -857,6 +857,16 @@ model MailBatchRecipient {
   @@schema("recall")
 }
 
+model MailDomainThrottle {
+  senderDomain    String   @id
+  nextAvailableAt DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([nextAvailableAt])
+  @@schema("recall")
+}
+
 model MailBatchAsset {
   id          String               @id @default(cuid())
   batchId     String
