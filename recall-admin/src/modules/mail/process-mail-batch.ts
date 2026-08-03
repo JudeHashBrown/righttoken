@@ -29,6 +29,7 @@ export type MailBatchJobInput = {
 export type MailBatchDeliveryDependencies = {
   adapter: Pick<MailboxAdapter, "send">;
   random?: () => number;
+  reservationNow?: Date;
 };
 
 type MailBatchCounts = {
@@ -236,14 +237,16 @@ export async function processMailBatch(
     reserveBulkMailRecipient(tx, {
       batchId: input.batchId,
       senderDomain,
-      now,
+      ...(dependencies.reservationNow
+        ? { now: dependencies.reservationNow }
+        : {}),
       random: dependencies.random
     })
   );
   if (reservation.status === "CLAIMED") {
     await deliverClaimedMailBatchRecipient(
       reservation.recipientId,
-      now,
+      reservation.claimedAt,
       dependencies
     );
   }
@@ -266,7 +269,11 @@ export async function processMailBatch(
       sentRecipients: counts.sent,
       skippedRecipients: counts.skipped,
       failedRecipients: counts.failed,
-      completedAt: completed ? now : null
+      completedAt: completed
+        ? reservation.status === "CLAIMED"
+          ? reservation.claimedAt
+          : now
+        : null
     }
   });
   if (!completed) {

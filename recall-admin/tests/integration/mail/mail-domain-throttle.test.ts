@@ -85,12 +85,15 @@ describe("mail domain throttle reservation", () => {
     `contention-${randomUUID()}.example.test`;
   const independentSenderDomain =
     `independent-${randomUUID()}.example.test`;
+  const postLockSenderDomain =
+    `post-lock-${randomUUID()}.example.test`;
   const senderDomains = [
     sharedSenderDomain,
     otherSenderDomain,
     concurrentSenderDomain,
     contentionSenderDomain,
-    independentSenderDomain
+    independentSenderDomain,
+    postLockSenderDomain
   ];
   const mailboxIds: string[] = [];
   const userIds: string[] = [];
@@ -103,6 +106,7 @@ describe("mail domain throttle reservation", () => {
   let secondConcurrentBatchId: string;
   let contentionBatchId: string;
   let independentBatchId: string;
+  let postLockBatchId: string;
 
   async function createPendingBatch(
     senderDomain: string
@@ -189,6 +193,9 @@ describe("mail domain throttle reservation", () => {
     independentBatchId = await createPendingBatch(
       independentSenderDomain
     );
+    postLockBatchId = await createPendingBatch(
+      postLockSenderDomain
+    );
   });
 
   afterAll(async () => {
@@ -224,6 +231,7 @@ describe("mail domain throttle reservation", () => {
     expect(first).toMatchObject({
       status: "CLAIMED",
       recipientId: expect.any(String),
+      claimedAt: now,
       runAt: new Date(now.getTime() + 120_000)
     });
 
@@ -251,6 +259,7 @@ describe("mail domain throttle reservation", () => {
     expect(otherDomain).toMatchObject({
       status: "CLAIMED",
       recipientId: expect.any(String),
+      claimedAt: now,
       runAt: new Date(now.getTime() + 240_000)
     });
   });
@@ -282,6 +291,7 @@ describe("mail domain throttle reservation", () => {
     expect(claimed).toMatchObject({
       status: "CLAIMED",
       recipientId: expect.any(String),
+      claimedAt: now,
       runAt: new Date(now.getTime() + 120_000)
     });
     expect(waiting).toEqual({
@@ -455,5 +465,110 @@ describe("mail domain throttle reservation", () => {
       claimedAt: null,
       lastAttemptAt: null
     });
+  });
+
+  it("measures a production reservation from database time after lock acquisition", async () => {
+    const lockAcquired = deferred<number>();
+    const releaseLock = deferred<void>();
+    const contenderStarted = deferred<number>();
+    let reservation:
+      | Promise<BulkMailReservation>
+      | undefined;
+    let releasedAt: Date | undefined;
+
+    const lockHolder = prisma
+      .$transaction(async (tx) => {
+        const [connection] = await tx.$queryRaw<
+          Array<{ pid: number }>
+        >`
+          SELECT
+            pg_backend_pid()::int AS "pid",
+            pg_advisory_xact_lock(
+              hashtextextended(${postLockSenderDomain}, 0)
+            )::text AS "locked"
+        `;
+        lockAcquired.resolve(connection.pid);
+        await releaseLock.promise;
+      })
+      .catch((error) => {
+        lockAcquired.reject(error);
+        throw error;
+      });
+
+    try {
+      const lockHolderPid = await lockAcquired.promise;
+      reservation = prisma
+        .$transaction(async (tx) => {
+          const [connection] = await tx.$queryRaw<
+            Array<{ pid: number }>
+          >`
+            SELECT pg_backend_pid()::int AS "pid"
+          `;
+          contenderStarted.resolve(connection.pid);
+          return reserveBulkMailRecipient(tx, {
+            batchId: postLockBatchId,
+            senderDomain: postLockSenderDomain,
+            random: () => 0
+          });
+        })
+        .catch((error) => {
+          contenderStarted.reject(error);
+          throw error;
+        });
+
+      const contenderPid = await contenderStarted.promise;
+      expect(contenderPid).not.toBe(lockHolderPid);
+      await expect(
+        waitForAdvisoryLock(contenderPid)
+      ).resolves.toEqual({
+        waitEvent: "advisory",
+        waitEventType: "Lock"
+      });
+      await new Promise((resolve) => setTimeout(resolve, 150));
+      const [clock] = await prisma.$queryRaw<
+        Array<{ now: Date }>
+      >`
+        SELECT clock_timestamp() AS "now"
+      `;
+      releasedAt = clock.now;
+    } finally {
+      releaseLock.resolve(undefined);
+      await lockHolder;
+      if (reservation) {
+        await Promise.allSettled([reservation]);
+      }
+    }
+
+    const result = await reservation;
+    expect(result).toMatchObject({
+      status: "CLAIMED",
+      recipientId: expect.any(String),
+      claimedAt: expect.any(Date),
+      runAt: expect.any(Date)
+    });
+    if (result?.status !== "CLAIMED" || !releasedAt) {
+      throw new Error("expected a post-lock claim");
+    }
+    expect(result.claimedAt.getTime()).toBeGreaterThanOrEqual(
+      releasedAt.getTime()
+    );
+    expect(
+      result.runAt.getTime() - result.claimedAt.getTime()
+    ).toBe(120_000);
+    await expect(
+      prisma.mailBatchRecipient.findFirstOrThrow({
+        where: { batchId: postLockBatchId },
+        select: { claimedAt: true, lastAttemptAt: true }
+      })
+    ).resolves.toEqual({
+      claimedAt: result.claimedAt,
+      lastAttemptAt: result.claimedAt
+    });
+    await expect(
+      prisma.mailDomainThrottle.findUniqueOrThrow({
+        where: { senderDomain: postLockSenderDomain },
+        select: { nextAvailableAt: true }
+      })
+    ).resolves.toEqual({ nextAvailableAt: result.runAt });
   });
 });

@@ -9,6 +9,7 @@ export type BulkMailReservation =
   | {
       status: "CLAIMED";
       recipientId: string;
+      claimedAt: Date;
       runAt: Date;
     };
 
@@ -49,7 +50,7 @@ export async function reserveBulkMailRecipient(
   input: {
     batchId: string;
     senderDomain: string;
-    now: Date;
+    now?: Date;
     random?: () => number;
   }
 ): Promise<BulkMailReservation> {
@@ -58,15 +59,22 @@ export async function reserveBulkMailRecipient(
       hashtextextended(${input.senderDomain}, 0)
     )::text AS "locked"
   `;
+  const claimedAt =
+    input.now ??
+    (
+      await tx.$queryRaw<Array<{ now: Date }>>`
+        SELECT clock_timestamp() AS "now"
+      `
+    )[0].now;
   const throttle = await tx.mailDomainThrottle.upsert({
     where: { senderDomain: input.senderDomain },
     create: {
       senderDomain: input.senderDomain,
-      nextAvailableAt: input.now
+      nextAvailableAt: claimedAt
     },
     update: {}
   });
-  if (throttle.nextAvailableAt > input.now) {
+  if (throttle.nextAvailableAt > claimedAt) {
     return {
       status: "WAIT",
       runAt: throttle.nextAvailableAt
@@ -87,15 +95,15 @@ export async function reserveBulkMailRecipient(
     where: { id: recipient.id, status: "PENDING" },
     data: {
       status: "SENDING",
-      claimedAt: input.now,
-      lastAttemptAt: input.now,
+      claimedAt,
+      lastAttemptAt: claimedAt,
       attempts: { increment: 1 }
     }
   });
   if (claimed.count !== 1) return { status: "EMPTY" };
 
   const runAt = new Date(
-    input.now.getTime() + randomBulkMailDelayMs(input.random)
+    claimedAt.getTime() + randomBulkMailDelayMs(input.random)
   );
   await tx.mailDomainThrottle.update({
     where: { senderDomain: input.senderDomain },
@@ -104,6 +112,7 @@ export async function reserveBulkMailRecipient(
   return {
     status: "CLAIMED",
     recipientId: recipient.id,
+    claimedAt,
     runAt
   };
 }

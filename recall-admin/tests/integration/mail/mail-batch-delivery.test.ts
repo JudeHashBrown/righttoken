@@ -275,7 +275,13 @@ describe("mail batch delivery", () => {
       { batchId },
       new Date("2026-07-30T10:00:00.000Z"),
       scheduler,
-      { adapter, random: () => 0 }
+      {
+        adapter,
+        random: () => 0,
+        reservationNow: new Date(
+          "2026-07-30T10:00:00.000Z"
+        )
+      }
     );
 
     expect(adapter.send).toHaveBeenCalledTimes(1);
@@ -298,7 +304,13 @@ describe("mail batch delivery", () => {
       { batchId },
       new Date("2026-07-30T10:01:00.000Z"),
       scheduler,
-      { adapter, random: () => 0 }
+      {
+        adapter,
+        random: () => 0,
+        reservationNow: new Date(
+          "2026-07-30T10:01:00.000Z"
+        )
+      }
     );
     expect(adapter.send).toHaveBeenCalledTimes(1);
     expect(scheduled.at(-1)).toEqual({
@@ -310,7 +322,13 @@ describe("mail batch delivery", () => {
       { batchId },
       new Date("2026-07-30T10:02:00.000Z"),
       scheduler,
-      { adapter: rejectingAdapter, random: () => 0 }
+      {
+        adapter: rejectingAdapter,
+        random: () => 0,
+        reservationNow: new Date(
+          "2026-07-30T10:02:00.000Z"
+        )
+      }
     );
     expect(rejectingAdapter.send).toHaveBeenCalledTimes(1);
     expect(rejectingAdapter.send).toHaveBeenCalledWith(
@@ -374,6 +392,128 @@ describe("mail batch delivery", () => {
     });
   });
 
+  it("uses the post-lock database claim time for delivery timestamps", async () => {
+    const databaseClockDomain =
+      `database-clock-${randomUUID()}.righttoken.test`;
+    const mailbox = await prisma.mailbox.create({
+      data: {
+        name: "数据库时钟投递邮箱",
+        emailAddress: `support@${databaseClockDomain}`,
+        encryptedConfig: "encrypted-test-value",
+        enabled: true
+      }
+    });
+    const email =
+      `database-clock-${randomUUID()}@example.test`;
+    const user = await prisma.userProfile.create({
+      data: {
+        externalUserId: `database-clock-${randomUUID()}`,
+        email,
+        emailNormalized: email,
+        registeredAt: new Date("2026-08-04T00:00:00.000Z"),
+        currentSegment: "F"
+      }
+    });
+    const batch = await prisma.mailBatch.create({
+      data: {
+        mailboxId: mailbox.id,
+        createdById: memberId,
+        audienceMode: "SEGMENT",
+        segment: "F",
+        subject: "数据库时钟投递",
+        bodyText: "正文",
+        bodyHtml: "<p>正文</p>",
+        idempotencyKey: `database-clock-${randomUUID()}`,
+        totalRecipients: 1,
+        pendingRecipients: 1,
+        recipients: {
+          create: {
+            userId: user.id,
+            emailNormalized: email
+          }
+        }
+      }
+    });
+    const adapter = {
+      send: vi.fn().mockResolvedValue({
+        providerMessageId: "<database-clock@example.test>"
+      })
+    };
+    const beforeReservation = new Date();
+
+    try {
+      await expect(
+        handleMailBatch(
+          { batchId: batch.id },
+          new Date("2000-01-01T00:00:00.000Z"),
+          scheduler,
+          { adapter, random: () => 0 }
+        )
+      ).resolves.toMatchObject({ completed: true, sent: 1 });
+
+      const recipient =
+        await prisma.mailBatchRecipient.findFirstOrThrow({
+          where: { batchId: batch.id },
+          select: {
+            claimedAt: true,
+            lastAttemptAt: true,
+            completedAt: true,
+            messageId: true
+          }
+        });
+      expect(recipient.claimedAt).toBeInstanceOf(Date);
+      expect(recipient.claimedAt?.getTime()).toBeGreaterThanOrEqual(
+        beforeReservation.getTime()
+      );
+      expect(recipient.lastAttemptAt).toEqual(
+        recipient.claimedAt
+      );
+      expect(recipient.completedAt).toEqual(recipient.claimedAt);
+      const message = await prisma.mailMessage.findUniqueOrThrow({
+        where: { id: recipient.messageId ?? "" },
+        select: { sentAt: true }
+      });
+      expect(message.sentAt).toEqual(recipient.claimedAt);
+      await expect(
+        prisma.mailBatch.findUniqueOrThrow({
+          where: { id: batch.id },
+          select: { completedAt: true }
+        })
+      ).resolves.toEqual({ completedAt: recipient.claimedAt });
+      const throttle =
+        await prisma.mailDomainThrottle.findUniqueOrThrow({
+          where: { senderDomain: databaseClockDomain },
+          select: { nextAvailableAt: true }
+        });
+      expect(
+        throttle.nextAvailableAt.getTime() -
+          (recipient.claimedAt?.getTime() ?? 0)
+      ).toBe(120_000);
+    } finally {
+      await prisma.mailBatch.deleteMany({
+        where: { id: batch.id }
+      });
+      await prisma.mailMessage.deleteMany({
+        where: { mailboxId: mailbox.id }
+      });
+      await prisma.mailThread.deleteMany({
+        where: { mailboxId: mailbox.id }
+      });
+      await prisma.recallTask.deleteMany({
+        where: { userId: user.id }
+      });
+      await prisma.mailDomainThrottle.deleteMany({
+        where: { senderDomain: databaseClockDomain }
+      });
+      await prisma.mailbox.deleteMany({
+        where: { id: mailbox.id }
+      });
+      await prisma.userProfile.deleteMany({
+        where: { id: user.id }
+      });
+    }
+  });
+
   it("schedules crash recovery at claim expiry without a hot loop", async () => {
     const adapter = { send: vi.fn() };
 
@@ -381,7 +521,13 @@ describe("mail batch delivery", () => {
       { batchId: recoveryBatchId },
       new Date("2026-07-30T11:15:00.000Z"),
       scheduler,
-      { adapter, random: () => 0 }
+      {
+        adapter,
+        random: () => 0,
+        reservationNow: new Date(
+          "2026-07-30T11:15:00.000Z"
+        )
+      }
     );
 
     expect(adapter.send).not.toHaveBeenCalled();
@@ -397,7 +543,13 @@ describe("mail batch delivery", () => {
       { batchId: recoveryBatchId },
       new Date("2026-07-30T11:30:00.000Z"),
       scheduler,
-      { adapter, random: () => 0 }
+      {
+        adapter,
+        random: () => 0,
+        reservationNow: new Date(
+          "2026-07-30T11:30:00.000Z"
+        )
+      }
     );
 
     expect(recovered).toEqual({
