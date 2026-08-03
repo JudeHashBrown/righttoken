@@ -10,8 +10,68 @@ import {
 } from "vitest";
 import { prisma } from "@/lib/db/prisma";
 import {
-  reserveBulkMailRecipient
+  reserveBulkMailRecipient,
+  type BulkMailReservation
 } from "@/modules/mail/bulk-mail-throttle";
+
+function deferred<T>() {
+  let resolve!: (value: T | PromiseLike<T>) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((promiseResolve, promiseReject) => {
+    resolve = promiseResolve;
+    reject = promiseReject;
+  });
+  return { promise, reject, resolve };
+}
+
+async function waitForAdvisoryLock(pid: number) {
+  const deadline = Date.now() + 2_000;
+  while (Date.now() < deadline) {
+    const [activity] = await prisma.$queryRaw<
+      Array<{
+        waitEvent: string | null;
+        waitEventType: string | null;
+      }>
+    >`
+      SELECT
+        "wait_event" AS "waitEvent",
+        "wait_event_type" AS "waitEventType"
+      FROM "pg_stat_activity"
+      WHERE "pid" = ${pid}
+    `;
+    if (
+      activity?.waitEventType === "Lock" &&
+      activity.waitEvent === "advisory"
+    ) {
+      return activity;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+  throw new Error(
+    `backend ${pid} did not wait on an advisory lock`
+  );
+}
+
+async function within<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  message: string
+): Promise<T> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<never>((_resolve, reject) => {
+        timeout = setTimeout(
+          () => reject(new Error(message)),
+          timeoutMs
+        );
+      })
+    ]);
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
+}
 
 describe("mail domain throttle reservation", () => {
   const now = new Date("2026-08-03T12:00:00.000Z");
@@ -21,10 +81,16 @@ describe("mail domain throttle reservation", () => {
     `other-${randomUUID()}.example.test`;
   const concurrentSenderDomain =
     `concurrent-${randomUUID()}.example.test`;
+  const contentionSenderDomain =
+    `contention-${randomUUID()}.example.test`;
+  const independentSenderDomain =
+    `independent-${randomUUID()}.example.test`;
   const senderDomains = [
     sharedSenderDomain,
     otherSenderDomain,
-    concurrentSenderDomain
+    concurrentSenderDomain,
+    contentionSenderDomain,
+    independentSenderDomain
   ];
   const mailboxIds: string[] = [];
   const userIds: string[] = [];
@@ -35,6 +101,8 @@ describe("mail domain throttle reservation", () => {
   let otherDomainBatchId: string;
   let firstConcurrentBatchId: string;
   let secondConcurrentBatchId: string;
+  let contentionBatchId: string;
+  let independentBatchId: string;
 
   async function createPendingBatch(
     senderDomain: string
@@ -114,6 +182,12 @@ describe("mail domain throttle reservation", () => {
     );
     secondConcurrentBatchId = await createPendingBatch(
       concurrentSenderDomain
+    );
+    contentionBatchId = await createPendingBatch(
+      contentionSenderDomain
+    );
+    independentBatchId = await createPendingBatch(
+      independentSenderDomain
     );
   });
 
@@ -249,5 +323,137 @@ describe("mail domain throttle reservation", () => {
         }
       ])
     );
+  });
+
+  it("waits for the same domain lock without blocking another domain", async () => {
+    const heldDomainRunAt = new Date(
+      now.getTime() + 180_000
+    );
+    const lockAcquired = deferred<number>();
+    const releaseLock = deferred<void>();
+    const contenderStarted = deferred<number>();
+    let sameDomainSettled = false;
+    let sameDomainReservation:
+      | Promise<BulkMailReservation>
+      | undefined;
+    let independentReservation:
+      | Promise<BulkMailReservation>
+      | undefined;
+
+    const lockHolder = prisma
+      .$transaction(async (tx) => {
+        const [connection] = await tx.$queryRaw<
+          Array<{ pid: number }>
+        >`
+          SELECT
+            pg_backend_pid()::int AS "pid",
+            pg_advisory_xact_lock(
+              hashtextextended(${contentionSenderDomain}, 0)
+            )::text AS "locked"
+        `;
+        lockAcquired.resolve(connection.pid);
+        await releaseLock.promise;
+        await tx.mailDomainThrottle.upsert({
+          where: { senderDomain: contentionSenderDomain },
+          create: {
+            senderDomain: contentionSenderDomain,
+            nextAvailableAt: heldDomainRunAt
+          },
+          update: { nextAvailableAt: heldDomainRunAt }
+        });
+      })
+      .catch((error) => {
+        lockAcquired.reject(error);
+        throw error;
+      });
+
+    try {
+      const lockHolderPid = await lockAcquired.promise;
+      sameDomainReservation = prisma
+        .$transaction(async (tx) => {
+          const [connection] = await tx.$queryRaw<
+            Array<{ pid: number }>
+          >`
+            SELECT pg_backend_pid()::int AS "pid"
+          `;
+          contenderStarted.resolve(connection.pid);
+          return reserveBulkMailRecipient(tx, {
+            batchId: contentionBatchId,
+            senderDomain: contentionSenderDomain,
+            now,
+            random: () => 0
+          });
+        })
+        .then((result) => {
+          sameDomainSettled = true;
+          return result;
+        })
+        .catch((error) => {
+          contenderStarted.reject(error);
+          throw error;
+        });
+
+      const contenderPid = await contenderStarted.promise;
+      expect(contenderPid).not.toBe(lockHolderPid);
+      await expect(
+        waitForAdvisoryLock(contenderPid)
+      ).resolves.toEqual({
+        waitEvent: "advisory",
+        waitEventType: "Lock"
+      });
+      expect(sameDomainSettled).toBe(false);
+
+      independentReservation = prisma.$transaction((tx) =>
+        reserveBulkMailRecipient(tx, {
+          batchId: independentBatchId,
+          senderDomain: independentSenderDomain,
+          now,
+          random: () => 0
+        })
+      );
+      await expect(
+        within(
+          independentReservation,
+          1_000,
+          "different-domain reservation did not complete while the lock was held"
+        )
+      ).resolves.toMatchObject({
+        status: "CLAIMED",
+        recipientId: expect.any(String),
+        runAt: new Date(now.getTime() + 120_000)
+      });
+    } finally {
+      releaseLock.resolve(undefined);
+      await lockHolder;
+      await Promise.allSettled(
+        [sameDomainReservation, independentReservation].filter(
+          (
+            reservation
+          ): reservation is Promise<BulkMailReservation> =>
+            reservation !== undefined
+        )
+      );
+    }
+
+    await expect(sameDomainReservation).resolves.toEqual({
+      status: "WAIT",
+      runAt: heldDomainRunAt
+    });
+    await expect(
+      prisma.mailBatchRecipient.findFirstOrThrow({
+        where: { batchId: contentionBatchId },
+        select: {
+          status: true,
+          attempts: true,
+          claimedAt: true,
+          lastAttemptAt: true
+        }
+      })
+    ).resolves.toEqual({
+      status: "PENDING",
+      attempts: 0,
+      claimedAt: null,
+      lastAttemptAt: null
+    });
   });
 });
