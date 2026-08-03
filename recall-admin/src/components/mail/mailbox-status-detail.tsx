@@ -66,7 +66,10 @@ export function MailboxStatusDetail({
           <strong>每 2 分钟</strong>
         </div>
       </div>
-      <MailboxActions mailboxId={mailbox.id} />
+      <MailboxActions
+        mailboxId={mailbox.id}
+        mailboxName={mailbox.name}
+      />
     </div>
   );
 }

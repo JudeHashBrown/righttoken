@@ -39,7 +39,12 @@ describe("MailboxActions", () => {
           })
       });
     vi.stubGlobal("fetch", fetchMock);
-    render(<MailboxActions mailboxId="mailbox-1" />);
+    render(
+      <MailboxActions
+        mailboxId="mailbox-1"
+        mailboxName="企业微信邮箱"
+      />
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "测试连接" }));
     await waitFor(() => {
@@ -70,7 +75,12 @@ describe("MailboxActions", () => {
           })
       })
     );
-    render(<MailboxActions mailboxId="mailbox-1" />);
+    render(
+      <MailboxActions
+        mailboxId="mailbox-1"
+        mailboxName="企业微信邮箱"
+      />
+    );
 
     fireEvent.click(
       screen.getByRole("button", { name: "立即收取邮件" })
@@ -83,5 +93,89 @@ describe("MailboxActions", () => {
     expect(
       screen.queryByText("IMAP_CONNECTION_TIMEOUT")
     ).not.toBeInTheDocument();
+  });
+
+  it("does not delete when the administrator cancels confirmation", () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    vi.spyOn(window, "confirm").mockReturnValue(false);
+    render(
+      <MailboxActions
+        mailboxId="mailbox-1"
+        mailboxName="企业微信邮箱"
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "删除邮箱" })
+    );
+
+    expect(window.confirm).toHaveBeenCalledWith(
+      expect.stringContaining("历史邮件和群发记录会保留")
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("permanently removes mailbox credentials after confirmation", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ mailbox: { id: "mailbox-1" } })
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(
+      <MailboxActions
+        mailboxId="mailbox-1"
+        mailboxName="企业微信邮箱"
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "删除邮箱" })
+    );
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/integrations/mailboxes/mailbox-1",
+        { method: "DELETE" }
+      );
+    });
+    expect(
+      screen.getByText("邮箱配置已删除，历史邮件和群发记录已保留。")
+    ).toBeInTheDocument();
+  });
+
+  it("keeps the mailbox available when credential removal fails", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 400,
+        json: () =>
+          Promise.resolve({
+            code: "MAILBOX_CONFIGURATION_DELETE_FAILED"
+          })
+      })
+    );
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(
+      <MailboxActions
+        mailboxId="mailbox-1"
+        mailboxName="企业微信邮箱"
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "删除邮箱" })
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("邮箱配置删除失败，原有数据未改变。")
+      ).toBeInTheDocument();
+    });
+    expect(
+      screen.getByRole("button", { name: "删除邮箱" })
+    ).toBeEnabled();
   });
 });

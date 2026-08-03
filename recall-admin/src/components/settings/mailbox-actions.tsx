@@ -8,12 +8,16 @@ import {
 } from "@/modules/mail/sync-error";
 
 export function MailboxActions({
-  mailboxId
+  mailboxId,
+  mailboxName
 }: {
   mailboxId: string;
+  mailboxName: string;
 }): React.JSX.Element {
   const router = useRouter();
-  const [busy, setBusy] = useState<"test" | "sync" | null>(null);
+  const [busy, setBusy] = useState<
+    "test" | "sync" | "delete" | null
+  >(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -75,6 +79,40 @@ export function MailboxActions({
     }
   }
 
+  async function deleteConfiguration(): Promise<void> {
+    const confirmed = window.confirm(
+      `确定删除“${mailboxName}”吗？邮箱账号、密码和收发服务器配置将永久删除，历史邮件和群发记录会保留。`
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    setBusy("delete");
+    setMessage(null);
+    setError(null);
+    try {
+      const response = await fetch(
+        `/api/integrations/mailboxes/${mailboxId}`,
+        { method: "DELETE" }
+      );
+      if (!response.ok) {
+        if (response.status === 404) {
+          setError("邮箱配置已不存在，列表已刷新。");
+          router.refresh();
+          return;
+        }
+        setError("邮箱配置删除失败，原有数据未改变。");
+        return;
+      }
+      setMessage("邮箱配置已删除，历史邮件和群发记录已保留。");
+      router.refresh();
+    } catch {
+      setError("网络连接异常，邮箱配置未删除。");
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <div>
       <div className={styles.inlineActions}>
@@ -93,6 +131,14 @@ export function MailboxActions({
           disabled={busy !== null}
         >
           {busy === "sync" ? "正在收取" : "立即收取邮件"}
+        </button>
+        <button
+          className={styles.dangerButton}
+          type="button"
+          onClick={deleteConfiguration}
+          disabled={busy !== null}
+        >
+          {busy === "delete" ? "正在删除" : "删除邮箱"}
         </button>
       </div>
       {message ? (

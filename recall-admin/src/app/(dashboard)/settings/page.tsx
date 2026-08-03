@@ -107,7 +107,10 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
                         : "尚未测试连接"}
                   </p>
                 </div>
-                <MailboxActions mailboxId={mailbox.id} />
+                <MailboxActions
+                  mailboxId={mailbox.id}
+                  mailboxName={mailbox.name}
+                />
               </li>
             ))}
           </ul>
