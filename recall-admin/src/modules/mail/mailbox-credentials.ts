@@ -110,3 +110,73 @@ export async function getMailboxRuntimeConfig(
   void _provider;
   return smtpImapConfigSchema.parse(config);
 }
+
+export class MailboxConfigurationNotFoundError extends Error {
+  constructor() {
+    super("MAILBOX_CONFIGURATION_NOT_FOUND");
+    this.name = "MailboxConfigurationNotFoundError";
+  }
+}
+
+export async function removeMailboxConfiguration(
+  actorId: string,
+  mailboxId: string
+): Promise<{ id: string }> {
+  const actor = await prisma.member.findUniqueOrThrow({
+    where: { id: actorId },
+    select: { id: true, role: true, active: true }
+  });
+  if (!actor.active) {
+    throw new ForbiddenError("integrations:manage");
+  }
+  assertMemberPermission(actor, "integrations:manage");
+
+  return prisma.$transaction(async (tx) => {
+    const mailbox = await tx.mailbox.findFirst({
+      where: { id: mailboxId, ...configuredMailboxWhere },
+      select: {
+        id: true,
+        emailAddress: true,
+        enabled: true
+      }
+    });
+    if (!mailbox) {
+      throw new MailboxConfigurationNotFoundError();
+    }
+
+    const [threads, messages, batches] = await Promise.all([
+      tx.mailThread.count({ where: { mailboxId } }),
+      tx.mailMessage.count({ where: { mailboxId } }),
+      tx.mailBatch.count({ where: { mailboxId } })
+    ]);
+    await tx.mailbox.update({
+      where: { id: mailboxId },
+      data: {
+        encryptedConfig: null,
+        configurationDeletedAt: new Date(),
+        enabled: false,
+        lastTestedAt: null,
+        lastSuccessAt: null,
+        lastErrorCode: null,
+        lastSyncedAt: null
+      }
+    });
+    await tx.auditLog.create({
+      data: {
+        actorId: actor.id,
+        action: "mailbox.configuration_deleted",
+        entityType: "Mailbox",
+        entityId: mailboxId,
+        metadata: {
+          emailDomain:
+            mailbox.emailAddress.split("@")[1] ?? "unknown",
+          previouslyEnabled: mailbox.enabled,
+          preservedThreads: threads,
+          preservedMessages: messages,
+          preservedBatches: batches
+        }
+      }
+    });
+    return { id: mailboxId };
+  });
+}

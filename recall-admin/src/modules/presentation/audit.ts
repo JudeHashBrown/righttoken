@@ -24,6 +24,7 @@ const actionCopy: Record<string, string> = {
   "mail.thread_replied": "回复用户邮件",
   "mail.inbound_assigned": "关联用户来信",
   "mailbox.credential_saved": "保存客服邮箱",
+  "mailbox.configuration_deleted": "删除邮箱配置",
   "integration.credential_saved": "保存通知连接",
   "users.export_csv": "导出用户名单",
   "user_note.created": "添加用户备注"
