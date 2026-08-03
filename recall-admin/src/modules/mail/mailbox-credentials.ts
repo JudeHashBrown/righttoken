@@ -63,6 +63,7 @@ export async function saveMailboxCredential(
       name,
       encryptedConfig,
       configurationDeletedAt: null,
+      configurationVersion: { increment: 1 },
       enabled: input.enabled,
       lastErrorCode: null
     },
@@ -71,6 +72,7 @@ export async function saveMailboxCredential(
       name: true,
       emailAddress: true,
       enabled: true,
+      configurationVersion: true,
       lastTestedAt: true,
       lastSuccessAt: true,
       lastErrorCode: true
@@ -118,10 +120,18 @@ export class MailboxConfigurationNotFoundError extends Error {
   }
 }
 
+export class MailboxConfigurationVersionConflictError extends Error {
+  constructor() {
+    super("MAILBOX_CONFIGURATION_VERSION_CONFLICT");
+    this.name = "MailboxConfigurationVersionConflictError";
+  }
+}
+
 export async function removeMailboxConfiguration(
   actorId: string,
-  mailboxId: string
-): Promise<{ id: string }> {
+  mailboxId: string,
+  expectedConfigurationVersion: number
+): Promise<{ id: string; configurationVersion: number }> {
   const actor = await prisma.member.findUniqueOrThrow({
     where: { id: actorId },
     select: { id: true, role: true, active: true }
@@ -132,15 +142,40 @@ export async function removeMailboxConfiguration(
   assertMemberPermission(actor, "integrations:manage");
 
   return prisma.$transaction(async (tx) => {
-    const mailbox = await tx.mailbox.findFirst({
-      where: { id: mailboxId, ...configuredMailboxWhere },
-      select: {
-        id: true,
-        emailAddress: true,
-        enabled: true
-      }
-    });
+    const [mailbox] = await tx.$queryRaw<
+      Array<{
+        id: string;
+        emailAddress: string;
+        encryptedConfig: string | null;
+        configurationDeletedAt: Date | null;
+        configurationVersion: number;
+        enabled: boolean;
+      }>
+    >`
+      SELECT
+        "id",
+        "emailAddress",
+        "encryptedConfig",
+        "configurationDeletedAt",
+        "configurationVersion",
+        "enabled"
+      FROM "recall"."Mailbox"
+      WHERE "id" = ${mailboxId}
+      FOR UPDATE
+    `;
     if (!mailbox) {
+      throw new MailboxConfigurationNotFoundError();
+    }
+    if (
+      mailbox.configurationVersion !==
+      expectedConfigurationVersion
+    ) {
+      throw new MailboxConfigurationVersionConflictError();
+    }
+    if (
+      mailbox.encryptedConfig === null ||
+      mailbox.configurationDeletedAt !== null
+    ) {
       throw new MailboxConfigurationNotFoundError();
     }
 
@@ -149,11 +184,17 @@ export async function removeMailboxConfiguration(
       tx.mailMessage.count({ where: { mailboxId } }),
       tx.mailBatch.count({ where: { mailboxId } })
     ]);
-    await tx.mailbox.update({
-      where: { id: mailboxId },
+    const cleared = await tx.mailbox.updateMany({
+      where: {
+        id: mailboxId,
+        configurationVersion: expectedConfigurationVersion,
+        encryptedConfig: { not: null },
+        configurationDeletedAt: null
+      },
       data: {
         encryptedConfig: null,
         configurationDeletedAt: new Date(),
+        configurationVersion: { increment: 1 },
         enabled: false,
         lastTestedAt: null,
         lastSuccessAt: null,
@@ -161,6 +202,9 @@ export async function removeMailboxConfiguration(
         lastSyncedAt: null
       }
     });
+    if (cleared.count !== 1) {
+      throw new MailboxConfigurationVersionConflictError();
+    }
     await tx.auditLog.create({
       data: {
         actorId: actor.id,
@@ -177,6 +221,9 @@ export async function removeMailboxConfiguration(
         }
       }
     });
-    return { id: mailboxId };
+    return {
+      id: mailboxId,
+      configurationVersion: expectedConfigurationVersion + 1
+    };
   });
 }

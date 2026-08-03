@@ -471,6 +471,7 @@ async function selectedItem(
         name: true,
         emailAddress: true,
         enabled: true,
+        configurationVersion: true,
         lastTestedAt: true,
         lastSyncedAt: true,
         lastErrorCode: true
@@ -484,6 +485,8 @@ async function selectedItem(
             name: mailbox.name,
             emailAddress: mailbox.emailAddress,
             enabled: mailbox.enabled,
+            configurationVersion:
+              mailbox.configurationVersion,
             statusText: mailboxSyncStatusText({
               lastErrorCode: mailbox.lastErrorCode,
               lastSyncedAt: mailbox.lastSyncedAt

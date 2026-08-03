@@ -43,6 +43,7 @@ describe("MailboxActions", () => {
       <MailboxActions
         mailboxId="mailbox-1"
         mailboxName="企业微信邮箱"
+        configurationVersion={1}
       />
     );
 
@@ -79,6 +80,7 @@ describe("MailboxActions", () => {
       <MailboxActions
         mailboxId="mailbox-1"
         mailboxName="企业微信邮箱"
+        configurationVersion={1}
       />
     );
 
@@ -103,6 +105,7 @@ describe("MailboxActions", () => {
       <MailboxActions
         mailboxId="mailbox-1"
         mailboxName="企业微信邮箱"
+        configurationVersion={1}
       />
     );
 
@@ -127,6 +130,7 @@ describe("MailboxActions", () => {
       <MailboxActions
         mailboxId="mailbox-1"
         mailboxName="企业微信邮箱"
+        configurationVersion={1}
       />
     );
 
@@ -137,7 +141,11 @@ describe("MailboxActions", () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
         "/api/integrations/mailboxes/mailbox-1",
-        { method: "DELETE" }
+        {
+          method: "DELETE",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ configurationVersion: 1 })
+        }
       );
     });
     expect(
@@ -162,6 +170,7 @@ describe("MailboxActions", () => {
       <MailboxActions
         mailboxId="mailbox-1"
         mailboxName="企业微信邮箱"
+        configurationVersion={1}
       />
     );
 
@@ -177,5 +186,37 @@ describe("MailboxActions", () => {
     expect(
       screen.getByRole("button", { name: "删除邮箱" })
     ).toBeEnabled();
+  });
+
+  it("refreshes after a stale configuration version conflict", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 409,
+        json: () =>
+          Promise.resolve({
+            code: "MAILBOX_CONFIGURATION_VERSION_CONFLICT"
+          })
+      })
+    );
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(
+      <MailboxActions
+        mailboxId="mailbox-1"
+        mailboxName="企业微信邮箱"
+        configurationVersion={7}
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "删除邮箱" })
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("邮箱配置已更新，列表已刷新。")
+      ).toBeInTheDocument();
+    });
   });
 });

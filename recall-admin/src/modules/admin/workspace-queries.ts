@@ -122,6 +122,7 @@ export async function getMailWorkspaceOverview(
           name: true,
           emailAddress: true,
           enabled: true,
+          configurationVersion: true,
           lastSyncedAt: true,
           lastSuccessAt: true,
           lastErrorCode: true
@@ -485,6 +486,7 @@ export async function getSettingsWorkspaceOverview() {
         name: true,
         emailAddress: true,
         enabled: true,
+        configurationVersion: true,
         lastTestedAt: true,
         lastSuccessAt: true,
         lastErrorCode: true,

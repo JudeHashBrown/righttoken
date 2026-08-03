@@ -6,6 +6,7 @@ export type MailboxStatusDetailData = {
   name: string;
   emailAddress: string;
   enabled: boolean;
+  configurationVersion: number;
   statusText: string;
   lastTestedAt: string | null;
   lastSyncedAt: string | null;
@@ -69,6 +70,7 @@ export function MailboxStatusDetail({
       <MailboxActions
         mailboxId={mailbox.id}
         mailboxName={mailbox.name}
+        configurationVersion={mailbox.configurationVersion}
       />
     </div>
   );

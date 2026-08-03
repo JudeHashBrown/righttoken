@@ -35,6 +35,7 @@ export async function GET(
         name: true,
         emailAddress: true,
         enabled: true,
+        configurationVersion: true,
         lastTestedAt: true,
         lastSuccessAt: true,
         lastErrorCode: true

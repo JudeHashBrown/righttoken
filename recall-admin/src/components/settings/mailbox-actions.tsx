@@ -9,10 +9,12 @@ import {
 
 export function MailboxActions({
   mailboxId,
-  mailboxName
+  mailboxName,
+  configurationVersion
 }: {
   mailboxId: string;
   mailboxName: string;
+  configurationVersion: number;
 }): React.JSX.Element {
   const router = useRouter();
   const [busy, setBusy] = useState<
@@ -93,11 +95,20 @@ export function MailboxActions({
     try {
       const response = await fetch(
         `/api/integrations/mailboxes/${mailboxId}`,
-        { method: "DELETE" }
+        {
+          method: "DELETE",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ configurationVersion })
+        }
       );
       if (!response.ok) {
         if (response.status === 404) {
           setError("邮箱配置已不存在，列表已刷新。");
+          router.refresh();
+          return;
+        }
+        if (response.status === 409) {
+          setError("邮箱配置已更新，列表已刷新。");
           router.refresh();
           return;
         }

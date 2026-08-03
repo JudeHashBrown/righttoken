@@ -11,8 +11,8 @@ import {
   SESSION_COOKIE_NAME
 } from "@/modules/auth/session";
 import {
-  MailboxConfigurationNotFoundError,
-  removeMailboxConfiguration
+  removeMailboxConfiguration,
+  saveMailboxCredential
 } from "@/modules/mail/mailbox-credentials";
 
 describe("mailbox configuration removal", () => {
@@ -85,14 +85,22 @@ describe("mailbox configuration removal", () => {
 
     try {
       await expect(
-        removeMailboxConfiguration(admin.id, mailbox.id)
-      ).resolves.toEqual({ id: mailbox.id });
+        removeMailboxConfiguration(
+          admin.id,
+          mailbox.id,
+          mailbox.configurationVersion
+        )
+      ).resolves.toEqual({
+        id: mailbox.id,
+        configurationVersion: 2
+      });
 
       const updated = await prisma.mailbox.findUniqueOrThrow({
         where: { id: mailbox.id }
       });
       expect(updated.encryptedConfig).toBeNull();
       expect(updated.enabled).toBe(false);
+      expect(updated.configurationVersion).toBe(2);
       expect(updated.configurationDeletedAt).toBeInstanceOf(Date);
       expect(updated.lastTestedAt).toBeNull();
       expect(updated.lastSuccessAt).toBeNull();
@@ -130,11 +138,59 @@ describe("mailbox configuration removal", () => {
         "encrypted-mailbox-configuration"
       );
 
+      const readded = await saveMailboxCredential(admin.id, {
+        name: "重新添加的历史邮箱",
+        enabled: true,
+        provider: "CUSTOM",
+        config: {
+          emailAddress: mailbox.emailAddress,
+          displayName: "历史客服",
+          username: mailbox.emailAddress,
+          password: "replacement-password",
+          smtp: {
+            host: "smtp.example.test",
+            port: 465,
+            secure: true
+          },
+          imap: {
+            host: "imap.example.test",
+            port: 993,
+            secure: true
+          }
+        }
+      });
+      expect(readded).toMatchObject({
+        id: mailbox.id,
+        configurationVersion: 3
+      });
       await expect(
-        removeMailboxConfiguration(admin.id, mailbox.id)
-      ).rejects.toBeInstanceOf(
-        MailboxConfigurationNotFoundError
-      );
+        prisma.mailbox.findUniqueOrThrow({
+          where: { id: mailbox.id },
+          select: {
+            encryptedConfig: true,
+            configurationDeletedAt: true,
+            configurationVersion: true
+          }
+        })
+      ).resolves.toMatchObject({
+        encryptedConfig: expect.any(String),
+        configurationDeletedAt: null,
+        configurationVersion: 3
+      });
+      await expect(
+        removeMailboxConfiguration(admin.id, mailbox.id, 2)
+      ).rejects.toMatchObject({
+        name: "MailboxConfigurationVersionConflictError",
+        message: "MAILBOX_CONFIGURATION_VERSION_CONFLICT"
+      });
+      expect(
+        await prisma.auditLog.count({
+          where: {
+            action: "mailbox.configuration_deleted",
+            entityId: mailbox.id
+          }
+        })
+      ).toBe(1);
     } finally {
       await prisma.auditLog.deleteMany({
         where: { entityId: mailbox.id }
@@ -153,6 +209,93 @@ describe("mailbox configuration removal", () => {
       });
       await prisma.userProfile.deleteMany({
         where: { id: user.id }
+      });
+      await prisma.member.deleteMany({
+        where: { id: admin.id }
+      });
+    }
+  });
+
+  it("serializes concurrent deletion requests for one displayed version", async () => {
+    const token = randomUUID();
+    const admin = await prisma.member.create({
+      data: {
+        email: `mailbox-concurrent-admin-${token}@example.test`,
+        displayName: "Mailbox Concurrent Admin",
+        passwordHash: "not-used",
+        role: "ADMIN"
+      }
+    });
+    const mailbox = await prisma.mailbox.create({
+      data: {
+        name: "并发删除邮箱",
+        emailAddress: `mailbox-concurrent-${token}@example.test`,
+        encryptedConfig: "encrypted-concurrent-configuration",
+        enabled: true
+      }
+    });
+
+    try {
+      const results = await Promise.allSettled([
+        removeMailboxConfiguration(
+          admin.id,
+          mailbox.id,
+          mailbox.configurationVersion
+        ),
+        removeMailboxConfiguration(
+          admin.id,
+          mailbox.id,
+          mailbox.configurationVersion
+        )
+      ]);
+
+      expect(
+        results.filter((result) => result.status === "fulfilled")
+      ).toEqual([
+        {
+          status: "fulfilled",
+          value: {
+            id: mailbox.id,
+            configurationVersion: 2
+          }
+        }
+      ]);
+      const rejected = results.find(
+        (result) => result.status === "rejected"
+      );
+      expect(rejected).toMatchObject({
+        status: "rejected",
+        reason: {
+          name: "MailboxConfigurationVersionConflictError",
+          message: "MAILBOX_CONFIGURATION_VERSION_CONFLICT"
+        }
+      });
+      await expect(
+        prisma.mailbox.findUniqueOrThrow({
+          where: { id: mailbox.id },
+          select: {
+            encryptedConfig: true,
+            configurationVersion: true
+          }
+        })
+      ).resolves.toEqual({
+        encryptedConfig: null,
+        configurationVersion: 2
+      });
+      expect(
+        await prisma.auditLog.count({
+          where: {
+            action: "mailbox.configuration_deleted",
+            entityId: mailbox.id
+          }
+        })
+      ).toBe(1);
+    } finally {
+      await prisma.auditLog.deleteMany({
+        where: { entityId: mailbox.id }
+      });
+      await prisma.mailbox.deleteMany({
+        where: { id: mailbox.id }
       });
       await prisma.member.deleteMany({
         where: { id: admin.id }
@@ -181,8 +324,12 @@ describe("mailbox configuration removal", () => {
           method: "DELETE",
           headers: {
             origin: "http://127.0.0.1:3000",
+            "content-type": "application/json",
             cookie: `${SESSION_COOKIE_NAME}=${session.token}`
-          }
+          },
+          body: JSON.stringify({
+            configurationVersion: mailbox.configurationVersion
+          })
         }
       );
 
@@ -192,15 +339,18 @@ describe("mailbox configuration removal", () => {
       });
       expect(response.status).toBe(200);
       await expect(response.json()).resolves.toEqual({
-        mailbox: { id: mailbox.id }
+        mailbox: {
+          id: mailbox.id,
+          configurationVersion: 2
+        }
       });
 
-      const missingResponse = await DELETE(request(), {
+      const conflictResponse = await DELETE(request(), {
         params: Promise.resolve({ id: mailbox.id })
       });
-      expect(missingResponse.status).toBe(404);
-      await expect(missingResponse.json()).resolves.toEqual({
-        code: "MAILBOX_CONFIGURATION_NOT_FOUND"
+      expect(conflictResponse.status).toBe(409);
+      await expect(conflictResponse.json()).resolves.toEqual({
+        code: "MAILBOX_CONFIGURATION_VERSION_CONFLICT"
       });
     } finally {
       await revokeSessionByToken(session.token);

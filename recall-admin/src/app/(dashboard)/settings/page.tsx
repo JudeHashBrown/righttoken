@@ -110,6 +110,9 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
                 <MailboxActions
                   mailboxId={mailbox.id}
                   mailboxName={mailbox.name}
+                  configurationVersion={
+                    mailbox.configurationVersion
+                  }
                 />
               </li>
             ))}

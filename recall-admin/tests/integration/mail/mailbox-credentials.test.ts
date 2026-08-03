@@ -10,7 +10,7 @@ import {
 
 describe("encrypted mailbox credentials", () => {
   let adminId: string;
-  let mailboxId: string;
+  const mailboxIds: string[] = [];
 
   beforeAll(async () => {
     const admin = await prisma.member.create({
@@ -28,8 +28,10 @@ describe("encrypted mailbox credentials", () => {
     await prisma.auditLog.deleteMany({
       where: { actorId: adminId, entityType: "Mailbox" }
     });
-    if (mailboxId) {
-      await prisma.mailbox.deleteMany({ where: { id: mailboxId } });
+    if (mailboxIds.length) {
+      await prisma.mailbox.deleteMany({
+        where: { id: { in: mailboxIds } }
+      });
     }
     await prisma.member.deleteMany({ where: { id: adminId } });
     await prisma.$disconnect();
@@ -57,22 +59,69 @@ describe("encrypted mailbox credentials", () => {
         }
       }
     });
-    mailboxId = saved.id;
+    mailboxIds.push(saved.id);
 
     expect(saved).not.toHaveProperty("encryptedConfig");
     expect(saved).not.toHaveProperty("password");
     const stored = await prisma.mailbox.findUniqueOrThrow({
-      where: { id: mailboxId }
+      where: { id: saved.id }
     });
     expect(stored.encryptedConfig).not.toContain(
       "mailbox-secret-password"
     );
     await expect(
-      getMailboxRuntimeConfig(mailboxId)
+      getMailboxRuntimeConfig(saved.id)
     ).resolves.toMatchObject({
       password: "mailbox-secret-password",
       smtp: { port: 465 },
       imap: { port: 993 }
     });
+  });
+
+  it("increments the configuration version on every credential save", async () => {
+    const emailAddress = `versioned-${randomUUID()}@righttoken.test`;
+    const input = {
+      name: "版本化邮箱",
+      enabled: true,
+      provider: "CUSTOM" as const,
+      config: {
+        emailAddress,
+        displayName: "版本化客服",
+        username: emailAddress,
+        password: "first-password",
+        smtp: {
+          host: "smtp.example.test",
+          port: 465,
+          secure: true
+        },
+        imap: {
+          host: "imap.example.test",
+          port: 993,
+          secure: true
+        }
+      }
+    };
+
+    const first = await saveMailboxCredential(adminId, input);
+    mailboxIds.push(first.id);
+    const second = await saveMailboxCredential(adminId, {
+      ...input,
+      config: {
+        ...input.config,
+        password: "second-password"
+      }
+    });
+
+    expect(first.configurationVersion).toBe(1);
+    expect(second).toMatchObject({
+      id: first.id,
+      configurationVersion: 2
+    });
+    await expect(
+      prisma.mailbox.findUniqueOrThrow({
+        where: { id: first.id },
+        select: { configurationVersion: true }
+      })
+    ).resolves.toEqual({ configurationVersion: 2 });
   });
 });
