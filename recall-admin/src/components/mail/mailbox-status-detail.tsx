@@ -8,7 +8,6 @@ export type MailboxStatusDetailData = {
   enabled: boolean;
   statusText: string;
   lastTestedAt: string | null;
-  lastSuccessAt: string | null;
   lastSyncedAt: string | null;
 };
 
@@ -59,12 +58,12 @@ export function MailboxStatusDetail({
           <strong>{dateTime(mailbox.lastTestedAt)}</strong>
         </div>
         <div className={styles.summaryItem}>
-          <span className={styles.detailLabel}>最近成功收信</span>
-          <strong>{dateTime(mailbox.lastSuccessAt)}</strong>
+          <span className={styles.detailLabel}>最近成功同步</span>
+          <strong>{dateTime(mailbox.lastSyncedAt)}</strong>
         </div>
         <div className={styles.summaryItem}>
-          <span className={styles.detailLabel}>最近收取邮件</span>
-          <strong>{dateTime(mailbox.lastSyncedAt)}</strong>
+          <span className={styles.detailLabel}>自动同步频率</span>
+          <strong>每 2 分钟</strong>
         </div>
       </div>
       <MailboxActions mailboxId={mailbox.id} />

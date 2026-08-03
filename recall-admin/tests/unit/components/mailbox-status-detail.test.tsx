@@ -28,7 +28,6 @@ describe("MailboxStatusDetail", () => {
           enabled: true,
           statusText: "连接邮箱服务器超时",
           lastTestedAt: null,
-          lastSuccessAt: null,
           lastSyncedAt: null
         }}
       />
@@ -46,5 +45,11 @@ describe("MailboxStatusDetail", () => {
     expect(
       screen.getByRole("button", { name: "立即收取邮件" })
     ).toBeEnabled();
+    expect(screen.getByText("最近成功同步")).toBeInTheDocument();
+    expect(screen.getByText("自动同步频率")).toBeInTheDocument();
+    expect(screen.getByText("每 2 分钟")).toBeInTheDocument();
+    expect(
+      screen.queryByText("最近成功收信")
+    ).not.toBeInTheDocument();
   });
 });

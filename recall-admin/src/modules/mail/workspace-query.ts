@@ -8,9 +8,7 @@ import { prisma } from "@/lib/db/prisma";
 import type {
   MailWorkspaceFilter
 } from "@/modules/mail/workspace-filter";
-import {
-  mailSyncStatusText
-} from "@/modules/mail/sync-error";
+import { mailboxSyncStatusText } from "@/modules/mail/sync-error";
 import {
   listMailBatches
 } from "@/modules/mail/mail-batch-query";
@@ -320,12 +318,10 @@ async function listItems(
       title: mailbox.name,
       subtitle: mailbox.emailAddress,
       preview:
-        (mailbox.lastErrorCode
-          ? mailSyncStatusText(mailbox.lastErrorCode)
-          : null) ||
-        (mailbox.lastSyncedAt
-          ? "同步正常"
-          : "尚未运行同步"),
+        mailboxSyncStatusText({
+          lastErrorCode: mailbox.lastErrorCode,
+          lastSyncedAt: mailbox.lastSyncedAt
+        }),
       occurredAt: iso(mailbox.lastSyncedAt),
       status: mailbox.enabled ? "已启用" : "未启用"
     }));
@@ -468,7 +464,6 @@ async function selectedItem(
         emailAddress: true,
         enabled: true,
         lastTestedAt: true,
-        lastSuccessAt: true,
         lastSyncedAt: true,
         lastErrorCode: true
       }
@@ -481,11 +476,11 @@ async function selectedItem(
             name: mailbox.name,
             emailAddress: mailbox.emailAddress,
             enabled: mailbox.enabled,
-            statusText: mailSyncStatusText(
-              mailbox.lastErrorCode
-            ),
+            statusText: mailboxSyncStatusText({
+              lastErrorCode: mailbox.lastErrorCode,
+              lastSyncedAt: mailbox.lastSyncedAt
+            }),
             lastTestedAt: iso(mailbox.lastTestedAt),
-            lastSuccessAt: iso(mailbox.lastSuccessAt),
             lastSyncedAt: iso(mailbox.lastSyncedAt)
           }
         }
