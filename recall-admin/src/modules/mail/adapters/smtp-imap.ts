@@ -2,7 +2,8 @@ import { z } from "zod";
 import { ImapFlow } from "imapflow";
 import {
   simpleParser,
-  type AddressObject
+  type AddressObject,
+  type SimpleParserOptions
 } from "mailparser";
 import {
   sendSmtpMessage,
@@ -134,10 +135,14 @@ export async function parseFetchedMessage(
   source: Buffer,
   internalDate: Date
 ): Promise<MailboxMessage | null> {
-  const parsed = await simpleParser(source, {
+  const options: SimpleParserOptions & {
+    keepDeliveryStatus: boolean;
+  } = {
     skipHtmlToText: true,
-    skipTextToHtml: true
-  });
+    skipTextToHtml: true,
+    keepDeliveryStatus: true
+  };
+  const parsed = await simpleParser(source, options);
   return parsedMailToMailboxMessage(parsed, internalDate);
 }
 

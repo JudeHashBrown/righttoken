@@ -25,6 +25,18 @@ import {
 import type {
   MailAssetStorage
 } from "@/modules/mail/assets/types";
+import {
+  parseDeliveryStatus,
+  type ParsedDeliveryStatus
+} from "@/modules/mail/delivery-status";
+import {
+  matchDeliveryStatusRecipient,
+  normalizeDeliverySubject,
+  type OutboundDeliveryCandidate
+} from "@/modules/mail/delivery-status-matcher";
+import {
+  applyDeliveryStatus
+} from "@/modules/mail/apply-delivery-status";
 
 type SyncResult = {
   received: number;
@@ -32,7 +44,25 @@ type SyncResult = {
   unmatched: number;
   replyTasksCreated: number;
   replyTasksReopened: number;
+  deliveryEvents: number;
+  finalBounces: number;
+  delayedDeliveries: number;
+  unmatchedBounces: number;
 };
+
+function emptySyncResult(): SyncResult {
+  return {
+    received: 0,
+    matched: 0,
+    unmatched: 0,
+    replyTasksCreated: 0,
+    replyTasksReopened: 0,
+    deliveryEvents: 0,
+    finalBounces: 0,
+    delayedDeliveries: 0,
+    unmatchedBounces: 0
+  };
+}
 
 const MAIL_SYNC_TRANSACTION_OPTIONS = {
   maxWait: 10_000,
@@ -77,13 +107,7 @@ export async function syncMailbox(
     }
   });
   if (!mailbox.enabled) {
-    return {
-      received: 0,
-      matched: 0,
-      unmatched: 0,
-      replyTasksCreated: 0,
-      replyTasksReopened: 0
-    };
+    return emptySyncResult();
   }
   const since = mailbox.lastSyncedAt
     ? new Date(mailbox.lastSyncedAt.getTime() - 5 * 60 * 1000)
@@ -94,23 +118,30 @@ export async function syncMailbox(
   const providerIds = inbound.map(
     (message) => message.providerMessageId
   );
-  const [existing, outboundRows] = await Promise.all([
+  const [existing, existingDeliveryEvents, outboundRows] =
+    await Promise.all([
     prisma.mailMessage.findMany({
       where: { providerMessageId: { in: providerIds } },
       select: { providerMessageId: true }
+    }),
+    prisma.mailDeliveryEvent.findMany({
+      where: { inboundProviderMessageId: { in: providerIds } },
+      distinct: ["inboundProviderMessageId"],
+      select: { inboundProviderMessageId: true }
     }),
     prisma.mailMessage.findMany({
       where: {
         mailboxId,
         direction: "OUTBOUND",
-        status: "SENT",
+        status: { in: ["SENT", "BOUNCED"] },
         sentAt: {
           gte: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
         },
-        providerMessageId: { not: null },
-        threadId: { not: null }
+        providerMessageId: { not: null }
       },
       select: {
+        id: true,
+        mailboxId: true,
         threadId: true,
         taskId: true,
         providerMessageId: true,
@@ -122,8 +153,12 @@ export async function syncMailbox(
     })
   ]);
   const existingIds = new Set(
-    existing
-      .map((message) => message.providerMessageId)
+    [
+      ...existing.map((message) => message.providerMessageId),
+      ...existingDeliveryEvents.map(
+        (event) => event.inboundProviderMessageId
+      )
+    ]
       .filter((value): value is string => Boolean(value))
   );
   const storage =
@@ -131,11 +166,27 @@ export async function syncMailbox(
   const newInbound = inbound.filter(
     (message) => !existingIds.has(message.providerMessageId)
   );
+  const deliveryStatusByProviderId = new Map<
+    string,
+    ParsedDeliveryStatus
+  >();
+  for (const message of newInbound) {
+    const deliveryStatus = parseDeliveryStatus(message);
+    if (deliveryStatus) {
+      deliveryStatusByProviderId.set(
+        message.providerMessageId,
+        deliveryStatus
+      );
+    }
+  }
   const preparedByProviderId = new Map<
     string,
     PreparedInboundMessage
   >();
   for (const message of newInbound) {
+    if (deliveryStatusByProviderId.has(message.providerMessageId)) {
+      continue;
+    }
     preparedByProviderId.set(
       message.providerMessageId,
       await prepareInboundMailAssets(message, { storage })
@@ -160,6 +211,26 @@ export async function syncMailbox(
           ]
         : []
   );
+  const deliveryCandidates: OutboundDeliveryCandidate[] =
+    outboundRows.flatMap((message) =>
+      message.providerMessageId &&
+      message.sentAt &&
+      message.toAddresses[0]
+        ? [
+            {
+              messageId: message.id,
+              providerMessageId: message.providerMessageId,
+              mailboxId: message.mailboxId,
+              recipientNormalized:
+                message.toAddresses[0].trim().toLowerCase(),
+              normalizedSubject: normalizeDeliverySubject(
+                message.subject
+              ),
+              sentAt: message.sentAt
+            }
+          ]
+        : []
+    );
 
   const notificationTaskIds: string[] = [];
   const skippedPrepared: PreparedInboundMessage[] = [];
@@ -171,22 +242,32 @@ export async function syncMailbox(
         hashtextextended(${MAIL_SYNC_ADVISORY_LOCK}, 0)
       )::text AS "locked"
     `;
-    const currentExisting = await tx.mailMessage.findMany({
-      where: { providerMessageId: { in: providerIds } },
-      select: { providerMessageId: true }
-    });
+    const [currentExisting, currentDeliveryEvents] =
+      await Promise.all([
+        tx.mailMessage.findMany({
+          where: { providerMessageId: { in: providerIds } },
+          select: { providerMessageId: true }
+        }),
+        tx.mailDeliveryEvent.findMany({
+          where: {
+            inboundProviderMessageId: { in: providerIds }
+          },
+          distinct: ["inboundProviderMessageId"],
+          select: { inboundProviderMessageId: true }
+        })
+      ]);
     const currentExistingIds = new Set(
-      currentExisting
-        .map((message) => message.providerMessageId)
+      [
+        ...currentExisting.map(
+          (message) => message.providerMessageId
+        ),
+        ...currentDeliveryEvents.map(
+          (event) => event.inboundProviderMessageId
+        )
+      ]
         .filter((value): value is string => Boolean(value))
     );
-    const result: SyncResult = {
-      received: 0,
-      matched: 0,
-      unmatched: 0,
-      replyTasksCreated: 0,
-      replyTasksReopened: 0
-    };
+    const result = emptySyncResult();
     for (const message of inbound) {
       if (currentExistingIds.has(message.providerMessageId)) {
         const prepared = preparedByProviderId.get(
@@ -201,6 +282,78 @@ export async function syncMailbox(
         message.providerMessageId
       );
       result.received += 1;
+      const deliveryStatus = deliveryStatusByProviderId.get(
+        message.providerMessageId
+      );
+      if (deliveryStatus) {
+        const unmatchedReasons: string[] = [];
+        for (const recipient of deliveryStatus.recipients) {
+          const deliveryMatch = matchDeliveryStatusRecipient(
+            {
+              recipient,
+              inbound: {
+                mailboxId,
+                inReplyTo: message.inReplyTo,
+                references: message.references,
+                subject: message.subject,
+                reportedAt: message.receivedAt
+              }
+            },
+            deliveryCandidates
+          );
+          if (deliveryMatch.kind === "UNMATCHED") {
+            unmatchedReasons.push(deliveryMatch.reason);
+            continue;
+          }
+          const applied = await applyDeliveryStatus(tx, {
+            mailboxId,
+            outboundMessageId: deliveryMatch.messageId,
+            inboundProviderMessageId:
+              message.providerMessageId,
+            recipient,
+            reportedAt: message.receivedAt
+          });
+          if (applied.eventCreated) result.deliveryEvents += 1;
+          if (applied.finalBounce) result.finalBounces += 1;
+          if (applied.delayedDelivery) {
+            result.delayedDeliveries += 1;
+          }
+        }
+        if (unmatchedReasons.length > 0) {
+          result.unmatched += 1;
+          result.unmatchedBounces += 1;
+          const unmatched = await tx.mailMessage.create({
+            data: {
+              mailboxId,
+              direction: "INBOUND",
+              status: "UNMATCHED",
+              providerMessageId: message.providerMessageId,
+              inReplyTo: message.inReplyTo,
+              references: message.references,
+              fromAddress: message.fromAddress,
+              toAddresses: message.toAddresses,
+              subject: message.subject,
+              bodyText: message.bodyText,
+              bodyHtml: null,
+              receivedAt: message.receivedAt,
+              lastErrorCode: unmatchedReasons[0]
+            }
+          });
+          await tx.auditLog.create({
+            data: {
+              action: "MAIL_BOUNCE_UNMATCHED",
+              entityType: "MailMessage",
+              entityId: unmatched.id,
+              metadata: {
+                mailboxId,
+                providerMessageId: message.providerMessageId,
+                reasons: [...new Set(unmatchedReasons)]
+              }
+            }
+          });
+        }
+        continue;
+      }
       const match = matchInboundReply(
         {
           providerMessageId: message.providerMessageId,

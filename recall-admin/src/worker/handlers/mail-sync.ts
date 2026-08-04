@@ -51,7 +51,11 @@ export async function handleMailSync(
     matched: 0,
     unmatched: 0,
     replyTasksCreated: 0,
-    replyTasksReopened: 0
+    replyTasksReopened: 0,
+    deliveryEvents: 0,
+    finalBounces: 0,
+    delayedDeliveries: 0,
+    unmatchedBounces: 0
   };
   for (const mailbox of mailboxes) {
     try {
@@ -69,6 +73,10 @@ export async function handleMailSync(
       summary.unmatched += result.unmatched;
       summary.replyTasksCreated += result.replyTasksCreated;
       summary.replyTasksReopened += result.replyTasksReopened;
+      summary.deliveryEvents += result.deliveryEvents;
+      summary.finalBounces += result.finalBounces;
+      summary.delayedDeliveries += result.delayedDeliveries;
+      summary.unmatchedBounces += result.unmatchedBounces;
     } catch (error) {
       const code = classifyMailSyncError(error);
       const diagnostic = mailSyncErrorDiagnostic(error);
