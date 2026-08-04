@@ -52,6 +52,23 @@ describe("processMailHtml", () => {
     );
   });
 
+  it("hardens safe external links and clears unsafe link metadata", () => {
+    const result = processMailHtml(`
+      <a href="https://example.com/help">帮助</a>
+      <a href="mailto:help@example.com" target="_self">邮件</a>
+      <a href="javascript:alert(1)" target="_blank" rel="opener">危险</a>
+    `);
+
+    expect(result.html).toContain(
+      '<a href="https://example.com/help" target="_blank" rel="noopener noreferrer">帮助</a>'
+    );
+    expect(result.html).toContain(
+      '<a href="mailto:help@example.com" target="_blank" rel="noopener noreferrer">邮件</a>'
+    );
+    expect(result.html).not.toContain("javascript:");
+    expect(result.html).not.toContain('rel="opener"');
+  });
+
   it("allows https images and rejects other external sources", () => {
     const result = processMailHtml(`
       <img src="https://cdn.example.test/guide.png" alt="guide">
