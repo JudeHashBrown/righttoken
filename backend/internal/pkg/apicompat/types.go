@@ -4,7 +4,10 @@
 // formats can be served through a unified gateway.
 package apicompat
 
-import "encoding/json"
+import (
+	"bytes"
+	"encoding/json"
+)
 
 // ---------------------------------------------------------------------------
 // Anthropic Messages API types
@@ -188,7 +191,38 @@ type ResponsesInputItem struct {
 	ID        string `json:"id,omitempty"`
 
 	// type=function_call_output
-	Output string `json:"output,omitempty"`
+	Output    string `json:"output,omitempty"`
+	outputRaw json.RawMessage
+}
+
+// UnmarshalJSON accepts both the original string form and the content-part
+// array form used by newer Responses clients for function_call_output.output.
+// The public Output field remains a string for backward compatibility while
+// outputRaw retains structured tool results for protocol bridges.
+func (i *ResponsesInputItem) UnmarshalJSON(data []byte) error {
+	type alias ResponsesInputItem
+	var wire struct {
+		*alias
+		Output json.RawMessage `json:"output"`
+	}
+
+	*i = ResponsesInputItem{}
+	wire.alias = (*alias)(i)
+	if err := json.Unmarshal(data, &wire); err != nil {
+		return err
+	}
+
+	output := bytes.TrimSpace(wire.Output)
+	if len(output) == 0 || bytes.Equal(output, []byte("null")) {
+		return nil
+	}
+	if err := json.Unmarshal(output, &i.Output); err == nil {
+		return nil
+	}
+
+	i.outputRaw = append(i.outputRaw[:0], output...)
+	i.Output = string(output)
+	return nil
 }
 
 // ResponsesContentPart is a typed content part in a Responses message.
