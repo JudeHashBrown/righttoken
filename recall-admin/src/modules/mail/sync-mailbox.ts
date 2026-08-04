@@ -1,3 +1,4 @@
+import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import {
   configuredMailboxWhere
@@ -31,6 +32,7 @@ import {
 } from "@/modules/mail/delivery-status";
 import {
   matchDeliveryStatusRecipient,
+  normalizeDeliveryMessageId,
   normalizeDeliverySubject,
   type OutboundDeliveryCandidate
 } from "@/modules/mail/delivery-status-matcher";
@@ -139,6 +141,25 @@ export async function syncMailbox(
       )
     )
   ];
+  const normalizedExactOutboundMessageIds = exactOutboundMessageIds
+    .map(normalizeDeliveryMessageId)
+    .filter((value): value is string => Boolean(value));
+  const historicalExactCandidates =
+    normalizedExactOutboundMessageIds.length > 0
+      ? await prisma.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+          SELECT "id"
+          FROM "recall"."MailMessage"
+          WHERE "mailboxId" = ${mailboxId}
+            AND "direction" = 'OUTBOUND'::"recall"."MailDirection"
+            AND "status" IN (
+              'SENT'::"recall"."MailMessageStatus",
+              'BOUNCED'::"recall"."MailMessageStatus"
+            )
+            AND "sentAt" IS NOT NULL
+            AND LOWER(TRIM(BOTH '<>' FROM BTRIM("providerMessageId")))
+              IN (${Prisma.join(normalizedExactOutboundMessageIds)})
+        `)
+      : [];
   const providerIds = inbound.map(
     (message) => message.providerMessageId
   );
@@ -168,11 +189,13 @@ export async function syncMailbox(
               )
             }
           },
-          ...(exactOutboundMessageIds.length > 0
+          ...(historicalExactCandidates.length > 0
             ? [
                 {
-                  providerMessageId: {
-                    in: exactOutboundMessageIds
+                  id: {
+                    in: historicalExactCandidates.map(
+                      (candidate) => candidate.id
+                    )
                   }
                 }
               ]

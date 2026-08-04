@@ -466,11 +466,16 @@ describe("mail bounce synchronization", () => {
 
   it("matches an exact DSN message id even when the send is older than 30 days", async () => {
     const fixture = await createFixture();
+    const mixedCaseMessageId = `Mixed-${randomUUID()}@Example.Test`;
+    await prisma.mailMessage.update({
+      where: { id: fixture.message.id },
+      data: { providerMessageId: `<${mixedCaseMessageId}>` }
+    });
     const dsn = dsnMessage({
       id: `<dsn-old-exact-${randomUUID()}@example.test>`,
       recipient: fixture.user.emailNormalized,
       action: "failed",
-      originalMessageId: fixture.message.providerMessageId!
+      originalMessageId: mixedCaseMessageId.toLowerCase()
     });
     try {
       const result = await syncMailbox(
