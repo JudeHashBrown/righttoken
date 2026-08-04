@@ -124,8 +124,7 @@ export function MailBatchList({
   }
 
   async function retryFinalBounces(
-    batchId: string,
-    _count: number
+    batchId: string
   ): Promise<void> {
     setBounceRetryingId(batchId);
     setError(null);
@@ -321,9 +320,7 @@ export function MailBatchList({
                             }
                             onClick={() =>
                               retryFinalBounces(
-                                batch.id,
-                                bounceDetails[batch.id]!
-                                  .actionableBounceCount
+                                batch.id
                               )
                             }
                           >

@@ -213,6 +213,7 @@ export function MailRichEditor({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [editingLink, setEditingLink] = useState(false);
   const [linkValue, setLinkValue] = useState("");
   const [linkError, setLinkError] = useState<string | null>(null);
   const [preview, setPreview] =
@@ -364,6 +365,7 @@ export function MailRichEditor({
     const anchor =
       editor && range ? anchorForRange(range, editor) : null;
     activeAnchorRef.current = anchor;
+    setEditingLink(Boolean(anchor));
     setLinkValue(anchor?.getAttribute("href") ?? "");
     setLinkError(null);
     setLinkDialogOpen(true);
@@ -374,6 +376,7 @@ export function MailRichEditor({
     setLinkValue("");
     setLinkError(null);
     activeAnchorRef.current = null;
+    setEditingLink(false);
   }
 
   function applyLink(): void {
@@ -732,7 +735,7 @@ export function MailRichEditor({
               role="dialog"
             >
               <strong id={`${idPrefix}-link-title`}>
-                {activeAnchorRef.current
+                {editingLink
                   ? "编辑超链接"
                   : "插入超链接"}
               </strong>
@@ -765,7 +768,7 @@ export function MailRichEditor({
                 >
                   取消
                 </button>
-                {activeAnchorRef.current ? (
+                {editingLink ? (
                   <button
                     className={styles.dangerButton}
                     onClick={removeLink}
