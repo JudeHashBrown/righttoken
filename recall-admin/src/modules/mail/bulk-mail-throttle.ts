@@ -61,11 +61,17 @@ export async function reserveBulkMailRecipient(
   `;
   const claimedAt =
     input.now ??
-    (
-      await tx.$queryRaw<Array<{ now: Date }>>`
-        SELECT clock_timestamp() AS "now"
-      `
-    )[0].now;
+    new Date(
+      Number(
+        (
+          await tx.$queryRaw<Array<{ nowMs: bigint }>>`
+            SELECT floor(
+              extract(epoch FROM clock_timestamp()) * 1000
+            )::bigint AS "nowMs"
+          `
+        )[0].nowMs
+      )
+    );
   const throttle = await tx.mailDomainThrottle.upsert({
     where: { senderDomain: input.senderDomain },
     create: {
