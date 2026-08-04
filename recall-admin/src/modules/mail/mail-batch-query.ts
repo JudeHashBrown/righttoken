@@ -182,7 +182,10 @@ export async function getMailBatchSummary(
       id: batchId,
       ...batchWhere(viewer)
     },
-    select: batchSummarySelect
+    select: {
+      ...batchSummarySelect,
+      mailbox: { select: { emailAddress: true } }
+    }
   });
   if (!batch) {
     throw new MailBatchNotFoundError();
@@ -203,8 +206,10 @@ export async function getMailBatchSummary(
   const actionableBounceEmails = leaves.map(
     (leaf) => leaf.emailNormalized
   );
+  const { mailbox, ...safeBatch } = batch;
   return {
-    ...presentBatch(batch),
+    ...presentBatch(safeBatch),
+    senderMailbox: mailbox.emailAddress,
     actionableBounceCount: actionableBounceEmails.length,
     actionableBounceEmails,
     actionableBounceList: actionableBounceEmails.join(";"),
