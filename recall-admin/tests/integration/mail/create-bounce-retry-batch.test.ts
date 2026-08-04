@@ -17,13 +17,6 @@ describe("final bounce retry batches", () => {
   let rootBatchId: string;
   let assetId: string;
   const userIds: string[] = [];
-  const scheduled: string[] = [];
-  const scheduler: TaskScheduler = {
-    async scheduleSegmentCheck() {},
-    async scheduleMailBatch({ batchId }) {
-      scheduled.push(batchId);
-    }
-  };
 
   beforeAll(async () => {
     const member = await prisma.member.create({
@@ -154,22 +147,40 @@ describe("final bounce retry batches", () => {
   });
 
   it("creates an idempotent child batch with inherited content and lineage", async () => {
+    const scheduled: string[] = [];
+    let scheduleAttempts = 0;
+    const flakyScheduler: TaskScheduler = {
+      async scheduleSegmentCheck() {},
+      async scheduleMailBatch({ batchId }) {
+        scheduleAttempts += 1;
+        if (scheduleAttempts === 1) {
+          throw new Error("scheduler unavailable");
+        }
+        scheduled.push(batchId);
+      }
+    };
+    await expect(
+      createBounceRetryBatch({
+        actorId: memberId,
+        batchId: rootBatchId,
+        idempotencyKey: "bounce-retry-key-1",
+        scheduler: flakyScheduler,
+        now: new Date("2026-08-04T09:00:00.000Z")
+      })
+    ).rejects.toThrow("scheduler unavailable");
+    const persisted = await prisma.mailBatch.findUniqueOrThrow({
+      where: { idempotencyKey: "bounce-retry-key-1" }
+    });
     const batch = await createBounceRetryBatch({
       actorId: memberId,
       batchId: rootBatchId,
       idempotencyKey: "bounce-retry-key-1",
-      scheduler,
-      now: new Date("2026-08-04T09:00:00.000Z")
-    });
-    const replay = await createBounceRetryBatch({
-      actorId: memberId,
-      batchId: rootBatchId,
-      idempotencyKey: "bounce-retry-key-1",
-      scheduler,
+      scheduler: flakyScheduler,
       now: new Date("2026-08-04T09:00:01.000Z")
     });
 
-    expect(replay.id).toBe(batch.id);
+    expect(batch.id).toBe(persisted.id);
+    expect(scheduleAttempts).toBe(2);
     expect(batch).toMatchObject({
       retryRootBatchId: rootBatchId,
       mailboxId,

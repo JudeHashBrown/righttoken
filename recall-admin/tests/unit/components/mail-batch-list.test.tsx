@@ -50,6 +50,7 @@ describe("MailBatchList", () => {
             sentRecipients: 9,
             skippedRecipients: 2,
             failedRecipients: 1,
+            retryableFailedRecipients: 1,
             createdAt: "2026-07-30T10:00:00.000Z"
           }
         ]}
@@ -118,11 +119,16 @@ describe("MailBatchList", () => {
             sentRecipients: 0,
             skippedRecipients: 0,
             failedRecipients: 2,
+            retryableFailedRecipients: 0,
             createdAt: "2026-08-04T10:00:00.000Z"
           }
         ]}
       />
     );
+
+    expect(
+      screen.queryByRole("button", { name: "重试失败项" })
+    ).not.toBeInTheDocument();
 
     fireEvent.click(
       screen.getByRole("button", { name: "查看退信邮箱" })

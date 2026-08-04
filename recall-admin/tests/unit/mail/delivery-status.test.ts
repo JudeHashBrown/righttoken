@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  inspectDeliveryStatus,
   parseDeliveryStatus
 } from "@/modules/mail/delivery-status";
 import type { MailboxMessage } from "@/modules/mail/types";
@@ -52,6 +53,7 @@ describe("parseDeliveryStatus", () => {
     expect(parsed).toEqual({
       inboundProviderMessageId: "<dsn-1@example.test>",
       reportedAt: new Date("2026-08-04T08:00:00.000Z"),
+      malformedRecipientBlocks: 0,
       recipients: [
         {
           action: "FAILED",
@@ -140,8 +142,30 @@ describe("parseDeliveryStatus", () => {
     );
 
     expect(parsed?.recipients).toHaveLength(1);
+    expect(parsed?.malformedRecipientBlocks).toBe(1);
     expect(
       parsed?.recipients[0]?.diagnosticCode
     ).toHaveLength(2_000);
+  });
+
+  it("distinguishes malformed DSN content from ordinary mail", () => {
+    expect(
+      inspectDeliveryStatus(
+        mailboxMessage({
+          deliveryStatus: [
+            "Final-Recipient: rfc822; not-an-email",
+            "Action: failed"
+          ].join("\r\n")
+        })
+      )
+    ).toEqual({ kind: "MALFORMED" });
+    expect(
+      inspectDeliveryStatus(
+        mailboxMessage({
+          subject: "Hello",
+          bodyText: "This is an ordinary reply."
+        })
+      )
+    ).toEqual({ kind: "NOT_DSN" });
   });
 });

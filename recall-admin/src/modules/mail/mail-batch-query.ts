@@ -174,7 +174,25 @@ export async function listMailBatches(
     take: 30,
     select: batchSummarySelect
   });
-  return batches.map(presentBatch);
+  const retryableFailures = await prisma.mailBatchRecipient.groupBy({
+    by: ["batchId"],
+    where: {
+      batchId: { in: batches.map((batch) => batch.id) },
+      status: "FAILED"
+    },
+    _count: { _all: true }
+  });
+  const retryableByBatchId = new Map(
+    retryableFailures.map((row) => [
+      row.batchId,
+      row._count._all
+    ])
+  );
+  return batches.map((batch) => ({
+    ...presentBatch(batch),
+    retryableFailedRecipients:
+      retryableByBatchId.get(batch.id) ?? 0
+  }));
 }
 
 export async function getMailBatchSummary(

@@ -88,7 +88,12 @@ export async function createBounceRetryBatch(
           "IDEMPOTENCY_KEY_CONFLICT"
         );
       }
-      return { batch: existing, shouldSchedule: false };
+      return {
+        batch: existing,
+        shouldSchedule:
+          existing.status === "PENDING" &&
+          existing.pendingRecipients > 0
+      };
     }
 
     const root = await tx.mailBatch.findUnique({

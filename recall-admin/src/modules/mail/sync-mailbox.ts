@@ -26,8 +26,8 @@ import type {
   MailAssetStorage
 } from "@/modules/mail/assets/types";
 import {
-  parseDeliveryStatus,
-  type ParsedDeliveryStatus
+  inspectDeliveryStatus,
+  type DeliveryStatusInspection
 } from "@/modules/mail/delivery-status";
 import {
   matchDeliveryStatusRecipient,
@@ -115,6 +115,30 @@ export async function syncMailbox(
   const inbound = uniqueMailboxMessages(
     await adapter.listMessagesSince(since)
   );
+  const deliveryInspectionByProviderId = new Map<
+    string,
+    DeliveryStatusInspection
+  >(
+    inbound.map((message) => [
+      message.providerMessageId,
+      inspectDeliveryStatus(message)
+    ])
+  );
+  const exactOutboundMessageIds = [
+    ...new Set(
+      [...deliveryInspectionByProviderId.values()].flatMap(
+        (inspection) =>
+          inspection.kind === "PARSED"
+            ? inspection.deliveryStatus.recipients.flatMap(
+                (recipient) =>
+                  recipient.originalMessageId
+                    ? [recipient.originalMessageId]
+                    : []
+              )
+            : []
+      )
+    )
+  ];
   const providerIds = inbound.map(
     (message) => message.providerMessageId
   );
@@ -134,10 +158,26 @@ export async function syncMailbox(
         mailboxId,
         direction: "OUTBOUND",
         status: { in: ["SENT", "BOUNCED"] },
-        sentAt: {
-          gte: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-        },
-        providerMessageId: { not: null }
+        sentAt: { not: null },
+        providerMessageId: { not: null },
+        OR: [
+          {
+            sentAt: {
+              gte: new Date(
+                now.getTime() - 30 * 24 * 60 * 60 * 1000
+              )
+            }
+          },
+          ...(exactOutboundMessageIds.length > 0
+            ? [
+                {
+                  providerMessageId: {
+                    in: exactOutboundMessageIds
+                  }
+                }
+              ]
+            : [])
+        ]
       },
       select: {
         id: true,
@@ -166,25 +206,16 @@ export async function syncMailbox(
   const newInbound = inbound.filter(
     (message) => !existingIds.has(message.providerMessageId)
   );
-  const deliveryStatusByProviderId = new Map<
-    string,
-    ParsedDeliveryStatus
-  >();
-  for (const message of newInbound) {
-    const deliveryStatus = parseDeliveryStatus(message);
-    if (deliveryStatus) {
-      deliveryStatusByProviderId.set(
-        message.providerMessageId,
-        deliveryStatus
-      );
-    }
-  }
   const preparedByProviderId = new Map<
     string,
     PreparedInboundMessage
   >();
   for (const message of newInbound) {
-    if (deliveryStatusByProviderId.has(message.providerMessageId)) {
+    if (
+      deliveryInspectionByProviderId.get(
+        message.providerMessageId
+      )?.kind !== "NOT_DSN"
+    ) {
       continue;
     }
     preparedByProviderId.set(
@@ -282,11 +313,49 @@ export async function syncMailbox(
         message.providerMessageId
       );
       result.received += 1;
-      const deliveryStatus = deliveryStatusByProviderId.get(
+      const deliveryInspection = deliveryInspectionByProviderId.get(
         message.providerMessageId
       );
-      if (deliveryStatus) {
-        const unmatchedReasons: string[] = [];
+      if (deliveryInspection?.kind === "MALFORMED") {
+        result.unmatched += 1;
+        result.unmatchedBounces += 1;
+        const unmatched = await tx.mailMessage.create({
+          data: {
+            mailboxId,
+            direction: "INBOUND",
+            status: "UNMATCHED",
+            providerMessageId: message.providerMessageId,
+            inReplyTo: message.inReplyTo,
+            references: message.references,
+            fromAddress: message.fromAddress,
+            toAddresses: message.toAddresses,
+            subject: message.subject,
+            bodyText: message.bodyText,
+            bodyHtml: null,
+            receivedAt: message.receivedAt,
+            lastErrorCode: "DELIVERY_STATUS_MALFORMED"
+          }
+        });
+        await tx.auditLog.create({
+          data: {
+            action: "MAIL_BOUNCE_UNMATCHED",
+            entityType: "MailMessage",
+            entityId: unmatched.id,
+            metadata: {
+              mailboxId,
+              providerMessageId: message.providerMessageId,
+              reasons: ["DELIVERY_STATUS_MALFORMED"]
+            }
+          }
+        });
+        continue;
+      }
+      if (deliveryInspection?.kind === "PARSED") {
+        const deliveryStatus = deliveryInspection.deliveryStatus;
+        const unmatchedReasons: string[] =
+          deliveryStatus.malformedRecipientBlocks > 0
+            ? ["DELIVERY_STATUS_MALFORMED_RECIPIENT"]
+            : [];
         for (const recipient of deliveryStatus.recipients) {
           const deliveryMatch = matchDeliveryStatusRecipient(
             {

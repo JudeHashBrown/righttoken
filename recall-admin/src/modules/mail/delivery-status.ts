@@ -12,7 +12,16 @@ export type ParsedDeliveryStatus = {
   inboundProviderMessageId: string;
   reportedAt: Date;
   recipients: DeliveryStatusRecipient[];
+  malformedRecipientBlocks: number;
 };
+
+export type DeliveryStatusInspection =
+  | { kind: "NOT_DSN" }
+  | { kind: "MALFORMED" }
+  | {
+      kind: "PARSED";
+      deliveryStatus: ParsedDeliveryStatus;
+    };
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -75,7 +84,10 @@ function attachedOriginalMessageId(
 function recipientsFromSource(
   source: string,
   fallbackMessageId: string | null
-): DeliveryStatusRecipient[] {
+): {
+  recipients: DeliveryStatusRecipient[];
+  malformedRecipientBlocks: number;
+} {
   const blocks = headerBlocks(source);
   const messageId =
     blocks
@@ -83,13 +95,22 @@ function recipientsFromSource(
       .find(Boolean)
       ?.slice(0, 998) ?? fallbackMessageId;
 
-  return blocks.flatMap((headers) => {
+  let malformedRecipientBlocks = 0;
+  const recipients = blocks.flatMap((headers) => {
+    const hasRecipientFields =
+      headers.has("action") ||
+      headers.has("final-recipient") ||
+      headers.has("original-recipient");
+    if (!hasRecipientFields) return [];
     const action = normalizedAction(headers.get("action"));
     const recipient = normalizedRecipient(
       headers.get("final-recipient") ??
         headers.get("original-recipient")
     );
-    if (!action || !recipient) return [];
+    if (!action || !recipient) {
+      malformedRecipientBlocks += 1;
+      return [];
+    }
     return [
       {
         action,
@@ -104,11 +125,12 @@ function recipientsFromSource(
       }
     ];
   });
+  return { recipients, malformedRecipientBlocks };
 }
 
-export function parseDeliveryStatus(
+export function inspectDeliveryStatus(
   message: MailboxMessage
-): ParsedDeliveryStatus | null {
+): DeliveryStatusInspection {
   const deliveryParts = message.attachments.filter(
     (attachment) =>
       attachment.contentType.toLowerCase() ===
@@ -123,17 +145,37 @@ export function parseDeliveryStatus(
         ) && /^Action:/im.test(message.bodyText)
       ? [message.bodyText]
       : [];
-  if (sources.length === 0) return null;
+  if (sources.length === 0) return { kind: "NOT_DSN" };
 
   const attachedMessageId = attachedOriginalMessageId(message);
-  const recipients = sources.flatMap((source) =>
+  const parsedSources = sources.map((source) =>
     recipientsFromSource(source, attachedMessageId)
+  );
+  const recipients = parsedSources.flatMap(
+    (parsed) => parsed.recipients
+  );
+  const malformedRecipientBlocks = parsedSources.reduce(
+    (total, parsed) => total + parsed.malformedRecipientBlocks,
+    0
   );
   return recipients.length > 0
     ? {
-        inboundProviderMessageId: message.providerMessageId,
-        reportedAt: message.receivedAt,
-        recipients
+        kind: "PARSED",
+        deliveryStatus: {
+          inboundProviderMessageId: message.providerMessageId,
+          reportedAt: message.receivedAt,
+          recipients,
+          malformedRecipientBlocks
+        }
       }
+    : { kind: "MALFORMED" };
+}
+
+export function parseDeliveryStatus(
+  message: MailboxMessage
+): ParsedDeliveryStatus | null {
+  const inspected = inspectDeliveryStatus(message);
+  return inspected.kind === "PARSED"
+    ? inspected.deliveryStatus
     : null;
 }

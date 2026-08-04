@@ -4,6 +4,15 @@ import {
 } from "@/modules/mail/html-policy";
 
 describe("processMailHtml", () => {
+  it("removes fragment-only links because only HTTPS and mailto are allowed", () => {
+    const result = processMailHtml(
+      '<p><a href="#internal">内部跳转</a></p>'
+    );
+
+    expect(result.html).not.toContain('href="#internal"');
+    expect(result.diagnostics.blockedUrls).toBeGreaterThan(0);
+  });
+
   it("preserves a complete static email document", () => {
     const result = processMailHtml(`<!DOCTYPE html>
       <html>

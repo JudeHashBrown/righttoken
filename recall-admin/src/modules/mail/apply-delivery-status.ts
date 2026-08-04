@@ -81,6 +81,14 @@ async function reopenLatestWaitingTask(
   input: ApplyDeliveryStatusInput
 ): Promise<void> {
   if (!message.taskId || !message.userId) return;
+  const lockedTask = await tx.$queryRaw<Array<{ status: string }>>`
+    SELECT "status"::text AS "status"
+    FROM "recall"."RecallTask"
+    WHERE "id" = ${message.taskId}
+      AND "userId" = ${message.userId}
+    FOR UPDATE
+  `;
+  if (lockedTask[0]?.status !== "WAITING_USER") return;
   const latest = await tx.mailMessage.findFirst({
     where: {
       taskId: message.taskId,
@@ -88,7 +96,11 @@ async function reopenLatestWaitingTask(
       direction: "OUTBOUND",
       sentAt: { not: null }
     },
-    orderBy: [{ sentAt: "desc" }, { createdAt: "desc" }],
+    orderBy: [
+      { sentAt: "desc" },
+      { createdAt: "desc" },
+      { id: "desc" }
+    ],
     select: { id: true }
   });
   if (latest?.id !== message.id) return;

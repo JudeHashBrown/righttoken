@@ -119,9 +119,6 @@ function isSafeHttpsUrl(value: string): boolean {
 }
 
 function isSafeLinkUrl(value: string): boolean {
-  if (value.startsWith("#")) {
-    return true;
-  }
   try {
     const url = new URL(value);
     return url.protocol === "https:" || url.protocol === "mailto:";

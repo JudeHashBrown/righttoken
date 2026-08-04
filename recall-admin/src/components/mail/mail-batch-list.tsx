@@ -19,6 +19,7 @@ export type MailBatchListItem = {
   sentRecipients: number;
   skippedRecipients: number;
   failedRecipients: number;
+  retryableFailedRecipients: number;
   createdAt: string;
 };
 
@@ -190,7 +191,7 @@ export function MailBatchList({
             </div>
             <div className={styles.inlineActions}>
               <span>共 {batch.totalRecipients} 人</span>
-              {batch.failedRecipients > 0 ? (
+              {batch.retryableFailedRecipients > 0 ? (
                 <button
                   className={styles.secondaryButton}
                   type="button"

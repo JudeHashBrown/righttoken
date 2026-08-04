@@ -3,10 +3,27 @@ import "dotenv/config";
 import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it, vi } from "vitest";
 import { prisma } from "@/lib/db/prisma";
+import { applyDeliveryStatus } from "@/modules/mail/apply-delivery-status";
 import { syncMailbox } from "@/modules/mail/sync-mailbox";
 import type { MailboxMessage } from "@/modules/mail/types";
 
 type Fixture = Awaited<ReturnType<typeof createFixture>>;
+
+async function waitForBlockedDatabaseLock(): Promise<void> {
+  const deadline = Date.now() + 2_000;
+  while (Date.now() < deadline) {
+    const [row] = await prisma.$queryRaw<
+      Array<{ blocked: boolean }>
+    >`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_locks WHERE NOT granted
+      ) AS "blocked"
+    `;
+    if (row?.blocked) return;
+    await new Promise<void>((resolve) => setTimeout(resolve, 10));
+  }
+  throw new Error("concurrent delivery update did not block");
+}
 
 async function createFixture(withBatch = false) {
   const suffix = randomUUID();
@@ -274,6 +291,85 @@ describe("mail bounce synchronization", () => {
     }
   });
 
+  it("does not let an older bounce reopen a task after a newer send commits", async () => {
+    const fixture = await createFixture();
+    let releaseSend!: () => void;
+    let markSendLocked!: () => void;
+    const holdSend = new Promise<void>((resolve) => {
+      releaseSend = resolve;
+    });
+    const sendLocked = new Promise<void>((resolve) => {
+      markSendLocked = resolve;
+    });
+    try {
+      const newerSentAt = new Date("2026-08-04T08:30:00.000Z");
+      const sending = prisma.$transaction(async (tx) => {
+        await tx.recallTask.update({
+          where: { id: fixture.task.id },
+          data: { status: "WAITING_USER" }
+        });
+        const newer = await tx.mailMessage.create({
+          data: {
+            mailboxId: fixture.mailbox.id,
+            threadId: fixture.thread.id,
+            userId: fixture.user.id,
+            taskId: fixture.task.id,
+            direction: "OUTBOUND",
+            status: "SENT",
+            providerMessageId: `<newer-${randomUUID()}@example.test>`,
+            references: [],
+            fromAddress: fixture.mailbox.emailAddress,
+            toAddresses: [fixture.user.emailNormalized],
+            subject: "Newer follow-up",
+            bodyText: "This is the newer outbound message.",
+            sentAt: newerSentAt
+          }
+        });
+        markSendLocked();
+        await holdSend;
+        return newer;
+      });
+      await sendLocked;
+
+      const bouncing = prisma.$transaction((tx) =>
+        applyDeliveryStatus(tx, {
+          mailboxId: fixture.mailbox.id,
+          outboundMessageId: fixture.message.id,
+          inboundProviderMessageId: `<concurrent-dsn-${randomUUID()}@example.test>`,
+          recipient: {
+            action: "FAILED",
+            recipientNormalized: fixture.user.emailNormalized,
+            statusCode: "5.1.1",
+            diagnosticCode: "smtp; 550 rejected",
+            originalMessageId: fixture.message.providerMessageId
+          },
+          reportedAt: new Date("2026-08-04T08:31:00.000Z")
+        })
+      );
+      await waitForBlockedDatabaseLock();
+      releaseSend();
+      await sending;
+      await bouncing;
+
+      await expect(
+        prisma.recallTask.findUniqueOrThrow({
+          where: { id: fixture.task.id }
+        })
+      ).resolves.toMatchObject({ status: "WAITING_USER" });
+      await expect(
+        prisma.taskActivity.count({
+          where: {
+            taskId: fixture.task.id,
+            action: "mail.final_bounced"
+          }
+        })
+      ).resolves.toBe(0);
+    } finally {
+      releaseSend?.();
+      await cleanup(fixture);
+    }
+  });
+
   it("stores an unmatched final DSN without unlocking the outbound message", async () => {
     const fixture = await createFixture();
     const dsn = dsnMessage({
@@ -316,6 +412,83 @@ describe("mail bounce synchronization", () => {
           }
         })
       ).resolves.toBeGreaterThan(0);
+    } finally {
+      await cleanup(fixture);
+    }
+  });
+
+  it("stores malformed DSN as unmatched instead of treating it as a user reply", async () => {
+    const fixture = await createFixture();
+    const malformed = dsnMessage({
+      id: `<dsn-malformed-${randomUUID()}@example.test>`,
+      recipient: "not-an-email",
+      action: "failed",
+      originalMessageId: fixture.message.providerMessageId!
+    });
+    malformed.inReplyTo = fixture.message.providerMessageId;
+    try {
+      const result = await syncMailbox(
+        fixture.mailbox.id,
+        {
+          listMessagesSince: vi.fn().mockResolvedValue([malformed])
+        },
+        fixture.mailbox.configurationVersion,
+        new Date("2026-08-04T08:01:00.000Z")
+      );
+
+      expect(result).toMatchObject({
+        received: 1,
+        matched: 0,
+        unmatched: 1,
+        unmatchedBounces: 1,
+        replyTasksCreated: 0,
+        replyTasksReopened: 0
+      });
+      await expect(
+        prisma.mailMessage.findUniqueOrThrow({
+          where: {
+            providerMessageId: malformed.providerMessageId
+          }
+        })
+      ).resolves.toMatchObject({
+        status: "UNMATCHED",
+        lastErrorCode: "DELIVERY_STATUS_MALFORMED"
+      });
+      await expect(
+        prisma.recallTask.findUniqueOrThrow({
+          where: { id: fixture.task.id }
+        })
+      ).resolves.toMatchObject({ status: "WAITING_USER" });
+    } finally {
+      await cleanup(fixture);
+    }
+  });
+
+  it("matches an exact DSN message id even when the send is older than 30 days", async () => {
+    const fixture = await createFixture();
+    const dsn = dsnMessage({
+      id: `<dsn-old-exact-${randomUUID()}@example.test>`,
+      recipient: fixture.user.emailNormalized,
+      action: "failed",
+      originalMessageId: fixture.message.providerMessageId!
+    });
+    try {
+      const result = await syncMailbox(
+        fixture.mailbox.id,
+        { listMessagesSince: vi.fn().mockResolvedValue([dsn]) },
+        fixture.mailbox.configurationVersion,
+        new Date("2026-09-10T08:01:00.000Z")
+      );
+
+      expect(result).toMatchObject({
+        finalBounces: 1,
+        unmatchedBounces: 0
+      });
+      await expect(
+        prisma.mailMessage.findUniqueOrThrow({
+          where: { id: fixture.message.id }
+        })
+      ).resolves.toMatchObject({ status: "BOUNCED" });
     } finally {
       await cleanup(fixture);
     }
