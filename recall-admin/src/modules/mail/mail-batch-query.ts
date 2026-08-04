@@ -98,7 +98,11 @@ export async function findActionableBounceLeaves(
       taskId: recipient.taskId
     }))
     .sort((left, right) =>
-      left.emailNormalized.localeCompare(right.emailNormalized)
+      left.emailNormalized < right.emailNormalized
+        ? -1
+        : left.emailNormalized > right.emailNormalized
+          ? 1
+          : 0
     );
   return { rootBatchId, leaves };
 }
