@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   classifyMailSyncError,
+  mailSyncErrorDiagnostic,
   mailboxSyncStatusText,
   mailSyncStatusText
 } from "@/modules/mail/sync-error";
@@ -35,6 +36,15 @@ describe("mail sync error classification", () => {
         code: "MAIL_SYNC_PROCESSING_FAILED"
       }),
       "MAIL_SYNC_PROCESSING_FAILED"
+    ],
+    [
+      Object.assign(
+        new Error(
+          "Transaction API error: A query cannot be executed on an expired transaction"
+        ),
+        { code: "P2028" }
+      ),
+      "MAIL_SYNC_PROCESSING_FAILED"
     ]
   ])("classifies %o as %s", (error, expected) => {
     expect(classifyMailSyncError(error)).toBe(expected);
@@ -54,6 +64,19 @@ describe("mail sync error classification", () => {
     expect(mailSyncStatusText("SECRET_PROVIDER_FAILURE")).toBe(
       "邮箱同步未完成，请重新测试连接"
     );
+  });
+
+  it("only exposes bounded diagnostic metadata", () => {
+    expect(
+      mailSyncErrorDiagnostic(
+        Object.assign(new Error("contains sensitive provider detail"), {
+          code: "P2028"
+        })
+      )
+    ).toEqual({ causeName: "Error", causeCode: "P2028" });
+    expect(
+      mailSyncErrorDiagnostic({ code: "unsafe code with spaces" })
+    ).toEqual({ causeName: "UnknownError", causeCode: null });
   });
 });
 

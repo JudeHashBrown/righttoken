@@ -6,7 +6,10 @@ import {
   matchInboundReply,
   type OutboundReplyCandidate
 } from "@/modules/mail/reply-matcher";
-import type { MailboxAdapter } from "@/modules/mail/types";
+import type {
+  MailboxAdapter,
+  MailboxMessage
+} from "@/modules/mail/types";
 import { createTaskNotificationIntents } from "@/modules/notifications/notification-service";
 import {
   replyTriggerKey
@@ -30,6 +33,26 @@ type SyncResult = {
   replyTasksCreated: number;
   replyTasksReopened: number;
 };
+
+const MAIL_SYNC_TRANSACTION_OPTIONS = {
+  maxWait: 10_000,
+  timeout: 120_000
+} as const;
+
+const MAIL_SYNC_ADVISORY_LOCK = "righttoken:mail-sync";
+
+export function uniqueMailboxMessages<
+  T extends Pick<MailboxMessage, "providerMessageId">
+>(messages: T[]): T[] {
+  return [
+    ...new Map(
+      messages.map((message) => [
+        message.providerMessageId,
+        message
+      ])
+    ).values()
+  ];
+}
 
 export async function syncMailbox(
   mailboxId: string,
@@ -65,7 +88,9 @@ export async function syncMailbox(
   const since = mailbox.lastSyncedAt
     ? new Date(mailbox.lastSyncedAt.getTime() - 5 * 60 * 1000)
     : new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-  const inbound = await adapter.listMessagesSince(since);
+  const inbound = uniqueMailboxMessages(
+    await adapter.listMessagesSince(since)
+  );
   const providerIds = inbound.map(
     (message) => message.providerMessageId
   );
@@ -137,9 +162,24 @@ export async function syncMailbox(
   );
 
   const notificationTaskIds: string[] = [];
+  const skippedPrepared: PreparedInboundMessage[] = [];
   let result: SyncResult;
   try {
     result = await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`
+      SELECT pg_advisory_xact_lock(
+        hashtextextended(${MAIL_SYNC_ADVISORY_LOCK}, 0)
+      )::text AS "locked"
+    `;
+    const currentExisting = await tx.mailMessage.findMany({
+      where: { providerMessageId: { in: providerIds } },
+      select: { providerMessageId: true }
+    });
+    const currentExistingIds = new Set(
+      currentExisting
+        .map((message) => message.providerMessageId)
+        .filter((value): value is string => Boolean(value))
+    );
     const result: SyncResult = {
       received: 0,
       matched: 0,
@@ -148,7 +188,13 @@ export async function syncMailbox(
       replyTasksReopened: 0
     };
     for (const message of inbound) {
-      if (existingIds.has(message.providerMessageId)) {
+      if (currentExistingIds.has(message.providerMessageId)) {
+        const prepared = preparedByProviderId.get(
+          message.providerMessageId
+        );
+        if (prepared) {
+          skippedPrepared.push(prepared);
+        }
         continue;
       }
       const prepared = preparedByProviderId.get(
@@ -307,13 +353,16 @@ export async function syncMailbox(
       }
     });
       return result;
-    });
+    }, MAIL_SYNC_TRANSACTION_OPTIONS);
   } catch (error) {
     await discardPreparedInboundAssets(
       [...preparedByProviderId.values()],
       storage
     );
     throw error;
+  }
+  if (skippedPrepared.length > 0) {
+    await discardPreparedInboundAssets(skippedPrepared, storage);
   }
   await Promise.all(
     notificationTaskIds.map((taskId) =>

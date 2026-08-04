@@ -228,7 +228,7 @@ export function createSmtpImapAdapter(
         if (!ids || ids.length === 0) {
           return [];
         }
-        return collectFetchedMessages(
+        return await collectFetchedMessages(
           client.fetch(
             ids,
             { source: true, internalDate: true },

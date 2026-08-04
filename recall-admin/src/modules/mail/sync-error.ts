@@ -84,7 +84,30 @@ export function classifyMailSyncError(
   if (code === "MAIL_SYNC_PROCESSING_FAILED") {
     return "MAIL_SYNC_PROCESSING_FAILED";
   }
+  if (
+    code === "P2028" ||
+    text.includes("EXPIRED TRANSACTION") ||
+    text.includes("TRANSACTION API ERROR")
+  ) {
+    return "MAIL_SYNC_PROCESSING_FAILED";
+  }
   return "MAIL_SYNC_FAILED";
+}
+
+export function mailSyncErrorDiagnostic(error: unknown): {
+  causeName: string;
+  causeCode: string | null;
+} {
+  const causeName =
+    error instanceof Error && error.name.trim()
+      ? error.name.slice(0, 80)
+      : "UnknownError";
+  const rawCode = errorProperty(error, "code");
+  const causeCode =
+    typeof rawCode === "string" && /^[A-Z0-9_:-]{1,80}$/i.test(rawCode)
+      ? rawCode
+      : null;
+  return { causeName, causeCode };
 }
 
 export function mailSyncStatusText(

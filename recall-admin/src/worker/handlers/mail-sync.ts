@@ -4,7 +4,8 @@ import {
   getMailboxRuntimeConfiguration
 } from "@/modules/mail/mailbox-credentials";
 import {
-  classifyMailSyncError
+  classifyMailSyncError,
+  mailSyncErrorDiagnostic
 } from "@/modules/mail/sync-error";
 import { syncMailbox } from "@/modules/mail/sync-mailbox";
 import type { MailboxAdapter } from "@/modules/mail/types";
@@ -70,11 +71,13 @@ export async function handleMailSync(
       summary.replyTasksReopened += result.replyTasksReopened;
     } catch (error) {
       const code = classifyMailSyncError(error);
+      const diagnostic = mailSyncErrorDiagnostic(error);
       summary.failed += 1;
       console.error("mail_sync_failed", {
         mailboxId: mailbox.id,
         stage: "scheduled_sync",
-        code
+        code,
+        ...diagnostic
       });
       await prisma.mailbox.updateMany({
         where: {

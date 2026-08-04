@@ -12,7 +12,8 @@ import {
   getMailboxRuntimeConfiguration
 } from "@/modules/mail/mailbox-credentials";
 import {
-  classifyMailSyncError
+  classifyMailSyncError,
+  mailSyncErrorDiagnostic
 } from "@/modules/mail/sync-error";
 import { syncMailbox } from "@/modules/mail/sync-mailbox";
 
@@ -63,6 +64,7 @@ export async function POST(
       );
     }
     const code = classifyMailSyncError(error);
+    const diagnostic = mailSyncErrorDiagnostic(error);
     if (mailboxId && configurationVersion !== null) {
       await prisma.mailbox
         .updateMany({
@@ -79,7 +81,8 @@ export async function POST(
       console.error("mail_sync_failed", {
         mailboxId,
         stage: "manual_sync",
-        code
+        code,
+        ...diagnostic
       });
     }
     return NextResponse.json({ code }, { status: 502 });

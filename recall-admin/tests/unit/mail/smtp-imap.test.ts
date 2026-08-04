@@ -4,6 +4,7 @@ import {
   parsedMailToMailboxMessage,
   smtpImapConfigSchema
 } from "@/modules/mail/adapters/smtp-imap";
+import { uniqueMailboxMessages } from "@/modules/mail/sync-mailbox";
 import { sendSmtpMessage } from "@/modules/integrations/email/smtp-sender";
 
 function mailboxConfig() {
@@ -26,6 +27,21 @@ function mailboxConfig() {
 }
 
 describe("SMTP/IMAP mailbox adapter", () => {
+  it("deduplicates messages with the same provider message id", () => {
+    const first = {
+      providerMessageId: "<duplicate@example.test>",
+      subject: "first"
+    };
+    const second = {
+      ...first,
+      subject: "second"
+    };
+
+    expect(
+      uniqueMailboxMessages([first, second])
+    ).toEqual([second]);
+  });
+
   it("continues after one malformed fetched message without logging its content", async () => {
     const onParseFailure = vi.fn();
     const parseMessage = vi
