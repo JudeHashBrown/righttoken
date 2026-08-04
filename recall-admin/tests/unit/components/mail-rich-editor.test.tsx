@@ -40,6 +40,27 @@ function Harness({
 
 import React from "react";
 
+function selectEditorText(text: string): void {
+  const editor = screen.getByRole("textbox", {
+    name: "邮件正文"
+  });
+  const walker = document.createTreeWalker(
+    editor,
+    NodeFilter.SHOW_TEXT
+  );
+  let node = walker.nextNode();
+  while (node && !node.textContent?.includes(text)) {
+    node = walker.nextNode();
+  }
+  if (!node) throw new Error(`Text not found: ${text}`);
+  const range = document.createRange();
+  range.selectNodeContents(node);
+  const selection = window.getSelection()!;
+  selection.removeAllRanges();
+  selection.addRange(range);
+  fireEvent.mouseUp(editor);
+}
+
 describe("MailRichEditor", () => {
   afterEach(() => {
     cleanup();
@@ -537,6 +558,85 @@ describe("MailRichEditor", () => {
       ).toHaveValue(
         "<!DOCTYPE html><html><body><p>导入内容</p></body></html>"
       )
+    );
+  });
+
+  it("inserts, edits, and removes a safe hyperlink", async () => {
+    render(<Harness />);
+
+    selectEditorText("初始正文");
+    fireEvent.click(
+      screen.getByRole("button", { name: "超链接" })
+    );
+    fireEvent.change(screen.getByLabelText("链接地址"), {
+      target: { value: "example.com/help" }
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "保存链接" })
+    );
+    await waitFor(() => {
+      expect(screen.getByTestId("value")).toHaveTextContent(
+        'href=\\"https://example.com/help\\"'
+      );
+    });
+    expect(screen.getByTestId("value")).toHaveTextContent(
+      'rel=\\"noopener noreferrer\\"'
+    );
+
+    selectEditorText("初始正文");
+    fireEvent.click(
+      screen.getByRole("button", { name: "超链接" })
+    );
+    expect(screen.getByLabelText("链接地址")).toHaveValue(
+      "https://example.com/help"
+    );
+    fireEvent.change(screen.getByLabelText("链接地址"), {
+      target: { value: "https://example.com/updated" }
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "保存链接" })
+    );
+    await waitFor(() => {
+      expect(screen.getByTestId("value")).toHaveTextContent(
+        "https://example.com/updated"
+      );
+    });
+
+    selectEditorText("初始正文");
+    fireEvent.click(
+      screen.getByRole("button", { name: "超链接" })
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "移除链接" })
+    );
+    await waitFor(() => {
+      expect(screen.getByTestId("value")).not.toHaveTextContent(
+        "<a"
+      );
+    });
+    expect(screen.getByText("初始正文")).toBeInTheDocument();
+  });
+
+  it("rejects unsafe hyperlink schemes without changing content", () => {
+    render(<Harness />);
+    selectEditorText("初始正文");
+    fireEvent.click(
+      screen.getByRole("button", { name: "超链接" })
+    );
+    fireEvent.change(screen.getByLabelText("链接地址"), {
+      target: { value: "javascript:alert(1)" }
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "保存链接" })
+    );
+
+    expect(
+      screen.getByRole("alert", {
+        name: ""
+      })
+    ).toHaveTextContent("仅支持 HTTPS 或邮件地址链接");
+    expect(screen.getByTestId("value")).not.toHaveTextContent(
+      "javascript:"
     );
   });
 });

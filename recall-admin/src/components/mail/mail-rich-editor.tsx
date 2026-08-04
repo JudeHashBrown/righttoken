@@ -7,6 +7,7 @@ import {
   FileUp,
   ImagePlus,
   Italic,
+  Link2,
   List,
   Monitor,
   Paperclip,
@@ -27,6 +28,7 @@ import {
 import type {
   MailHtmlDiagnostics
 } from "@/modules/mail/html-policy";
+import { normalizeEditorLink } from "@/modules/mail/editor-link";
 import styles from "@/components/workspaces/workspace.module.css";
 
 export type MailEditorAsset = {
@@ -199,6 +201,7 @@ export function MailRichEditor({
   const attachmentInputRef = useRef<HTMLInputElement>(null);
   const htmlInputRef = useRef<HTMLInputElement>(null);
   const savedRangeRef = useRef<Range | null>(null);
+  const activeAnchorRef = useRef<HTMLAnchorElement | null>(null);
   const valueRef = useRef(value);
   const onChangeRef = useRef(onChange);
   const [mode, setMode] = useState<EditorMode>(() =>
@@ -209,6 +212,9 @@ export function MailRichEditor({
   );
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [linkValue, setLinkValue] = useState("");
+  const [linkError, setLinkError] = useState<string | null>(null);
   const [preview, setPreview] =
     useState<MailPreviewResult | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
@@ -333,6 +339,96 @@ export function MailRichEditor({
       return;
     }
     savedRangeRef.current = selection.getRangeAt(0).cloneRange();
+  }
+
+  function anchorForRange(
+    range: Range,
+    editor: HTMLElement
+  ): HTMLAnchorElement | null {
+    const node = range.startContainer;
+    const element =
+      node.nodeType === Node.ELEMENT_NODE
+        ? (node as Element)
+        : node.parentElement;
+    const anchor = element?.closest("a") ?? null;
+    return anchor instanceof HTMLAnchorElement &&
+      editor.contains(anchor)
+      ? anchor
+      : null;
+  }
+
+  function openLinkDialog(): void {
+    saveSelection();
+    const editor = editorRef.current;
+    const range = savedRangeRef.current;
+    const anchor =
+      editor && range ? anchorForRange(range, editor) : null;
+    activeAnchorRef.current = anchor;
+    setLinkValue(anchor?.getAttribute("href") ?? "");
+    setLinkError(null);
+    setLinkDialogOpen(true);
+  }
+
+  function closeLinkDialog(): void {
+    setLinkDialogOpen(false);
+    setLinkValue("");
+    setLinkError(null);
+    activeAnchorRef.current = null;
+  }
+
+  function applyLink(): void {
+    const editor = editorRef.current;
+    const range = savedRangeRef.current;
+    if (
+      !editor ||
+      !range ||
+      !editor.contains(range.commonAncestorContainer)
+    ) {
+      setLinkError("请先在正文中选择文字或放置光标");
+      return;
+    }
+    const normalized = normalizeEditorLink(linkValue);
+    if (!normalized.ok) {
+      setLinkError(
+        {
+          EMPTY_LINK: "请输入链接地址",
+          UNSAFE_LINK: "仅支持 HTTPS 或邮件地址链接",
+          INVALID_LINK: "链接地址格式不正确"
+        }[normalized.code]
+      );
+      return;
+    }
+    const activeAnchor = activeAnchorRef.current;
+    if (activeAnchor && editor.contains(activeAnchor)) {
+      activeAnchor.setAttribute("href", normalized.href);
+      activeAnchor.setAttribute("target", "_blank");
+      activeAnchor.setAttribute("rel", "noopener noreferrer");
+    } else {
+      const anchor = document.createElement("a");
+      anchor.setAttribute("href", normalized.href);
+      anchor.setAttribute("target", "_blank");
+      anchor.setAttribute("rel", "noopener noreferrer");
+      if (range.collapsed) {
+        anchor.textContent = normalized.href;
+      } else {
+        anchor.append(range.extractContents());
+      }
+      range.insertNode(anchor);
+    }
+    emit();
+    closeLinkDialog();
+  }
+
+  function removeLink(): void {
+    const editor = editorRef.current;
+    const anchor = activeAnchorRef.current;
+    if (!editor || !anchor || !editor.contains(anchor)) {
+      setLinkError("当前选中的文字没有超链接");
+      return;
+    }
+    anchor.replaceWith(...Array.from(anchor.childNodes));
+    emit();
+    closeLinkDialog();
   }
 
   function insertInlineImage(asset: MailEditorAsset): void {
@@ -580,6 +676,13 @@ export function MailRichEditor({
             >
               <List aria-hidden="true" size={16} />
             </button>
+            <button
+              aria-label="超链接"
+              onClick={openLinkDialog}
+              type="button"
+            >
+              <Link2 aria-hidden="true" size={16} />
+            </button>
             <span
               aria-hidden="true"
               className={styles.toolbarDivider}
@@ -615,10 +718,72 @@ export function MailRichEditor({
             id={`${idPrefix}-body`}
             onBlur={saveSelection}
             onInput={() => emit()}
+            onKeyUp={saveSelection}
+            onMouseUp={saveSelection}
             ref={editorRef}
             role="textbox"
             suppressContentEditableWarning
           />
+          {linkDialogOpen ? (
+            <div
+              aria-labelledby={`${idPrefix}-link-title`}
+              aria-modal="true"
+              className={styles.mailLinkDialog}
+              role="dialog"
+            >
+              <strong id={`${idPrefix}-link-title`}>
+                {activeAnchorRef.current
+                  ? "编辑超链接"
+                  : "插入超链接"}
+              </strong>
+              <div className={styles.field}>
+                <label htmlFor={`${idPrefix}-link-value`}>
+                  链接地址
+                </label>
+                <input
+                  autoFocus
+                  className={styles.input}
+                  id={`${idPrefix}-link-value`}
+                  onChange={(event) => {
+                    setLinkValue(event.target.value);
+                    setLinkError(null);
+                  }}
+                  placeholder="example.com 或 mailto:name@example.com"
+                  value={linkValue}
+                />
+              </div>
+              {linkError ? (
+                <p className={styles.error} role="alert">
+                  {linkError}
+                </p>
+              ) : null}
+              <div className={styles.inlineActions}>
+                <button
+                  className={styles.secondaryButton}
+                  onClick={closeLinkDialog}
+                  type="button"
+                >
+                  取消
+                </button>
+                {activeAnchorRef.current ? (
+                  <button
+                    className={styles.dangerButton}
+                    onClick={removeLink}
+                    type="button"
+                  >
+                    移除链接
+                  </button>
+                ) : null}
+                <button
+                  className={styles.button}
+                  onClick={applyLink}
+                  type="button"
+                >
+                  保存链接
+                </button>
+              </div>
+            </div>
+          ) : null}
         </>
       ) : null}
       {mode === "SOURCE" ? (
