@@ -26,6 +26,9 @@ import {
 import {
   processMailHtml
 } from "@/modules/mail/html-policy";
+import {
+  findLatestOutboundContact
+} from "@/modules/mail/latest-outbound-contact";
 
 export type ReviewedMailInput = {
   actorId: string;
@@ -159,7 +162,7 @@ export async function sendReviewedMail(
     );
   }
 
-  const [userSuppressed, recipientSuppressed, lastSent] =
+  const [userSuppressed, recipientSuppressed, latestOutbound] =
     await Promise.all([
     prisma.suppressionEntry.findUnique({
       where: { emailNormalized: user.emailNormalized },
@@ -169,15 +172,7 @@ export async function sendReviewedMail(
       where: { emailNormalized: recipient },
       select: { id: true }
     }),
-    prisma.mailMessage.findFirst({
-      where: {
-        userId: user.id,
-        direction: "OUTBOUND",
-        status: "SENT"
-      },
-      orderBy: { sentAt: "desc" },
-      select: { sentAt: true }
-    })
+    findLatestOutboundContact(user.id)
     ]);
   assertMailSendAllowed(
     {
@@ -191,7 +186,7 @@ export async function sendReviewedMail(
       reviewedById: actor.id,
       subject: input.subject,
       bodyText: reviewedBodyText,
-      lastSentAt: lastSent?.sentAt ?? null,
+      latestOutbound,
       minimumContactIntervalMinutes:
         input.minimumContactIntervalMinutes
     },

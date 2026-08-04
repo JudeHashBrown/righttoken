@@ -25,6 +25,9 @@ import {
 import {
   processMailHtml
 } from "@/modules/mail/html-policy";
+import {
+  findLatestOutboundContact
+} from "@/modules/mail/latest-outbound-contact";
 
 export type ThreadReplyInput = {
   actorId: string;
@@ -151,7 +154,7 @@ export async function replyToMailThread(
     throw new MailSendBlockedError("EMPTY_MESSAGE");
   }
 
-  const [userSuppressed, recipientSuppressed, lastSent] =
+  const [userSuppressed, recipientSuppressed, latestOutbound] =
     await Promise.all([
       prisma.suppressionEntry.findUnique({
         where: {
@@ -163,15 +166,7 @@ export async function replyToMailThread(
         where: { emailNormalized: recipient },
         select: { id: true }
       }),
-      prisma.mailMessage.findFirst({
-        where: {
-          userId: thread.user.id,
-          direction: "OUTBOUND",
-          status: "SENT"
-        },
-        orderBy: { sentAt: "desc" },
-        select: { sentAt: true }
-      })
+      findLatestOutboundContact(thread.user.id)
     ]);
   assertMailSendAllowed(
     {
@@ -185,7 +180,7 @@ export async function replyToMailThread(
       reviewedById: actor.id,
       subject: input.subject,
       bodyText: reviewedBodyText,
-      lastSentAt: lastSent?.sentAt ?? null,
+      latestOutbound,
       minimumContactIntervalMinutes:
         input.minimumContactIntervalMinutes
     },
