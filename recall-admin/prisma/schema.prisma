@@ -635,24 +635,27 @@ model RecoveryCode {
 }
 
 model Mailbox {
-  id                 String    @id @default(cuid())
-  name               String
-  emailAddress       String    @unique
-  encryptedConfig    String
-  enabled            Boolean   @default(false)
-  trackingEnabled    Boolean   @default(false)
-  trackingDisclosure String?
-  lastSyncedAt       DateTime?
-  lastTestedAt       DateTime?
-  lastSuccessAt      DateTime?
-  lastErrorCode      String?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id                     String    @id @default(cuid())
+  name                   String
+  emailAddress           String    @unique
+  encryptedConfig        String?
+  configurationDeletedAt DateTime?
+  configurationVersion   Int       @default(1)
+  enabled                Boolean   @default(false)
+  trackingEnabled        Boolean   @default(false)
+  trackingDisclosure     String?
+  lastSyncedAt           DateTime?
+  lastTestedAt           DateTime?
+  lastSuccessAt          DateTime?
+  lastErrorCode          String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
 
   threads     MailThread[]
   messages    MailMessage[]
   mailBatches MailBatch[]
 
+  @@index([configurationDeletedAt, enabled])
   @@schema("recall")
 }
 
@@ -852,6 +855,16 @@ model MailBatchRecipient {
 
   @@unique([batchId, userId])
   @@index([batchId, status, id])
+  @@schema("recall")
+}
+
+model MailDomainThrottle {
+  senderDomain    String   @id
+  nextAvailableAt DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([nextAvailableAt])
   @@schema("recall")
 }
 

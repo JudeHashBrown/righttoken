@@ -48,4 +48,25 @@ describe("durable job singleton keys", () => {
       await boss.deleteJob(JOBS.SEGMENT_CHECK, matching[0].id);
     }
   });
+
+  it("persists a delayed mail-batch run in pg-boss", async () => {
+    const scheduler = new PgTaskScheduler(boss);
+    const batchId = `delayed-mail-batch-${randomUUID()}`;
+    const runAt = new Date(Date.now() + 60 * 60 * 1000);
+
+    await scheduler.scheduleMailBatch({ batchId, runAt });
+
+    const jobs = await boss.findJobs(JOBS.MAIL_BATCH, {
+      queued: true
+    });
+    const matching = jobs.filter(
+      (job) => job.singletonKey === batchId
+    );
+    expect(matching).toHaveLength(1);
+    expect(matching[0]?.startAfter).toEqual(runAt);
+
+    if (matching[0]) {
+      await boss.deleteJob(JOBS.MAIL_BATCH, matching[0].id);
+    }
+  });
 });

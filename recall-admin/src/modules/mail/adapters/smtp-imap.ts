@@ -37,27 +37,6 @@ export const smtpImapConfigSchema = z
 
 export type SmtpImapConfig = z.infer<typeof smtpImapConfigSchema>;
 
-export function namecheapMailboxConfig(
-  input: Pick<
-    SmtpImapConfig,
-    "emailAddress" | "displayName" | "username" | "password"
-  >
-): SmtpImapConfig {
-  return smtpImapConfigSchema.parse({
-    ...input,
-    smtp: {
-      host: "mail.privateemail.com",
-      port: 465,
-      secure: true
-    },
-    imap: {
-      host: "mail.privateemail.com",
-      port: 993,
-      secure: true
-    }
-  });
-}
-
 function addresses(
   value: AddressObject | AddressObject[] | undefined
 ): string[] {

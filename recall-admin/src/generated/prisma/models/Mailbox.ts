@@ -20,8 +20,18 @@ export type MailboxModel = runtime.Types.Result.DefaultSelection<Prisma.$Mailbox
 
 export type AggregateMailbox = {
   _count: MailboxCountAggregateOutputType | null
+  _avg: MailboxAvgAggregateOutputType | null
+  _sum: MailboxSumAggregateOutputType | null
   _min: MailboxMinAggregateOutputType | null
   _max: MailboxMaxAggregateOutputType | null
+}
+
+export type MailboxAvgAggregateOutputType = {
+  configurationVersion: number | null
+}
+
+export type MailboxSumAggregateOutputType = {
+  configurationVersion: number | null
 }
 
 export type MailboxMinAggregateOutputType = {
@@ -29,6 +39,8 @@ export type MailboxMinAggregateOutputType = {
   name: string | null
   emailAddress: string | null
   encryptedConfig: string | null
+  configurationDeletedAt: Date | null
+  configurationVersion: number | null
   enabled: boolean | null
   trackingEnabled: boolean | null
   trackingDisclosure: string | null
@@ -45,6 +57,8 @@ export type MailboxMaxAggregateOutputType = {
   name: string | null
   emailAddress: string | null
   encryptedConfig: string | null
+  configurationDeletedAt: Date | null
+  configurationVersion: number | null
   enabled: boolean | null
   trackingEnabled: boolean | null
   trackingDisclosure: string | null
@@ -61,6 +75,8 @@ export type MailboxCountAggregateOutputType = {
   name: number
   emailAddress: number
   encryptedConfig: number
+  configurationDeletedAt: number
+  configurationVersion: number
   enabled: number
   trackingEnabled: number
   trackingDisclosure: number
@@ -74,11 +90,21 @@ export type MailboxCountAggregateOutputType = {
 }
 
 
+export type MailboxAvgAggregateInputType = {
+  configurationVersion?: true
+}
+
+export type MailboxSumAggregateInputType = {
+  configurationVersion?: true
+}
+
 export type MailboxMinAggregateInputType = {
   id?: true
   name?: true
   emailAddress?: true
   encryptedConfig?: true
+  configurationDeletedAt?: true
+  configurationVersion?: true
   enabled?: true
   trackingEnabled?: true
   trackingDisclosure?: true
@@ -95,6 +121,8 @@ export type MailboxMaxAggregateInputType = {
   name?: true
   emailAddress?: true
   encryptedConfig?: true
+  configurationDeletedAt?: true
+  configurationVersion?: true
   enabled?: true
   trackingEnabled?: true
   trackingDisclosure?: true
@@ -111,6 +139,8 @@ export type MailboxCountAggregateInputType = {
   name?: true
   emailAddress?: true
   encryptedConfig?: true
+  configurationDeletedAt?: true
+  configurationVersion?: true
   enabled?: true
   trackingEnabled?: true
   trackingDisclosure?: true
@@ -161,6 +191,18 @@ export type MailboxAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: MailboxAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: MailboxSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: MailboxMinAggregateInputType
@@ -191,6 +233,8 @@ export type MailboxGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: MailboxCountAggregateInputType | true
+  _avg?: MailboxAvgAggregateInputType
+  _sum?: MailboxSumAggregateInputType
   _min?: MailboxMinAggregateInputType
   _max?: MailboxMaxAggregateInputType
 }
@@ -199,7 +243,9 @@ export type MailboxGroupByOutputType = {
   id: string
   name: string
   emailAddress: string
-  encryptedConfig: string
+  encryptedConfig: string | null
+  configurationDeletedAt: Date | null
+  configurationVersion: number
   enabled: boolean
   trackingEnabled: boolean
   trackingDisclosure: string | null
@@ -210,6 +256,8 @@ export type MailboxGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   _count: MailboxCountAggregateOutputType | null
+  _avg: MailboxAvgAggregateOutputType | null
+  _sum: MailboxSumAggregateOutputType | null
   _min: MailboxMinAggregateOutputType | null
   _max: MailboxMaxAggregateOutputType | null
 }
@@ -236,7 +284,9 @@ export type MailboxWhereInput = {
   id?: Prisma.StringFilter<"Mailbox"> | string
   name?: Prisma.StringFilter<"Mailbox"> | string
   emailAddress?: Prisma.StringFilter<"Mailbox"> | string
-  encryptedConfig?: Prisma.StringFilter<"Mailbox"> | string
+  encryptedConfig?: Prisma.StringNullableFilter<"Mailbox"> | string | null
+  configurationDeletedAt?: Prisma.DateTimeNullableFilter<"Mailbox"> | Date | string | null
+  configurationVersion?: Prisma.IntFilter<"Mailbox"> | number
   enabled?: Prisma.BoolFilter<"Mailbox"> | boolean
   trackingEnabled?: Prisma.BoolFilter<"Mailbox"> | boolean
   trackingDisclosure?: Prisma.StringNullableFilter<"Mailbox"> | string | null
@@ -255,7 +305,9 @@ export type MailboxOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   emailAddress?: Prisma.SortOrder
-  encryptedConfig?: Prisma.SortOrder
+  encryptedConfig?: Prisma.SortOrderInput | Prisma.SortOrder
+  configurationDeletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  configurationVersion?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
   trackingEnabled?: Prisma.SortOrder
   trackingDisclosure?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -277,7 +329,9 @@ export type MailboxWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.MailboxWhereInput[]
   NOT?: Prisma.MailboxWhereInput | Prisma.MailboxWhereInput[]
   name?: Prisma.StringFilter<"Mailbox"> | string
-  encryptedConfig?: Prisma.StringFilter<"Mailbox"> | string
+  encryptedConfig?: Prisma.StringNullableFilter<"Mailbox"> | string | null
+  configurationDeletedAt?: Prisma.DateTimeNullableFilter<"Mailbox"> | Date | string | null
+  configurationVersion?: Prisma.IntFilter<"Mailbox"> | number
   enabled?: Prisma.BoolFilter<"Mailbox"> | boolean
   trackingEnabled?: Prisma.BoolFilter<"Mailbox"> | boolean
   trackingDisclosure?: Prisma.StringNullableFilter<"Mailbox"> | string | null
@@ -296,7 +350,9 @@ export type MailboxOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   emailAddress?: Prisma.SortOrder
-  encryptedConfig?: Prisma.SortOrder
+  encryptedConfig?: Prisma.SortOrderInput | Prisma.SortOrder
+  configurationDeletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  configurationVersion?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
   trackingEnabled?: Prisma.SortOrder
   trackingDisclosure?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -307,8 +363,10 @@ export type MailboxOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.MailboxCountOrderByAggregateInput
+  _avg?: Prisma.MailboxAvgOrderByAggregateInput
   _max?: Prisma.MailboxMaxOrderByAggregateInput
   _min?: Prisma.MailboxMinOrderByAggregateInput
+  _sum?: Prisma.MailboxSumOrderByAggregateInput
 }
 
 export type MailboxScalarWhereWithAggregatesInput = {
@@ -318,7 +376,9 @@ export type MailboxScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Mailbox"> | string
   name?: Prisma.StringWithAggregatesFilter<"Mailbox"> | string
   emailAddress?: Prisma.StringWithAggregatesFilter<"Mailbox"> | string
-  encryptedConfig?: Prisma.StringWithAggregatesFilter<"Mailbox"> | string
+  encryptedConfig?: Prisma.StringNullableWithAggregatesFilter<"Mailbox"> | string | null
+  configurationDeletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Mailbox"> | Date | string | null
+  configurationVersion?: Prisma.IntWithAggregatesFilter<"Mailbox"> | number
   enabled?: Prisma.BoolWithAggregatesFilter<"Mailbox"> | boolean
   trackingEnabled?: Prisma.BoolWithAggregatesFilter<"Mailbox"> | boolean
   trackingDisclosure?: Prisma.StringNullableWithAggregatesFilter<"Mailbox"> | string | null
@@ -334,7 +394,9 @@ export type MailboxCreateInput = {
   id?: string
   name: string
   emailAddress: string
-  encryptedConfig: string
+  encryptedConfig?: string | null
+  configurationDeletedAt?: Date | string | null
+  configurationVersion?: number
   enabled?: boolean
   trackingEnabled?: boolean
   trackingDisclosure?: string | null
@@ -353,7 +415,9 @@ export type MailboxUncheckedCreateInput = {
   id?: string
   name: string
   emailAddress: string
-  encryptedConfig: string
+  encryptedConfig?: string | null
+  configurationDeletedAt?: Date | string | null
+  configurationVersion?: number
   enabled?: boolean
   trackingEnabled?: boolean
   trackingDisclosure?: string | null
@@ -372,7 +436,9 @@ export type MailboxUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
-  encryptedConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  configurationDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  configurationVersion?: Prisma.IntFieldUpdateOperationsInput | number
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingDisclosure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -391,7 +457,9 @@ export type MailboxUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
-  encryptedConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  configurationDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  configurationVersion?: Prisma.IntFieldUpdateOperationsInput | number
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingDisclosure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -410,7 +478,9 @@ export type MailboxCreateManyInput = {
   id?: string
   name: string
   emailAddress: string
-  encryptedConfig: string
+  encryptedConfig?: string | null
+  configurationDeletedAt?: Date | string | null
+  configurationVersion?: number
   enabled?: boolean
   trackingEnabled?: boolean
   trackingDisclosure?: string | null
@@ -426,7 +496,9 @@ export type MailboxUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
-  encryptedConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  configurationDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  configurationVersion?: Prisma.IntFieldUpdateOperationsInput | number
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingDisclosure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -442,7 +514,9 @@ export type MailboxUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
-  encryptedConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  configurationDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  configurationVersion?: Prisma.IntFieldUpdateOperationsInput | number
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingDisclosure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -459,6 +533,8 @@ export type MailboxCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   emailAddress?: Prisma.SortOrder
   encryptedConfig?: Prisma.SortOrder
+  configurationDeletedAt?: Prisma.SortOrder
+  configurationVersion?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
   trackingEnabled?: Prisma.SortOrder
   trackingDisclosure?: Prisma.SortOrder
@@ -470,11 +546,17 @@ export type MailboxCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type MailboxAvgOrderByAggregateInput = {
+  configurationVersion?: Prisma.SortOrder
+}
+
 export type MailboxMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   emailAddress?: Prisma.SortOrder
   encryptedConfig?: Prisma.SortOrder
+  configurationDeletedAt?: Prisma.SortOrder
+  configurationVersion?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
   trackingEnabled?: Prisma.SortOrder
   trackingDisclosure?: Prisma.SortOrder
@@ -491,6 +573,8 @@ export type MailboxMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   emailAddress?: Prisma.SortOrder
   encryptedConfig?: Prisma.SortOrder
+  configurationDeletedAt?: Prisma.SortOrder
+  configurationVersion?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
   trackingEnabled?: Prisma.SortOrder
   trackingDisclosure?: Prisma.SortOrder
@@ -500,6 +584,10 @@ export type MailboxMinOrderByAggregateInput = {
   lastErrorCode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type MailboxSumOrderByAggregateInput = {
+  configurationVersion?: Prisma.SortOrder
 }
 
 export type MailboxScalarRelationFilter = {
@@ -553,7 +641,9 @@ export type MailboxCreateWithoutThreadsInput = {
   id?: string
   name: string
   emailAddress: string
-  encryptedConfig: string
+  encryptedConfig?: string | null
+  configurationDeletedAt?: Date | string | null
+  configurationVersion?: number
   enabled?: boolean
   trackingEnabled?: boolean
   trackingDisclosure?: string | null
@@ -571,7 +661,9 @@ export type MailboxUncheckedCreateWithoutThreadsInput = {
   id?: string
   name: string
   emailAddress: string
-  encryptedConfig: string
+  encryptedConfig?: string | null
+  configurationDeletedAt?: Date | string | null
+  configurationVersion?: number
   enabled?: boolean
   trackingEnabled?: boolean
   trackingDisclosure?: string | null
@@ -605,7 +697,9 @@ export type MailboxUpdateWithoutThreadsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
-  encryptedConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  configurationDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  configurationVersion?: Prisma.IntFieldUpdateOperationsInput | number
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingDisclosure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -623,7 +717,9 @@ export type MailboxUncheckedUpdateWithoutThreadsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
-  encryptedConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  configurationDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  configurationVersion?: Prisma.IntFieldUpdateOperationsInput | number
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingDisclosure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -641,7 +737,9 @@ export type MailboxCreateWithoutMessagesInput = {
   id?: string
   name: string
   emailAddress: string
-  encryptedConfig: string
+  encryptedConfig?: string | null
+  configurationDeletedAt?: Date | string | null
+  configurationVersion?: number
   enabled?: boolean
   trackingEnabled?: boolean
   trackingDisclosure?: string | null
@@ -659,7 +757,9 @@ export type MailboxUncheckedCreateWithoutMessagesInput = {
   id?: string
   name: string
   emailAddress: string
-  encryptedConfig: string
+  encryptedConfig?: string | null
+  configurationDeletedAt?: Date | string | null
+  configurationVersion?: number
   enabled?: boolean
   trackingEnabled?: boolean
   trackingDisclosure?: string | null
@@ -693,7 +793,9 @@ export type MailboxUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
-  encryptedConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  configurationDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  configurationVersion?: Prisma.IntFieldUpdateOperationsInput | number
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingDisclosure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -711,7 +813,9 @@ export type MailboxUncheckedUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
-  encryptedConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  configurationDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  configurationVersion?: Prisma.IntFieldUpdateOperationsInput | number
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingDisclosure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -729,7 +833,9 @@ export type MailboxCreateWithoutMailBatchesInput = {
   id?: string
   name: string
   emailAddress: string
-  encryptedConfig: string
+  encryptedConfig?: string | null
+  configurationDeletedAt?: Date | string | null
+  configurationVersion?: number
   enabled?: boolean
   trackingEnabled?: boolean
   trackingDisclosure?: string | null
@@ -747,7 +853,9 @@ export type MailboxUncheckedCreateWithoutMailBatchesInput = {
   id?: string
   name: string
   emailAddress: string
-  encryptedConfig: string
+  encryptedConfig?: string | null
+  configurationDeletedAt?: Date | string | null
+  configurationVersion?: number
   enabled?: boolean
   trackingEnabled?: boolean
   trackingDisclosure?: string | null
@@ -781,7 +889,9 @@ export type MailboxUpdateWithoutMailBatchesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
-  encryptedConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  configurationDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  configurationVersion?: Prisma.IntFieldUpdateOperationsInput | number
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingDisclosure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -799,7 +909,9 @@ export type MailboxUncheckedUpdateWithoutMailBatchesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
-  encryptedConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  configurationDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  configurationVersion?: Prisma.IntFieldUpdateOperationsInput | number
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   trackingDisclosure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -867,6 +979,8 @@ export type MailboxSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name?: boolean
   emailAddress?: boolean
   encryptedConfig?: boolean
+  configurationDeletedAt?: boolean
+  configurationVersion?: boolean
   enabled?: boolean
   trackingEnabled?: boolean
   trackingDisclosure?: boolean
@@ -887,6 +1001,8 @@ export type MailboxSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   emailAddress?: boolean
   encryptedConfig?: boolean
+  configurationDeletedAt?: boolean
+  configurationVersion?: boolean
   enabled?: boolean
   trackingEnabled?: boolean
   trackingDisclosure?: boolean
@@ -903,6 +1019,8 @@ export type MailboxSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   emailAddress?: boolean
   encryptedConfig?: boolean
+  configurationDeletedAt?: boolean
+  configurationVersion?: boolean
   enabled?: boolean
   trackingEnabled?: boolean
   trackingDisclosure?: boolean
@@ -919,6 +1037,8 @@ export type MailboxSelectScalar = {
   name?: boolean
   emailAddress?: boolean
   encryptedConfig?: boolean
+  configurationDeletedAt?: boolean
+  configurationVersion?: boolean
   enabled?: boolean
   trackingEnabled?: boolean
   trackingDisclosure?: boolean
@@ -930,7 +1050,7 @@ export type MailboxSelectScalar = {
   updatedAt?: boolean
 }
 
-export type MailboxOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "emailAddress" | "encryptedConfig" | "enabled" | "trackingEnabled" | "trackingDisclosure" | "lastSyncedAt" | "lastTestedAt" | "lastSuccessAt" | "lastErrorCode" | "createdAt" | "updatedAt", ExtArgs["result"]["mailbox"]>
+export type MailboxOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "emailAddress" | "encryptedConfig" | "configurationDeletedAt" | "configurationVersion" | "enabled" | "trackingEnabled" | "trackingDisclosure" | "lastSyncedAt" | "lastTestedAt" | "lastSuccessAt" | "lastErrorCode" | "createdAt" | "updatedAt", ExtArgs["result"]["mailbox"]>
 export type MailboxInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   threads?: boolean | Prisma.Mailbox$threadsArgs<ExtArgs>
   messages?: boolean | Prisma.Mailbox$messagesArgs<ExtArgs>
@@ -951,7 +1071,9 @@ export type $MailboxPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     id: string
     name: string
     emailAddress: string
-    encryptedConfig: string
+    encryptedConfig: string | null
+    configurationDeletedAt: Date | null
+    configurationVersion: number
     enabled: boolean
     trackingEnabled: boolean
     trackingDisclosure: string | null
@@ -1391,6 +1513,8 @@ export interface MailboxFieldRefs {
   readonly name: Prisma.FieldRef<"Mailbox", 'String'>
   readonly emailAddress: Prisma.FieldRef<"Mailbox", 'String'>
   readonly encryptedConfig: Prisma.FieldRef<"Mailbox", 'String'>
+  readonly configurationDeletedAt: Prisma.FieldRef<"Mailbox", 'DateTime'>
+  readonly configurationVersion: Prisma.FieldRef<"Mailbox", 'Int'>
   readonly enabled: Prisma.FieldRef<"Mailbox", 'Boolean'>
   readonly trackingEnabled: Prisma.FieldRef<"Mailbox", 'Boolean'>
   readonly trackingDisclosure: Prisma.FieldRef<"Mailbox", 'String'>

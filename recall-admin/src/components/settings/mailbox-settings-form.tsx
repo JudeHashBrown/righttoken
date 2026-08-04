@@ -14,6 +14,7 @@ export function MailboxSettingsForm(): React.JSX.Element {
     event: FormEvent<HTMLFormElement>
   ): Promise<void> {
     event.preventDefault();
+    const form = event.currentTarget;
     setSubmitting(true);
     setError(null);
     setSuccess(null);
@@ -49,6 +50,10 @@ export function MailboxSettingsForm(): React.JSX.Element {
         return;
       }
       setSuccess("邮箱连接已安全保存");
+      const password = form.elements.namedItem("password");
+      if (password instanceof HTMLInputElement) {
+        password.value = "";
+      }
       router.refresh();
     } catch {
       setError("网络连接异常，请稍后重试。");
@@ -61,7 +66,7 @@ export function MailboxSettingsForm(): React.JSX.Element {
     <section className={styles.panel}>
       <div className={styles.panelHeader}>
         <div>
-          <h2>连接客服邮箱</h2>
+          <h2>新增邮箱连接</h2>
           <p>密码会加密保存，保存后页面不会再次显示</p>
         </div>
       </div>
@@ -73,10 +78,9 @@ export function MailboxSettingsForm(): React.JSX.Element {
               className={styles.select}
               id="mailbox-provider"
               name="provider"
-              defaultValue="NAMECHEAP"
+              defaultValue="WECOM_MAIL"
               disabled={submitting}
             >
-              <option value="NAMECHEAP">Namecheap Private Email</option>
               <option value="WECOM_MAIL">企业微信邮箱</option>
               <option value="CUSTOM">其他邮箱（手动设置）</option>
             </select>
@@ -87,7 +91,7 @@ export function MailboxSettingsForm(): React.JSX.Element {
               className={styles.input}
               id="mailbox-name"
               name="name"
-              defaultValue="Namecheap 客服邮箱"
+              defaultValue="企业微信邮箱"
               required
               disabled={submitting}
             />
@@ -144,7 +148,6 @@ export function MailboxSettingsForm(): React.JSX.Element {
               className={styles.input}
               id="smtp-host"
               name="smtpHost"
-              defaultValue="mail.privateemail.com"
               required
               disabled={submitting}
             />
@@ -156,7 +159,6 @@ export function MailboxSettingsForm(): React.JSX.Element {
               id="smtp-port"
               name="smtpPort"
               type="number"
-              defaultValue="465"
               min="1"
               max="65535"
               required
@@ -169,7 +171,6 @@ export function MailboxSettingsForm(): React.JSX.Element {
               className={styles.input}
               id="imap-host"
               name="imapHost"
-              defaultValue="mail.privateemail.com"
               required
               disabled={submitting}
             />
@@ -181,7 +182,6 @@ export function MailboxSettingsForm(): React.JSX.Element {
               id="imap-port"
               name="imapPort"
               type="number"
-              defaultValue="993"
               min="1"
               max="65535"
               required

@@ -19,7 +19,7 @@ describe("mail batch worker", () => {
     });
   });
 
-  it("passes one already-resolved adapter to the bounded processor", async () => {
+  it("passes one already-resolved adapter to the paced processor", async () => {
     const { handleMailBatch } = await import(
       "@/worker/handlers/mail-batch"
     );
@@ -34,16 +34,14 @@ describe("mail batch worker", () => {
       { batchId: "batch-1" },
       now,
       scheduler,
-      { adapter },
-      10
+      { adapter }
     );
 
     expect(mocks.processMailBatch).toHaveBeenCalledWith(
       { batchId: "batch-1" },
       now,
       scheduler,
-      { adapter },
-      10
+      { adapter }
     );
   });
 });

@@ -9,12 +9,15 @@ import {
 } from "@/modules/auth/guards";
 import { smtpImapConfigSchema } from "@/modules/mail/adapters/smtp-imap";
 import { saveMailboxCredential } from "@/modules/mail/mailbox-credentials";
+import {
+  configuredMailboxWhere
+} from "@/modules/mail/mailbox-availability";
 
 const mailboxSchema = z
   .object({
     name: z.string().trim().min(1).max(120),
     enabled: z.boolean(),
-    provider: z.enum(["NAMECHEAP", "WECOM_MAIL", "CUSTOM"]),
+    provider: z.enum(["WECOM_MAIL", "CUSTOM"]),
     config: smtpImapConfigSchema
   })
   .strict();
@@ -25,12 +28,14 @@ export async function GET(
   try {
     await requireRequestPermission(request, "integrations:manage");
     const mailboxes = await prisma.mailbox.findMany({
+      where: configuredMailboxWhere,
       orderBy: { createdAt: "asc" },
       select: {
         id: true,
         name: true,
         emailAddress: true,
         enabled: true,
+        configurationVersion: true,
         lastTestedAt: true,
         lastSuccessAt: true,
         lastErrorCode: true

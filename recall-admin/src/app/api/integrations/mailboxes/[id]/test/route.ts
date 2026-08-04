@@ -7,7 +7,9 @@ import {
   UnauthorizedError
 } from "@/modules/auth/guards";
 import { createSmtpImapAdapter } from "@/modules/mail/adapters/smtp-imap";
-import { getMailboxRuntimeConfig } from "@/modules/mail/mailbox-credentials";
+import {
+  getMailboxRuntimeConfiguration
+} from "@/modules/mail/mailbox-credentials";
 import {
   classifyMailSyncError
 } from "@/modules/mail/sync-error";
@@ -22,13 +24,20 @@ export async function POST(
 ): Promise<NextResponse> {
   const testedAt = new Date();
   const { id } = await context.params;
+  let configurationVersion: number | null = null;
   try {
     assertSameOrigin(request);
     await requireRequestPermission(request, "integrations:manage");
-    const config = await getMailboxRuntimeConfig(id);
-    await createSmtpImapAdapter(config).testConnection();
-    await prisma.mailbox.update({
-      where: { id },
+    const runtime = await getMailboxRuntimeConfiguration(id);
+    configurationVersion = runtime.configurationVersion;
+    await createSmtpImapAdapter(runtime.config).testConnection();
+    await prisma.mailbox.updateMany({
+      where: {
+        id,
+        configurationVersion,
+        encryptedConfig: { not: null },
+        configurationDeletedAt: null
+      },
       data: {
         lastTestedAt: testedAt,
         lastSuccessAt: testedAt,
@@ -52,15 +61,22 @@ export async function POST(
       );
     }
     const code = classifyMailSyncError(error);
-    await prisma.mailbox
-      .update({
-        where: { id },
-        data: {
-          lastTestedAt: testedAt,
-          lastErrorCode: code
-        }
-      })
-      .catch(() => undefined);
+    if (configurationVersion !== null) {
+      await prisma.mailbox
+        .updateMany({
+          where: {
+            id,
+            configurationVersion,
+            encryptedConfig: { not: null },
+            configurationDeletedAt: null
+          },
+          data: {
+            lastTestedAt: testedAt,
+            lastErrorCode: code
+          }
+        })
+        .catch(() => undefined);
+    }
     console.error("mailbox_connection_test_failed", {
       mailboxId: id,
       stage: "connection_test",

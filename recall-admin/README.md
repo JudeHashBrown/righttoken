@@ -79,7 +79,7 @@ npm run dev -- --hostname 127.0.0.1 --port 3101
 
 直接在“系统设置”中完成配置，邮箱凭据、Webhook 和接口密钥都会加密保存：
 
-- 客服邮箱：支持 Namecheap Private Email、企业微信邮箱和自定义 SMTP/IMAP。
+- 客服邮箱：支持企业微信邮箱和其他自定义 SMTP/IMAP 邮箱。
 - 企业微信：保存群机器人 Webhook 后，可先发送一条不含用户信息的测试消息。
 - RightToken：正式用户接口未提供前可启用 100 位安全模拟用户；正式接入时切换为 HTTP 模式。
 

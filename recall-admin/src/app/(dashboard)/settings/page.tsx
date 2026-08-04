@@ -66,11 +66,7 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
             <li className={styles.listItem} key={integration.name}>
               <div>
                 <strong>{integration.name}</strong>
-                <p>
-                  {integration.configured
-                    ? "已经连接，可以使用"
-                    : "尚未连接"}
-                </p>
+                <p>{integration.detail}</p>
               </div>
               <span
                 className={
@@ -111,7 +107,13 @@ export default async function SettingsPage(): Promise<React.JSX.Element> {
                         : "尚未测试连接"}
                   </p>
                 </div>
-                <MailboxActions mailboxId={mailbox.id} />
+                <MailboxActions
+                  mailboxId={mailbox.id}
+                  mailboxName={mailbox.name}
+                  configurationVersion={
+                    mailbox.configurationVersion
+                  }
+                />
               </li>
             ))}
           </ul>

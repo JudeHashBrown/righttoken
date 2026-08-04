@@ -26,6 +26,7 @@ describe("MailboxStatusDetail", () => {
           name: "Namecheap 客服邮箱",
           emailAddress: "contact@righttoken.ai",
           enabled: true,
+          configurationVersion: 1,
           statusText: "连接邮箱服务器超时",
           lastTestedAt: null,
           lastSyncedAt: null

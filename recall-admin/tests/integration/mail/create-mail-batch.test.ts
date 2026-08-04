@@ -24,11 +24,13 @@ describe("mail batch creation", () => {
   const userIds: string[] = [];
   const batchIds: string[] = [];
   const scheduled: string[] = [];
+  const scheduledRunAts: Array<Date | undefined> = [];
 
   const scheduler: TaskScheduler = {
     async scheduleSegmentCheck() {},
-    async scheduleMailBatch({ batchId }) {
+    async scheduleMailBatch({ batchId, runAt }) {
       scheduled.push(batchId);
+      scheduledRunAts.push(runAt);
     }
   };
 
@@ -144,6 +146,7 @@ describe("mail batch creation", () => {
     expect(second.id).toBe(first.id);
     expect(first.bodyText).toBe("请查看最新说明。");
     expect(scheduled).toEqual([first.id]);
+    expect(scheduledRunAts).toEqual([undefined]);
     expect(first.totalRecipients).toBeGreaterThanOrEqual(2);
     expect(first.pendingRecipients).toBeGreaterThanOrEqual(1);
     expect(first.skippedRecipients).toBeGreaterThanOrEqual(1);

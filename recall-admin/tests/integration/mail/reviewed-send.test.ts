@@ -11,6 +11,7 @@ describe("reviewed user mail", () => {
   let userEmail: string;
   let taskId: string;
   let mailboxId: string;
+  let senderDomain: string;
 
   beforeAll(async () => {
     const member = await prisma.member.create({
@@ -48,10 +49,12 @@ describe("reviewed user mail", () => {
       }
     });
     taskId = task.id;
+    senderDomain =
+      `reviewed-send-${randomUUID()}.righttoken.test`;
     const mailbox = await prisma.mailbox.create({
       data: {
         name: "测试客服邮箱",
-        emailAddress: `support-${randomUUID()}@righttoken.test`,
+        emailAddress: `support@${senderDomain}`,
         encryptedConfig: "encrypted-test-value",
         enabled: true
       }
@@ -64,6 +67,9 @@ describe("reviewed user mail", () => {
       where: { actorId: memberId, entityType: "MailMessage" }
     });
     await prisma.recallTask.deleteMany({ where: { userId } });
+    await prisma.mailDomainThrottle.deleteMany({
+      where: { senderDomain }
+    });
     await prisma.mailbox.deleteMany({ where: { id: mailboxId } });
     await prisma.userProfile.deleteMany({ where: { id: userId } });
     await prisma.member.deleteMany({ where: { id: memberId } });
@@ -119,6 +125,11 @@ describe("reviewed user mail", () => {
         }
       })
     ).not.toBeNull();
+    await expect(
+      prisma.mailDomainThrottle.findUnique({
+        where: { senderDomain }
+      })
+    ).resolves.toBeNull();
   });
 
   it("sends to the reviewed override and records a safe audit marker", async () => {

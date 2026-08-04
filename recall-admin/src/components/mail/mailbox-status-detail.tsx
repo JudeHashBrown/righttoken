@@ -6,6 +6,7 @@ export type MailboxStatusDetailData = {
   name: string;
   emailAddress: string;
   enabled: boolean;
+  configurationVersion: number;
   statusText: string;
   lastTestedAt: string | null;
   lastSyncedAt: string | null;
@@ -66,7 +67,11 @@ export function MailboxStatusDetail({
           <strong>每 2 分钟</strong>
         </div>
       </div>
-      <MailboxActions mailboxId={mailbox.id} />
+      <MailboxActions
+        mailboxId={mailbox.id}
+        mailboxName={mailbox.name}
+        configurationVersion={mailbox.configurationVersion}
+      />
     </div>
   );
 }

@@ -1,5 +1,8 @@
 import { prisma } from "@/lib/db/prisma";
 import {
+  configuredMailboxWhere
+} from "@/modules/mail/mailbox-availability";
+import {
   matchInboundReply,
   type OutboundReplyCandidate
 } from "@/modules/mail/reply-matcher";
@@ -54,13 +57,18 @@ export function uniqueMailboxMessages<
 export async function syncMailbox(
   mailboxId: string,
   adapter: Pick<MailboxAdapter, "listMessagesSince">,
+  configurationVersion: number,
   now = new Date(),
   dependencies: {
     storage?: MailAssetStorage;
   } = {}
 ): Promise<SyncResult> {
-  const mailbox = await prisma.mailbox.findUniqueOrThrow({
-    where: { id: mailboxId },
+  const mailbox = await prisma.mailbox.findFirstOrThrow({
+    where: {
+      id: mailboxId,
+      configurationVersion,
+      ...configuredMailboxWhere
+    },
     select: {
       id: true,
       emailAddress: true,
@@ -160,8 +168,8 @@ export async function syncMailbox(
     result = await prisma.$transaction(async (tx) => {
     await tx.$queryRaw`
       SELECT pg_advisory_xact_lock(
-        hashtext(${MAIL_SYNC_ADVISORY_LOCK})
-      )
+        hashtextextended(${MAIL_SYNC_ADVISORY_LOCK}, 0)
+      )::text AS "locked"
     `;
     const currentExisting = await tx.mailMessage.findMany({
       where: { providerMessageId: { in: providerIds } },
@@ -330,8 +338,14 @@ export async function syncMailbox(
         result.replyTasksCreated += 1;
       }
     }
-    await tx.mailbox.update({
-      where: { id: mailboxId },
+    await tx.mailbox.updateMany({
+      where: {
+        id: mailboxId,
+        configurationVersion,
+        encryptedConfig: { not: null },
+        configurationDeletedAt: null,
+        enabled: true
+      },
       data: {
         lastSyncedAt: now,
         lastSuccessAt: now,

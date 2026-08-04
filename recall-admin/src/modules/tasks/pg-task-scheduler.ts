@@ -1,5 +1,6 @@
 import type { PgBoss } from "pg-boss";
 import type {
+  MailBatchSchedule,
   SegmentCheckSchedule,
   TaskScheduler
 } from "@/modules/tasks/scheduler";
@@ -53,12 +54,11 @@ export class PgTaskScheduler implements TaskScheduler {
   }
 
   async scheduleMailBatch(
-    input: { batchId: string }
+    input: MailBatchSchedule
   ): Promise<void> {
-    await this.boss.upsert(
-      JOBS.MAIL_BATCH,
-      input,
-      { singletonKey: input.batchId }
-    );
+    await this.boss.upsert(JOBS.MAIL_BATCH, input, {
+      singletonKey: input.batchId,
+      ...(input.runAt ? { startAfter: input.runAt } : {})
+    });
   }
 }

@@ -60,4 +60,48 @@ describe("mail domain schema", () => {
       });
     }
   });
+
+  it("keeps a mailbox identity after its configuration is removed", async () => {
+    const deletedAt = new Date();
+    const mailbox = await prisma.mailbox.create({
+      data: {
+        name: "历史客服邮箱",
+        emailAddress: `history-${randomUUID()}@example.test`,
+        encryptedConfig: null,
+        enabled: false,
+        configurationDeletedAt: deletedAt
+      }
+    });
+
+    try {
+      expect(mailbox.encryptedConfig).toBeNull();
+      expect(mailbox.configurationDeletedAt).toEqual(deletedAt);
+    } finally {
+      await prisma.mailbox.delete({ where: { id: mailbox.id } });
+    }
+  });
+
+  it("defaults every mailbox configuration lifecycle to version one", async () => {
+    const columns = await prisma.$queryRaw<
+      Array<{
+        column_name: string;
+        column_default: string | null;
+        is_nullable: string;
+      }>
+    >`
+      SELECT "column_name", "column_default", "is_nullable"
+      FROM "information_schema"."columns"
+      WHERE "table_schema" = 'recall'
+        AND "table_name" = 'Mailbox'
+        AND "column_name" = 'configurationVersion'
+    `;
+
+    expect(columns).toEqual([
+      {
+        column_name: "configurationVersion",
+        column_default: "1",
+        is_nullable: "NO"
+      }
+    ]);
+  });
 });

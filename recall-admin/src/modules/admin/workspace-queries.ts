@@ -7,6 +7,12 @@ import type {
   TaskStatus
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
+import {
+  configuredMailboxWhere
+} from "@/modules/mail/mailbox-availability";
+import {
+  buildMailboxIntegrationSummary
+} from "@/modules/admin/settings-overview";
 import { getProductionRightTokenUserFactsByIds } from "@/modules/users/righttoken-facts";
 import {
   defaultSegmentRuleSet
@@ -109,12 +115,14 @@ export async function getMailWorkspaceOverview(
         }
       }),
       prisma.mailbox.findMany({
+        where: configuredMailboxWhere,
         orderBy: { createdAt: "asc" },
         select: {
           id: true,
           name: true,
           emailAddress: true,
           enabled: true,
+          configurationVersion: true,
           lastSyncedAt: true,
           lastSuccessAt: true,
           lastErrorCode: true
@@ -471,12 +479,14 @@ export async function getSettingsWorkspaceOverview() {
 
   const [mailboxes, integrationCredentials] = await Promise.all([
     prisma.mailbox.findMany({
+      where: configuredMailboxWhere,
       orderBy: { createdAt: "asc" },
       select: {
         id: true,
         name: true,
         emailAddress: true,
         enabled: true,
+        configurationVersion: true,
         lastTestedAt: true,
         lastSuccessAt: true,
         lastErrorCode: true,
@@ -505,29 +515,24 @@ export async function getSettingsWorkspaceOverview() {
     databaseReady,
     mailboxes,
     integrations: [
-      {
-        name: "Namecheap 客服邮箱",
-        configured:
-          mailboxes.length > 0 ||
-          Boolean(
-            process.env.SMTP_HOST &&
-              process.env.SMTP_USER &&
-              process.env.SMTP_PASSWORD
-          )
-      },
-      {
-        name: "企业微信邮箱",
-        configured: Boolean(process.env.WECOM_MAIL_HOST)
-      },
+      buildMailboxIntegrationSummary(mailboxes),
       {
         name: "企业微信应用",
-        configured: configuredCredentials.has("WECOM_APP")
+        configured: configuredCredentials.has("WECOM_APP"),
+        detail: configuredCredentials.has("WECOM_APP")
+          ? "已经连接，可以使用"
+          : "尚未连接"
       },
       {
         name: "企微群机器人",
         configured:
           configuredCredentials.has("WECOM_ROBOT") ||
+          Boolean(process.env.WECOM_WEBHOOK_URL),
+        detail:
+          configuredCredentials.has("WECOM_ROBOT") ||
           Boolean(process.env.WECOM_WEBHOOK_URL)
+            ? "已经连接，可以使用"
+            : "尚未连接"
       }
     ]
   };

@@ -6,6 +6,9 @@ import {
 } from "@/modules/auth/guards";
 import type { MailboxAdapter } from "@/modules/mail/types";
 import {
+  configuredMailboxWhere
+} from "@/modules/mail/mailbox-availability";
+import {
   assertMailSendAllowed,
   MailSendBlockedError
 } from "@/modules/mail/send-guard";
@@ -68,8 +71,11 @@ export async function replyToMailThread(
         where: { id: input.actorId },
         select: { id: true, role: true, active: true }
       }),
-      prisma.mailbox.findUniqueOrThrow({
-        where: { id: input.mailboxId },
+      prisma.mailbox.findFirstOrThrow({
+        where: {
+          id: input.mailboxId,
+          ...configuredMailboxWhere
+        },
         select: { id: true, emailAddress: true, enabled: true }
       }),
       prisma.recallTask.findUniqueOrThrow({

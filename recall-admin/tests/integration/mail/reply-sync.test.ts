@@ -9,6 +9,7 @@ import { syncMailbox } from "@/modules/mail/sync-mailbox";
 describe("mailbox reply synchronization", () => {
   let userId: string;
   let mailboxId: string;
+  let configurationVersion: number;
   let threadId: string;
   let memberId: string;
   let waitingTaskId: string;
@@ -46,6 +47,7 @@ describe("mailbox reply synchronization", () => {
       }
     });
     mailboxId = mailbox.id;
+    configurationVersion = mailbox.configurationVersion;
     const thread = await prisma.mailThread.create({
       data: {
         userId,
@@ -157,6 +159,7 @@ describe("mailbox reply synchronization", () => {
     const result = await syncMailbox(
       mailboxId,
       adapter,
+      configurationVersion,
       new Date("2026-07-24T08:01:00.000Z"),
       {
         storage: {
