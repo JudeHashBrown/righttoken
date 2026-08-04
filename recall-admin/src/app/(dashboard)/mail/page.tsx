@@ -22,6 +22,7 @@ import {
   findComposeUsers,
   getComposeContext
 } from "@/modules/mail/compose-context";
+import { plainTextToMailHtml } from "@/modules/mail/rich-content";
 
 type MailPageProps = {
   searchParams: Promise<
@@ -43,11 +44,13 @@ export default async function MailPage({
       filter.compose
         ? getComposeContext(member, {
             userId: filter.composeUserId,
-            taskId: filter.composeTaskId
+            taskId: filter.composeTaskId,
+            retryMessageId: filter.composeRetryMessageId
           })
         : Promise.resolve({
-            selectedUser: null,
-            selectedTask: null
+          selectedUser: null,
+          selectedTask: null,
+          retryMessage: null
           })
     ]);
   const composeUsers = composeContext.selectedUser
@@ -144,8 +147,25 @@ export default async function MailPage({
               initialTaskId={
                 composeContext.selectedTask?.id ?? null
               }
-              initialSubject=""
+              initialSubject={
+                composeContext.retryMessage?.subject ?? ""
+              }
               initialBody=""
+              initialContent={
+                composeContext.retryMessage
+                  ? {
+                      bodyText:
+                        composeContext.retryMessage.bodyText,
+                      bodyHtml:
+                        composeContext.retryMessage.bodyHtml ??
+                        plainTextToMailHtml(
+                          composeContext.retryMessage.bodyText
+                        ),
+                      assets:
+                        composeContext.retryMessage.assets
+                    }
+                  : null
+              }
               closeHref={`/mail?view=${filter.view}`}
             />
           ) : null}

@@ -175,4 +175,47 @@ describe("MailWorkbench", () => {
       screen.queryByRole("button", { name: /发送回复/ })
     ).not.toBeInTheDocument();
   });
+
+  it("shows final-bounce diagnostics and an editable retry link", () => {
+    const bouncedData = {
+      ...data,
+      filter: { view: "failed", selectedId: "bounced-1" },
+      items: [],
+      selected: {
+        kind: "message",
+        message: {
+          id: "bounced-1",
+          userId: "user-1",
+          taskId: "task-1",
+          status: "BOUNCED",
+          fromAddress: "support@righttoken.test",
+          toAddresses: ["person@example.test"],
+          subject: "重要通知",
+          bodyText: "原始正文",
+          bodyHtml: "<p>原始正文</p>",
+          externalImagesBlocked: false,
+          assets: [],
+          sentAt: "2026-08-04T08:00:00.000Z",
+          createdAt: "2026-08-04T07:59:00.000Z",
+          bouncedAt: "2026-08-04T08:05:00.000Z",
+          bounceStatusCode: "5.1.1",
+          bounceDiagnostic: "smtp; 550 mailbox unavailable"
+        }
+      }
+    } as unknown as MailWorkspaceData;
+
+    render(<MailWorkbench data={bouncedData} />);
+
+    expect(screen.getByText("最终退信")).toBeInTheDocument();
+    expect(screen.getByText(/5\.1\.1/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/550 mailbox unavailable/)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "重新编辑并发送" })
+    ).toHaveAttribute(
+      "href",
+      "/mail?view=failed&compose=1&userId=user-1&taskId=task-1&retryMessageId=bounced-1"
+    );
+  });
 });

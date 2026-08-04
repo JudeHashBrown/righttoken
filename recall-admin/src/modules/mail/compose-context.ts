@@ -108,6 +108,7 @@ export async function getComposeContext(
   input: {
     userId?: string | null;
     taskId?: string | null;
+    retryMessageId?: string | null;
   }
 ) {
   const selectedUser = input.userId
@@ -120,56 +121,117 @@ export async function getComposeContext(
       )[0] ?? null
     : null;
   if (input.userId && !selectedUser) {
-    return { selectedUser: null, selectedTask: null };
+    return {
+      selectedUser: null,
+      selectedTask: null,
+      retryMessage: null
+    };
   }
-  if (!input.taskId) {
-    return { selectedUser, selectedTask: null };
-  }
-  const task = await prisma.recallTask.findFirst({
-    where: {
-      id: input.taskId,
-      status: { in: openTaskStatuses },
-      ...(input.userId ? { userId: input.userId } : {}),
-      ...(viewer.role === "OPERATOR"
-        ? {
-            OR: [
-              { assigneeId: viewer.id },
-              { user: { ownerId: viewer.id } },
-              {
-                assigneeId: null,
-                status: "UNASSIGNED"
+  const task = input.taskId
+    ? await prisma.recallTask.findFirst({
+        where: {
+          id: input.taskId,
+          status: { in: openTaskStatuses },
+          ...(input.userId ? { userId: input.userId } : {}),
+          ...(viewer.role === "OPERATOR"
+            ? {
+                OR: [
+                  { assigneeId: viewer.id },
+                  { user: { ownerId: viewer.id } },
+                  {
+                    assigneeId: null,
+                    status: "UNASSIGNED"
+                  }
+                ]
               }
-            ]
-          }
-        : {})
-    },
-    select: {
-      id: true,
-      userId: true,
-      title: true,
-      status: true
-    }
-  });
-  if (!task) {
-    return { selectedUser, selectedTask: null };
+            : {})
+        },
+        select: {
+          id: true,
+          userId: true,
+          title: true,
+          status: true
+        }
+      })
+    : null;
+  if (input.taskId && !task) {
+    return {
+      selectedUser,
+      selectedTask: null,
+      retryMessage: null
+    };
   }
   const taskUser =
     selectedUser ??
-    (
+    (task
+      ? (
       await findComposeUsers(
         viewer,
         "",
         task.userId
       )
-    )[0] ??
+        )[0]
+      : null) ??
     null;
+  const retryMessage =
+    input.retryMessageId && taskUser
+      ? await prisma.mailMessage.findFirst({
+          where: {
+            id: input.retryMessageId,
+            direction: "OUTBOUND",
+            status: "BOUNCED",
+            userId: taskUser.id,
+            ...(input.taskId ? { taskId: input.taskId } : {}),
+            user: userScope(viewer)
+          },
+          select: {
+            id: true,
+            subject: true,
+            bodyText: true,
+            bodyHtml: true,
+            assets: {
+              orderBy: { sortOrder: "asc" },
+              select: {
+                disposition: true,
+                sortOrder: true,
+                asset: {
+                  select: {
+                    id: true,
+                    fileName: true,
+                    contentType: true,
+                    byteSize: true,
+                    width: true,
+                    height: true
+                  }
+                }
+              }
+            }
+          }
+        })
+      : null;
   return {
     selectedUser: taskUser,
-    selectedTask: {
-      id: task.id,
-      userId: task.userId,
-      title: task.title,
-      status: task.status
-    }
+    selectedTask: task
+      ? {
+          id: task.id,
+          userId: task.userId,
+          title: task.title,
+          status: task.status
+        }
+      : null,
+    retryMessage: retryMessage
+      ? {
+          id: retryMessage.id,
+          subject: retryMessage.subject,
+          bodyText: retryMessage.bodyText,
+          bodyHtml: retryMessage.bodyHtml,
+          assets: retryMessage.assets.map((usage) => ({
+            ...usage.asset,
+            disposition: usage.disposition,
+            sortOrder: usage.sortOrder,
+            previewUrl: `/api/mail/assets/${usage.asset.id}`
+          }))
+        }
+      : null
   };
 }

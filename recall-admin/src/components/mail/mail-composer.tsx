@@ -74,6 +74,7 @@ type MailComposerProps = {
   initialTaskId?: string | null;
   initialSubject: string;
   initialBody: string;
+  initialContent?: MailRichContent | null;
   closeHref?: string;
 };
 
@@ -129,6 +130,7 @@ export function MailComposer({
   initialTaskId = null,
   initialSubject,
   initialBody,
+  initialContent = null,
   closeHref
 }: MailComposerProps): React.JSX.Element {
   const router = useRouter();
@@ -166,7 +168,7 @@ export function MailComposer({
   );
   const [subject, setSubject] = useState(initialSubject);
   const [content, setContent] = useState<MailRichContent>(() =>
-    initialRichContent(initialBody)
+    initialContent ?? initialRichContent(initialBody)
   );
   const [audienceMode, setAudienceMode] =
     useState<AudienceMode>("USER");

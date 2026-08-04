@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import styles from "@/components/workspaces/workspace.module.css";
 import {
   MailConversationDetail,
@@ -20,6 +21,7 @@ import {
 import type {
   MailWorkspaceData
 } from "@/modules/mail/workspace-query";
+import { mailComposeHref } from "@/modules/mail/compose-link";
 
 function dateTime(value: string | null): string {
   if (!value) return "—";
@@ -111,6 +113,40 @@ export function MailWorkbench({
                 )}
               </time>
             </header>
+            {data.selected.message.status === "BOUNCED" ? (
+              <div className={styles.bounceDiagnosticPanel}>
+                <strong>最终退信</strong>
+                <p>
+                  收件服务器已明确标记投递失败。这封邮件不再受
+                  24 小时联系保护限制，可以修正后重新发送。
+                </p>
+                {data.selected.message.bounceStatusCode ? (
+                  <p>
+                    状态码：
+                    {data.selected.message.bounceStatusCode}
+                  </p>
+                ) : null}
+                {data.selected.message.bounceDiagnostic ? (
+                  <p>
+                    服务器信息：
+                    {data.selected.message.bounceDiagnostic}
+                  </p>
+                ) : null}
+                {data.selected.message.userId ? (
+                  <Link
+                    className={styles.button}
+                    href={mailComposeHref({
+                      view: "failed",
+                      userId: data.selected.message.userId,
+                      taskId: data.selected.message.taskId,
+                      retryMessageId: data.selected.message.id
+                    })}
+                  >
+                    重新编辑并发送
+                  </Link>
+                ) : null}
+              </div>
+            ) : null}
             <div className={styles.unmatchedBody}>
               <MailMessageContent
                 message={data.selected.message}

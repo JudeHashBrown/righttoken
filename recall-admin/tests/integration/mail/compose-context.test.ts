@@ -162,7 +162,89 @@ describe("mail compose context", () => {
       )
     ).resolves.toEqual({
       selectedUser: null,
-      selectedTask: null
+      selectedTask: null,
+      retryMessage: null
     });
+  });
+
+  it("prefills only an authorized final-bounced outbound message", async () => {
+    const task = await prisma.recallTask.create({
+      data: {
+        userId: operatorAUserId,
+        origin: "MANUAL",
+        triggerKey: `bounce-compose-${randomUUID()}`,
+        ruleVersion: 1,
+        title: "重新联系退信用户",
+        reason: "最终退信",
+        priority: "NORMAL",
+        status: "IN_PROGRESS",
+        assigneeId: operatorAId,
+        dueAt: new Date("2026-08-05T08:00:00.000Z")
+      }
+    });
+    const mailbox = await prisma.mailbox.create({
+      data: {
+        name: "退信预填测试",
+        emailAddress: `bounce-compose-${randomUUID()}@righttoken.test`,
+        encryptedConfig: "configured",
+        enabled: true
+      }
+    });
+    const message = await prisma.mailMessage.create({
+      data: {
+        mailboxId: mailbox.id,
+        userId: operatorAUserId,
+        taskId: task.id,
+        direction: "OUTBOUND",
+        status: "BOUNCED",
+        providerMessageId: `<bounce-compose-${randomUUID()}@example.test>`,
+        references: [],
+        fromAddress: mailbox.emailAddress,
+        toAddresses: ["recipient@example.test"],
+        subject: "原始主题",
+        bodyText: "原始正文",
+        bodyHtml: "<p>原始正文</p>",
+        bouncedAt: new Date("2026-08-04T08:00:00.000Z")
+      }
+    });
+
+    try {
+      await expect(
+        getComposeContext(
+          { id: operatorAId, role: "OPERATOR" },
+          {
+            userId: operatorAUserId,
+            taskId: task.id,
+            retryMessageId: message.id
+          }
+        )
+      ).resolves.toMatchObject({
+        retryMessage: {
+          id: message.id,
+          subject: "原始主题",
+          bodyText: "原始正文",
+          bodyHtml: "<p>原始正文</p>"
+        }
+      });
+
+      await prisma.mailMessage.update({
+        where: { id: message.id },
+        data: { status: "SENT" }
+      });
+      await expect(
+        getComposeContext(
+          { id: operatorAId, role: "OPERATOR" },
+          {
+            userId: operatorAUserId,
+            taskId: task.id,
+            retryMessageId: message.id
+          }
+        )
+      ).resolves.toMatchObject({ retryMessage: null });
+    } finally {
+      await prisma.mailMessage.delete({ where: { id: message.id } });
+      await prisma.mailbox.delete({ where: { id: mailbox.id } });
+      await prisma.recallTask.delete({ where: { id: task.id } });
+    }
   });
 });

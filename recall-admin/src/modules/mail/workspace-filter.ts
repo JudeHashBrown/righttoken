@@ -20,6 +20,7 @@ export type MailWorkspaceFilter = {
   compose: boolean;
   composeUserId: string | null;
   composeTaskId: string | null;
+  composeRetryMessageId: string | null;
 };
 
 type SearchParams = Record<
@@ -35,6 +36,7 @@ export function parseMailWorkspaceFilter(
   const compose = searchParams.compose;
   const userId = searchParams.userId;
   const taskId = searchParams.taskId;
+  const retryMessageId = searchParams.retryMessageId;
   return {
     view:
       typeof view === "string" &&
@@ -53,6 +55,11 @@ export function parseMailWorkspaceFilter(
     composeTaskId:
       typeof taskId === "string" && taskId.trim()
         ? taskId
+        : null,
+    composeRetryMessageId:
+      typeof retryMessageId === "string" &&
+      retryMessageId.trim()
+        ? retryMessageId
         : null
   };
 }

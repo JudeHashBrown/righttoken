@@ -157,7 +157,7 @@ export async function getMailWorkspaceData(
       where: {
         ...messages,
         direction: "OUTBOUND",
-        status: "FAILED"
+        status: { in: ["FAILED", "BOUNCED"] }
       }
     }),
     prisma.mailTemplate.findMany({
@@ -344,7 +344,7 @@ async function listItems(
           ? "DRAFT"
           : filter.view === "sent"
             ? "SENT"
-            : "FAILED";
+            : { in: ["FAILED" as const, "BOUNCED" as const] };
     const rows = await prisma.mailMessage.findMany({
       where: {
         ...messages,
@@ -377,17 +377,19 @@ async function listItems(
     });
     return rows.map((message) => ({
       id:
-        filter.view === "sent"
+        filter.view === "sent" || message.status === "BOUNCED"
           ? message.id
           : message.threadId ?? message.id,
       messageId: message.id,
       kind:
-        filter.view !== "sent" && message.threadId !== null
+        filter.view !== "sent" &&
+        message.status !== "BOUNCED" &&
+        message.threadId !== null
           ? ("THREAD" as const)
           : ("MESSAGE" as const),
       title: message.subject,
       subtitle:
-        filter.view === "sent"
+        filter.view === "sent" || message.status === "BOUNCED"
           ? message.toAddresses.join("、")
           : message.user?.displayName ||
             message.user?.externalUserId ||
@@ -397,7 +399,11 @@ async function listItems(
         message.receivedAt ?? message.sentAt ?? message.createdAt
       ),
       status:
-        filter.view === "sent" ? "已发送" : message.status
+        filter.view === "sent"
+          ? "已发送"
+          : message.status === "BOUNCED"
+            ? "最终退信"
+            : message.status
     }));
   }
 
@@ -554,16 +560,25 @@ async function selectedItem(
         }
       : null;
   }
-  if (filter.view === "sent" && filter.selectedId) {
+  if (
+    (filter.view === "sent" || filter.view === "failed") &&
+    filter.selectedId
+  ) {
     const message = await prisma.mailMessage.findFirst({
       where: {
         id: filter.selectedId,
         ...messageScope(viewer),
         direction: "OUTBOUND",
-        status: "SENT"
+        status:
+          filter.view === "sent"
+            ? "SENT"
+            : { in: ["FAILED", "BOUNCED"] }
       },
       select: {
         id: true,
+        userId: true,
+        taskId: true,
+        status: true,
         fromAddress: true,
         toAddresses: true,
         subject: true,
@@ -589,11 +604,14 @@ async function selectedItem(
           }
         },
         sentAt: true,
+        bouncedAt: true,
+        bounceStatusCode: true,
+        bounceDiagnostic: true,
         createdAt: true
       }
     });
-    return message
-      ? {
+    if (message) {
+      return {
           kind: "message" as const,
           message: {
             ...message,
@@ -605,10 +623,14 @@ async function selectedItem(
               previewUrl: `/api/mail/assets/${usage.asset.id}`
             })),
             sentAt: iso(message.sentAt),
+            bouncedAt: iso(message.bouncedAt),
             createdAt: message.createdAt.toISOString()
           }
-        }
-      : null;
+        };
+    }
+    if (filter.view === "sent") {
+      return null;
+    }
   }
   if (!filter.selectedId) {
     return null;

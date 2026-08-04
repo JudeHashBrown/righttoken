@@ -872,6 +872,33 @@
   line-height: 1.55;
 }
 
+.bounceDiagnosticPanel {
+  display: grid;
+  gap: 8px;
+  margin: 14px 16px 0;
+  border: 1px solid #edc8cd;
+  border-radius: 10px;
+  background: #fff7f8;
+  padding: 14px;
+}
+
+.bounceDiagnosticPanel strong {
+  color: #a02c3c;
+}
+
+.bounceDiagnosticPanel p {
+  margin: 0;
+  color: #6f5159;
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.bounceDiagnosticPanel .button {
+  justify-self: start;
+  margin-top: 3px;
+}
+
 .templateBar {
   display: flex;
   min-width: 0;
