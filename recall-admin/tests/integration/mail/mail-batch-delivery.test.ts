@@ -514,6 +514,65 @@ describe("mail batch delivery", () => {
     }
   });
 
+  it("preserves final bounces when recalculating a completed batch", async () => {
+    const email = `recount-bounce-${randomUUID()}@example.test`;
+    const user = await prisma.userProfile.create({
+      data: {
+        externalUserId: `recount-bounce-${randomUUID()}`,
+        email,
+        emailNormalized: email,
+        registeredAt: new Date("2026-08-04T00:00:00.000Z"),
+        currentSegment: "F"
+      }
+    });
+    const batch = await prisma.mailBatch.create({
+      data: {
+        mailboxId,
+        createdById: memberId,
+        audienceMode: "USER",
+        subject: "最终退信重算",
+        bodyText: "正文",
+        bodyHtml: "<p>正文</p>",
+        idempotencyKey: `recount-bounce-${randomUUID()}`,
+        status: "FAILED",
+        totalRecipients: 1,
+        failedRecipients: 1,
+        recipients: {
+          create: {
+            userId: user.id,
+            emailNormalized: email,
+            status: "BOUNCED",
+            reasonCode: "FINAL_BOUNCE"
+          }
+        }
+      }
+    });
+
+    try {
+      const result = await handleMailBatch(
+        { batchId: batch.id },
+        new Date("2026-08-04T12:00:00.000Z"),
+        scheduler,
+        { adapter: { send: vi.fn() }, random: () => 0 }
+      );
+      expect(result).toMatchObject({
+        completed: true,
+        failed: 1
+      });
+      await expect(
+        prisma.mailBatch.findUniqueOrThrow({
+          where: { id: batch.id }
+        })
+      ).resolves.toMatchObject({
+        status: "FAILED",
+        failedRecipients: 1
+      });
+    } finally {
+      await prisma.mailBatch.delete({ where: { id: batch.id } });
+      await prisma.userProfile.delete({ where: { id: user.id } });
+    }
+  });
+
   it("schedules crash recovery at claim expiry without a hot loop", async () => {
     const adapter = { send: vi.fn() };
 

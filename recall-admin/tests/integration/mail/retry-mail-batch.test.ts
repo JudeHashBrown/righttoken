@@ -53,7 +53,7 @@ describe("mail batch retry", () => {
     });
     mailboxId = mailbox.id;
     const users = await Promise.all(
-      ["sent", "skipped", "failed"].map(async (label) => {
+      ["sent", "skipped", "failed", "bounced"].map(async (label) => {
         const email =
           `batch-${label}-${randomUUID()}@example.test`;
         const user = await prisma.userProfile.create({
@@ -82,10 +82,10 @@ describe("mail batch retry", () => {
         bodyHtml: "<p>正文</p>",
         idempotencyKey: `batch-retry-${randomUUID()}`,
         status: "PARTIAL_FAILURE",
-        totalRecipients: 3,
+        totalRecipients: 4,
         sentRecipients: 1,
         skippedRecipients: 1,
-        failedRecipients: 1,
+        failedRecipients: 2,
         recipients: {
           create: [
             {
@@ -104,6 +104,12 @@ describe("mail batch retry", () => {
               emailNormalized: users[2].emailNormalized,
               status: "FAILED",
               reasonCode: "SMTP_SEND_FAILED"
+            },
+            {
+              userId: users[3].id,
+              emailNormalized: users[3].emailNormalized,
+              status: "BOUNCED",
+              reasonCode: "FINAL_BOUNCE"
             }
           ]
         }
@@ -145,14 +151,14 @@ describe("mail batch retry", () => {
     const statuses = rows.map((row) => row.status).sort();
 
     expect(statuses).toEqual(
-      ["SENT", "SKIPPED", "PENDING"].sort()
+      ["SENT", "SKIPPED", "PENDING", "BOUNCED"].sort()
     );
     expect(result).toMatchObject({
       status: "PENDING",
       pendingRecipients: 1,
       sentRecipients: 1,
       skippedRecipients: 1,
-      failedRecipients: 0
+      failedRecipients: 1
     });
     expect(scheduled).toEqual([batchId]);
     expect(scheduledRunAts).toEqual([undefined]);

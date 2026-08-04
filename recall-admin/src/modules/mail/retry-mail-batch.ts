@@ -68,6 +68,7 @@ export async function retryMailBatch(
         | "PENDING"
         | "SENDING"
         | "SENT"
+        | "BOUNCED"
         | "SKIPPED"
         | "FAILED"
     ) =>
@@ -81,7 +82,8 @@ export async function retryMailBatch(
           count("PENDING") + count("SENDING"),
         sentRecipients: count("SENT"),
         skippedRecipients: count("SKIPPED"),
-        failedRecipients: count("FAILED"),
+        failedRecipients:
+          count("FAILED") + count("BOUNCED"),
         completedAt: retried.count > 0 ? null : undefined
       }
     });

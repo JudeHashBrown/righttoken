@@ -68,7 +68,12 @@ async function recipientCounts(
     if (row.status === "SENDING") counts.sending = count;
     if (row.status === "SENT") counts.sent = count;
     if (row.status === "SKIPPED") counts.skipped = count;
-    if (row.status === "FAILED") counts.failed = count;
+    if (
+      row.status === "FAILED" ||
+      row.status === "BOUNCED"
+    ) {
+      counts.failed += count;
+    }
   }
   return counts;
 }
