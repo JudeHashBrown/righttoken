@@ -66,9 +66,19 @@ enum MailDirection {
 enum MailMessageStatus {
   DRAFT
   SENT
+  BOUNCED
   RECEIVED
   FAILED
   UNMATCHED
+
+  @@schema("recall")
+}
+
+enum MailDeliveryAction {
+  FAILED
+  DELAYED
+  DELIVERED
+  OTHER
 
   @@schema("recall")
 }
@@ -102,6 +112,7 @@ enum MailBatchRecipientStatus {
   PENDING
   SENDING
   SENT
+  BOUNCED
   SKIPPED
   FAILED
 
@@ -651,9 +662,10 @@ model Mailbox {
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
-  threads     MailThread[]
-  messages    MailMessage[]
-  mailBatches MailBatch[]
+  threads        MailThread[]
+  messages       MailMessage[]
+  mailBatches    MailBatch[]
+  deliveryEvents MailDeliveryEvent[]
 
   @@index([configurationDeletedAt, enabled])
   @@schema("recall")
@@ -725,6 +737,9 @@ model MailMessage {
   clickCount            Int               @default(0)
   sentAt                DateTime?
   receivedAt            DateTime?
+  bouncedAt             DateTime?
+  bounceStatusCode      String?
+  bounceDiagnostic      String?
   lastErrorCode         String?
   externalImagesBlocked Boolean           @default(false)
   createdAt             DateTime          @default(now())
@@ -737,11 +752,33 @@ model MailMessage {
   reviewedBy     Member?             @relation("MailReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
   assets         MailMessageAsset[]
   batchRecipient MailBatchRecipient?
+  deliveryEvents MailDeliveryEvent[]
 
   @@index([mailboxId, status, createdAt])
   @@index([threadId, createdAt])
   @@index([userId, createdAt])
   @@index([taskId])
+  @@schema("recall")
+}
+
+model MailDeliveryEvent {
+  id                       String             @id @default(cuid())
+  mailboxId                String
+  outboundMessageId        String
+  inboundProviderMessageId String
+  action                   MailDeliveryAction
+  recipientNormalized      String
+  statusCode               String?
+  diagnosticCode           String?
+  reportedAt               DateTime
+  createdAt                DateTime           @default(now())
+
+  mailbox         Mailbox     @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+  outboundMessage MailMessage @relation(fields: [outboundMessageId], references: [id], onDelete: Cascade)
+
+  @@unique([inboundProviderMessageId, recipientNormalized, action])
+  @@index([mailboxId, reportedAt])
+  @@index([outboundMessageId, reportedAt])
   @@schema("recall")
 }
 
@@ -811,6 +848,7 @@ model MailBatch {
   bodyText          String
   bodyHtml          String
   idempotencyKey    String           @unique
+  retryRootBatchId  String?
   status            MailBatchStatus  @default(PENDING)
   totalRecipients   Int              @default(0)
   pendingRecipients Int              @default(0)
@@ -826,35 +864,45 @@ model MailBatch {
   createdBy  Member               @relation("MailBatchCreator", fields: [createdById], references: [id], onDelete: Restrict)
   recipients MailBatchRecipient[]
   assets     MailBatchAsset[]
+  retryRoot  MailBatch?           @relation("MailBatchRetryRoot", fields: [retryRootBatchId], references: [id], onDelete: Restrict)
+  retries    MailBatch[]          @relation("MailBatchRetryRoot")
 
   @@index([createdById, createdAt])
   @@index([status, createdAt])
+  @@index([retryRootBatchId, createdAt])
   @@schema("recall")
 }
 
 model MailBatchRecipient {
-  id              String                   @id @default(cuid())
-  batchId         String
-  userId          String
-  emailNormalized String
-  status          MailBatchRecipientStatus @default(PENDING)
-  reasonCode      String?
-  messageId       String?                  @unique
-  taskId          String?
-  attempts        Int                      @default(0)
-  claimedAt       DateTime?
-  lastAttemptAt   DateTime?
-  completedAt     DateTime?
-  createdAt       DateTime                 @default(now())
-  updatedAt       DateTime                 @updatedAt
+  id                 String                   @id @default(cuid())
+  batchId            String
+  userId             String
+  emailNormalized    String
+  status             MailBatchRecipientStatus @default(PENDING)
+  reasonCode         String?
+  messageId          String?                  @unique
+  taskId             String?
+  retryOfRecipientId String?                  @unique
+  attempts           Int                      @default(0)
+  claimedAt          DateTime?
+  lastAttemptAt      DateTime?
+  completedAt        DateTime?
+  bouncedAt          DateTime?
+  bounceStatusCode   String?
+  bounceDiagnostic   String?
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
 
-  batch   MailBatch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  user    UserProfile  @relation(fields: [userId], references: [id], onDelete: Restrict)
-  message MailMessage? @relation(fields: [messageId], references: [id], onDelete: SetNull)
-  task    RecallTask?  @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  batch            MailBatch           @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  user             UserProfile         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  message          MailMessage?        @relation(fields: [messageId], references: [id], onDelete: SetNull)
+  task             RecallTask?         @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  retryOfRecipient MailBatchRecipient? @relation("MailRecipientRetry", fields: [retryOfRecipientId], references: [id], onDelete: Restrict)
+  retryRecipient   MailBatchRecipient? @relation("MailRecipientRetry")
 
   @@unique([batchId, userId])
   @@index([batchId, status, id])
+  @@index([retryOfRecipientId])
   @@schema("recall")
 }
 

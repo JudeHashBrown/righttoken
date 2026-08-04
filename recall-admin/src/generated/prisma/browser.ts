@@ -143,6 +143,11 @@ export type MailThread = Prisma.MailThreadModel
  */
 export type MailMessage = Prisma.MailMessageModel
 /**
+ * Model MailDeliveryEvent
+ * 
+ */
+export type MailDeliveryEvent = Prisma.MailDeliveryEventModel
+/**
  * Model MailAsset
  * 
  */

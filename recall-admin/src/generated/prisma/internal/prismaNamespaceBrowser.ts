@@ -76,6 +76,7 @@ export const ModelName = {
   MailTemplate: 'MailTemplate',
   MailThread: 'MailThread',
   MailMessage: 'MailMessage',
+  MailDeliveryEvent: 'MailDeliveryEvent',
   MailAsset: 'MailAsset',
   MailTemplateAsset: 'MailTemplateAsset',
   MailMessageAsset: 'MailMessageAsset',
@@ -568,6 +569,9 @@ export const MailMessageScalarFieldEnum = {
   clickCount: 'clickCount',
   sentAt: 'sentAt',
   receivedAt: 'receivedAt',
+  bouncedAt: 'bouncedAt',
+  bounceStatusCode: 'bounceStatusCode',
+  bounceDiagnostic: 'bounceDiagnostic',
   lastErrorCode: 'lastErrorCode',
   externalImagesBlocked: 'externalImagesBlocked',
   createdAt: 'createdAt',
@@ -575,6 +579,22 @@ export const MailMessageScalarFieldEnum = {
 } as const
 
 export type MailMessageScalarFieldEnum = (typeof MailMessageScalarFieldEnum)[keyof typeof MailMessageScalarFieldEnum]
+
+
+export const MailDeliveryEventScalarFieldEnum = {
+  id: 'id',
+  mailboxId: 'mailboxId',
+  outboundMessageId: 'outboundMessageId',
+  inboundProviderMessageId: 'inboundProviderMessageId',
+  action: 'action',
+  recipientNormalized: 'recipientNormalized',
+  statusCode: 'statusCode',
+  diagnosticCode: 'diagnosticCode',
+  reportedAt: 'reportedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type MailDeliveryEventScalarFieldEnum = (typeof MailDeliveryEventScalarFieldEnum)[keyof typeof MailDeliveryEventScalarFieldEnum]
 
 
 export const MailAssetScalarFieldEnum = {
@@ -629,6 +649,7 @@ export const MailBatchScalarFieldEnum = {
   bodyText: 'bodyText',
   bodyHtml: 'bodyHtml',
   idempotencyKey: 'idempotencyKey',
+  retryRootBatchId: 'retryRootBatchId',
   status: 'status',
   totalRecipients: 'totalRecipients',
   pendingRecipients: 'pendingRecipients',
@@ -653,10 +674,14 @@ export const MailBatchRecipientScalarFieldEnum = {
   reasonCode: 'reasonCode',
   messageId: 'messageId',
   taskId: 'taskId',
+  retryOfRecipientId: 'retryOfRecipientId',
   attempts: 'attempts',
   claimedAt: 'claimedAt',
   lastAttemptAt: 'lastAttemptAt',
   completedAt: 'completedAt',
+  bouncedAt: 'bouncedAt',
+  bounceStatusCode: 'bounceStatusCode',
+  bounceDiagnostic: 'bounceDiagnostic',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

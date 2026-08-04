@@ -43,10 +43,14 @@ export type MailBatchRecipientMinAggregateOutputType = {
   reasonCode: string | null
   messageId: string | null
   taskId: string | null
+  retryOfRecipientId: string | null
   attempts: number | null
   claimedAt: Date | null
   lastAttemptAt: Date | null
   completedAt: Date | null
+  bouncedAt: Date | null
+  bounceStatusCode: string | null
+  bounceDiagnostic: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -60,10 +64,14 @@ export type MailBatchRecipientMaxAggregateOutputType = {
   reasonCode: string | null
   messageId: string | null
   taskId: string | null
+  retryOfRecipientId: string | null
   attempts: number | null
   claimedAt: Date | null
   lastAttemptAt: Date | null
   completedAt: Date | null
+  bouncedAt: Date | null
+  bounceStatusCode: string | null
+  bounceDiagnostic: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -77,10 +85,14 @@ export type MailBatchRecipientCountAggregateOutputType = {
   reasonCode: number
   messageId: number
   taskId: number
+  retryOfRecipientId: number
   attempts: number
   claimedAt: number
   lastAttemptAt: number
   completedAt: number
+  bouncedAt: number
+  bounceStatusCode: number
+  bounceDiagnostic: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -104,10 +116,14 @@ export type MailBatchRecipientMinAggregateInputType = {
   reasonCode?: true
   messageId?: true
   taskId?: true
+  retryOfRecipientId?: true
   attempts?: true
   claimedAt?: true
   lastAttemptAt?: true
   completedAt?: true
+  bouncedAt?: true
+  bounceStatusCode?: true
+  bounceDiagnostic?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -121,10 +137,14 @@ export type MailBatchRecipientMaxAggregateInputType = {
   reasonCode?: true
   messageId?: true
   taskId?: true
+  retryOfRecipientId?: true
   attempts?: true
   claimedAt?: true
   lastAttemptAt?: true
   completedAt?: true
+  bouncedAt?: true
+  bounceStatusCode?: true
+  bounceDiagnostic?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -138,10 +158,14 @@ export type MailBatchRecipientCountAggregateInputType = {
   reasonCode?: true
   messageId?: true
   taskId?: true
+  retryOfRecipientId?: true
   attempts?: true
   claimedAt?: true
   lastAttemptAt?: true
   completedAt?: true
+  bouncedAt?: true
+  bounceStatusCode?: true
+  bounceDiagnostic?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -242,10 +266,14 @@ export type MailBatchRecipientGroupByOutputType = {
   reasonCode: string | null
   messageId: string | null
   taskId: string | null
+  retryOfRecipientId: string | null
   attempts: number
   claimedAt: Date | null
   lastAttemptAt: Date | null
   completedAt: Date | null
+  bouncedAt: Date | null
+  bounceStatusCode: string | null
+  bounceDiagnostic: string | null
   createdAt: Date
   updatedAt: Date
   _count: MailBatchRecipientCountAggregateOutputType | null
@@ -282,16 +310,22 @@ export type MailBatchRecipientWhereInput = {
   reasonCode?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
   messageId?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
   taskId?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
+  retryOfRecipientId?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
   attempts?: Prisma.IntFilter<"MailBatchRecipient"> | number
   claimedAt?: Prisma.DateTimeNullableFilter<"MailBatchRecipient"> | Date | string | null
   lastAttemptAt?: Prisma.DateTimeNullableFilter<"MailBatchRecipient"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"MailBatchRecipient"> | Date | string | null
+  bouncedAt?: Prisma.DateTimeNullableFilter<"MailBatchRecipient"> | Date | string | null
+  bounceStatusCode?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
+  bounceDiagnostic?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
   createdAt?: Prisma.DateTimeFilter<"MailBatchRecipient"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MailBatchRecipient"> | Date | string
   batch?: Prisma.XOR<Prisma.MailBatchScalarRelationFilter, Prisma.MailBatchWhereInput>
   user?: Prisma.XOR<Prisma.UserProfileScalarRelationFilter, Prisma.UserProfileWhereInput>
   message?: Prisma.XOR<Prisma.MailMessageNullableScalarRelationFilter, Prisma.MailMessageWhereInput> | null
   task?: Prisma.XOR<Prisma.RecallTaskNullableScalarRelationFilter, Prisma.RecallTaskWhereInput> | null
+  retryOfRecipient?: Prisma.XOR<Prisma.MailBatchRecipientNullableScalarRelationFilter, Prisma.MailBatchRecipientWhereInput> | null
+  retryRecipient?: Prisma.XOR<Prisma.MailBatchRecipientNullableScalarRelationFilter, Prisma.MailBatchRecipientWhereInput> | null
 }
 
 export type MailBatchRecipientOrderByWithRelationInput = {
@@ -303,21 +337,28 @@ export type MailBatchRecipientOrderByWithRelationInput = {
   reasonCode?: Prisma.SortOrderInput | Prisma.SortOrder
   messageId?: Prisma.SortOrderInput | Prisma.SortOrder
   taskId?: Prisma.SortOrderInput | Prisma.SortOrder
+  retryOfRecipientId?: Prisma.SortOrderInput | Prisma.SortOrder
   attempts?: Prisma.SortOrder
   claimedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastAttemptAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  bouncedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  bounceStatusCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  bounceDiagnostic?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   batch?: Prisma.MailBatchOrderByWithRelationInput
   user?: Prisma.UserProfileOrderByWithRelationInput
   message?: Prisma.MailMessageOrderByWithRelationInput
   task?: Prisma.RecallTaskOrderByWithRelationInput
+  retryOfRecipient?: Prisma.MailBatchRecipientOrderByWithRelationInput
+  retryRecipient?: Prisma.MailBatchRecipientOrderByWithRelationInput
 }
 
 export type MailBatchRecipientWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   messageId?: string
+  retryOfRecipientId?: string
   batchId_userId?: Prisma.MailBatchRecipientBatchIdUserIdCompoundUniqueInput
   AND?: Prisma.MailBatchRecipientWhereInput | Prisma.MailBatchRecipientWhereInput[]
   OR?: Prisma.MailBatchRecipientWhereInput[]
@@ -332,13 +373,18 @@ export type MailBatchRecipientWhereUniqueInput = Prisma.AtLeast<{
   claimedAt?: Prisma.DateTimeNullableFilter<"MailBatchRecipient"> | Date | string | null
   lastAttemptAt?: Prisma.DateTimeNullableFilter<"MailBatchRecipient"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"MailBatchRecipient"> | Date | string | null
+  bouncedAt?: Prisma.DateTimeNullableFilter<"MailBatchRecipient"> | Date | string | null
+  bounceStatusCode?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
+  bounceDiagnostic?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
   createdAt?: Prisma.DateTimeFilter<"MailBatchRecipient"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MailBatchRecipient"> | Date | string
   batch?: Prisma.XOR<Prisma.MailBatchScalarRelationFilter, Prisma.MailBatchWhereInput>
   user?: Prisma.XOR<Prisma.UserProfileScalarRelationFilter, Prisma.UserProfileWhereInput>
   message?: Prisma.XOR<Prisma.MailMessageNullableScalarRelationFilter, Prisma.MailMessageWhereInput> | null
   task?: Prisma.XOR<Prisma.RecallTaskNullableScalarRelationFilter, Prisma.RecallTaskWhereInput> | null
-}, "id" | "messageId" | "batchId_userId">
+  retryOfRecipient?: Prisma.XOR<Prisma.MailBatchRecipientNullableScalarRelationFilter, Prisma.MailBatchRecipientWhereInput> | null
+  retryRecipient?: Prisma.XOR<Prisma.MailBatchRecipientNullableScalarRelationFilter, Prisma.MailBatchRecipientWhereInput> | null
+}, "id" | "messageId" | "retryOfRecipientId" | "batchId_userId">
 
 export type MailBatchRecipientOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -349,10 +395,14 @@ export type MailBatchRecipientOrderByWithAggregationInput = {
   reasonCode?: Prisma.SortOrderInput | Prisma.SortOrder
   messageId?: Prisma.SortOrderInput | Prisma.SortOrder
   taskId?: Prisma.SortOrderInput | Prisma.SortOrder
+  retryOfRecipientId?: Prisma.SortOrderInput | Prisma.SortOrder
   attempts?: Prisma.SortOrder
   claimedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastAttemptAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  bouncedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  bounceStatusCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  bounceDiagnostic?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.MailBatchRecipientCountOrderByAggregateInput
@@ -374,10 +424,14 @@ export type MailBatchRecipientScalarWhereWithAggregatesInput = {
   reasonCode?: Prisma.StringNullableWithAggregatesFilter<"MailBatchRecipient"> | string | null
   messageId?: Prisma.StringNullableWithAggregatesFilter<"MailBatchRecipient"> | string | null
   taskId?: Prisma.StringNullableWithAggregatesFilter<"MailBatchRecipient"> | string | null
+  retryOfRecipientId?: Prisma.StringNullableWithAggregatesFilter<"MailBatchRecipient"> | string | null
   attempts?: Prisma.IntWithAggregatesFilter<"MailBatchRecipient"> | number
   claimedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"MailBatchRecipient"> | Date | string | null
   lastAttemptAt?: Prisma.DateTimeNullableWithAggregatesFilter<"MailBatchRecipient"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"MailBatchRecipient"> | Date | string | null
+  bouncedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"MailBatchRecipient"> | Date | string | null
+  bounceStatusCode?: Prisma.StringNullableWithAggregatesFilter<"MailBatchRecipient"> | string | null
+  bounceDiagnostic?: Prisma.StringNullableWithAggregatesFilter<"MailBatchRecipient"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"MailBatchRecipient"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"MailBatchRecipient"> | Date | string
 }
@@ -391,12 +445,17 @@ export type MailBatchRecipientCreateInput = {
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   batch: Prisma.MailBatchCreateNestedOneWithoutRecipientsInput
   user: Prisma.UserProfileCreateNestedOneWithoutMailBatchRecipientsInput
   message?: Prisma.MailMessageCreateNestedOneWithoutBatchRecipientInput
   task?: Prisma.RecallTaskCreateNestedOneWithoutMailBatchRecipientsInput
+  retryOfRecipient?: Prisma.MailBatchRecipientCreateNestedOneWithoutRetryRecipientInput
+  retryRecipient?: Prisma.MailBatchRecipientCreateNestedOneWithoutRetryOfRecipientInput
 }
 
 export type MailBatchRecipientUncheckedCreateInput = {
@@ -408,12 +467,17 @@ export type MailBatchRecipientUncheckedCreateInput = {
   reasonCode?: string | null
   messageId?: string | null
   taskId?: string | null
+  retryOfRecipientId?: string | null
   attempts?: number
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  retryRecipient?: Prisma.MailBatchRecipientUncheckedCreateNestedOneWithoutRetryOfRecipientInput
 }
 
 export type MailBatchRecipientUpdateInput = {
@@ -425,12 +489,17 @@ export type MailBatchRecipientUpdateInput = {
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   batch?: Prisma.MailBatchUpdateOneRequiredWithoutRecipientsNestedInput
   user?: Prisma.UserProfileUpdateOneRequiredWithoutMailBatchRecipientsNestedInput
   message?: Prisma.MailMessageUpdateOneWithoutBatchRecipientNestedInput
   task?: Prisma.RecallTaskUpdateOneWithoutMailBatchRecipientsNestedInput
+  retryOfRecipient?: Prisma.MailBatchRecipientUpdateOneWithoutRetryRecipientNestedInput
+  retryRecipient?: Prisma.MailBatchRecipientUpdateOneWithoutRetryOfRecipientNestedInput
 }
 
 export type MailBatchRecipientUncheckedUpdateInput = {
@@ -442,12 +511,17 @@ export type MailBatchRecipientUncheckedUpdateInput = {
   reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   messageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryOfRecipientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  retryRecipient?: Prisma.MailBatchRecipientUncheckedUpdateOneWithoutRetryOfRecipientNestedInput
 }
 
 export type MailBatchRecipientCreateManyInput = {
@@ -459,10 +533,14 @@ export type MailBatchRecipientCreateManyInput = {
   reasonCode?: string | null
   messageId?: string | null
   taskId?: string | null
+  retryOfRecipientId?: string | null
   attempts?: number
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -476,6 +554,9 @@ export type MailBatchRecipientUpdateManyMutationInput = {
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -489,10 +570,14 @@ export type MailBatchRecipientUncheckedUpdateManyInput = {
   reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   messageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryOfRecipientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -526,10 +611,14 @@ export type MailBatchRecipientCountOrderByAggregateInput = {
   reasonCode?: Prisma.SortOrder
   messageId?: Prisma.SortOrder
   taskId?: Prisma.SortOrder
+  retryOfRecipientId?: Prisma.SortOrder
   attempts?: Prisma.SortOrder
   claimedAt?: Prisma.SortOrder
   lastAttemptAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  bouncedAt?: Prisma.SortOrder
+  bounceStatusCode?: Prisma.SortOrder
+  bounceDiagnostic?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -547,10 +636,14 @@ export type MailBatchRecipientMaxOrderByAggregateInput = {
   reasonCode?: Prisma.SortOrder
   messageId?: Prisma.SortOrder
   taskId?: Prisma.SortOrder
+  retryOfRecipientId?: Prisma.SortOrder
   attempts?: Prisma.SortOrder
   claimedAt?: Prisma.SortOrder
   lastAttemptAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  bouncedAt?: Prisma.SortOrder
+  bounceStatusCode?: Prisma.SortOrder
+  bounceDiagnostic?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -564,10 +657,14 @@ export type MailBatchRecipientMinOrderByAggregateInput = {
   reasonCode?: Prisma.SortOrder
   messageId?: Prisma.SortOrder
   taskId?: Prisma.SortOrder
+  retryOfRecipientId?: Prisma.SortOrder
   attempts?: Prisma.SortOrder
   claimedAt?: Prisma.SortOrder
   lastAttemptAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  bouncedAt?: Prisma.SortOrder
+  bounceStatusCode?: Prisma.SortOrder
+  bounceDiagnostic?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -734,8 +831,56 @@ export type MailBatchRecipientUncheckedUpdateManyWithoutBatchNestedInput = {
   deleteMany?: Prisma.MailBatchRecipientScalarWhereInput | Prisma.MailBatchRecipientScalarWhereInput[]
 }
 
+export type MailBatchRecipientCreateNestedOneWithoutRetryRecipientInput = {
+  create?: Prisma.XOR<Prisma.MailBatchRecipientCreateWithoutRetryRecipientInput, Prisma.MailBatchRecipientUncheckedCreateWithoutRetryRecipientInput>
+  connectOrCreate?: Prisma.MailBatchRecipientCreateOrConnectWithoutRetryRecipientInput
+  connect?: Prisma.MailBatchRecipientWhereUniqueInput
+}
+
+export type MailBatchRecipientCreateNestedOneWithoutRetryOfRecipientInput = {
+  create?: Prisma.XOR<Prisma.MailBatchRecipientCreateWithoutRetryOfRecipientInput, Prisma.MailBatchRecipientUncheckedCreateWithoutRetryOfRecipientInput>
+  connectOrCreate?: Prisma.MailBatchRecipientCreateOrConnectWithoutRetryOfRecipientInput
+  connect?: Prisma.MailBatchRecipientWhereUniqueInput
+}
+
+export type MailBatchRecipientUncheckedCreateNestedOneWithoutRetryOfRecipientInput = {
+  create?: Prisma.XOR<Prisma.MailBatchRecipientCreateWithoutRetryOfRecipientInput, Prisma.MailBatchRecipientUncheckedCreateWithoutRetryOfRecipientInput>
+  connectOrCreate?: Prisma.MailBatchRecipientCreateOrConnectWithoutRetryOfRecipientInput
+  connect?: Prisma.MailBatchRecipientWhereUniqueInput
+}
+
 export type EnumMailBatchRecipientStatusFieldUpdateOperationsInput = {
   set?: $Enums.MailBatchRecipientStatus
+}
+
+export type MailBatchRecipientUpdateOneWithoutRetryRecipientNestedInput = {
+  create?: Prisma.XOR<Prisma.MailBatchRecipientCreateWithoutRetryRecipientInput, Prisma.MailBatchRecipientUncheckedCreateWithoutRetryRecipientInput>
+  connectOrCreate?: Prisma.MailBatchRecipientCreateOrConnectWithoutRetryRecipientInput
+  upsert?: Prisma.MailBatchRecipientUpsertWithoutRetryRecipientInput
+  disconnect?: Prisma.MailBatchRecipientWhereInput | boolean
+  delete?: Prisma.MailBatchRecipientWhereInput | boolean
+  connect?: Prisma.MailBatchRecipientWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MailBatchRecipientUpdateToOneWithWhereWithoutRetryRecipientInput, Prisma.MailBatchRecipientUpdateWithoutRetryRecipientInput>, Prisma.MailBatchRecipientUncheckedUpdateWithoutRetryRecipientInput>
+}
+
+export type MailBatchRecipientUpdateOneWithoutRetryOfRecipientNestedInput = {
+  create?: Prisma.XOR<Prisma.MailBatchRecipientCreateWithoutRetryOfRecipientInput, Prisma.MailBatchRecipientUncheckedCreateWithoutRetryOfRecipientInput>
+  connectOrCreate?: Prisma.MailBatchRecipientCreateOrConnectWithoutRetryOfRecipientInput
+  upsert?: Prisma.MailBatchRecipientUpsertWithoutRetryOfRecipientInput
+  disconnect?: Prisma.MailBatchRecipientWhereInput | boolean
+  delete?: Prisma.MailBatchRecipientWhereInput | boolean
+  connect?: Prisma.MailBatchRecipientWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MailBatchRecipientUpdateToOneWithWhereWithoutRetryOfRecipientInput, Prisma.MailBatchRecipientUpdateWithoutRetryOfRecipientInput>, Prisma.MailBatchRecipientUncheckedUpdateWithoutRetryOfRecipientInput>
+}
+
+export type MailBatchRecipientUncheckedUpdateOneWithoutRetryOfRecipientNestedInput = {
+  create?: Prisma.XOR<Prisma.MailBatchRecipientCreateWithoutRetryOfRecipientInput, Prisma.MailBatchRecipientUncheckedCreateWithoutRetryOfRecipientInput>
+  connectOrCreate?: Prisma.MailBatchRecipientCreateOrConnectWithoutRetryOfRecipientInput
+  upsert?: Prisma.MailBatchRecipientUpsertWithoutRetryOfRecipientInput
+  disconnect?: Prisma.MailBatchRecipientWhereInput | boolean
+  delete?: Prisma.MailBatchRecipientWhereInput | boolean
+  connect?: Prisma.MailBatchRecipientWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MailBatchRecipientUpdateToOneWithWhereWithoutRetryOfRecipientInput, Prisma.MailBatchRecipientUpdateWithoutRetryOfRecipientInput>, Prisma.MailBatchRecipientUncheckedUpdateWithoutRetryOfRecipientInput>
 }
 
 export type MailBatchRecipientCreateWithoutUserInput = {
@@ -747,11 +892,16 @@ export type MailBatchRecipientCreateWithoutUserInput = {
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   batch: Prisma.MailBatchCreateNestedOneWithoutRecipientsInput
   message?: Prisma.MailMessageCreateNestedOneWithoutBatchRecipientInput
   task?: Prisma.RecallTaskCreateNestedOneWithoutMailBatchRecipientsInput
+  retryOfRecipient?: Prisma.MailBatchRecipientCreateNestedOneWithoutRetryRecipientInput
+  retryRecipient?: Prisma.MailBatchRecipientCreateNestedOneWithoutRetryOfRecipientInput
 }
 
 export type MailBatchRecipientUncheckedCreateWithoutUserInput = {
@@ -762,12 +912,17 @@ export type MailBatchRecipientUncheckedCreateWithoutUserInput = {
   reasonCode?: string | null
   messageId?: string | null
   taskId?: string | null
+  retryOfRecipientId?: string | null
   attempts?: number
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  retryRecipient?: Prisma.MailBatchRecipientUncheckedCreateNestedOneWithoutRetryOfRecipientInput
 }
 
 export type MailBatchRecipientCreateOrConnectWithoutUserInput = {
@@ -808,10 +963,14 @@ export type MailBatchRecipientScalarWhereInput = {
   reasonCode?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
   messageId?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
   taskId?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
+  retryOfRecipientId?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
   attempts?: Prisma.IntFilter<"MailBatchRecipient"> | number
   claimedAt?: Prisma.DateTimeNullableFilter<"MailBatchRecipient"> | Date | string | null
   lastAttemptAt?: Prisma.DateTimeNullableFilter<"MailBatchRecipient"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"MailBatchRecipient"> | Date | string | null
+  bouncedAt?: Prisma.DateTimeNullableFilter<"MailBatchRecipient"> | Date | string | null
+  bounceStatusCode?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
+  bounceDiagnostic?: Prisma.StringNullableFilter<"MailBatchRecipient"> | string | null
   createdAt?: Prisma.DateTimeFilter<"MailBatchRecipient"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MailBatchRecipient"> | Date | string
 }
@@ -825,11 +984,16 @@ export type MailBatchRecipientCreateWithoutTaskInput = {
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   batch: Prisma.MailBatchCreateNestedOneWithoutRecipientsInput
   user: Prisma.UserProfileCreateNestedOneWithoutMailBatchRecipientsInput
   message?: Prisma.MailMessageCreateNestedOneWithoutBatchRecipientInput
+  retryOfRecipient?: Prisma.MailBatchRecipientCreateNestedOneWithoutRetryRecipientInput
+  retryRecipient?: Prisma.MailBatchRecipientCreateNestedOneWithoutRetryOfRecipientInput
 }
 
 export type MailBatchRecipientUncheckedCreateWithoutTaskInput = {
@@ -840,12 +1004,17 @@ export type MailBatchRecipientUncheckedCreateWithoutTaskInput = {
   status?: $Enums.MailBatchRecipientStatus
   reasonCode?: string | null
   messageId?: string | null
+  retryOfRecipientId?: string | null
   attempts?: number
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  retryRecipient?: Prisma.MailBatchRecipientUncheckedCreateNestedOneWithoutRetryOfRecipientInput
 }
 
 export type MailBatchRecipientCreateOrConnectWithoutTaskInput = {
@@ -883,11 +1052,16 @@ export type MailBatchRecipientCreateWithoutMessageInput = {
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   batch: Prisma.MailBatchCreateNestedOneWithoutRecipientsInput
   user: Prisma.UserProfileCreateNestedOneWithoutMailBatchRecipientsInput
   task?: Prisma.RecallTaskCreateNestedOneWithoutMailBatchRecipientsInput
+  retryOfRecipient?: Prisma.MailBatchRecipientCreateNestedOneWithoutRetryRecipientInput
+  retryRecipient?: Prisma.MailBatchRecipientCreateNestedOneWithoutRetryOfRecipientInput
 }
 
 export type MailBatchRecipientUncheckedCreateWithoutMessageInput = {
@@ -898,12 +1072,17 @@ export type MailBatchRecipientUncheckedCreateWithoutMessageInput = {
   status?: $Enums.MailBatchRecipientStatus
   reasonCode?: string | null
   taskId?: string | null
+  retryOfRecipientId?: string | null
   attempts?: number
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  retryRecipient?: Prisma.MailBatchRecipientUncheckedCreateNestedOneWithoutRetryOfRecipientInput
 }
 
 export type MailBatchRecipientCreateOrConnectWithoutMessageInput = {
@@ -931,11 +1110,16 @@ export type MailBatchRecipientUpdateWithoutMessageInput = {
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   batch?: Prisma.MailBatchUpdateOneRequiredWithoutRecipientsNestedInput
   user?: Prisma.UserProfileUpdateOneRequiredWithoutMailBatchRecipientsNestedInput
   task?: Prisma.RecallTaskUpdateOneWithoutMailBatchRecipientsNestedInput
+  retryOfRecipient?: Prisma.MailBatchRecipientUpdateOneWithoutRetryRecipientNestedInput
+  retryRecipient?: Prisma.MailBatchRecipientUpdateOneWithoutRetryOfRecipientNestedInput
 }
 
 export type MailBatchRecipientUncheckedUpdateWithoutMessageInput = {
@@ -946,12 +1130,17 @@ export type MailBatchRecipientUncheckedUpdateWithoutMessageInput = {
   status?: Prisma.EnumMailBatchRecipientStatusFieldUpdateOperationsInput | $Enums.MailBatchRecipientStatus
   reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryOfRecipientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  retryRecipient?: Prisma.MailBatchRecipientUncheckedUpdateOneWithoutRetryOfRecipientNestedInput
 }
 
 export type MailBatchRecipientCreateWithoutBatchInput = {
@@ -963,11 +1152,16 @@ export type MailBatchRecipientCreateWithoutBatchInput = {
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserProfileCreateNestedOneWithoutMailBatchRecipientsInput
   message?: Prisma.MailMessageCreateNestedOneWithoutBatchRecipientInput
   task?: Prisma.RecallTaskCreateNestedOneWithoutMailBatchRecipientsInput
+  retryOfRecipient?: Prisma.MailBatchRecipientCreateNestedOneWithoutRetryRecipientInput
+  retryRecipient?: Prisma.MailBatchRecipientCreateNestedOneWithoutRetryOfRecipientInput
 }
 
 export type MailBatchRecipientUncheckedCreateWithoutBatchInput = {
@@ -978,12 +1172,17 @@ export type MailBatchRecipientUncheckedCreateWithoutBatchInput = {
   reasonCode?: string | null
   messageId?: string | null
   taskId?: string | null
+  retryOfRecipientId?: string | null
   attempts?: number
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  retryRecipient?: Prisma.MailBatchRecipientUncheckedCreateNestedOneWithoutRetryOfRecipientInput
 }
 
 export type MailBatchRecipientCreateOrConnectWithoutBatchInput = {
@@ -1012,9 +1211,78 @@ export type MailBatchRecipientUpdateManyWithWhereWithoutBatchInput = {
   data: Prisma.XOR<Prisma.MailBatchRecipientUpdateManyMutationInput, Prisma.MailBatchRecipientUncheckedUpdateManyWithoutBatchInput>
 }
 
-export type MailBatchRecipientCreateManyUserInput = {
+export type MailBatchRecipientCreateWithoutRetryRecipientInput = {
+  id?: string
+  emailNormalized: string
+  status?: $Enums.MailBatchRecipientStatus
+  reasonCode?: string | null
+  attempts?: number
+  claimedAt?: Date | string | null
+  lastAttemptAt?: Date | string | null
+  completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  batch: Prisma.MailBatchCreateNestedOneWithoutRecipientsInput
+  user: Prisma.UserProfileCreateNestedOneWithoutMailBatchRecipientsInput
+  message?: Prisma.MailMessageCreateNestedOneWithoutBatchRecipientInput
+  task?: Prisma.RecallTaskCreateNestedOneWithoutMailBatchRecipientsInput
+  retryOfRecipient?: Prisma.MailBatchRecipientCreateNestedOneWithoutRetryRecipientInput
+}
+
+export type MailBatchRecipientUncheckedCreateWithoutRetryRecipientInput = {
   id?: string
   batchId: string
+  userId: string
+  emailNormalized: string
+  status?: $Enums.MailBatchRecipientStatus
+  reasonCode?: string | null
+  messageId?: string | null
+  taskId?: string | null
+  retryOfRecipientId?: string | null
+  attempts?: number
+  claimedAt?: Date | string | null
+  lastAttemptAt?: Date | string | null
+  completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type MailBatchRecipientCreateOrConnectWithoutRetryRecipientInput = {
+  where: Prisma.MailBatchRecipientWhereUniqueInput
+  create: Prisma.XOR<Prisma.MailBatchRecipientCreateWithoutRetryRecipientInput, Prisma.MailBatchRecipientUncheckedCreateWithoutRetryRecipientInput>
+}
+
+export type MailBatchRecipientCreateWithoutRetryOfRecipientInput = {
+  id?: string
+  emailNormalized: string
+  status?: $Enums.MailBatchRecipientStatus
+  reasonCode?: string | null
+  attempts?: number
+  claimedAt?: Date | string | null
+  lastAttemptAt?: Date | string | null
+  completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  batch: Prisma.MailBatchCreateNestedOneWithoutRecipientsInput
+  user: Prisma.UserProfileCreateNestedOneWithoutMailBatchRecipientsInput
+  message?: Prisma.MailMessageCreateNestedOneWithoutBatchRecipientInput
+  task?: Prisma.RecallTaskCreateNestedOneWithoutMailBatchRecipientsInput
+  retryRecipient?: Prisma.MailBatchRecipientCreateNestedOneWithoutRetryOfRecipientInput
+}
+
+export type MailBatchRecipientUncheckedCreateWithoutRetryOfRecipientInput = {
+  id?: string
+  batchId: string
+  userId: string
   emailNormalized: string
   status?: $Enums.MailBatchRecipientStatus
   reasonCode?: string | null
@@ -1024,6 +1292,141 @@ export type MailBatchRecipientCreateManyUserInput = {
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  retryRecipient?: Prisma.MailBatchRecipientUncheckedCreateNestedOneWithoutRetryOfRecipientInput
+}
+
+export type MailBatchRecipientCreateOrConnectWithoutRetryOfRecipientInput = {
+  where: Prisma.MailBatchRecipientWhereUniqueInput
+  create: Prisma.XOR<Prisma.MailBatchRecipientCreateWithoutRetryOfRecipientInput, Prisma.MailBatchRecipientUncheckedCreateWithoutRetryOfRecipientInput>
+}
+
+export type MailBatchRecipientUpsertWithoutRetryRecipientInput = {
+  update: Prisma.XOR<Prisma.MailBatchRecipientUpdateWithoutRetryRecipientInput, Prisma.MailBatchRecipientUncheckedUpdateWithoutRetryRecipientInput>
+  create: Prisma.XOR<Prisma.MailBatchRecipientCreateWithoutRetryRecipientInput, Prisma.MailBatchRecipientUncheckedCreateWithoutRetryRecipientInput>
+  where?: Prisma.MailBatchRecipientWhereInput
+}
+
+export type MailBatchRecipientUpdateToOneWithWhereWithoutRetryRecipientInput = {
+  where?: Prisma.MailBatchRecipientWhereInput
+  data: Prisma.XOR<Prisma.MailBatchRecipientUpdateWithoutRetryRecipientInput, Prisma.MailBatchRecipientUncheckedUpdateWithoutRetryRecipientInput>
+}
+
+export type MailBatchRecipientUpdateWithoutRetryRecipientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMailBatchRecipientStatusFieldUpdateOperationsInput | $Enums.MailBatchRecipientStatus
+  reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  batch?: Prisma.MailBatchUpdateOneRequiredWithoutRecipientsNestedInput
+  user?: Prisma.UserProfileUpdateOneRequiredWithoutMailBatchRecipientsNestedInput
+  message?: Prisma.MailMessageUpdateOneWithoutBatchRecipientNestedInput
+  task?: Prisma.RecallTaskUpdateOneWithoutMailBatchRecipientsNestedInput
+  retryOfRecipient?: Prisma.MailBatchRecipientUpdateOneWithoutRetryRecipientNestedInput
+}
+
+export type MailBatchRecipientUncheckedUpdateWithoutRetryRecipientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  batchId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMailBatchRecipientStatusFieldUpdateOperationsInput | $Enums.MailBatchRecipientStatus
+  reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  messageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryOfRecipientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type MailBatchRecipientUpsertWithoutRetryOfRecipientInput = {
+  update: Prisma.XOR<Prisma.MailBatchRecipientUpdateWithoutRetryOfRecipientInput, Prisma.MailBatchRecipientUncheckedUpdateWithoutRetryOfRecipientInput>
+  create: Prisma.XOR<Prisma.MailBatchRecipientCreateWithoutRetryOfRecipientInput, Prisma.MailBatchRecipientUncheckedCreateWithoutRetryOfRecipientInput>
+  where?: Prisma.MailBatchRecipientWhereInput
+}
+
+export type MailBatchRecipientUpdateToOneWithWhereWithoutRetryOfRecipientInput = {
+  where?: Prisma.MailBatchRecipientWhereInput
+  data: Prisma.XOR<Prisma.MailBatchRecipientUpdateWithoutRetryOfRecipientInput, Prisma.MailBatchRecipientUncheckedUpdateWithoutRetryOfRecipientInput>
+}
+
+export type MailBatchRecipientUpdateWithoutRetryOfRecipientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMailBatchRecipientStatusFieldUpdateOperationsInput | $Enums.MailBatchRecipientStatus
+  reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  batch?: Prisma.MailBatchUpdateOneRequiredWithoutRecipientsNestedInput
+  user?: Prisma.UserProfileUpdateOneRequiredWithoutMailBatchRecipientsNestedInput
+  message?: Prisma.MailMessageUpdateOneWithoutBatchRecipientNestedInput
+  task?: Prisma.RecallTaskUpdateOneWithoutMailBatchRecipientsNestedInput
+  retryRecipient?: Prisma.MailBatchRecipientUpdateOneWithoutRetryOfRecipientNestedInput
+}
+
+export type MailBatchRecipientUncheckedUpdateWithoutRetryOfRecipientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  batchId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMailBatchRecipientStatusFieldUpdateOperationsInput | $Enums.MailBatchRecipientStatus
+  reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  messageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  retryRecipient?: Prisma.MailBatchRecipientUncheckedUpdateOneWithoutRetryOfRecipientNestedInput
+}
+
+export type MailBatchRecipientCreateManyUserInput = {
+  id?: string
+  batchId: string
+  emailNormalized: string
+  status?: $Enums.MailBatchRecipientStatus
+  reasonCode?: string | null
+  messageId?: string | null
+  taskId?: string | null
+  retryOfRecipientId?: string | null
+  attempts?: number
+  claimedAt?: Date | string | null
+  lastAttemptAt?: Date | string | null
+  completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1037,11 +1440,16 @@ export type MailBatchRecipientUpdateWithoutUserInput = {
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   batch?: Prisma.MailBatchUpdateOneRequiredWithoutRecipientsNestedInput
   message?: Prisma.MailMessageUpdateOneWithoutBatchRecipientNestedInput
   task?: Prisma.RecallTaskUpdateOneWithoutMailBatchRecipientsNestedInput
+  retryOfRecipient?: Prisma.MailBatchRecipientUpdateOneWithoutRetryRecipientNestedInput
+  retryRecipient?: Prisma.MailBatchRecipientUpdateOneWithoutRetryOfRecipientNestedInput
 }
 
 export type MailBatchRecipientUncheckedUpdateWithoutUserInput = {
@@ -1052,12 +1460,17 @@ export type MailBatchRecipientUncheckedUpdateWithoutUserInput = {
   reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   messageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryOfRecipientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  retryRecipient?: Prisma.MailBatchRecipientUncheckedUpdateOneWithoutRetryOfRecipientNestedInput
 }
 
 export type MailBatchRecipientUncheckedUpdateManyWithoutUserInput = {
@@ -1068,10 +1481,14 @@ export type MailBatchRecipientUncheckedUpdateManyWithoutUserInput = {
   reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   messageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryOfRecipientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1084,10 +1501,14 @@ export type MailBatchRecipientCreateManyTaskInput = {
   status?: $Enums.MailBatchRecipientStatus
   reasonCode?: string | null
   messageId?: string | null
+  retryOfRecipientId?: string | null
   attempts?: number
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1101,11 +1522,16 @@ export type MailBatchRecipientUpdateWithoutTaskInput = {
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   batch?: Prisma.MailBatchUpdateOneRequiredWithoutRecipientsNestedInput
   user?: Prisma.UserProfileUpdateOneRequiredWithoutMailBatchRecipientsNestedInput
   message?: Prisma.MailMessageUpdateOneWithoutBatchRecipientNestedInput
+  retryOfRecipient?: Prisma.MailBatchRecipientUpdateOneWithoutRetryRecipientNestedInput
+  retryRecipient?: Prisma.MailBatchRecipientUpdateOneWithoutRetryOfRecipientNestedInput
 }
 
 export type MailBatchRecipientUncheckedUpdateWithoutTaskInput = {
@@ -1116,12 +1542,17 @@ export type MailBatchRecipientUncheckedUpdateWithoutTaskInput = {
   status?: Prisma.EnumMailBatchRecipientStatusFieldUpdateOperationsInput | $Enums.MailBatchRecipientStatus
   reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   messageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryOfRecipientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  retryRecipient?: Prisma.MailBatchRecipientUncheckedUpdateOneWithoutRetryOfRecipientNestedInput
 }
 
 export type MailBatchRecipientUncheckedUpdateManyWithoutTaskInput = {
@@ -1132,10 +1563,14 @@ export type MailBatchRecipientUncheckedUpdateManyWithoutTaskInput = {
   status?: Prisma.EnumMailBatchRecipientStatusFieldUpdateOperationsInput | $Enums.MailBatchRecipientStatus
   reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   messageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryOfRecipientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1148,10 +1583,14 @@ export type MailBatchRecipientCreateManyBatchInput = {
   reasonCode?: string | null
   messageId?: string | null
   taskId?: string | null
+  retryOfRecipientId?: string | null
   attempts?: number
   claimedAt?: Date | string | null
   lastAttemptAt?: Date | string | null
   completedAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  bounceStatusCode?: string | null
+  bounceDiagnostic?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1165,11 +1604,16 @@ export type MailBatchRecipientUpdateWithoutBatchInput = {
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserProfileUpdateOneRequiredWithoutMailBatchRecipientsNestedInput
   message?: Prisma.MailMessageUpdateOneWithoutBatchRecipientNestedInput
   task?: Prisma.RecallTaskUpdateOneWithoutMailBatchRecipientsNestedInput
+  retryOfRecipient?: Prisma.MailBatchRecipientUpdateOneWithoutRetryRecipientNestedInput
+  retryRecipient?: Prisma.MailBatchRecipientUpdateOneWithoutRetryOfRecipientNestedInput
 }
 
 export type MailBatchRecipientUncheckedUpdateWithoutBatchInput = {
@@ -1180,12 +1624,17 @@ export type MailBatchRecipientUncheckedUpdateWithoutBatchInput = {
   reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   messageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryOfRecipientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  retryRecipient?: Prisma.MailBatchRecipientUncheckedUpdateOneWithoutRetryOfRecipientNestedInput
 }
 
 export type MailBatchRecipientUncheckedUpdateManyWithoutBatchInput = {
@@ -1196,10 +1645,14 @@ export type MailBatchRecipientUncheckedUpdateManyWithoutBatchInput = {
   reasonCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   messageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryOfRecipientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   claimedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bounceStatusCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bounceDiagnostic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1215,16 +1668,22 @@ export type MailBatchRecipientSelect<ExtArgs extends runtime.Types.Extensions.In
   reasonCode?: boolean
   messageId?: boolean
   taskId?: boolean
+  retryOfRecipientId?: boolean
   attempts?: boolean
   claimedAt?: boolean
   lastAttemptAt?: boolean
   completedAt?: boolean
+  bouncedAt?: boolean
+  bounceStatusCode?: boolean
+  bounceDiagnostic?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   batch?: boolean | Prisma.MailBatchDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserProfileDefaultArgs<ExtArgs>
   message?: boolean | Prisma.MailBatchRecipient$messageArgs<ExtArgs>
   task?: boolean | Prisma.MailBatchRecipient$taskArgs<ExtArgs>
+  retryOfRecipient?: boolean | Prisma.MailBatchRecipient$retryOfRecipientArgs<ExtArgs>
+  retryRecipient?: boolean | Prisma.MailBatchRecipient$retryRecipientArgs<ExtArgs>
 }, ExtArgs["result"]["mailBatchRecipient"]>
 
 export type MailBatchRecipientSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1236,16 +1695,21 @@ export type MailBatchRecipientSelectCreateManyAndReturn<ExtArgs extends runtime.
   reasonCode?: boolean
   messageId?: boolean
   taskId?: boolean
+  retryOfRecipientId?: boolean
   attempts?: boolean
   claimedAt?: boolean
   lastAttemptAt?: boolean
   completedAt?: boolean
+  bouncedAt?: boolean
+  bounceStatusCode?: boolean
+  bounceDiagnostic?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   batch?: boolean | Prisma.MailBatchDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserProfileDefaultArgs<ExtArgs>
   message?: boolean | Prisma.MailBatchRecipient$messageArgs<ExtArgs>
   task?: boolean | Prisma.MailBatchRecipient$taskArgs<ExtArgs>
+  retryOfRecipient?: boolean | Prisma.MailBatchRecipient$retryOfRecipientArgs<ExtArgs>
 }, ExtArgs["result"]["mailBatchRecipient"]>
 
 export type MailBatchRecipientSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1257,16 +1721,21 @@ export type MailBatchRecipientSelectUpdateManyAndReturn<ExtArgs extends runtime.
   reasonCode?: boolean
   messageId?: boolean
   taskId?: boolean
+  retryOfRecipientId?: boolean
   attempts?: boolean
   claimedAt?: boolean
   lastAttemptAt?: boolean
   completedAt?: boolean
+  bouncedAt?: boolean
+  bounceStatusCode?: boolean
+  bounceDiagnostic?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   batch?: boolean | Prisma.MailBatchDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserProfileDefaultArgs<ExtArgs>
   message?: boolean | Prisma.MailBatchRecipient$messageArgs<ExtArgs>
   task?: boolean | Prisma.MailBatchRecipient$taskArgs<ExtArgs>
+  retryOfRecipient?: boolean | Prisma.MailBatchRecipient$retryOfRecipientArgs<ExtArgs>
 }, ExtArgs["result"]["mailBatchRecipient"]>
 
 export type MailBatchRecipientSelectScalar = {
@@ -1278,32 +1747,40 @@ export type MailBatchRecipientSelectScalar = {
   reasonCode?: boolean
   messageId?: boolean
   taskId?: boolean
+  retryOfRecipientId?: boolean
   attempts?: boolean
   claimedAt?: boolean
   lastAttemptAt?: boolean
   completedAt?: boolean
+  bouncedAt?: boolean
+  bounceStatusCode?: boolean
+  bounceDiagnostic?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type MailBatchRecipientOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "batchId" | "userId" | "emailNormalized" | "status" | "reasonCode" | "messageId" | "taskId" | "attempts" | "claimedAt" | "lastAttemptAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["mailBatchRecipient"]>
+export type MailBatchRecipientOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "batchId" | "userId" | "emailNormalized" | "status" | "reasonCode" | "messageId" | "taskId" | "retryOfRecipientId" | "attempts" | "claimedAt" | "lastAttemptAt" | "completedAt" | "bouncedAt" | "bounceStatusCode" | "bounceDiagnostic" | "createdAt" | "updatedAt", ExtArgs["result"]["mailBatchRecipient"]>
 export type MailBatchRecipientInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   batch?: boolean | Prisma.MailBatchDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserProfileDefaultArgs<ExtArgs>
   message?: boolean | Prisma.MailBatchRecipient$messageArgs<ExtArgs>
   task?: boolean | Prisma.MailBatchRecipient$taskArgs<ExtArgs>
+  retryOfRecipient?: boolean | Prisma.MailBatchRecipient$retryOfRecipientArgs<ExtArgs>
+  retryRecipient?: boolean | Prisma.MailBatchRecipient$retryRecipientArgs<ExtArgs>
 }
 export type MailBatchRecipientIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   batch?: boolean | Prisma.MailBatchDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserProfileDefaultArgs<ExtArgs>
   message?: boolean | Prisma.MailBatchRecipient$messageArgs<ExtArgs>
   task?: boolean | Prisma.MailBatchRecipient$taskArgs<ExtArgs>
+  retryOfRecipient?: boolean | Prisma.MailBatchRecipient$retryOfRecipientArgs<ExtArgs>
 }
 export type MailBatchRecipientIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   batch?: boolean | Prisma.MailBatchDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserProfileDefaultArgs<ExtArgs>
   message?: boolean | Prisma.MailBatchRecipient$messageArgs<ExtArgs>
   task?: boolean | Prisma.MailBatchRecipient$taskArgs<ExtArgs>
+  retryOfRecipient?: boolean | Prisma.MailBatchRecipient$retryOfRecipientArgs<ExtArgs>
 }
 
 export type $MailBatchRecipientPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1313,6 +1790,8 @@ export type $MailBatchRecipientPayload<ExtArgs extends runtime.Types.Extensions.
     user: Prisma.$UserProfilePayload<ExtArgs>
     message: Prisma.$MailMessagePayload<ExtArgs> | null
     task: Prisma.$RecallTaskPayload<ExtArgs> | null
+    retryOfRecipient: Prisma.$MailBatchRecipientPayload<ExtArgs> | null
+    retryRecipient: Prisma.$MailBatchRecipientPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1323,10 +1802,14 @@ export type $MailBatchRecipientPayload<ExtArgs extends runtime.Types.Extensions.
     reasonCode: string | null
     messageId: string | null
     taskId: string | null
+    retryOfRecipientId: string | null
     attempts: number
     claimedAt: Date | null
     lastAttemptAt: Date | null
     completedAt: Date | null
+    bouncedAt: Date | null
+    bounceStatusCode: string | null
+    bounceDiagnostic: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["mailBatchRecipient"]>
@@ -1727,6 +2210,8 @@ export interface Prisma__MailBatchRecipientClient<T, Null = never, ExtArgs exten
   user<T extends Prisma.UserProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__UserProfileClient<runtime.Types.Result.GetResult<Prisma.$UserProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   message<T extends Prisma.MailBatchRecipient$messageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailBatchRecipient$messageArgs<ExtArgs>>): Prisma.Prisma__MailMessageClient<runtime.Types.Result.GetResult<Prisma.$MailMessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   task<T extends Prisma.MailBatchRecipient$taskArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailBatchRecipient$taskArgs<ExtArgs>>): Prisma.Prisma__RecallTaskClient<runtime.Types.Result.GetResult<Prisma.$RecallTaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  retryOfRecipient<T extends Prisma.MailBatchRecipient$retryOfRecipientArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailBatchRecipient$retryOfRecipientArgs<ExtArgs>>): Prisma.Prisma__MailBatchRecipientClient<runtime.Types.Result.GetResult<Prisma.$MailBatchRecipientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  retryRecipient<T extends Prisma.MailBatchRecipient$retryRecipientArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailBatchRecipient$retryRecipientArgs<ExtArgs>>): Prisma.Prisma__MailBatchRecipientClient<runtime.Types.Result.GetResult<Prisma.$MailBatchRecipientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1764,10 +2249,14 @@ export interface MailBatchRecipientFieldRefs {
   readonly reasonCode: Prisma.FieldRef<"MailBatchRecipient", 'String'>
   readonly messageId: Prisma.FieldRef<"MailBatchRecipient", 'String'>
   readonly taskId: Prisma.FieldRef<"MailBatchRecipient", 'String'>
+  readonly retryOfRecipientId: Prisma.FieldRef<"MailBatchRecipient", 'String'>
   readonly attempts: Prisma.FieldRef<"MailBatchRecipient", 'Int'>
   readonly claimedAt: Prisma.FieldRef<"MailBatchRecipient", 'DateTime'>
   readonly lastAttemptAt: Prisma.FieldRef<"MailBatchRecipient", 'DateTime'>
   readonly completedAt: Prisma.FieldRef<"MailBatchRecipient", 'DateTime'>
+  readonly bouncedAt: Prisma.FieldRef<"MailBatchRecipient", 'DateTime'>
+  readonly bounceStatusCode: Prisma.FieldRef<"MailBatchRecipient", 'String'>
+  readonly bounceDiagnostic: Prisma.FieldRef<"MailBatchRecipient", 'String'>
   readonly createdAt: Prisma.FieldRef<"MailBatchRecipient", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"MailBatchRecipient", 'DateTime'>
 }
@@ -2206,6 +2695,44 @@ export type MailBatchRecipient$taskArgs<ExtArgs extends runtime.Types.Extensions
    */
   include?: Prisma.RecallTaskInclude<ExtArgs> | null
   where?: Prisma.RecallTaskWhereInput
+}
+
+/**
+ * MailBatchRecipient.retryOfRecipient
+ */
+export type MailBatchRecipient$retryOfRecipientArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailBatchRecipient
+   */
+  select?: Prisma.MailBatchRecipientSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailBatchRecipient
+   */
+  omit?: Prisma.MailBatchRecipientOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailBatchRecipientInclude<ExtArgs> | null
+  where?: Prisma.MailBatchRecipientWhereInput
+}
+
+/**
+ * MailBatchRecipient.retryRecipient
+ */
+export type MailBatchRecipient$retryRecipientArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailBatchRecipient
+   */
+  select?: Prisma.MailBatchRecipientSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailBatchRecipient
+   */
+  omit?: Prisma.MailBatchRecipientOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailBatchRecipientInclude<ExtArgs> | null
+  where?: Prisma.MailBatchRecipientWhereInput
 }
 
 /**

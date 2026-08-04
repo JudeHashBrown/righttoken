@@ -73,12 +73,23 @@ export type MailDirection = (typeof MailDirection)[keyof typeof MailDirection]
 export const MailMessageStatus = {
   DRAFT: 'DRAFT',
   SENT: 'SENT',
+  BOUNCED: 'BOUNCED',
   RECEIVED: 'RECEIVED',
   FAILED: 'FAILED',
   UNMATCHED: 'UNMATCHED'
 } as const
 
 export type MailMessageStatus = (typeof MailMessageStatus)[keyof typeof MailMessageStatus]
+
+
+export const MailDeliveryAction = {
+  FAILED: 'FAILED',
+  DELAYED: 'DELAYED',
+  DELIVERED: 'DELIVERED',
+  OTHER: 'OTHER'
+} as const
+
+export type MailDeliveryAction = (typeof MailDeliveryAction)[keyof typeof MailDeliveryAction]
 
 
 export const MailAssetDisposition = {
@@ -113,6 +124,7 @@ export const MailBatchRecipientStatus = {
   PENDING: 'PENDING',
   SENDING: 'SENDING',
   SENT: 'SENT',
+  BOUNCED: 'BOUNCED',
   SKIPPED: 'SKIPPED',
   FAILED: 'FAILED'
 } as const

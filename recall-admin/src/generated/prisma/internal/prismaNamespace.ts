@@ -422,6 +422,7 @@ export const ModelName = {
   MailTemplate: 'MailTemplate',
   MailThread: 'MailThread',
   MailMessage: 'MailMessage',
+  MailDeliveryEvent: 'MailDeliveryEvent',
   MailAsset: 'MailAsset',
   MailTemplateAsset: 'MailTemplateAsset',
   MailMessageAsset: 'MailMessageAsset',
@@ -447,7 +448,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "member" | "ssoTicketRedemption" | "session" | "userProfile" | "userEvent" | "siteVisit" | "segmentHistory" | "segmentOverride" | "userNote" | "automationRuleVersion" | "segmentRecalculationRun" | "assignmentRule" | "assignmentRecalculationRun" | "locationAttributionRule" | "locationRecalculationRun" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "mailAsset" | "mailTemplateAsset" | "mailMessageAsset" | "mailBatch" | "mailBatchRecipient" | "mailDomainThrottle" | "mailBatchAsset" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
+    modelProps: "member" | "ssoTicketRedemption" | "session" | "userProfile" | "userEvent" | "siteVisit" | "segmentHistory" | "segmentOverride" | "userNote" | "automationRuleVersion" | "segmentRecalculationRun" | "assignmentRule" | "assignmentRecalculationRun" | "locationAttributionRule" | "locationRecalculationRun" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "mailDeliveryEvent" | "mailAsset" | "mailTemplateAsset" | "mailMessageAsset" | "mailBatch" | "mailBatchRecipient" | "mailDomainThrottle" | "mailBatchAsset" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2301,6 +2302,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MailDeliveryEvent: {
+      payload: Prisma.$MailDeliveryEventPayload<ExtArgs>
+      fields: Prisma.MailDeliveryEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MailDeliveryEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailDeliveryEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MailDeliveryEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailDeliveryEventPayload>
+        }
+        findFirst: {
+          args: Prisma.MailDeliveryEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailDeliveryEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MailDeliveryEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailDeliveryEventPayload>
+        }
+        findMany: {
+          args: Prisma.MailDeliveryEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailDeliveryEventPayload>[]
+        }
+        create: {
+          args: Prisma.MailDeliveryEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailDeliveryEventPayload>
+        }
+        createMany: {
+          args: Prisma.MailDeliveryEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MailDeliveryEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailDeliveryEventPayload>[]
+        }
+        delete: {
+          args: Prisma.MailDeliveryEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailDeliveryEventPayload>
+        }
+        update: {
+          args: Prisma.MailDeliveryEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailDeliveryEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.MailDeliveryEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MailDeliveryEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MailDeliveryEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailDeliveryEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.MailDeliveryEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MailDeliveryEventPayload>
+        }
+        aggregate: {
+          args: Prisma.MailDeliveryEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMailDeliveryEvent>
+        }
+        groupBy: {
+          args: Prisma.MailDeliveryEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailDeliveryEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MailDeliveryEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MailDeliveryEventCountAggregateOutputType> | number
+        }
+      }
+    }
     MailAsset: {
       payload: Prisma.$MailAssetPayload<ExtArgs>
       fields: Prisma.MailAssetFieldRefs
@@ -3544,6 +3619,9 @@ export const MailMessageScalarFieldEnum = {
   clickCount: 'clickCount',
   sentAt: 'sentAt',
   receivedAt: 'receivedAt',
+  bouncedAt: 'bouncedAt',
+  bounceStatusCode: 'bounceStatusCode',
+  bounceDiagnostic: 'bounceDiagnostic',
   lastErrorCode: 'lastErrorCode',
   externalImagesBlocked: 'externalImagesBlocked',
   createdAt: 'createdAt',
@@ -3551,6 +3629,22 @@ export const MailMessageScalarFieldEnum = {
 } as const
 
 export type MailMessageScalarFieldEnum = (typeof MailMessageScalarFieldEnum)[keyof typeof MailMessageScalarFieldEnum]
+
+
+export const MailDeliveryEventScalarFieldEnum = {
+  id: 'id',
+  mailboxId: 'mailboxId',
+  outboundMessageId: 'outboundMessageId',
+  inboundProviderMessageId: 'inboundProviderMessageId',
+  action: 'action',
+  recipientNormalized: 'recipientNormalized',
+  statusCode: 'statusCode',
+  diagnosticCode: 'diagnosticCode',
+  reportedAt: 'reportedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type MailDeliveryEventScalarFieldEnum = (typeof MailDeliveryEventScalarFieldEnum)[keyof typeof MailDeliveryEventScalarFieldEnum]
 
 
 export const MailAssetScalarFieldEnum = {
@@ -3605,6 +3699,7 @@ export const MailBatchScalarFieldEnum = {
   bodyText: 'bodyText',
   bodyHtml: 'bodyHtml',
   idempotencyKey: 'idempotencyKey',
+  retryRootBatchId: 'retryRootBatchId',
   status: 'status',
   totalRecipients: 'totalRecipients',
   pendingRecipients: 'pendingRecipients',
@@ -3629,10 +3724,14 @@ export const MailBatchRecipientScalarFieldEnum = {
   reasonCode: 'reasonCode',
   messageId: 'messageId',
   taskId: 'taskId',
+  retryOfRecipientId: 'retryOfRecipientId',
   attempts: 'attempts',
   claimedAt: 'claimedAt',
   lastAttemptAt: 'lastAttemptAt',
   completedAt: 'completedAt',
+  bouncedAt: 'bouncedAt',
+  bounceStatusCode: 'bounceStatusCode',
+  bounceDiagnostic: 'bounceDiagnostic',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -3995,6 +4094,20 @@ export type ListEnumMailMessageStatusFieldRefInput<$PrismaModel> = FieldRefInput
 
 
 /**
+ * Reference to a field of type 'MailDeliveryAction'
+ */
+export type EnumMailDeliveryActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailDeliveryAction'>
+    
+
+
+/**
+ * Reference to a field of type 'MailDeliveryAction[]'
+ */
+export type ListEnumMailDeliveryActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailDeliveryAction[]'>
+    
+
+
+/**
  * Reference to a field of type 'MailAssetDisposition'
  */
 export type EnumMailAssetDispositionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailAssetDisposition'>
@@ -4267,6 +4380,7 @@ export type GlobalOmitConfig = {
   mailTemplate?: Prisma.MailTemplateOmit
   mailThread?: Prisma.MailThreadOmit
   mailMessage?: Prisma.MailMessageOmit
+  mailDeliveryEvent?: Prisma.MailDeliveryEventOmit
   mailAsset?: Prisma.MailAssetOmit
   mailTemplateAsset?: Prisma.MailTemplateAssetOmit
   mailMessageAsset?: Prisma.MailMessageAssetOmit
