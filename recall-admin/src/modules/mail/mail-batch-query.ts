@@ -184,7 +184,7 @@ export async function getMailBatchSummary(
     },
     select: {
       ...batchSummarySelect,
-      mailbox: { select: { emailAddress: true } }
+      mailbox: { select: { name: true } }
     }
   });
   if (!batch) {
@@ -209,7 +209,7 @@ export async function getMailBatchSummary(
   const { mailbox, ...safeBatch } = batch;
   return {
     ...presentBatch(safeBatch),
-    senderMailbox: mailbox.emailAddress,
+    senderMailboxName: mailbox.name,
     actionableBounceCount: actionableBounceEmails.length,
     actionableBounceEmails,
     actionableBounceList: actionableBounceEmails.join(";"),

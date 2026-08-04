@@ -30,7 +30,7 @@ type BounceDetail = {
   actionableBounceCount: number;
   actionableBounceEmails: string[];
   actionableBounceList: string;
-  senderMailbox: string;
+  senderMailboxName: string;
   subject: string;
 };
 
@@ -284,7 +284,7 @@ export function MailBatchList({
                           <b>
                             {
                               bounceDetails[batch.id]!
-                                .senderMailbox
+                                .senderMailboxName
                             }
                           </b>
                           {" "}

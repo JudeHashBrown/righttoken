@@ -88,7 +88,7 @@ describe("MailBatchList", () => {
               ],
               actionableBounceList:
                 "a@example.test;z@example.test",
-              senderMailbox: "sender@righttoken.test",
+              senderMailboxName: "客服邮箱",
               subject: "重要通知"
             })
           };
@@ -154,7 +154,7 @@ describe("MailBatchList", () => {
       name: "确认重新发送最终退信"
     });
     expect(dialog).toHaveTextContent("2 个最终退信邮箱");
-    expect(dialog).toHaveTextContent("sender@righttoken.test");
+    expect(dialog).toHaveTextContent("客服邮箱");
     expect(dialog).toHaveTextContent("2-4 分钟随机间隔");
     fireEvent.click(
       screen.getByRole("button", { name: "确认创建重发任务" })
