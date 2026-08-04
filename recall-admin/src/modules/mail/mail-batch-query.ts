@@ -16,6 +16,93 @@ export class MailBatchNotFoundError extends Error {
   }
 }
 
+type MailBatchQueryClient = Pick<
+  Prisma.TransactionClient,
+  "mailBatch" | "mailBatchRecipient"
+>;
+
+export type ActionableBounceLeaf = {
+  recipientId: string;
+  userId: string;
+  emailNormalized: string;
+  taskId: string | null;
+};
+
+export async function findActionableBounceLeaves(
+  client: MailBatchQueryClient,
+  batchId: string
+): Promise<{
+  rootBatchId: string;
+  leaves: ActionableBounceLeaf[];
+}> {
+  const requested = await client.mailBatch.findUnique({
+    where: { id: batchId },
+    select: { id: true, retryRootBatchId: true }
+  });
+  if (!requested) {
+    throw new MailBatchNotFoundError();
+  }
+  const rootBatchId = requested.retryRootBatchId ?? requested.id;
+  const batches = await client.mailBatch.findMany({
+    where: {
+      OR: [
+        { id: rootBatchId },
+        { retryRootBatchId: rootBatchId }
+      ]
+    },
+    select: { id: true }
+  });
+  const recipients = await client.mailBatchRecipient.findMany({
+    where: { batchId: { in: batches.map((batch) => batch.id) } },
+    select: {
+      id: true,
+      batchId: true,
+      userId: true,
+      emailNormalized: true,
+      taskId: true,
+      status: true,
+      retryOfRecipientId: true
+    }
+  });
+  const retriedByParent = new Map(
+    recipients
+      .filter(
+        (recipient) => recipient.retryOfRecipientId !== null
+      )
+      .map((recipient) => [
+        recipient.retryOfRecipientId as string,
+        recipient
+      ])
+  );
+  const rootRecipients = recipients.filter(
+    (recipient) => recipient.batchId === rootBatchId
+  );
+  const leaves = rootRecipients
+    .map((recipient) => {
+      let leaf = recipient;
+      const visited = new Set<string>();
+      while (
+        !visited.has(leaf.id) &&
+        retriedByParent.has(leaf.id)
+      ) {
+        visited.add(leaf.id);
+        leaf = retriedByParent.get(leaf.id)!;
+      }
+      return leaf;
+    })
+    .filter((recipient) => recipient.status === "BOUNCED")
+    .map((recipient) => ({
+      recipientId: recipient.id,
+      userId: recipient.userId,
+      emailNormalized: recipient.emailNormalized,
+      taskId: recipient.taskId
+    }))
+    .sort((left, right) =>
+      left.emailNormalized.localeCompare(right.emailNormalized)
+    );
+  return { rootBatchId, leaves };
+}
+
 function batchWhere(
   viewer: MailBatchViewer
 ): Prisma.MailBatchWhereInput {
@@ -109,8 +196,18 @@ export async function getMailBatchSummary(
     _count: { _all: true },
     orderBy: { reasonCode: "asc" }
   });
+  const { leaves } = await findActionableBounceLeaves(
+    prisma,
+    batchId
+  );
+  const actionableBounceEmails = leaves.map(
+    (leaf) => leaf.emailNormalized
+  );
   return {
     ...presentBatch(batch),
+    actionableBounceCount: actionableBounceEmails.length,
+    actionableBounceEmails,
+    actionableBounceList: actionableBounceEmails.join(";"),
     reasons: grouped
       .filter(
         (row): row is typeof row & { reasonCode: string } =>
