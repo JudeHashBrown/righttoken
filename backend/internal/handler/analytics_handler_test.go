@@ -24,9 +24,13 @@ func (tracker *recallVisitTrackerStub) Track(_ context.Context, event service.Re
 }
 
 func setupAnalyticsRouter(tracker recallVisitTracker) *gin.Engine {
+	return setupAnalyticsRouterWithTrustedProxies(tracker, nil)
+}
+
+func setupAnalyticsRouterWithTrustedProxies(tracker recallVisitTracker, trustedProxies []string) *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
-	requireNoError := router.SetTrustedProxies(nil)
+	requireNoError := router.SetTrustedProxies(trustedProxies)
 	if requireNoError != nil {
 		panic(requireNoError)
 	}
@@ -50,7 +54,12 @@ func TestAnalyticsVisitCreatesAndReusesPrivateVisitorCookie(t *testing.T) {
 	tracker := &recallVisitTrackerStub{}
 	router := setupAnalyticsRouter(tracker)
 
-	first := performVisitRequest(router, `{"path":"/pricing?coupon=secret#checkout"}`, nil)
+	request := httptest.NewRequest(http.MethodPost, "/api/v1/analytics/visit", strings.NewReader(`{"path":"/pricing?coupon=secret#checkout"}`))
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("X-Forwarded-For", "198.51.100.24")
+	request.RemoteAddr = "203.0.113.8:4321"
+	first := httptest.NewRecorder()
+	router.ServeHTTP(first, request)
 
 	require.Equal(t, http.StatusNoContent, first.Code)
 	require.Equal(t, "203.0.113.8", tracker.event.IP)
@@ -68,6 +77,21 @@ func TestAnalyticsVisitCreatesAndReusesPrivateVisitorCookie(t *testing.T) {
 	require.Equal(t, http.StatusNoContent, second.Code)
 	require.Equal(t, firstVisitorID, tracker.event.VisitorID)
 	require.Empty(t, second.Header().Get("Set-Cookie"))
+}
+
+func TestAnalyticsVisitUsesForwardedClientIPFromTrustedProxy(t *testing.T) {
+	tracker := &recallVisitTrackerStub{}
+	router := setupAnalyticsRouterWithTrustedProxies(tracker, []string{"192.0.2.10"})
+	request := httptest.NewRequest(http.MethodPost, "/api/v1/analytics/visit", strings.NewReader(`{"path":"/"}`))
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("X-Forwarded-For", "198.51.100.24, 192.0.2.10")
+	request.RemoteAddr = "192.0.2.10:4321"
+	recorder := httptest.NewRecorder()
+
+	router.ServeHTTP(recorder, request)
+
+	require.Equal(t, http.StatusNoContent, recorder.Code)
+	require.Equal(t, "198.51.100.24", tracker.event.IP)
 }
 
 func TestAnalyticsVisitNeverBreaksBrowsing(t *testing.T) {

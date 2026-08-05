@@ -17,6 +17,76 @@ func resetViperWithJWTSecret(t *testing.T) {
 	t.Setenv("JWT_SECRET", strings.Repeat("x", 32))
 }
 
+func TestParseTrustedProxies(t *testing.T) {
+	got, err := ParseTrustedProxies("172.18.0.1, 10.20.0.0/16")
+
+	require.NoError(t, err)
+	require.Equal(t, []string{"172.18.0.1", "10.20.0.0/16"}, got)
+}
+
+func TestParseTrustedProxiesRejectsUnsafeOrInvalidValues(t *testing.T) {
+	for _, raw := range []string{
+		"bad-value",
+		"0.0.0.0/0",
+		"::/0",
+		"",
+		"172.18.0.1,",
+		"172.18.0.1, ,10.20.0.0/16",
+	} {
+		t.Run(raw, func(t *testing.T) {
+			_, err := ParseTrustedProxies(raw)
+			require.Error(t, err)
+		})
+	}
+}
+
+func TestLoadReadsTrustedProxiesFromEnv(t *testing.T) {
+	resetViperWithJWTSecret(t)
+	t.Setenv("SERVER_TRUSTED_PROXIES", "172.18.0.1, 10.20.0.0/16")
+
+	cfg, err := Load()
+
+	require.NoError(t, err)
+	require.Equal(t, []string{"172.18.0.1", "10.20.0.0/16"}, cfg.Server.TrustedProxies)
+}
+
+func TestLoadPreservesConfiguredTrustedProxiesWithoutEnvOverride(t *testing.T) {
+	resetViperWithJWTSecret(t)
+	previous, wasSet := os.LookupEnv("SERVER_TRUSTED_PROXIES")
+	require.NoError(t, os.Unsetenv("SERVER_TRUSTED_PROXIES"))
+	t.Cleanup(func() {
+		if wasSet {
+			_ = os.Setenv("SERVER_TRUSTED_PROXIES", previous)
+		} else {
+			_ = os.Unsetenv("SERVER_TRUSTED_PROXIES")
+		}
+	})
+	tempDir := t.TempDir()
+	require.NoError(t, os.WriteFile(
+		filepath.Join(tempDir, "config.yaml"),
+		[]byte("server:\n  trusted_proxies:\n    - 192.0.2.10\n"),
+		0o600,
+	))
+	t.Setenv("DATA_DIR", tempDir)
+
+	cfg, err := Load()
+
+	require.NoError(t, err)
+	require.Equal(t, []string{"192.0.2.10"}, cfg.Server.TrustedProxies)
+}
+
+func TestLoadRejectsInvalidTrustedProxyEnvWithoutLeakingValue(t *testing.T) {
+	resetViperWithJWTSecret(t)
+	const raw = "invalid-sensitive-proxy-value"
+	t.Setenv("SERVER_TRUSTED_PROXIES", raw)
+
+	_, err := Load()
+
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "SERVER_TRUSTED_PROXIES")
+	require.NotContains(t, err.Error(), raw)
+}
+
 func TestLoadForBootstrapAllowsMissingJWTSecret(t *testing.T) {
 	viper.Reset()
 	t.Setenv("JWT_SECRET", "")

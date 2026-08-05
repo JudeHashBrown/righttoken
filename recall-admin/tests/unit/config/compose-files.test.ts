@@ -10,6 +10,23 @@ const readRepository = (path: string) =>
   readFileSync(resolve(repositoryRoot, path), "utf8");
 
 describe("recall Compose environments", () => {
+  it("requires an explicit safe trusted proxy configuration for the main service", () => {
+    const compose = readRepository("deploy/docker-compose.yml");
+    const envExample = readRepository("deploy/.env.example");
+    const configExample = readRepository("deploy/config.example.yaml");
+
+    expect(compose).toContain(
+      "SERVER_TRUSTED_PROXIES=${SERVER_TRUSTED_PROXIES:?SERVER_TRUSTED_PROXIES is required}"
+    );
+    expect(envExample).toMatch(/^SERVER_TRUSTED_PROXIES=192\.0\.2\.1$/m);
+    expect(envExample).toContain(
+      "replace this placeholder with the exact reverse-proxy or Docker gateway IP/CIDR"
+    );
+    expect(configExample).toContain(
+      "Production deployments must use the exact reverse-proxy or Docker gateway IP/CIDR"
+    );
+  });
+
   it("defines the complete local stack with a loopback-only database", () => {
     const compose = readRecall("compose.yaml");
 
