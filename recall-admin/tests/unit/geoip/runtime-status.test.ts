@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
+import { constants } from "node:fs";
+
+const { accessMock } = vi.hoisted(() => ({ accessMock: vi.fn() }));
 
 vi.mock("server-only", () => ({}));
+vi.mock("node:fs/promises", () => ({ access: accessMock }));
 
 import { getGeoIpRuntimeStatus } from "@/modules/geoip/runtime-status";
 
@@ -53,5 +57,17 @@ describe("GeoIP runtime status", () => {
         }
       )
     ).resolves.toEqual({ kind: "country", provinceCapable: false });
+  });
+
+  it("does not report an unreadable local file as ready with the default checker", async () => {
+    accessMock.mockRejectedValueOnce(
+      Object.assign(new Error("EACCES"), { code: "EACCES" })
+    );
+
+    await expect(
+      getGeoIpRuntimeStatus({ GEOIP_MMDB_PATH: "/geo/protected.mmdb" })
+    ).resolves.toEqual({ kind: "unavailable", provinceCapable: false });
+
+    expect(accessMock).toHaveBeenCalledWith("/geo/protected.mmdb", constants.R_OK);
   });
 });

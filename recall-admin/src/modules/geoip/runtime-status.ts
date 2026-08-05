@@ -1,4 +1,5 @@
 import "server-only";
+import { constants } from "node:fs";
 import { access } from "node:fs/promises";
 
 export type GeoIpRuntimeStatus = {
@@ -24,7 +25,7 @@ async function isReadable(path: string, readable: Readable): Promise<boolean> {
 
 export async function getGeoIpRuntimeStatus(
   environment: GeoIpRuntimeEnvironment | NodeJS.ProcessEnv = process.env,
-  readable: Readable = access
+  readable: Readable = (path) => access(path, constants.R_OK)
 ): Promise<GeoIpRuntimeStatus> {
   const mmdbPath = environment.GEOIP_MMDB_PATH?.trim();
   if (mmdbPath && (await isReadable(mmdbPath, readable))) {
