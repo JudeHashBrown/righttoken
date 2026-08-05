@@ -5,8 +5,11 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
+	"log/slog"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/Wei-Shaw/sub2api/internal/pkg/ip"
@@ -24,7 +27,11 @@ type recallVisitTracker interface {
 }
 
 type AnalyticsHandler struct {
-	tracker recallVisitTracker
+	tracker       recallVisitTracker
+	now           func() time.Time
+	warn          func(string)
+	warningMu     sync.Mutex
+	lastWarningAt time.Time
 }
 
 func NewAnalyticsHandler(tracker *service.RecallVisitService) *AnalyticsHandler {
@@ -32,7 +39,17 @@ func NewAnalyticsHandler(tracker *service.RecallVisitService) *AnalyticsHandler 
 }
 
 func newAnalyticsHandler(tracker recallVisitTracker) *AnalyticsHandler {
-	return &AnalyticsHandler{tracker: tracker}
+	return newAnalyticsHandlerWithDiagnostics(tracker, time.Now, func(kind string) {
+		slog.Warn("recall_visit_tracking_failed", "kind", kind)
+	})
+}
+
+func newAnalyticsHandlerWithDiagnostics(
+	tracker recallVisitTracker,
+	now func() time.Time,
+	warn func(string),
+) *AnalyticsHandler {
+	return &AnalyticsHandler{tracker: tracker, now: now, warn: warn}
 }
 
 func newVisitorID() (string, bool) {
@@ -111,11 +128,36 @@ func (handler *AnalyticsHandler) Visit(c *gin.Context) {
 	if handler.tracker != nil {
 		ctx, cancel := context.WithTimeout(c.Request.Context(), 2300*time.Millisecond)
 		defer cancel()
-		_ = handler.tracker.Track(ctx, service.RecallVisitEvent{
+		if err := handler.tracker.Track(ctx, service.RecallVisitEvent{
 			VisitorID: visitorID,
 			IP:        ip.GetTrustedClientIP(c),
 			Path:      path,
-		})
+		}); err != nil {
+			handler.warnTrackingFailure(classifyRecallVisitTrackingError(err))
+		}
 	}
 	c.Status(http.StatusNoContent)
+}
+
+func classifyRecallVisitTrackingError(err error) string {
+	switch {
+	case errors.Is(err, service.ErrRecallVisitUnavailable):
+		return "unconfigured"
+	case errors.Is(err, context.DeadlineExceeded), errors.Is(err, context.Canceled):
+		return "timeout"
+	default:
+		return "forward_failed"
+	}
+}
+
+func (handler *AnalyticsHandler) warnTrackingFailure(kind string) {
+	now := handler.now()
+	handler.warningMu.Lock()
+	if !handler.lastWarningAt.IsZero() && now.Sub(handler.lastWarningAt) < time.Minute {
+		handler.warningMu.Unlock()
+		return
+	}
+	handler.lastWarningAt = now
+	handler.warningMu.Unlock()
+	handler.warn(kind)
 }
