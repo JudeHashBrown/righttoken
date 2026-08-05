@@ -10,6 +10,7 @@ const pool = new pg.Pool({
 const e2ePort = process.env.RECALL_E2E_PORT ?? "3101";
 const routes = [
   { path: "/dashboard", heading: "用户运营概览" },
+  { path: "/visits", heading: "访问看板" },
   { path: "/tasks", heading: "任务中心" },
   { path: "/users", heading: "用户中心" },
   { path: "/mail", heading: "邮件中心" },

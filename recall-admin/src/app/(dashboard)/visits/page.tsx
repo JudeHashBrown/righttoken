@@ -288,7 +288,9 @@ export default async function VisitsPage({
         <div className={styles.panelHeader}>
           <div>
             <h2>注册用户运营归因国家</h2>
-            <p>按注册用户档案中的运营归因国家统计。</p>
+            <p>
+              运营归因可能来自邮箱域名、注册 IP、主站事件或人工确认。
+            </p>
           </div>
         </div>
         {userSummary.countries.length ? (
