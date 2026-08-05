@@ -957,7 +957,10 @@ func NormalizeRunMode(value string) string {
 // ParseTrustedProxies parses a comma-separated list of exact proxy addresses or
 // CIDRs. Trust-all prefixes are intentionally rejected.
 func ParseTrustedProxies(raw string) ([]string, error) {
-	entries := strings.Split(raw, ",")
+	return normalizeTrustedProxies(strings.Split(raw, ","))
+}
+
+func normalizeTrustedProxies(entries []string) ([]string, error) {
 	trustedProxies := make([]string, 0, len(entries))
 	for index, rawEntry := range entries {
 		entry := strings.TrimSpace(rawEntry)
@@ -970,14 +973,24 @@ func ParseTrustedProxies(raw string) ([]string, error) {
 			if err != nil {
 				return nil, fmt.Errorf("trusted proxy entry %d is not a valid CIDR", index+1)
 			}
-			if prefix.Bits() == 0 {
+			addr := prefix.Addr()
+			bits := prefix.Bits()
+			if addr.Is4In6() {
+				addr = addr.Unmap()
+				bits -= 96
+			}
+			if bits <= 0 {
 				return nil, fmt.Errorf("trusted proxy entry %d must not trust all addresses", index+1)
 			}
-		} else if _, err := netip.ParseAddr(entry); err != nil {
-			return nil, fmt.Errorf("trusted proxy entry %d is not a valid IP address", index+1)
+			trustedProxies = append(trustedProxies, netip.PrefixFrom(addr, bits).Masked().String())
+			continue
 		}
 
-		trustedProxies = append(trustedProxies, entry)
+		addr, err := netip.ParseAddr(entry)
+		if err != nil || addr.Zone() != "" {
+			return nil, fmt.Errorf("trusted proxy entry %d is not a valid IP address", index+1)
+		}
+		trustedProxies = append(trustedProxies, addr.Unmap().String())
 	}
 	return trustedProxies, nil
 }
@@ -1025,17 +1038,22 @@ func load(allowMissingJWTSecret bool) (*Config, error) {
 		}
 		// 配置文件不存在时使用默认值
 	}
+	var cfg Config
+	if err := viper.Unmarshal(&cfg); err != nil {
+		return nil, fmt.Errorf("unmarshal config error: %w", err)
+	}
 	if rawTrustedProxies, present := os.LookupEnv("SERVER_TRUSTED_PROXIES"); present {
 		trustedProxies, err := ParseTrustedProxies(rawTrustedProxies)
 		if err != nil {
 			return nil, fmt.Errorf("parse SERVER_TRUSTED_PROXIES: %w", err)
 		}
-		viper.Set("server.trusted_proxies", trustedProxies)
-	}
-
-	var cfg Config
-	if err := viper.Unmarshal(&cfg); err != nil {
-		return nil, fmt.Errorf("unmarshal config error: %w", err)
+		cfg.Server.TrustedProxies = trustedProxies
+	} else if len(cfg.Server.TrustedProxies) > 0 {
+		trustedProxies, err := normalizeTrustedProxies(cfg.Server.TrustedProxies)
+		if err != nil {
+			return nil, fmt.Errorf("parse server.trusted_proxies: %w", err)
+		}
+		cfg.Server.TrustedProxies = trustedProxies
 	}
 
 	cfg.RunMode = NormalizeRunMode(cfg.RunMode)

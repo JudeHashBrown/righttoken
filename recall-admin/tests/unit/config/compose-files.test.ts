@@ -11,13 +11,19 @@ const readRepository = (path: string) =>
 
 describe("recall Compose environments", () => {
   it("requires an explicit safe trusted proxy configuration for the main service", () => {
-    const compose = readRepository("deploy/docker-compose.yml");
+    const composeFiles = [
+      "deploy/docker-compose.yml",
+      "deploy/docker-compose.local.yml",
+      "deploy/docker-compose.standalone.yml"
+    ];
     const envExample = readRepository("deploy/.env.example");
     const configExample = readRepository("deploy/config.example.yaml");
 
-    expect(compose).toContain(
-      "SERVER_TRUSTED_PROXIES=${SERVER_TRUSTED_PROXIES:?SERVER_TRUSTED_PROXIES is required}"
-    );
+    for (const composeFile of composeFiles) {
+      expect(readRepository(composeFile)).toContain(
+        "SERVER_TRUSTED_PROXIES=${SERVER_TRUSTED_PROXIES:?SERVER_TRUSTED_PROXIES is required}"
+      );
+    }
     expect(envExample).toMatch(/^SERVER_TRUSTED_PROXIES=192\.0\.2\.1$/m);
     expect(envExample).toContain(
       "replace this placeholder with the exact reverse-proxy or Docker gateway IP/CIDR"

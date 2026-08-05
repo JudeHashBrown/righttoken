@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -18,10 +19,16 @@ func resetViperWithJWTSecret(t *testing.T) {
 }
 
 func TestParseTrustedProxies(t *testing.T) {
-	got, err := ParseTrustedProxies("172.18.0.1, 10.20.0.0/16")
+	got, err := ParseTrustedProxies("172.18.0.1, 10.20.7.9/16, ::ffff:192.0.2.1, ::ffff:198.51.100.129/120, 2001:0db8::1234/64")
 
 	require.NoError(t, err)
-	require.Equal(t, []string{"172.18.0.1", "10.20.0.0/16"}, got)
+	require.Equal(t, []string{
+		"172.18.0.1",
+		"10.20.0.0/16",
+		"192.0.2.1",
+		"198.51.100.0/24",
+		"2001:db8::/64",
+	}, got)
 }
 
 func TestParseTrustedProxiesRejectsUnsafeOrInvalidValues(t *testing.T) {
@@ -29,6 +36,9 @@ func TestParseTrustedProxiesRejectsUnsafeOrInvalidValues(t *testing.T) {
 		"bad-value",
 		"0.0.0.0/0",
 		"::/0",
+		"::ffff:192.0.2.1/96",
+		"::ffff:192.0.2.1/95",
+		"fe80::1%eth0",
 		"",
 		"172.18.0.1,",
 		"172.18.0.1, ,10.20.0.0/16",
@@ -38,6 +48,110 @@ func TestParseTrustedProxiesRejectsUnsafeOrInvalidValues(t *testing.T) {
 			require.Error(t, err)
 		})
 	}
+}
+
+func TestLoadCanonicalizesTrustedProxiesFromYAML(t *testing.T) {
+	resetViperWithJWTSecret(t)
+	require.NoError(t, os.Unsetenv("SERVER_TRUSTED_PROXIES"))
+	tempDir := t.TempDir()
+	require.NoError(t, os.WriteFile(
+		filepath.Join(tempDir, "config.yaml"),
+		[]byte("server:\n  trusted_proxies:\n    - 192.0.2.129/24\n    - ::ffff:198.51.100.10\n"),
+		0o600,
+	))
+	t.Setenv("DATA_DIR", tempDir)
+
+	cfg, err := Load()
+
+	require.NoError(t, err)
+	require.Equal(t, []string{"192.0.2.0/24", "198.51.100.10"}, cfg.Server.TrustedProxies)
+}
+
+func TestLoadAllowsEmptyTrustedProxiesFromYAML(t *testing.T) {
+	resetViperWithJWTSecret(t)
+	require.NoError(t, os.Unsetenv("SERVER_TRUSTED_PROXIES"))
+	tempDir := t.TempDir()
+	require.NoError(t, os.WriteFile(
+		filepath.Join(tempDir, "config.yaml"),
+		[]byte("server:\n  trusted_proxies: []\n"),
+		0o600,
+	))
+	t.Setenv("DATA_DIR", tempDir)
+
+	cfg, err := Load()
+
+	require.NoError(t, err)
+	require.Empty(t, cfg.Server.TrustedProxies)
+}
+
+func TestLoadRejectsUnsafeOrInvalidTrustedProxiesFromYAMLWithoutLeakingValue(t *testing.T) {
+	for _, raw := range []string{
+		"",
+		"invalid-sensitive-yaml-proxy",
+		"0.0.0.0/0",
+		"::/0",
+		"::ffff:192.0.2.1/96",
+		"fe80::1%eth0",
+	} {
+		t.Run(raw, func(t *testing.T) {
+			resetViperWithJWTSecret(t)
+			require.NoError(t, os.Unsetenv("SERVER_TRUSTED_PROXIES"))
+			tempDir := t.TempDir()
+			quotedRaw := fmt.Sprintf("%q", raw)
+			require.NoError(t, os.WriteFile(
+				filepath.Join(tempDir, "config.yaml"),
+				[]byte("server:\n  trusted_proxies:\n    - "+quotedRaw+"\n"),
+				0o600,
+			))
+			t.Setenv("DATA_DIR", tempDir)
+
+			_, err := Load()
+
+			require.Error(t, err)
+			require.Contains(t, err.Error(), "server.trusted_proxies")
+			if raw != "" {
+				require.NotContains(t, err.Error(), raw)
+			}
+		})
+	}
+}
+
+func TestLoadDoesNotRetainTrustedProxyEnvOverride(t *testing.T) {
+	resetViperWithJWTSecret(t)
+	tempDir := t.TempDir()
+	require.NoError(t, os.WriteFile(
+		filepath.Join(tempDir, "config.yaml"),
+		[]byte("server:\n  trusted_proxies:\n    - 198.51.100.129/24\n"),
+		0o600,
+	))
+	t.Setenv("DATA_DIR", tempDir)
+	require.NoError(t, os.Setenv("SERVER_TRUSTED_PROXIES", "192.0.2.10"))
+
+	withEnv, err := Load()
+	require.NoError(t, err)
+	require.Equal(t, []string{"192.0.2.10"}, withEnv.Server.TrustedProxies)
+
+	require.NoError(t, os.Unsetenv("SERVER_TRUSTED_PROXIES"))
+	withoutEnv, err := Load()
+
+	require.NoError(t, err)
+	require.Equal(t, []string{"198.51.100.0/24"}, withoutEnv.Server.TrustedProxies)
+}
+
+func TestLoadDoesNotRetainTrustedProxyEnvOverrideOverDefault(t *testing.T) {
+	resetViperWithJWTSecret(t)
+	t.Setenv("DATA_DIR", t.TempDir())
+	require.NoError(t, os.Setenv("SERVER_TRUSTED_PROXIES", "192.0.2.10"))
+
+	withEnv, err := Load()
+	require.NoError(t, err)
+	require.Equal(t, []string{"192.0.2.10"}, withEnv.Server.TrustedProxies)
+
+	require.NoError(t, os.Unsetenv("SERVER_TRUSTED_PROXIES"))
+	withoutEnv, err := Load()
+
+	require.NoError(t, err)
+	require.Empty(t, withoutEnv.Server.TrustedProxies)
 }
 
 func TestLoadReadsTrustedProxiesFromEnv(t *testing.T) {

@@ -41,20 +41,23 @@ func ProvideRouter(
 
 	r := gin.New()
 	r.Use(middleware2.Recovery())
-	if len(cfg.Server.TrustedProxies) > 0 {
-		if err := r.SetTrustedProxies(cfg.Server.TrustedProxies); err != nil {
-			log.Printf("Failed to set trusted proxies: %v", err)
-		}
-	} else {
-		if err := r.SetTrustedProxies(nil); err != nil {
-			log.Printf("Failed to disable trusted proxies: %v", err)
-		}
-		if cfg.Server.Mode == "release" {
-			log.Printf("Warning: server.trusted_proxies is empty in release mode; client IP trust chain is disabled")
-		}
+	configureTrustedProxies(r, cfg.Server.TrustedProxies)
+	if len(cfg.Server.TrustedProxies) == 0 && cfg.Server.Mode == "release" {
+		log.Printf("Warning: server.trusted_proxies is empty in release mode; client IP trust chain is disabled")
 	}
 
 	return SetupRouter(r, handlers, jwtAuth, adminAuth, apiKeyAuth, apiKeyService, subscriptionService, opsService, settingService, cfg, redisClient)
+}
+
+func configureTrustedProxies(r *gin.Engine, trustedProxies []string) {
+	if err := r.SetTrustedProxies(trustedProxies); err == nil {
+		return
+	}
+
+	log.Printf("Warning: trusted proxy configuration is invalid; proxy trust disabled")
+	if err := r.SetTrustedProxies(nil); err != nil {
+		log.Printf("Warning: failed to disable proxy trust")
+	}
 }
 
 // ProvideHTTPServer 提供 HTTP 服务器
