@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import workspace from "@/components/workspaces/workspace.module.css";
 import { requireAdministrator } from "@/modules/admin/page-access";
+import { getGeoIpRuntimeStatus } from "@/modules/geoip/runtime-status";
+import { getUserCountrySummary } from "@/modules/users/country-summary";
 import {
   getVisitDashboard,
   type VisitRangeDays
@@ -47,7 +49,11 @@ export default async function VisitsPage({
 }): Promise<React.JSX.Element> {
   await requireAdministrator("/visits");
   const rangeDays = parseRange((await searchParams).days);
-  const dashboard = await getVisitDashboard(rangeDays);
+  const [dashboard, userSummary, geoIpStatus] = await Promise.all([
+    getVisitDashboard(rangeDays),
+    getUserCountrySummary(),
+    getGeoIpRuntimeStatus()
+  ]);
   const maxDaily = Math.max(
     1,
     ...dashboard.daily.flatMap((row) => [row.uv, row.pv])
@@ -59,6 +65,10 @@ export default async function VisitsPage({
   const hasUnknown = dashboard.countries.some(
     (row) => row.countryCode === "ZZ"
   );
+  const unknownCopy =
+    geoIpStatus.kind === "unavailable"
+      ? "GeoIP 数据源不可用，当前未知访问无法解析；请检查部署配置和数据文件。"
+      : "GeoIP 数据源已启用；剩余未知访问通常来自内网、保留地址或查询未命中。";
 
   return (
     <main className={workspace.page}>
@@ -188,8 +198,8 @@ export default async function VisitsPage({
         <section className={styles.panel}>
           <div className={styles.panelHeader}>
             <div>
-              <h2>全球国家或地区</h2>
-              <p>按页面访问量从高到低排列。</p>
+              <h2>访问 IP 国家或地区</h2>
+              <p>该表按页面访问时的 IP 统计，不读取用户档案地区。</p>
             </div>
           </div>
           {dashboard.countries.length ? (
@@ -227,8 +237,8 @@ export default async function VisitsPage({
             </div>
           )}
           {hasUnknown ? (
-            <p className={styles.dataNote}>
-              “未知”表示 GeoIP 数据库未配置、无法解析或访问来自内网地址。
+            <p className={`${styles.dataNote} ${styles.dataNoteWarning}`}>
+              {unknownCopy}
             </p>
           ) : null}
         </section>
@@ -273,6 +283,45 @@ export default async function VisitsPage({
           )}
         </section>
       </div>
+
+      <section className={`${styles.panel} ${styles.userCountryPanel}`}>
+        <div className={styles.panelHeader}>
+          <div>
+            <h2>注册用户运营归因国家</h2>
+            <p>按注册用户档案中的运营归因国家统计。</p>
+          </div>
+        </div>
+        {userSummary.countries.length ? (
+          <div className={styles.tableScroll}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>国家或地区</th>
+                  <th>注册用户数</th>
+                  <th>用户占比</th>
+                </tr>
+              </thead>
+              <tbody>
+                {userSummary.countries.map((row) => (
+                  <tr key={row.countryCode}>
+                    <td>
+                      <strong>{row.name}</strong>
+                      <small>{row.countryCode}</small>
+                    </td>
+                    <td>{numberFormatter.format(row.users)}</td>
+                    <td>{percentage(row.users, userSummary.total)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className={workspace.empty}>
+            <strong>暂无注册用户归因数据</strong>
+            <p>用户档案同步归因国家后会展示国家分布。</p>
+          </div>
+        )}
+      </section>
     </main>
   );
 }

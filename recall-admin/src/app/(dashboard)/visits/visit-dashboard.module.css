@@ -270,6 +270,16 @@
   line-height: 1.5;
 }
 
+.dataNoteWarning {
+  border-top-color: #f1ddad;
+  background: #fff8e8;
+  color: #80631d;
+}
+
+.userCountryPanel {
+  margin-top: 16px;
+}
+
 @media (max-width: 1120px) {
   .metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
