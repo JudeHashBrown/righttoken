@@ -314,6 +314,9 @@ model UserProfile {
   locationAssignedBy  Member?                  @relation("UserLocationAssigner", fields: [locationAssignedById], references: [id], onDelete: SetNull)
 
   @@index([currentSegment, updatedAt])
+  @@index([currentSegment, sourceDeletedAt, registeredAt], map: "UserProfile_recent_unpaid_idx")
+  @@index([currentSegment, anomalyActive, sourceDeletedAt, anomalyLastOccurredAt], map: "UserProfile_recent_anomaly_occurred_idx")
+  @@index([currentSegment, anomalyActive, sourceDeletedAt, anomalyChangedAt], map: "UserProfile_recent_anomaly_changed_idx")
   @@index([countryCode, region])
   @@index([ipCountryCode, ipRegion])
   @@index([locationRuleId])

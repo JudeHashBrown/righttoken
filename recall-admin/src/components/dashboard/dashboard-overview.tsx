@@ -9,25 +9,23 @@ import type { DashboardSnapshot } from "@/modules/reports/dashboard-query";
 import { ChannelHealth } from "./channel-health";
 import { DashboardFocusList } from "./dashboard-focus-list";
 import { MetricCard } from "./metric-card";
-import { PriorityTaskTable } from "./priority-task-table";
 import { SegmentDistribution } from "./segment-distribution";
 import { TeamWorkload } from "./team-workload";
 import styles from "./dashboard.module.css";
 
 type DashboardOverviewProps = {
   isAdministrator: boolean;
-  now: Date;
   snapshot: DashboardSnapshot;
 };
 
 export function DashboardOverview({
   isAdministrator,
-  now,
   snapshot
 }: DashboardOverviewProps): React.JSX.Element {
   const { metrics } = snapshot;
   return (
     <main className={styles.dashboard}>
+      <h1 className={styles.srOnly}>运营仪表盘</h1>
       <section className={styles.metrics} aria-label="运营指标">
         <MetricCard
           label="近72小时注册未支付"
@@ -84,15 +82,16 @@ export function DashboardOverview({
         />
       </section>
 
-      {snapshot.focus ? (
+      <div className={styles.primaryGrid}>
         <DashboardFocusList
           focus={snapshot.focus}
+          total={
+            snapshot.focus === "recent-unpaid"
+              ? metrics.recentUnpaid
+              : metrics.recentAnomalies
+          }
           users={snapshot.focusUsers}
         />
-      ) : null}
-
-      <div className={styles.primaryGrid}>
-        <PriorityTaskTable tasks={snapshot.priorityTasks} now={now} />
         <SegmentDistribution rows={snapshot.segmentDistribution} />
       </div>
 

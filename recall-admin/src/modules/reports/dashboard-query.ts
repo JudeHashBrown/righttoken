@@ -1,11 +1,10 @@
 import type {
   MemberRole,
+  Prisma,
   SegmentCode,
-  TaskPriority,
   TaskStatus
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
-import { getProductionRightTokenUserFactsByIds } from "@/modules/users/righttoken-facts";
 import {
   configuredMailboxWhere
 } from "@/modules/mail/mailbox-availability";
@@ -16,7 +15,9 @@ import {
   dashboardTaskWindows
 } from "@/modules/reports/dashboard-task-windows";
 import {
+  DASHBOARD_FOCUS_PAGE_SIZE,
   effectiveAnomalyAt,
+  limitDashboardFocusUsers,
   recentAnomalyWhere,
   recentUnpaidWhere,
   type DashboardFocus
@@ -32,26 +33,6 @@ const OPEN_TASK_STATUSES: TaskStatus[] = [
 
 const SEGMENTS: SegmentCode[] = ["A", "B", "C", "D", "E", "F", "G"];
 
-const PRIORITY_ORDER: Record<TaskPriority, number> = {
-  URGENT: 0,
-  IMPORTANT: 1,
-  NORMAL: 2
-};
-
-export type DashboardTask = {
-  id: string;
-  userId: string;
-  externalUserId: string;
-  userLabel: string;
-  segment: SegmentCode;
-  title: string;
-  priority: TaskPriority;
-  status: TaskStatus;
-  dueAt: Date;
-  assigneeName: string | null;
-  region: string | null;
-};
-
 export type DashboardFocusUser = {
   id: string;
   externalUserId: string;
@@ -66,18 +47,14 @@ export type DashboardFocusUser = {
 
 export type DashboardSnapshot = {
   metrics: {
-    dueToday: number;
-    overdue: number;
-    urgent: number;
     recentUnpaid: number;
     recentAnomalies: number;
     awaitingReply: number;
     unassignedUsers: number;
     sevenDayRecallRate: number | null;
   };
-  focus: DashboardFocus | null;
+  focus: DashboardFocus;
   focusUsers: DashboardFocusUser[];
-  priorityTasks: DashboardTask[];
   segmentDistribution: Array<{
     segment: SegmentCode;
     count: number;
@@ -99,6 +76,27 @@ type DashboardMember = {
   id: string;
   role: MemberRole;
 };
+
+export type DashboardNavigationMetrics = {
+  dueToday: number;
+  urgent: number;
+  awaitingReply: number;
+};
+
+const focusUserSelect = {
+  id: true,
+  externalUserId: true,
+  displayName: true,
+  email: true,
+  region: true,
+  countryCode: true,
+  registeredAt: true,
+  anomalyErrorMessage: true,
+  anomalyErrorType: true,
+  anomalyChangedAt: true,
+  anomalyLastOccurredAt: true,
+  owner: { select: { displayName: true } }
+} satisfies Prisma.UserProfileSelect;
 
 function shanghaiDayRange(now: Date): { start: Date; end: Date } {
   const offset = 8 * 60 * 60 * 1000;
@@ -132,37 +130,19 @@ function userScope(member: DashboardMember) {
     : {};
 }
 
-export async function getDashboardSnapshot(
+export async function getDashboardNavigationMetrics(
   member: DashboardMember,
-  now = new Date(),
-  focus: DashboardFocus | null = null
-): Promise<DashboardSnapshot> {
+  now = new Date()
+): Promise<DashboardNavigationMetrics> {
   const { start, end } = shanghaiDayRange(now);
   const { dueTodayCreatedAfter, urgentCreatedAfter } =
     dashboardTaskWindows(now);
-  const sevenDaysAgo = new Date(
-    now.getTime() - 7 * 24 * 60 * 60 * 1000
-  );
-  const scopedTasks = taskScope(member);
   const openWhere = {
-    ...scopedTasks,
+    ...taskScope(member),
     status: { in: OPEN_TASK_STATUSES }
   };
 
-  const [
-    dueToday,
-    overdue,
-    urgent,
-    awaitingReply,
-    sevenDayTasks,
-    sevenDayCompleted,
-    taskRows,
-    segmentRows,
-    workloadRows,
-    unassignedUsers,
-    recentUnpaid,
-    recentAnomalies
-  ] = await Promise.all([
+  const [dueToday, urgent, awaitingReply] = await Promise.all([
     prisma.recallTask.count({
       where: {
         ...openWhere,
@@ -173,17 +153,45 @@ export async function getDashboardSnapshot(
     prisma.recallTask.count({
       where: {
         ...openWhere,
-        createdAt: { gte: dueTodayCreatedAfter },
-        dueAt: { gte: start, lt: now }
+        createdAt: { gte: urgentCreatedAfter },
+        priority: "URGENT"
       }
     }),
     prisma.recallTask.count({
       where: {
         ...openWhere,
-        createdAt: { gte: urgentCreatedAfter },
-        priority: "URGENT"
+        origin: "EMAIL_REPLY"
       }
-    }),
+    })
+  ]);
+
+  return { dueToday, urgent, awaitingReply };
+}
+
+export async function getDashboardSnapshot(
+  member: DashboardMember,
+  now = new Date(),
+  focus: DashboardFocus = "recent-anomaly"
+): Promise<DashboardSnapshot> {
+  const sevenDaysAgo = new Date(
+    now.getTime() - 7 * 24 * 60 * 60 * 1000
+  );
+  const scopedTasks = taskScope(member);
+  const openWhere = {
+    ...scopedTasks,
+    status: { in: OPEN_TASK_STATUSES }
+  };
+
+  const [
+    awaitingReply,
+    sevenDayTasks,
+    sevenDayCompleted,
+    segmentRows,
+    workloadRows,
+    unassignedUsers,
+    recentUnpaid,
+    recentAnomalies
+  ] = await Promise.all([
     prisma.recallTask.count({
       where: {
         ...openWhere,
@@ -204,25 +212,6 @@ export async function getDashboardSnapshot(
         status: "COMPLETED",
         completedAt: { gte: sevenDaysAgo }
       }
-    }),
-    prisma.recallTask.findMany({
-      where: openWhere,
-      include: {
-        user: {
-          select: {
-            externalUserId: true,
-            displayName: true,
-            currentSegment: true,
-            region: true,
-            countryCode: true
-          }
-        },
-        assignee: {
-          select: { displayName: true }
-        }
-      },
-      orderBy: { dueAt: "asc" },
-      take: 40
     }),
     prisma.userProfile.groupBy({
       by: ["currentSegment"],
@@ -253,35 +242,49 @@ export async function getDashboardSnapshot(
     })
   ]);
 
-  const focusRows = focus
-    ? await prisma.userProfile.findMany({
-        where:
-          focus === "recent-unpaid"
-            ? recentUnpaidWhere(member, now)
-            : recentAnomalyWhere(member, now),
-        select: {
-          id: true,
-          externalUserId: true,
-          displayName: true,
-          email: true,
-          region: true,
-          countryCode: true,
-          registeredAt: true,
-          anomalyErrorMessage: true,
-          anomalyErrorType: true,
-          anomalyChangedAt: true,
-          anomalyLastOccurredAt: true,
-          owner: { select: { displayName: true } }
-        },
-        orderBy:
-          focus === "recent-unpaid"
-            ? [{ registeredAt: "desc" }, { id: "desc" }]
-            : { id: "desc" }
-      })
-    : [];
+  const focusWhere =
+    focus === "recent-unpaid"
+      ? recentUnpaidWhere(member, now)
+      : recentAnomalyWhere(member, now);
+  const focusRows =
+    focus === "recent-unpaid"
+      ? await prisma.userProfile.findMany({
+          where: focusWhere,
+          select: focusUserSelect,
+          orderBy: [{ registeredAt: "desc" }, { id: "desc" }],
+          take: DASHBOARD_FOCUS_PAGE_SIZE
+        })
+      : Array.from(
+          new Map(
+            (
+              await Promise.all([
+                prisma.userProfile.findMany({
+                  where: focusWhere,
+                  select: focusUserSelect,
+                  orderBy: [
+                    { anomalyLastOccurredAt: "desc" },
+                    { id: "desc" }
+                  ],
+                  take: DASHBOARD_FOCUS_PAGE_SIZE
+                }),
+                prisma.userProfile.findMany({
+                  where: focusWhere,
+                  select: focusUserSelect,
+                  orderBy: [
+                    { anomalyChangedAt: "desc" },
+                    { id: "desc" }
+                  ],
+                  take: DASHBOARD_FOCUS_PAGE_SIZE
+                })
+              ])
+            )
+              .flat()
+              .map((row) => [row.id, row])
+          ).values()
+        );
 
-  const focusUsers: DashboardFocusUser[] = focusRows
-    .map((row) => ({
+  const focusUsers = limitDashboardFocusUsers(
+    focusRows.map((row) => ({
       id: row.id,
       externalUserId: row.externalUserId,
       displayName: row.displayName,
@@ -292,51 +295,9 @@ export async function getDashboardSnapshot(
       anomalyReason:
         row.anomalyErrorMessage ?? row.anomalyErrorType ?? null,
       anomalyAt: effectiveAnomalyAt(row)
-    }))
-    .sort((left, right) => {
-      if (focus === "recent-unpaid") {
-        return (
-          right.registeredAt.getTime() - left.registeredAt.getTime() ||
-          right.id.localeCompare(left.id)
-        );
-      }
-      return (
-        (right.anomalyAt?.getTime() ?? 0) -
-          (left.anomalyAt?.getTime() ?? 0) ||
-        right.id.localeCompare(left.id)
-      );
-    });
-
-  const liveFacts = await getProductionRightTokenUserFactsByIds(
-    taskRows.map((task) => task.user.externalUserId)
+    })),
+    focus
   );
-  const priorityTasks = taskRows
-    .sort((left, right) => {
-      const priorityDelta =
-        PRIORITY_ORDER[left.priority] - PRIORITY_ORDER[right.priority];
-      return priorityDelta || left.dueAt.getTime() - right.dueAt.getTime();
-    })
-    .slice(0, 8)
-    .map((task) => {
-      const facts = liveFacts.get(task.user.externalUserId);
-      return {
-        id: task.id,
-        userId: task.userId,
-        externalUserId: task.user.externalUserId,
-        userLabel:
-          facts?.displayName ??
-          task.user.displayName ??
-          `用户 ${task.user.externalUserId.slice(-6)}`,
-        segment: task.user.currentSegment,
-        title: task.title,
-        priority: task.priority,
-        status: task.status,
-        dueAt: task.dueAt,
-        assigneeName: task.assignee?.displayName ?? null,
-        region:
-          task.user.region ?? task.user.countryCode ?? null
-      };
-    });
 
   const segmentCounts = new Map(
     segmentRows.map((row) => [
@@ -387,9 +348,6 @@ export async function getDashboardSnapshot(
 
   return {
     metrics: {
-      dueToday,
-      overdue,
-      urgent,
       recentUnpaid,
       recentAnomalies,
       awaitingReply,
@@ -403,7 +361,6 @@ export async function getDashboardSnapshot(
     },
     focus,
     focusUsers,
-    priorityTasks,
     segmentDistribution: SEGMENTS.map((segment) => ({
       segment,
       count: segmentCounts.get(segment) ?? 0

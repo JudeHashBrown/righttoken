@@ -1,7 +1,7 @@
 import { DashboardOverview } from "@/components/dashboard/dashboard-overview";
 import { requireWorkspaceMember } from "@/modules/admin/page-access";
 import { getDashboardSnapshot } from "@/modules/reports/dashboard-query";
-import { parseDashboardFocus } from "@/modules/reports/dashboard-recent-users";
+import { dashboardFocusOrDefault } from "@/modules/reports/dashboard-recent-users";
 
 type SearchParams = Promise<
   Record<string, string | string[] | undefined>
@@ -17,7 +17,7 @@ export default async function DashboardPage({
   const requestedFocus = Array.isArray(params.focus)
     ? params.focus[0]
     : params.focus;
-  const focus = parseDashboardFocus(requestedFocus);
+  const focus = dashboardFocusOrDefault(requestedFocus);
 
   const now = new Date();
   const snapshot = await getDashboardSnapshot(member, now, focus);
@@ -25,7 +25,6 @@ export default async function DashboardPage({
   return (
     <DashboardOverview
       isAdministrator={member.role !== "OPERATOR"}
-      now={now}
       snapshot={snapshot}
     />
   );

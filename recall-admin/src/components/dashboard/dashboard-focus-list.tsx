@@ -4,6 +4,7 @@ import styles from "./dashboard.module.css";
 
 type DashboardFocusListProps = {
   focus: NonNullable<DashboardSnapshot["focus"]>;
+  total: number;
   users: DashboardSnapshot["focusUsers"];
 };
 
@@ -21,6 +22,7 @@ function formatDate(value: Date | null): string {
 
 export function DashboardFocusList({
   focus,
+  total,
   users
 }: DashboardFocusListProps): React.JSX.Element {
   const isUnpaid = focus === "recent-unpaid";
@@ -37,7 +39,12 @@ export function DashboardFocusList({
       <header className={styles.panelHeader}>
         <div>
           <h2 id="focus-list-heading">{heading}</h2>
-          <p>共 {users.length.toLocaleString("zh-CN")} 位符合条件的用户</p>
+          <p>
+            共 {total.toLocaleString("zh-CN")} 位符合条件的用户
+            {total > users.length
+              ? `，显示最近 ${users.length.toLocaleString("zh-CN")} 位`
+              : ""}
+          </p>
         </div>
       </header>
 

@@ -3,7 +3,7 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { getServerEnv } from "@/lib/env/runtime";
 import { requireWorkspaceMember } from "@/modules/admin/page-access";
 import { resolveRightTokenDashboardUrl } from "@/modules/integrations/righttoken/dashboard-url";
-import { getDashboardSnapshot } from "@/modules/reports/dashboard-query";
+import { getDashboardNavigationMetrics } from "@/modules/reports/dashboard-query";
 import styles from "./shell.module.css";
 
 export default async function DashboardLayout({
@@ -13,7 +13,7 @@ export default async function DashboardLayout({
 }>): Promise<React.JSX.Element> {
   const member = await requireWorkspaceMember("/dashboard");
 
-  const snapshot = await getDashboardSnapshot(member);
+  const navigationMetrics = await getDashboardNavigationMetrics(member);
   const mainSiteUrl = resolveRightTokenDashboardUrl(
     getServerEnv()
   );
@@ -22,13 +22,13 @@ export default async function DashboardLayout({
     <div className={styles.shell}>
       <AppSidebar
         member={member}
-        unreadTasks={snapshot.metrics.dueToday}
-        unreadMail={snapshot.metrics.awaitingReply}
+        unreadTasks={navigationMetrics.dueToday}
+        unreadMail={navigationMetrics.awaitingReply}
       />
       <div className={styles.content}>
         <AppHeader
           memberName={member.displayName}
-          urgentCount={snapshot.metrics.urgent}
+          urgentCount={navigationMetrics.urgent}
           mainSiteUrl={mainSiteUrl}
         />
         {children}

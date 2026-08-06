@@ -8,30 +8,24 @@ import type { DashboardSnapshot } from "@/modules/reports/dashboard-query";
 
 const snapshot: DashboardSnapshot = {
   metrics: {
-    dueToday: 28,
-    overdue: 6,
-    urgent: 3,
     recentUnpaid: 9,
     recentAnomalies: 4,
     awaitingReply: 17,
     unassignedUsers: 12,
     sevenDayRecallRate: 18.6
   },
-  focus: null,
-  focusUsers: [],
-  priorityTasks: [
+  focus: "recent-anomaly",
+  focusUsers: [
     {
-      id: "task-1",
-      userId: "user-1",
+      id: "user-1",
       externalUserId: "RT-72841",
-      userLabel: "赵女士",
-      segment: "F",
-      title: "服务异常需要介入",
-      priority: "URGENT",
-      status: "TODO",
-      dueAt: new Date("2026-07-23T06:30:00.000Z"),
-      assigneeName: "林小雨",
-      region: "新加坡"
+      displayName: "赵女士",
+      email: "zhao@example.com",
+      region: "新加坡",
+      ownerName: "林小雨",
+      registeredAt: new Date("2026-07-23T06:30:00.000Z"),
+      anomalyReason: "服务调用失败",
+      anomalyAt: new Date("2026-07-23T06:30:00.000Z")
     }
   ],
   segmentDistribution: [
@@ -83,7 +77,6 @@ describe("DashboardOverview", () => {
     render(
       <DashboardOverview
         isAdministrator
-        now={new Date("2026-07-23T02:00:00.000Z")}
         snapshot={snapshot}
       />
     );
@@ -96,7 +89,11 @@ describe("DashboardOverview", () => {
     expect(screen.getByText("用户待回复")).toBeInTheDocument();
     expect(screen.getByText("待分配用户")).toBeInTheDocument();
     expect(screen.getByText("7 日召回转化")).toBeInTheDocument();
-    expect(screen.getByText("服务异常需要介入")).toBeInTheDocument();
+    expect(screen.queryByText("优先任务")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "近72小时服务异常用户" })
+    ).toBeInTheDocument();
+    expect(screen.getByText("服务调用失败")).toBeInTheDocument();
     expect(screen.getByText("A–G 用户分组")).toBeInTheDocument();
     expect(screen.getByText("联系渠道")).toBeInTheDocument();
     expect(screen.getByText("团队工作量")).toBeInTheDocument();
@@ -133,7 +130,6 @@ describe("DashboardOverview", () => {
     render(
       <DashboardOverview
         isAdministrator
-        now={new Date("2026-08-06T12:00:00.000Z")}
         snapshot={{
           ...snapshot,
           focus: "recent-unpaid",
@@ -168,7 +164,6 @@ describe("DashboardOverview", () => {
     render(
       <DashboardOverview
         isAdministrator
-        now={new Date("2026-08-06T12:00:00.000Z")}
         snapshot={{
           ...snapshot,
           focus: "recent-anomaly",
@@ -201,31 +196,22 @@ describe("DashboardOverview", () => {
     render(
       <DashboardOverview
         isAdministrator
-        now={new Date("2026-08-06T12:00:00.000Z")}
-        snapshot={{ ...snapshot, focus: "recent-unpaid", focusUsers: [] }}
+        snapshot={{
+          ...snapshot,
+          metrics: { ...snapshot.metrics, recentUnpaid: 0 },
+          focus: "recent-unpaid",
+          focusUsers: []
+        }}
       />
     );
 
     expect(screen.getByText("近72小时内没有符合条件的用户")).toBeInTheDocument();
   });
 
-  it("shows a useful empty task state", () => {
-    render(
-      <DashboardOverview
-        isAdministrator
-        now={new Date("2026-07-23T02:00:00.000Z")}
-        snapshot={{ ...snapshot, priorityTasks: [] }}
-      />
-    );
-
-    expect(screen.getByText("当前没有需要优先处理的任务")).toBeInTheDocument();
-  });
-
   it("does not show the global unassigned queue to operators", () => {
     render(
       <DashboardOverview
         isAdministrator={false}
-        now={new Date("2026-07-23T02:00:00.000Z")}
         snapshot={snapshot}
       />
     );

@@ -4,6 +4,16 @@
   padding: 28px;
 }
 
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .metrics {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -12,7 +22,6 @@
 }
 
 .focusPanel {
-  margin-bottom: 16px;
   scroll-margin-top: 20px;
 }
 
@@ -61,7 +70,7 @@
   display: block;
   margin-top: 3px;
   color: #8a92a4;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .focusEmpty {
@@ -206,154 +215,9 @@
   font-size: 12px;
 }
 
-.panelHeader a {
-  color: #5664d5;
-  font-size: 13px;
-  font-weight: 650;
-  text-decoration: none;
-}
-
-.panelHeader a:hover {
-  text-decoration: underline;
-}
-
 .tableScroll {
   overflow-x: auto;
 }
-
-.taskTable {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-
-.taskTable th,
-.taskTable td {
-  border-bottom: 1px solid #eef0f5;
-  padding: 13px 16px;
-  text-align: left;
-  vertical-align: middle;
-}
-
-.taskTable th {
-  background: #fafbfc;
-  color: #798195;
-  font-size: 12px;
-  font-weight: 630;
-}
-
-.taskTable th:first-child {
-  width: 45%;
-}
-
-.taskTable th:nth-child(2) {
-  width: 14%;
-}
-
-.taskTable th:nth-child(3) {
-  width: 18%;
-}
-
-.taskTable tbody tr:last-child td {
-  border-bottom: 0;
-}
-
-.taskTable tbody tr:hover {
-  background: #fafbfe;
-}
-
-.taskTitle {
-  display: block;
-  overflow: hidden;
-  color: #273047;
-  font-size: 14px;
-  font-weight: 650;
-  text-decoration: none;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.taskTitle:hover {
-  color: #5664d5;
-}
-
-.taskMeta {
-  display: block;
-  overflow: hidden;
-  margin-top: 4px;
-  color: #7a8398;
-  font-size: 12px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.priority {
-  display: inline-flex;
-  height: 22px;
-  align-items: center;
-  border-radius: 999px;
-  padding: 0 8px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.priorityURGENT {
-  background: #fff0f1;
-  color: #bd303e;
-}
-
-.priorityIMPORTANT {
-  background: #fff5df;
-  color: #9d6207;
-}
-
-.priorityNORMAL {
-  background: #eef0ff;
-  color: #505cc6;
-}
-
-.assignee,
-.due,
-.overdue {
-  color: #596278;
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-.overdue {
-  color: #c23543;
-  font-weight: 650;
-}
-
-.emptyState {
-  display: flex;
-  min-height: 260px;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  padding: 32px;
-  text-align: center;
-}
-
-.emptyState > span {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  border-radius: 50%;
-  background: #eaf8f2;
-  color: #15865e;
-  font-size: 18px;
-  font-weight: 750;
-}
-
-.emptyState strong {
-  margin-top: 14px;
-  color: #30384d;
-  font-size: 15px;
-}
-
-.emptyState p,
 .compactEmpty {
   margin: 6px 0 0;
   color: #81899b;
@@ -576,15 +440,6 @@
 
   .secondaryGrid {
     grid-template-columns: 1fr;
-  }
-
-  .taskTable th:nth-child(3),
-  .taskTable td:nth-child(3) {
-    display: none;
-  }
-
-  .taskTable th:first-child {
-    width: 58%;
   }
 
   .focusTable {
