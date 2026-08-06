@@ -12,6 +12,9 @@ import {
 import {
   buildMailboxChannelHealth
 } from "@/modules/admin/settings-overview";
+import {
+  dashboardTaskWindows
+} from "@/modules/reports/dashboard-task-windows";
 
 const OPEN_TASK_STATUSES: TaskStatus[] = [
   "UNASSIGNED",
@@ -112,6 +115,8 @@ export async function getDashboardSnapshot(
   now = new Date()
 ): Promise<DashboardSnapshot> {
   const { start, end } = shanghaiDayRange(now);
+  const { dueTodayCreatedAfter, urgentCreatedAfter } =
+    dashboardTaskWindows(now);
   const sevenDaysAgo = new Date(
     now.getTime() - 7 * 24 * 60 * 60 * 1000
   );
@@ -136,18 +141,21 @@ export async function getDashboardSnapshot(
     prisma.recallTask.count({
       where: {
         ...openWhere,
+        createdAt: { gte: dueTodayCreatedAfter },
         dueAt: { gte: start, lt: end }
       }
     }),
     prisma.recallTask.count({
       where: {
         ...openWhere,
-        dueAt: { lt: now }
+        createdAt: { gte: dueTodayCreatedAfter },
+        dueAt: { gte: start, lt: now }
       }
     }),
     prisma.recallTask.count({
       where: {
         ...openWhere,
+        createdAt: { gte: urgentCreatedAfter },
         priority: "URGENT"
       }
     }),
