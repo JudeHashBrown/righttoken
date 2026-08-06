@@ -90,7 +90,7 @@ export function DashboardOverview({
           note="用户来信会自动生成跟进任务"
           icon={MailQuestion}
           tone="warning"
-          href="/tasks?view=all&origin=EMAIL_REPLY&scope=open"
+          href="/mail?view=pending"
         />
         {isAdministrator ? (
           <MetricCard

@@ -111,7 +111,7 @@ describe("DashboardOverview", () => {
       screen.getByRole("link", { name: /用户待回复 17/ })
     ).toHaveAttribute(
       "href",
-      "/tasks?view=all&origin=EMAIL_REPLY&scope=open"
+      "/mail?view=pending"
     );
     expect(
       screen.getByRole("link", { name: /待分配用户 12/ })

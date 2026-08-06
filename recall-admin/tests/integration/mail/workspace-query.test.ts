@@ -332,6 +332,27 @@ describe("scoped mail workspace query", () => {
     expect(pendingData.stats.openReplyTasks).toBe(
       pendingData.items.length
     );
+    expect(pendingData.filter.selectedId).toBe(ownThreadId);
+    expect(pendingData.selected).toMatchObject({
+      kind: "thread",
+      thread: { id: ownThreadId }
+    });
+
+    const explicitlySelected = await getMailWorkspaceData(
+      { id: adminId, role: "ADMIN" },
+      {
+        view: "pending",
+        selectedId: otherThreadId,
+        ...noCompose
+      }
+    );
+    expect(explicitlySelected.filter.selectedId).toBe(
+      otherThreadId
+    );
+    expect(explicitlySelected.selected).toMatchObject({
+      kind: "thread",
+      thread: { id: otherThreadId }
+    });
   });
 
   it("lets an admin see all conversations and full selected body", async () => {

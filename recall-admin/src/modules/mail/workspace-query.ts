@@ -216,8 +216,14 @@ export async function getMailWorkspaceData(
   }));
 
   const items = await listItems(viewer, filter);
-  const selected = filter.selectedId
-    ? await selectedItem(viewer, filter)
+  const effectiveFilter =
+    filter.view === "pending" &&
+    !filter.selectedId &&
+    items[0]
+      ? { ...filter, selectedId: items[0].id }
+      : filter;
+  const selected = effectiveFilter.selectedId
+    ? await selectedItem(viewer, effectiveFilter)
     : null;
   const assignableUsers =
     filter.view === "unmatched"
@@ -239,7 +245,7 @@ export async function getMailWorkspaceData(
       : [];
 
   return {
-    filter,
+    filter: effectiveFilter,
     stats: {
       replyTasks,
       openReplyTasks,
