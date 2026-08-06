@@ -74,7 +74,8 @@ IP 结果；原始 IP 国家和地区仍会保留用于审计。
 
 固定发布门禁顺序是：迁移 → 访问链路预检 → Web/Worker。
 `recall-visit-verify` 必须使用与 Web 相同的数据库和 GeoIP 环境，
-成功输出只包含 `visit_pipeline_ready:<kind>`。
+并由容器直接执行预检 bundle；成功输出只包含
+`visit_pipeline_ready:<kind>`。
 
 1. 备份召回数据库。
 2. 执行 `npm run db:deploy` 或生产迁移容器。

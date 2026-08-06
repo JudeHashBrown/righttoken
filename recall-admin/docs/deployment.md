@@ -192,8 +192,9 @@ docker compose \
   run --rm --no-deps recall-visit-verify
 ```
 
-成功时标准输出只有 `visit_pipeline_ready:<kind>`。任何非零退出都必须
-停止发布；不要为了启动 Web 或 Worker 跳过迁移或预检。
+Compose 容器直接执行预检 bundle，成功时标准输出只有
+`visit_pipeline_ready:<kind>`。任何非零退出都必须停止发布；不要为了
+启动 Web 或 Worker 跳过迁移或预检。
 
 全新部署此时还没有主管理员。主管理员邮箱必须是已经注册的
 RightToken 用户。在 `recall.env` 临时设置：

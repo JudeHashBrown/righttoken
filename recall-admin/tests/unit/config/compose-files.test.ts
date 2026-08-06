@@ -1,4 +1,12 @@
-import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync
+} from "node:fs";
+import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -126,7 +134,7 @@ describe("recall Compose environments", () => {
       .split("\nnetworks:")[0]!;
 
     expect(verifierBlock).toContain(
-      'command: ["npm", "run", "visit:verify:prod"]'
+      'command: ["node", "dist/verify-visit-pipeline.mjs"]'
     );
     expect(verifierBlock).toContain("recall-migrate:");
     expect(verifierBlock).toContain(
@@ -151,6 +159,66 @@ describe("recall Compose environments", () => {
     expect(readRepository("deploy/recall.env.example")).toContain(
       "The deployment preflight requires at least one usable GeoIP source."
     );
+  });
+
+  it("keeps the production verifier entrypoint output machine-readable", () => {
+    const compose = readRepository("deploy/docker-compose.recall.yml");
+    const verifierBlock = compose
+      .split("  recall-visit-verify:")[1]!
+      .split("\n  recall-bootstrap:")[0]!;
+    const commandSource = verifierBlock.match(/command: (\[[^\n]+\])/);
+    const command = JSON.parse(commandSource?.[1] ?? "null") as
+      | string[]
+      | null;
+    const fixtureRoot = mkdtempSync(
+      resolve(tmpdir(), "recall-visit-verify-")
+    );
+
+    try {
+      mkdirSync(resolve(fixtureRoot, "dist"));
+      writeFileSync(
+        resolve(fixtureRoot, "package.json"),
+        JSON.stringify({
+          scripts: {
+            "visit:verify:prod": "node dist/verify-visit-pipeline.mjs"
+          }
+        })
+      );
+      writeFileSync(
+        resolve(fixtureRoot, "dist/verify-visit-pipeline.mjs"),
+        `if (process.env.VISIT_VERIFY_TEST_FAILURE) {
+  process.stderr.write("VISIT_PIPELINE_CHECK_FAILED\\n");
+  process.exitCode = 1;
+} else {
+  process.stdout.write("visit_pipeline_ready:remote\\n");
+}
+`
+      );
+
+      expect(command).not.toBeNull();
+      const success = spawnSync(command![0], command!.slice(1), {
+        cwd: fixtureRoot,
+        encoding: "utf8"
+      });
+      expect(success).toMatchObject({
+        status: 0,
+        stdout: "visit_pipeline_ready:remote\n",
+        stderr: ""
+      });
+
+      const failure = spawnSync(command![0], command!.slice(1), {
+        cwd: fixtureRoot,
+        encoding: "utf8",
+        env: { ...process.env, VISIT_VERIFY_TEST_FAILURE: "1" }
+      });
+      expect(failure).toMatchObject({
+        status: 1,
+        stdout: "",
+        stderr: "VISIT_PIPELINE_CHECK_FAILED\n"
+      });
+    } finally {
+      rmSync(fixtureRoot, { recursive: true, force: true });
+    }
   });
 
   it("builds the visit verifier into the production image", () => {

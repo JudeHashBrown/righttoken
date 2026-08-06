@@ -64,7 +64,7 @@ services:
 
   recall-visit-verify:
     <<: *recall-application
-    command: ["npm", "run", "visit:verify:prod"]
+    command: ["node", "dist/verify-visit-pipeline.mjs"]
     depends_on:
       recall-migrate:
         condition: service_completed_successfully
