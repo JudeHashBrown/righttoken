@@ -5,6 +5,7 @@ import {
   limitDashboardFocusUsers,
   parseDashboardFocus,
   recentAnomalyWhere,
+  recentAnomalyOrderBy,
   recentUnpaidWhere,
   recentUserCutoff
 } from "@/modules/reports/dashboard-recent-users";
@@ -129,5 +130,20 @@ describe("dashboard recent user filters", () => {
     expect(page).toHaveLength(100);
     expect(page[0]?.id).toBe("user-000");
     expect(page.at(-1)?.id).toBe("user-099");
+  });
+
+  it("sorts nullable anomaly timestamps with missing values last", () => {
+    expect(recentAnomalyOrderBy("anomalyLastOccurredAt")).toEqual([
+      {
+        anomalyLastOccurredAt: { sort: "desc", nulls: "last" }
+      },
+      { id: "desc" }
+    ]);
+    expect(recentAnomalyOrderBy("anomalyChangedAt")).toEqual([
+      {
+        anomalyChangedAt: { sort: "desc", nulls: "last" }
+      },
+      { id: "desc" }
+    ]);
   });
 });

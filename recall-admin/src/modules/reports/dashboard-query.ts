@@ -18,6 +18,7 @@ import {
   DASHBOARD_FOCUS_PAGE_SIZE,
   effectiveAnomalyAt,
   limitDashboardFocusUsers,
+  recentAnomalyOrderBy,
   recentAnomalyWhere,
   recentUnpaidWhere,
   type DashboardFocus
@@ -261,19 +262,15 @@ export async function getDashboardSnapshot(
                 prisma.userProfile.findMany({
                   where: focusWhere,
                   select: focusUserSelect,
-                  orderBy: [
-                    { anomalyLastOccurredAt: "desc" },
-                    { id: "desc" }
-                  ],
+                  orderBy: recentAnomalyOrderBy(
+                    "anomalyLastOccurredAt"
+                  ),
                   take: DASHBOARD_FOCUS_PAGE_SIZE
                 }),
                 prisma.userProfile.findMany({
                   where: focusWhere,
                   select: focusUserSelect,
-                  orderBy: [
-                    { anomalyChangedAt: "desc" },
-                    { id: "desc" }
-                  ],
+                  orderBy: recentAnomalyOrderBy("anomalyChangedAt"),
                   take: DASHBOARD_FOCUS_PAGE_SIZE
                 })
               ])

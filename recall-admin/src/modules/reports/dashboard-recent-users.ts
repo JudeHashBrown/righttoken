@@ -74,6 +74,15 @@ export function recentAnomalyWhere(
   };
 }
 
+export function recentAnomalyOrderBy(
+  field: "anomalyLastOccurredAt" | "anomalyChangedAt"
+): Prisma.UserProfileOrderByWithRelationInput[] {
+  const timestampOrder = { sort: "desc", nulls: "last" } as const;
+  return field === "anomalyLastOccurredAt"
+    ? [{ anomalyLastOccurredAt: timestampOrder }, { id: "desc" }]
+    : [{ anomalyChangedAt: timestampOrder }, { id: "desc" }];
+}
+
 export function effectiveAnomalyAt(row: AnomalyDates): Date | null {
   const timestamps = [
     row.anomalyLastOccurredAt,
