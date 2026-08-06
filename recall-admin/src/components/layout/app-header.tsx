@@ -23,6 +23,7 @@ export function AppHeader({
       ["/automation/assignment", "客户分配"],
       ["/automation/segments", "用户分组"],
       ["/groups/b", "B组 · 已发起支付但未完成"],
+      ["/groups/a", "A组 · 新注册但未发起支付"],
       ["/dashboard", "用户运营概览"],
       ["/tasks", "任务中心"],
       ["/users", "用户中心"],

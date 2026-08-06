@@ -18,7 +18,7 @@ export function AGroupCouponPanel({
     setPending(true);
     setMessage(null);
     const response = await fetch(
-      `/api/b-group/users/${user.id}/coupon`,
+      `/api/a-group/users/${user.id}/coupon`,
       { method: "POST" }
     );
     setPending(false);

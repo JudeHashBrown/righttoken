@@ -117,9 +117,10 @@ describe("AGroupWorkspace", () => {
   });
 
   it("clears a manual maintenance entry after it is saved", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true });
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue({ ok: true })
+      fetchMock
     );
     render(
       <AGroupWorkspace
@@ -137,6 +138,12 @@ describe("AGroupWorkspace", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "保存记录" }));
 
+    await waitFor(() =>
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/a-group/users/user-a-1/maintenance",
+        expect.objectContaining({ method: "POST" })
+      )
+    );
     await waitFor(() => expect(body).toHaveValue(""));
   });
 });

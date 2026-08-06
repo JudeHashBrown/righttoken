@@ -29,7 +29,7 @@ export function AGroupMaintenancePanel({
     setError(null);
     const form = new FormData(formElement);
     const response = await fetch(
-      `/api/b-group/users/${user.id}/maintenance`,
+      `/api/a-group/users/${user.id}/maintenance`,
       {
         method: "POST",
         headers: { "content-type": "application/json" },

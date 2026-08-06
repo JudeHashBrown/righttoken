@@ -54,6 +54,21 @@ describe("AppSidebar", () => {
       "href",
       "/groups/b"
     );
+    expect(screen.getByRole("link", { name: /A组/ })).toHaveAttribute(
+      "href",
+      "/groups/a"
+    );
+    const groupLinks = screen
+      .getAllByRole("link")
+      .filter((link) =>
+        ["/groups/b", "/groups/a"].includes(
+          link.getAttribute("href") ?? ""
+        )
+      );
+    expect(groupLinks.map((link) => link.getAttribute("href"))).toEqual([
+      "/groups/b",
+      "/groups/a"
+    ]);
     expect(screen.getByText("成员与权限")).toBeInTheDocument();
     expect(screen.getByText("访问看板")).toBeInTheDocument();
     expect(screen.getByText("系统设置")).toBeInTheDocument();

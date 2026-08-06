@@ -20,7 +20,7 @@ export function AGroupContactPanel({
     setMessage(null);
     const form = new FormData(event.currentTarget);
     const response = await fetch(
-      `/api/b-group/users/${user.id}/contact`,
+      `/api/a-group/users/${user.id}/contact`,
       {
         method: "PUT",
         headers: { "content-type": "application/json" },

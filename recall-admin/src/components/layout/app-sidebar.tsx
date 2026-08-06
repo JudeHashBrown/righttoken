@@ -15,6 +15,7 @@ import {
   SlidersHorizontal,
   Sparkles,
   UsersRound,
+  UserRoundPlus,
   Workflow
 } from "lucide-react";
 import styles from "./app-sidebar.module.css";
@@ -70,6 +71,11 @@ export function AppSidebar({
           label: "B组",
           href: "/groups/b",
           icon: CircleDollarSign
+        },
+        {
+          label: "A组",
+          href: "/groups/a",
+          icon: UserRoundPlus
         },
         {
           label: "任务中心",
