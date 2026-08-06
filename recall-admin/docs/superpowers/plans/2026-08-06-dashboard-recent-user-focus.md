@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the first two dashboard cards with recent unpaid-registration and service-anomaly metrics, and let either card reveal its matching user list on the dashboard.
+**Goal:** Replace the first two dashboard cards with recent unpaid-registration and service-anomaly metrics, remove the priority-task panel, and use its position for a switchable recent-user list that defaults to service anomalies.
 
 **Architecture:** A focused report helper owns the exact 72-hour predicates and focus parsing. The dashboard query reuses those predicates for both counts and detail rows, while the page passes a validated focus into the snapshot and a dedicated component renders the selected list.
 
@@ -13,6 +13,10 @@
 - Use a rolling 72-hour window with an inclusive lower boundary.
 - Preserve administrator/operator user scoping and exclude `sourceDeletedAt` users.
 - Keep existing task metrics in the snapshot for navigation badges.
+- Remove dashboard priority-task querying and rendering, while preserving task-center behavior.
+- Default an absent or invalid dashboard focus to `recent-anomaly`.
+- Load at most 100 focused users and show the full metric count separately.
+- Use a lightweight navigation query from the dashboard layout.
 - Do not mutate user or task data.
 - Do not push GitHub.
 
@@ -73,7 +77,7 @@ Expected: FAIL because the dashboard snapshot does not yet expose the new fields
 
 - [ ] **Step 3: Extend the dashboard query**
 
-Add both counts to the existing parallel query. Accept a nullable focus argument, query only the selected detail set with the exact same predicate as its count, include owner display name, compute effective anomaly time, and sort focused rows descending by the relevant timestamp with ID as deterministic tie-breaker.
+Add both counts to the existing parallel query. Accept the selected focus, query the matching detail set with the exact same predicate as its count, include owner display name, compute effective anomaly time, sort focused rows descending by the relevant timestamp with ID as deterministic tie-breaker, and cap the returned page at 100 users.
 
 - [ ] **Step 4: Run type checking and verify GREEN for the data contract**
 
@@ -106,7 +110,7 @@ Expected: FAIL on the new text, links, and detail panel.
 
 - [ ] **Step 3: Implement the page and components**
 
-Parse `searchParams.focus`, pass it into `getDashboardSnapshot`, remove the page header and unused props/helpers, link cards to the two focus URLs, and render a full-width focused table immediately below the metrics when a focus is selected.
+Parse `searchParams.focus` with `recent-anomaly` as the default, pass it into `getDashboardSnapshot`, remove the page header and unused props/helpers, link cards to the two focus URLs, delete the priority-task panel, and render the focused table in its former left-column position alongside segment distribution.
 
 - [ ] **Step 4: Run component tests and type checking**
 
