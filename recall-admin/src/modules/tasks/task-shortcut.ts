@@ -8,6 +8,7 @@ import {
 type ShortcutParams = {
   due?: string;
   origin?: string;
+  priority?: string;
   scope?: string;
   recent?: string;
 };
@@ -70,7 +71,8 @@ export function taskShortcutFilters(
   }
   if (params.scope === "open") {
     const { urgentCreatedAfter } = dashboardTaskWindows(now);
-    const recentUrgent = params.recent === "72h";
+    const recentUrgent =
+      params.priority === "URGENT" && params.recent === "72h";
     return {
       statuses: [...openTaskStatuses],
       ...(origin ? { origins: [origin] } : {}),

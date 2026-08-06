@@ -210,6 +210,16 @@ describe("scoped mail workspace query", () => {
       }
     });
     ownBouncedMessageId = ownBouncedMessage.id;
+    await Promise.all([
+      prisma.mailThread.update({
+        where: { id: ownThreadId },
+        data: { updatedAt: new Date("2026-07-27T08:00:00.000Z") }
+      }),
+      prisma.mailThread.update({
+        where: { id: otherThreadId },
+        data: { updatedAt: new Date("2026-07-27T12:00:00.000Z") }
+      })
+    ]);
     await prisma.recallTask.createMany({
       data: [
         {
@@ -334,6 +344,17 @@ describe("scoped mail workspace query", () => {
     );
     expect(pendingData.filter.selectedId).toBe(ownThreadId);
     expect(pendingData.selected).toMatchObject({
+      kind: "thread",
+      thread: { id: ownThreadId }
+    });
+
+    const adminPending = await getMailWorkspaceData(
+      { id: adminId, role: "ADMIN" },
+      { view: "pending", selectedId: null, ...noCompose }
+    );
+    expect(adminPending.items[0]?.id).toBe(ownThreadId);
+    expect(adminPending.filter.selectedId).toBe(ownThreadId);
+    expect(adminPending.selected).toMatchObject({
       kind: "thread",
       thread: { id: ownThreadId }
     });

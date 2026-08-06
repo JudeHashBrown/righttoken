@@ -76,6 +76,7 @@ export default async function TasksPage({
     {
       due: first(params.due),
       origin: first(params.origin),
+      priority,
       scope: first(params.scope),
       recent: first(params.recent)
     },

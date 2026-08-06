@@ -28,7 +28,11 @@ describe("task dashboard shortcut filters", () => {
   it("limits open shortcut results to the supported 72-hour window", () => {
     expect(
       taskShortcutFilters(
-        { scope: "open", recent: "72h" },
+        {
+          priority: "URGENT",
+          scope: "open",
+          recent: "72h"
+        },
         now
       )
     ).toEqual({
@@ -45,7 +49,11 @@ describe("task dashboard shortcut filters", () => {
 
     expect(
       taskShortcutFilters(
-        { scope: "open", recent: "999h" },
+        {
+          priority: "NORMAL",
+          scope: "open",
+          recent: "72h"
+        },
         now
       )
     ).not.toHaveProperty("createdFrom");

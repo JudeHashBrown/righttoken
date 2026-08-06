@@ -414,10 +414,24 @@ async function listItems(
   }
 
   const pending = filter.view === "pending";
+  const activeThreads = await prisma.mailMessage.groupBy({
+    by: ["threadId"],
+    where: {
+      threadId: { not: null },
+      thread: threadScope(viewer, pending)
+    },
+    _max: { createdAt: true },
+    orderBy: [
+      { _max: { createdAt: "desc" } },
+      { threadId: "desc" }
+    ],
+    take: 100
+  });
+  const threadIds = activeThreads.flatMap((row) =>
+    row.threadId ? [row.threadId] : []
+  );
   const rows = await prisma.mailThread.findMany({
-    where: threadScope(viewer, pending),
-    orderBy: { updatedAt: "desc" },
-    take: 100,
+    where: { id: { in: threadIds } },
     select: {
       id: true,
       subject: true,
@@ -442,9 +456,14 @@ async function listItems(
       }
     }
   });
-  return rows.map((thread) => {
+  const threadsById = new Map(
+    rows.map((thread) => [thread.id, thread])
+  );
+  return threadIds.flatMap((threadId) => {
+    const thread = threadsById.get(threadId);
+    if (!thread) return [];
     const latest = thread.messages[0];
-    return {
+    return [{
       id: thread.id,
       kind: "THREAD" as const,
       title: thread.subject,
@@ -460,7 +479,7 @@ async function listItems(
           thread.updatedAt
       ),
       status: latest?.status ?? "RECEIVED"
-    };
+    }];
   });
 }
 
