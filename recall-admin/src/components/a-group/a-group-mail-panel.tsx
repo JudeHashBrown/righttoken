@@ -1,0 +1,137 @@
+"use client";
+
+import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import type { AGroupSelectedUser } from "@/modules/a-group/types";
+import styles from "./a-group.module.css";
+
+type Mailbox = { id: string; name: string; emailAddress: string };
+type Template = {
+  id: string;
+  name: string;
+  subject: string;
+  bodyText: string;
+};
+
+export function AGroupMailPanel({
+  user,
+  mailboxes,
+  templates
+}: {
+  user: AGroupSelectedUser;
+  mailboxes: Mailbox[];
+  templates: Template[];
+}) {
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPending(true);
+    setMessage(null);
+    const form = new FormData(event.currentTarget);
+    const response = await fetch("/api/mail/send", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        mailboxId: form.get("mailboxId"),
+        userId: user.id,
+        recipient: user.email,
+        purpose: form.get("purpose"),
+        subject,
+        bodyText: body
+      })
+    });
+    setPending(false);
+    if (!response.ok) {
+      setMessage("邮件发送失败，请检查邮箱状态和联系频率。");
+      return;
+    }
+    setMessage("邮件已发送");
+    setSubject("");
+    setBody("");
+    router.refresh();
+  }
+
+  function applyTemplate(id: string) {
+    const item = templates.find((value) => value.id === id);
+    if (item) {
+      setSubject(item.subject);
+      setBody(item.bodyText);
+    }
+  }
+
+  return (
+    <section className={styles.panel}>
+      <h2>发送邮件</h2>
+      <form className={styles.mailGrid} onSubmit={submit}>
+        <div className={styles.mailMain}>
+          <input className={styles.input} disabled value={user.email} />
+          <input
+            aria-label="邮件主题"
+            className={styles.input}
+            onChange={(event) => setSubject(event.target.value)}
+            required
+            value={subject}
+          />
+          <textarea
+            aria-label="邮件正文"
+            className={styles.textarea}
+            onChange={(event) => setBody(event.target.value)}
+            required
+            value={body}
+          />
+        </div>
+        <aside className={styles.mailTools}>
+          <select
+            aria-label="邮件模板"
+            className={styles.input}
+            defaultValue=""
+            onChange={(event) => applyTemplate(event.target.value)}
+          >
+            <option value="">选择邮件模板</option>
+            {templates.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name}
+              </option>
+            ))}
+          </select>
+          <select
+            aria-label="邮件类型"
+            className={styles.input}
+            defaultValue="KNOWLEDGE_SHARE"
+            name="purpose"
+          >
+            <option value="PAYMENT_FOLLOW_UP">支付跟进</option>
+            <option value="KNOWLEDGE_SHARE">知识分享</option>
+            <option value="PRODUCT_UPDATE">产品更新</option>
+            <option value="CAMPAIGN">活动通知</option>
+            <option value="OTHER">其他</option>
+          </select>
+          <select
+            aria-label="发件邮箱"
+            className={styles.input}
+            name="mailboxId"
+            required
+          >
+            {mailboxes.map((box) => (
+              <option key={box.id} value={box.id}>
+                {box.name}
+              </option>
+            ))}
+          </select>
+          {message ? <p role="status">{message}</p> : null}
+          <button
+            className={styles.primary}
+            disabled={pending || !mailboxes.length}
+          >
+            {pending ? "发送中…" : "审核并发送"}
+          </button>
+        </aside>
+      </form>
+    </section>
+  );
+}

@@ -1,0 +1,58 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import type { AGroupSelectedUser } from "@/modules/a-group/types";
+import styles from "./a-group.module.css";
+
+export function AGroupCouponPanel({
+  user
+}: {
+  user: AGroupSelectedUser;
+}) {
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function grant() {
+    setPending(true);
+    setMessage(null);
+    const response = await fetch(
+      `/api/b-group/users/${user.id}/coupon`,
+      { method: "POST" }
+    );
+    setPending(false);
+    if (response.status === 503) {
+      setMessage("优惠券服务未连接，暂时无法发放。");
+      return;
+    }
+    if (!response.ok) {
+      setMessage("优惠券发放失败，请稍后重试。");
+      return;
+    }
+    setMessage("USD 1.43 优惠券已发放");
+    router.refresh();
+  }
+
+  return (
+    <section className={styles.panel}>
+      <h2>送优惠券</h2>
+      <p>
+        为当前用户发放一张价值 <strong>USD 1.43</strong> 的优惠券。
+        每位用户永久限送一次。
+      </p>
+      {message ? <p role="status">{message}</p> : null}
+      <button
+        className={styles.primary}
+        disabled={pending || user.coupon?.status === "SUCCEEDED"}
+        onClick={grant}
+      >
+        {user.coupon?.status === "SUCCEEDED"
+          ? "已赠送"
+          : pending
+            ? "发放中…"
+            : "确认赠送"}
+      </button>
+    </section>
+  );
+}
