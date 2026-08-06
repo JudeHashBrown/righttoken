@@ -76,7 +76,8 @@ export default async function TasksPage({
     {
       due: first(params.due),
       origin: first(params.origin),
-      scope: first(params.scope)
+      scope: first(params.scope),
+      recent: first(params.recent)
     },
     now
   );
@@ -99,6 +100,7 @@ export default async function TasksPage({
     assigneeId: first(params.assigneeId) || undefined,
     dueFrom: shortcut.dueFrom,
     dueBefore: shortcut.dueBefore,
+    createdFrom: shortcut.createdFrom,
     cursor: first(params.cursor) || undefined,
     pageSize: 30,
     now
@@ -174,6 +176,13 @@ export default async function TasksPage({
             name="scope"
             type="hidden"
             value={first(params.scope)}
+          />
+        ) : null}
+        {first(params.recent) ? (
+          <input
+            name="recent"
+            type="hidden"
+            value={first(params.recent)}
           />
         ) : null}
         <div className={`${styles.field} ${styles.fieldGrow}`}>

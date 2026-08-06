@@ -74,7 +74,7 @@ export function DashboardOverview({
           }
           icon={AlarmClock}
           tone="neutral"
-          href="/tasks?view=all&due=today"
+          href="/tasks?view=all&due=today&recent=168h"
         />
         <MetricCard
           label="紧急任务"
@@ -82,7 +82,7 @@ export function DashboardOverview({
           note={metrics.urgent ? "需要立即介入" : "目前无需紧急介入"}
           icon={Siren}
           tone="danger"
-          href="/tasks?view=all&priority=URGENT&scope=open"
+          href="/tasks?view=all&priority=URGENT&scope=open&recent=72h"
         />
         <MetricCard
           label="用户待回复"

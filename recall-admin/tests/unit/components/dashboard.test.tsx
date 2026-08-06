@@ -97,12 +97,15 @@ describe("DashboardOverview", () => {
     expect(screen.getByText("团队工作量")).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /今日待处理 28/ })
-    ).toHaveAttribute("href", "/tasks?view=all&due=today");
+    ).toHaveAttribute(
+      "href",
+      "/tasks?view=all&due=today&recent=168h"
+    );
     expect(
       screen.getByRole("link", { name: /紧急任务 3/ })
     ).toHaveAttribute(
       "href",
-      "/tasks?view=all&priority=URGENT&scope=open"
+      "/tasks?view=all&priority=URGENT&scope=open&recent=72h"
     );
     expect(
       screen.getByRole("link", { name: /用户待回复 17/ })

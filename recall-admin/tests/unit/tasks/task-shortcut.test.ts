@@ -6,7 +6,10 @@ describe("task dashboard shortcut filters", () => {
 
   it("maps today to the Shanghai calendar day and open tasks", () => {
     expect(
-      taskShortcutFilters({ due: "today" }, now)
+      taskShortcutFilters(
+        { due: "today", recent: "168h" },
+        now
+      )
     ).toEqual({
       statuses: [
         "UNASSIGNED",
@@ -17,8 +20,35 @@ describe("task dashboard shortcut filters", () => {
       ],
       dueFrom: new Date("2026-07-22T16:00:00.000Z"),
       dueBefore: new Date("2026-07-23T16:00:00.000Z"),
+      createdFrom: new Date("2026-07-16T02:00:00.000Z"),
       label: "今天到期且尚未完成的任务"
     });
+  });
+
+  it("limits open shortcut results to the supported 72-hour window", () => {
+    expect(
+      taskShortcutFilters(
+        { scope: "open", recent: "72h" },
+        now
+      )
+    ).toEqual({
+      statuses: [
+        "UNASSIGNED",
+        "TODO",
+        "IN_PROGRESS",
+        "WAITING_USER",
+        "PAUSED"
+      ],
+      createdFrom: new Date("2026-07-20T02:00:00.000Z"),
+      label: "最近 72 小时创建且尚未完成的任务"
+    });
+
+    expect(
+      taskShortcutFilters(
+        { scope: "open", recent: "999h" },
+        now
+      )
+    ).not.toHaveProperty("createdFrom");
   });
 
   it("maps open email-reply tasks without accepting unknown origins", () => {
