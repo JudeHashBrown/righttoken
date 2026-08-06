@@ -48,6 +48,7 @@ export type MailBatchMinAggregateOutputType = {
   createdById: string | null
   audienceMode: $Enums.MailAudienceMode | null
   segment: $Enums.SegmentCode | null
+  purpose: $Enums.MailPurpose | null
   subject: string | null
   bodyText: string | null
   bodyHtml: string | null
@@ -71,6 +72,7 @@ export type MailBatchMaxAggregateOutputType = {
   createdById: string | null
   audienceMode: $Enums.MailAudienceMode | null
   segment: $Enums.SegmentCode | null
+  purpose: $Enums.MailPurpose | null
   subject: string | null
   bodyText: string | null
   bodyHtml: string | null
@@ -94,6 +96,7 @@ export type MailBatchCountAggregateOutputType = {
   createdById: number
   audienceMode: number
   segment: number
+  purpose: number
   subject: number
   bodyText: number
   bodyHtml: number
@@ -135,6 +138,7 @@ export type MailBatchMinAggregateInputType = {
   createdById?: true
   audienceMode?: true
   segment?: true
+  purpose?: true
   subject?: true
   bodyText?: true
   bodyHtml?: true
@@ -158,6 +162,7 @@ export type MailBatchMaxAggregateInputType = {
   createdById?: true
   audienceMode?: true
   segment?: true
+  purpose?: true
   subject?: true
   bodyText?: true
   bodyHtml?: true
@@ -181,6 +186,7 @@ export type MailBatchCountAggregateInputType = {
   createdById?: true
   audienceMode?: true
   segment?: true
+  purpose?: true
   subject?: true
   bodyText?: true
   bodyHtml?: true
@@ -291,6 +297,7 @@ export type MailBatchGroupByOutputType = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment: $Enums.SegmentCode | null
+  purpose: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -337,6 +344,7 @@ export type MailBatchWhereInput = {
   createdById?: Prisma.StringFilter<"MailBatch"> | string
   audienceMode?: Prisma.EnumMailAudienceModeFilter<"MailBatch"> | $Enums.MailAudienceMode
   segment?: Prisma.EnumSegmentCodeNullableFilter<"MailBatch"> | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFilter<"MailBatch"> | $Enums.MailPurpose
   subject?: Prisma.StringFilter<"MailBatch"> | string
   bodyText?: Prisma.StringFilter<"MailBatch"> | string
   bodyHtml?: Prisma.StringFilter<"MailBatch"> | string
@@ -366,6 +374,7 @@ export type MailBatchOrderByWithRelationInput = {
   createdById?: Prisma.SortOrder
   audienceMode?: Prisma.SortOrder
   segment?: Prisma.SortOrderInput | Prisma.SortOrder
+  purpose?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
   bodyHtml?: Prisma.SortOrder
@@ -399,6 +408,7 @@ export type MailBatchWhereUniqueInput = Prisma.AtLeast<{
   createdById?: Prisma.StringFilter<"MailBatch"> | string
   audienceMode?: Prisma.EnumMailAudienceModeFilter<"MailBatch"> | $Enums.MailAudienceMode
   segment?: Prisma.EnumSegmentCodeNullableFilter<"MailBatch"> | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFilter<"MailBatch"> | $Enums.MailPurpose
   subject?: Prisma.StringFilter<"MailBatch"> | string
   bodyText?: Prisma.StringFilter<"MailBatch"> | string
   bodyHtml?: Prisma.StringFilter<"MailBatch"> | string
@@ -427,6 +437,7 @@ export type MailBatchOrderByWithAggregationInput = {
   createdById?: Prisma.SortOrder
   audienceMode?: Prisma.SortOrder
   segment?: Prisma.SortOrderInput | Prisma.SortOrder
+  purpose?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
   bodyHtml?: Prisma.SortOrder
@@ -458,6 +469,7 @@ export type MailBatchScalarWhereWithAggregatesInput = {
   createdById?: Prisma.StringWithAggregatesFilter<"MailBatch"> | string
   audienceMode?: Prisma.EnumMailAudienceModeWithAggregatesFilter<"MailBatch"> | $Enums.MailAudienceMode
   segment?: Prisma.EnumSegmentCodeNullableWithAggregatesFilter<"MailBatch"> | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeWithAggregatesFilter<"MailBatch"> | $Enums.MailPurpose
   subject?: Prisma.StringWithAggregatesFilter<"MailBatch"> | string
   bodyText?: Prisma.StringWithAggregatesFilter<"MailBatch"> | string
   bodyHtml?: Prisma.StringWithAggregatesFilter<"MailBatch"> | string
@@ -479,6 +491,7 @@ export type MailBatchCreateInput = {
   id?: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -507,6 +520,7 @@ export type MailBatchUncheckedCreateInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -531,6 +545,7 @@ export type MailBatchUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -559,6 +574,7 @@ export type MailBatchUncheckedUpdateInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -585,6 +601,7 @@ export type MailBatchCreateManyInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -606,6 +623,7 @@ export type MailBatchUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -628,6 +646,7 @@ export type MailBatchUncheckedUpdateManyInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -666,6 +685,7 @@ export type MailBatchCountOrderByAggregateInput = {
   createdById?: Prisma.SortOrder
   audienceMode?: Prisma.SortOrder
   segment?: Prisma.SortOrder
+  purpose?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
   bodyHtml?: Prisma.SortOrder
@@ -697,6 +717,7 @@ export type MailBatchMaxOrderByAggregateInput = {
   createdById?: Prisma.SortOrder
   audienceMode?: Prisma.SortOrder
   segment?: Prisma.SortOrder
+  purpose?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
   bodyHtml?: Prisma.SortOrder
@@ -720,6 +741,7 @@ export type MailBatchMinOrderByAggregateInput = {
   createdById?: Prisma.SortOrder
   audienceMode?: Prisma.SortOrder
   segment?: Prisma.SortOrder
+  purpose?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
   bodyHtml?: Prisma.SortOrder
@@ -932,6 +954,7 @@ export type MailBatchCreateWithoutCreatedByInput = {
   id?: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -958,6 +981,7 @@ export type MailBatchUncheckedCreateWithoutCreatedByInput = {
   mailboxId: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1013,6 +1037,7 @@ export type MailBatchScalarWhereInput = {
   createdById?: Prisma.StringFilter<"MailBatch"> | string
   audienceMode?: Prisma.EnumMailAudienceModeFilter<"MailBatch"> | $Enums.MailAudienceMode
   segment?: Prisma.EnumSegmentCodeNullableFilter<"MailBatch"> | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFilter<"MailBatch"> | $Enums.MailPurpose
   subject?: Prisma.StringFilter<"MailBatch"> | string
   bodyText?: Prisma.StringFilter<"MailBatch"> | string
   bodyHtml?: Prisma.StringFilter<"MailBatch"> | string
@@ -1034,6 +1059,7 @@ export type MailBatchCreateWithoutMailboxInput = {
   id?: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1060,6 +1086,7 @@ export type MailBatchUncheckedCreateWithoutMailboxInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1110,6 +1137,7 @@ export type MailBatchCreateWithoutRetriesInput = {
   id?: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1137,6 +1165,7 @@ export type MailBatchUncheckedCreateWithoutRetriesInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1165,6 +1194,7 @@ export type MailBatchCreateWithoutRetryRootInput = {
   id?: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1192,6 +1222,7 @@ export type MailBatchUncheckedCreateWithoutRetryRootInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1236,6 +1267,7 @@ export type MailBatchUpdateWithoutRetriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1263,6 +1295,7 @@ export type MailBatchUncheckedUpdateWithoutRetriesInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1302,6 +1335,7 @@ export type MailBatchCreateWithoutRecipientsInput = {
   id?: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1329,6 +1363,7 @@ export type MailBatchUncheckedCreateWithoutRecipientsInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1368,6 +1403,7 @@ export type MailBatchUpdateWithoutRecipientsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1395,6 +1431,7 @@ export type MailBatchUncheckedUpdateWithoutRecipientsInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1418,6 +1455,7 @@ export type MailBatchCreateWithoutAssetsInput = {
   id?: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1445,6 +1483,7 @@ export type MailBatchUncheckedCreateWithoutAssetsInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1484,6 +1523,7 @@ export type MailBatchUpdateWithoutAssetsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1511,6 +1551,7 @@ export type MailBatchUncheckedUpdateWithoutAssetsInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1535,6 +1576,7 @@ export type MailBatchCreateManyCreatedByInput = {
   mailboxId: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1556,6 +1598,7 @@ export type MailBatchUpdateWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1582,6 +1625,7 @@ export type MailBatchUncheckedUpdateWithoutCreatedByInput = {
   mailboxId?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1607,6 +1651,7 @@ export type MailBatchUncheckedUpdateManyWithoutCreatedByInput = {
   mailboxId?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1629,6 +1674,7 @@ export type MailBatchCreateManyMailboxInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1650,6 +1696,7 @@ export type MailBatchUpdateWithoutMailboxInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1676,6 +1723,7 @@ export type MailBatchUncheckedUpdateWithoutMailboxInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1701,6 +1749,7 @@ export type MailBatchUncheckedUpdateManyWithoutMailboxInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1724,6 +1773,7 @@ export type MailBatchCreateManyRetryRootInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1744,6 +1794,7 @@ export type MailBatchUpdateWithoutRetryRootInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1771,6 +1822,7 @@ export type MailBatchUncheckedUpdateWithoutRetryRootInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1796,6 +1848,7 @@ export type MailBatchUncheckedUpdateManyWithoutRetryRootInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1867,6 +1920,7 @@ export type MailBatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   createdById?: boolean
   audienceMode?: boolean
   segment?: boolean
+  purpose?: boolean
   subject?: boolean
   bodyText?: boolean
   bodyHtml?: boolean
@@ -1897,6 +1951,7 @@ export type MailBatchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   createdById?: boolean
   audienceMode?: boolean
   segment?: boolean
+  purpose?: boolean
   subject?: boolean
   bodyText?: boolean
   bodyHtml?: boolean
@@ -1923,6 +1978,7 @@ export type MailBatchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   createdById?: boolean
   audienceMode?: boolean
   segment?: boolean
+  purpose?: boolean
   subject?: boolean
   bodyText?: boolean
   bodyHtml?: boolean
@@ -1949,6 +2005,7 @@ export type MailBatchSelectScalar = {
   createdById?: boolean
   audienceMode?: boolean
   segment?: boolean
+  purpose?: boolean
   subject?: boolean
   bodyText?: boolean
   bodyHtml?: boolean
@@ -1966,7 +2023,7 @@ export type MailBatchSelectScalar = {
   updatedAt?: boolean
 }
 
-export type MailBatchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "mailboxId" | "createdById" | "audienceMode" | "segment" | "subject" | "bodyText" | "bodyHtml" | "idempotencyKey" | "retryRootBatchId" | "status" | "totalRecipients" | "pendingRecipients" | "sentRecipients" | "skippedRecipients" | "failedRecipients" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["mailBatch"]>
+export type MailBatchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "mailboxId" | "createdById" | "audienceMode" | "segment" | "purpose" | "subject" | "bodyText" | "bodyHtml" | "idempotencyKey" | "retryRootBatchId" | "status" | "totalRecipients" | "pendingRecipients" | "sentRecipients" | "skippedRecipients" | "failedRecipients" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["mailBatch"]>
 export type MailBatchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   mailbox?: boolean | Prisma.MailboxDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.MemberDefaultArgs<ExtArgs>
@@ -2003,6 +2060,7 @@ export type $MailBatchPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     createdById: string
     audienceMode: $Enums.MailAudienceMode
     segment: $Enums.SegmentCode | null
+    purpose: $Enums.MailPurpose
     subject: string
     bodyText: string
     bodyHtml: string
@@ -2452,6 +2510,7 @@ export interface MailBatchFieldRefs {
   readonly createdById: Prisma.FieldRef<"MailBatch", 'String'>
   readonly audienceMode: Prisma.FieldRef<"MailBatch", 'MailAudienceMode'>
   readonly segment: Prisma.FieldRef<"MailBatch", 'SegmentCode'>
+  readonly purpose: Prisma.FieldRef<"MailBatch", 'MailPurpose'>
   readonly subject: Prisma.FieldRef<"MailBatch", 'String'>
   readonly bodyText: Prisma.FieldRef<"MailBatch", 'String'>
   readonly bodyHtml: Prisma.FieldRef<"MailBatch", 'String'>

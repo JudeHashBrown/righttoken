@@ -65,6 +65,14 @@ const segmentOptions = [
   "G"
 ] as const;
 
+const purposeOptions = [
+  ["PAYMENT_FOLLOW_UP", "支付跟进"],
+  ["KNOWLEDGE_SHARE", "知识分享"],
+  ["PRODUCT_UPDATE", "产品更新"],
+  ["CAMPAIGN", "活动通知"],
+  ["OTHER", "其他"]
+] as const;
+
 type MailComposerProps = {
   tasks: ComposerTask[];
   users?: ComposerUser[];
@@ -167,6 +175,8 @@ export function MailComposer({
     mailboxes[0]?.id ?? ""
   );
   const [subject, setSubject] = useState(initialSubject);
+  const [purpose, setPurpose] =
+    useState<(typeof purposeOptions)[number][0]>("OTHER");
   const [content, setContent] = useState<MailRichContent>(() =>
     initialContent ?? initialRichContent(initialBody)
   );
@@ -333,6 +343,7 @@ export function MailComposer({
             mailboxId,
             recipient: normalizedRecipient,
             subject,
+            purpose,
             bodyText: content.bodyText,
             bodyHtml: content.bodyHtml,
             assets
@@ -355,6 +366,7 @@ export function MailComposer({
               : {}),
             mailboxId,
             subject,
+            purpose,
             bodyText: content.bodyText,
             bodyHtml: content.bodyHtml,
             assets
@@ -617,6 +629,26 @@ export function MailComposer({
               {mailboxes.map((mailbox) => (
                 <option key={mailbox.id} value={mailbox.id}>
                   {mailbox.name} · {mailbox.emailAddress}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={styles.field}>
+            <label htmlFor="mail-purpose">邮件类型</label>
+            <select
+              className={styles.select}
+              id="mail-purpose"
+              value={purpose}
+              onChange={(event) =>
+                setPurpose(
+                  event.target.value as (typeof purposeOptions)[number][0]
+                )
+              }
+              disabled={submitting}
+            >
+              {purposeOptions.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
                 </option>
               ))}
             </select>

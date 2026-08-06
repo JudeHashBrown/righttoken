@@ -6,6 +6,7 @@ import {
   BarChart3,
   Bot,
   ChevronRight,
+  CircleDollarSign,
   CircleUserRound,
   Globe2,
   LayoutDashboard,
@@ -64,6 +65,11 @@ export function AppSidebar({
           label: "用户运营概览",
           href: "/dashboard",
           icon: LayoutDashboard
+        },
+        {
+          label: "B组",
+          href: "/groups/b",
+          icon: CircleDollarSign
         },
         {
           label: "任务中心",

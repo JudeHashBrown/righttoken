@@ -119,6 +119,31 @@ enum MailBatchRecipientStatus {
   @@schema("recall")
 }
 
+enum MailPurpose {
+  PAYMENT_FOLLOW_UP
+  KNOWLEDGE_SHARE
+  PRODUCT_UPDATE
+  CAMPAIGN
+  OTHER
+
+  @@schema("recall")
+}
+
+enum MaintenanceSource {
+  MANUAL
+  MAIL
+
+  @@schema("recall")
+}
+
+enum CouponGrantStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+
+  @@schema("recall")
+}
+
 enum NotificationChannel {
   IN_APP
   WECOM_APP
@@ -206,6 +231,9 @@ model Member {
   ownerAssignmentsMade        UserProfile[]                @relation("UserOwnerAssigner")
   locationAssignmentsMade     UserProfile[]                @relation("UserLocationAssigner")
   createdMailBatches          MailBatch[]                  @relation("MailBatchCreator")
+  contactUpdates              UserContact[]                @relation("UserContactUpdater")
+  maintenanceRecords          UserMaintenanceRecord[]      @relation("MaintenanceActor")
+  requestedCouponGrants       CouponGrant[]                @relation("CouponGrantRequester")
 
   @@schema("recall")
 }
@@ -310,6 +338,9 @@ model UserProfile {
   mailThreads         MailThread[]
   mailMessages        MailMessage[]
   mailBatchRecipients MailBatchRecipient[]
+  contact             UserContact?
+  maintenanceRecords  UserMaintenanceRecord[]
+  couponGrant         CouponGrant?
   locationRule        LocationAttributionRule? @relation(fields: [locationRuleId], references: [id], onDelete: SetNull)
   locationAssignedBy  Member?                  @relation("UserLocationAssigner", fields: [locationAssignedById], references: [id], onDelete: SetNull)
 
@@ -403,6 +434,61 @@ model UserNote {
   author Member      @relation(fields: [authorId], references: [id])
 
   @@index([userId, createdAt])
+  @@schema("recall")
+}
+
+model UserContact {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  wechatId         String?
+  telegramHandle   String?
+  phoneCountryCode String?
+  phoneNumber      String?
+  updatedById      String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user      UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedBy Member      @relation("UserContactUpdater", fields: [updatedById], references: [id], onDelete: Restrict)
+
+  @@schema("recall")
+}
+
+model UserMaintenanceRecord {
+  id              String            @id @default(cuid())
+  userId          String
+  source          MaintenanceSource
+  sourceMessageId String?           @unique
+  actorId         String?
+  occurredAt      DateTime
+  body            String
+  createdAt       DateTime          @default(now())
+
+  user          UserProfile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceMessage MailMessage? @relation(fields: [sourceMessageId], references: [id], onDelete: SetNull)
+  actor         Member?      @relation("MaintenanceActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([userId, occurredAt])
+  @@schema("recall")
+}
+
+model CouponGrant {
+  id               String            @id @default(cuid())
+  userId           String            @unique
+  requestedById    String
+  amountMinor      Int
+  currency         String
+  idempotencyKey   String            @unique
+  status           CouponGrantStatus @default(PENDING)
+  externalCouponId String?
+  failureCode      String?
+  grantedAt        DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  user        UserProfile @relation(fields: [userId], references: [id], onDelete: Restrict)
+  requestedBy Member      @relation("CouponGrantRequester", fields: [requestedById], references: [id], onDelete: Restrict)
+
   @@schema("recall")
 }
 
@@ -733,6 +819,7 @@ model MailMessage {
   bodyHtml              String?
   templateKey           String?
   templateVersion       Int?
+  purpose               MailPurpose       @default(OTHER)
   reviewedById          String?
   openedAt              DateTime?
   firstClickedAt        DateTime?
@@ -748,14 +835,15 @@ model MailMessage {
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt
 
-  mailbox        Mailbox             @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
-  thread         MailThread?         @relation(fields: [threadId], references: [id], onDelete: SetNull)
-  user           UserProfile?        @relation(fields: [userId], references: [id], onDelete: SetNull)
-  task           RecallTask?         @relation(fields: [taskId], references: [id], onDelete: SetNull)
-  reviewedBy     Member?             @relation("MailReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
-  assets         MailMessageAsset[]
-  batchRecipient MailBatchRecipient?
-  deliveryEvents MailDeliveryEvent[]
+  mailbox           Mailbox                @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+  thread            MailThread?            @relation(fields: [threadId], references: [id], onDelete: SetNull)
+  user              UserProfile?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  task              RecallTask?            @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  reviewedBy        Member?                @relation("MailReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  assets            MailMessageAsset[]
+  batchRecipient    MailBatchRecipient?
+  deliveryEvents    MailDeliveryEvent[]
+  maintenanceRecord UserMaintenanceRecord?
 
   @@index([mailboxId, status, createdAt])
   @@index([threadId, createdAt])
@@ -847,6 +935,7 @@ model MailBatch {
   createdById       String
   audienceMode      MailAudienceMode
   segment           SegmentCode?
+  purpose           MailPurpose      @default(OTHER)
   subject           String
   bodyText          String
   bodyHtml          String

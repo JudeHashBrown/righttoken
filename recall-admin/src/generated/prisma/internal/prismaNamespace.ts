@@ -406,6 +406,9 @@ export const ModelName = {
   SegmentHistory: 'SegmentHistory',
   SegmentOverride: 'SegmentOverride',
   UserNote: 'UserNote',
+  UserContact: 'UserContact',
+  UserMaintenanceRecord: 'UserMaintenanceRecord',
+  CouponGrant: 'CouponGrant',
   AutomationRuleVersion: 'AutomationRuleVersion',
   SegmentRecalculationRun: 'SegmentRecalculationRun',
   AssignmentRule: 'AssignmentRule',
@@ -448,7 +451,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "member" | "ssoTicketRedemption" | "session" | "userProfile" | "userEvent" | "siteVisit" | "segmentHistory" | "segmentOverride" | "userNote" | "automationRuleVersion" | "segmentRecalculationRun" | "assignmentRule" | "assignmentRecalculationRun" | "locationAttributionRule" | "locationRecalculationRun" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "mailDeliveryEvent" | "mailAsset" | "mailTemplateAsset" | "mailMessageAsset" | "mailBatch" | "mailBatchRecipient" | "mailDomainThrottle" | "mailBatchAsset" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
+    modelProps: "member" | "ssoTicketRedemption" | "session" | "userProfile" | "userEvent" | "siteVisit" | "segmentHistory" | "segmentOverride" | "userNote" | "userContact" | "userMaintenanceRecord" | "couponGrant" | "automationRuleVersion" | "segmentRecalculationRun" | "assignmentRule" | "assignmentRecalculationRun" | "locationAttributionRule" | "locationRecalculationRun" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "mailDeliveryEvent" | "mailAsset" | "mailTemplateAsset" | "mailMessageAsset" | "mailBatch" | "mailBatchRecipient" | "mailDomainThrottle" | "mailBatchAsset" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1115,6 +1118,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserNoteCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserNoteCountAggregateOutputType> | number
+        }
+      }
+    }
+    UserContact: {
+      payload: Prisma.$UserContactPayload<ExtArgs>
+      fields: Prisma.UserContactFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserContactFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserContactFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>
+        }
+        findFirst: {
+          args: Prisma.UserContactFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserContactFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>
+        }
+        findMany: {
+          args: Prisma.UserContactFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>[]
+        }
+        create: {
+          args: Prisma.UserContactCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>
+        }
+        createMany: {
+          args: Prisma.UserContactCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserContactCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>[]
+        }
+        delete: {
+          args: Prisma.UserContactDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>
+        }
+        update: {
+          args: Prisma.UserContactUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserContactDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserContactUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserContactUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserContactUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserContactPayload>
+        }
+        aggregate: {
+          args: Prisma.UserContactAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserContact>
+        }
+        groupBy: {
+          args: Prisma.UserContactGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserContactGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserContactCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserContactCountAggregateOutputType> | number
+        }
+      }
+    }
+    UserMaintenanceRecord: {
+      payload: Prisma.$UserMaintenanceRecordPayload<ExtArgs>
+      fields: Prisma.UserMaintenanceRecordFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserMaintenanceRecordFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMaintenanceRecordPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserMaintenanceRecordFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMaintenanceRecordPayload>
+        }
+        findFirst: {
+          args: Prisma.UserMaintenanceRecordFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMaintenanceRecordPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserMaintenanceRecordFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMaintenanceRecordPayload>
+        }
+        findMany: {
+          args: Prisma.UserMaintenanceRecordFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMaintenanceRecordPayload>[]
+        }
+        create: {
+          args: Prisma.UserMaintenanceRecordCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMaintenanceRecordPayload>
+        }
+        createMany: {
+          args: Prisma.UserMaintenanceRecordCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserMaintenanceRecordCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMaintenanceRecordPayload>[]
+        }
+        delete: {
+          args: Prisma.UserMaintenanceRecordDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMaintenanceRecordPayload>
+        }
+        update: {
+          args: Prisma.UserMaintenanceRecordUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMaintenanceRecordPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserMaintenanceRecordDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserMaintenanceRecordUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserMaintenanceRecordUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMaintenanceRecordPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserMaintenanceRecordUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserMaintenanceRecordPayload>
+        }
+        aggregate: {
+          args: Prisma.UserMaintenanceRecordAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserMaintenanceRecord>
+        }
+        groupBy: {
+          args: Prisma.UserMaintenanceRecordGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserMaintenanceRecordGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserMaintenanceRecordCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserMaintenanceRecordCountAggregateOutputType> | number
+        }
+      }
+    }
+    CouponGrant: {
+      payload: Prisma.$CouponGrantPayload<ExtArgs>
+      fields: Prisma.CouponGrantFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CouponGrantFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CouponGrantPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CouponGrantFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CouponGrantPayload>
+        }
+        findFirst: {
+          args: Prisma.CouponGrantFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CouponGrantPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CouponGrantFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CouponGrantPayload>
+        }
+        findMany: {
+          args: Prisma.CouponGrantFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CouponGrantPayload>[]
+        }
+        create: {
+          args: Prisma.CouponGrantCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CouponGrantPayload>
+        }
+        createMany: {
+          args: Prisma.CouponGrantCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CouponGrantCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CouponGrantPayload>[]
+        }
+        delete: {
+          args: Prisma.CouponGrantDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CouponGrantPayload>
+        }
+        update: {
+          args: Prisma.CouponGrantUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CouponGrantPayload>
+        }
+        deleteMany: {
+          args: Prisma.CouponGrantDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CouponGrantUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CouponGrantUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CouponGrantPayload>[]
+        }
+        upsert: {
+          args: Prisma.CouponGrantUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CouponGrantPayload>
+        }
+        aggregate: {
+          args: Prisma.CouponGrantAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCouponGrant>
+        }
+        groupBy: {
+          args: Prisma.CouponGrantGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CouponGrantGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CouponGrantCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CouponGrantCountAggregateOutputType> | number
         }
       }
     }
@@ -3333,6 +3558,53 @@ export const UserNoteScalarFieldEnum = {
 export type UserNoteScalarFieldEnum = (typeof UserNoteScalarFieldEnum)[keyof typeof UserNoteScalarFieldEnum]
 
 
+export const UserContactScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  wechatId: 'wechatId',
+  telegramHandle: 'telegramHandle',
+  phoneCountryCode: 'phoneCountryCode',
+  phoneNumber: 'phoneNumber',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserContactScalarFieldEnum = (typeof UserContactScalarFieldEnum)[keyof typeof UserContactScalarFieldEnum]
+
+
+export const UserMaintenanceRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  source: 'source',
+  sourceMessageId: 'sourceMessageId',
+  actorId: 'actorId',
+  occurredAt: 'occurredAt',
+  body: 'body',
+  createdAt: 'createdAt'
+} as const
+
+export type UserMaintenanceRecordScalarFieldEnum = (typeof UserMaintenanceRecordScalarFieldEnum)[keyof typeof UserMaintenanceRecordScalarFieldEnum]
+
+
+export const CouponGrantScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  requestedById: 'requestedById',
+  amountMinor: 'amountMinor',
+  currency: 'currency',
+  idempotencyKey: 'idempotencyKey',
+  status: 'status',
+  externalCouponId: 'externalCouponId',
+  failureCode: 'failureCode',
+  grantedAt: 'grantedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CouponGrantScalarFieldEnum = (typeof CouponGrantScalarFieldEnum)[keyof typeof CouponGrantScalarFieldEnum]
+
+
 export const AutomationRuleVersionScalarFieldEnum = {
   id: 'id',
   kind: 'kind',
@@ -3612,6 +3884,7 @@ export const MailMessageScalarFieldEnum = {
   bodyHtml: 'bodyHtml',
   templateKey: 'templateKey',
   templateVersion: 'templateVersion',
+  purpose: 'purpose',
   reviewedById: 'reviewedById',
   openedAt: 'openedAt',
   firstClickedAt: 'firstClickedAt',
@@ -3695,6 +3968,7 @@ export const MailBatchScalarFieldEnum = {
   createdById: 'createdById',
   audienceMode: 'audienceMode',
   segment: 'segment',
+  purpose: 'purpose',
   subject: 'subject',
   bodyText: 'bodyText',
   bodyHtml: 'bodyHtml',
@@ -3996,6 +4270,34 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
 
 
 /**
+ * Reference to a field of type 'MaintenanceSource'
+ */
+export type EnumMaintenanceSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaintenanceSource'>
+    
+
+
+/**
+ * Reference to a field of type 'MaintenanceSource[]'
+ */
+export type ListEnumMaintenanceSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaintenanceSource[]'>
+    
+
+
+/**
+ * Reference to a field of type 'CouponGrantStatus'
+ */
+export type EnumCouponGrantStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CouponGrantStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'CouponGrantStatus[]'
+ */
+export type ListEnumCouponGrantStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CouponGrantStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'RecalculationStatus'
  */
 export type EnumRecalculationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecalculationStatus'>
@@ -4090,6 +4392,20 @@ export type EnumMailMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType
  * Reference to a field of type 'MailMessageStatus[]'
  */
 export type ListEnumMailMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailMessageStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'MailPurpose'
+ */
+export type EnumMailPurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailPurpose'>
+    
+
+
+/**
+ * Reference to a field of type 'MailPurpose[]'
+ */
+export type ListEnumMailPurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MailPurpose[]'>
     
 
 
@@ -4364,6 +4680,9 @@ export type GlobalOmitConfig = {
   segmentHistory?: Prisma.SegmentHistoryOmit
   segmentOverride?: Prisma.SegmentOverrideOmit
   userNote?: Prisma.UserNoteOmit
+  userContact?: Prisma.UserContactOmit
+  userMaintenanceRecord?: Prisma.UserMaintenanceRecordOmit
+  couponGrant?: Prisma.CouponGrantOmit
   automationRuleVersion?: Prisma.AutomationRuleVersionOmit
   segmentRecalculationRun?: Prisma.SegmentRecalculationRunOmit
   assignmentRule?: Prisma.AssignmentRuleOmit

@@ -63,6 +63,21 @@ export type SegmentOverride = Prisma.SegmentOverrideModel
  */
 export type UserNote = Prisma.UserNoteModel
 /**
+ * Model UserContact
+ * 
+ */
+export type UserContact = Prisma.UserContactModel
+/**
+ * Model UserMaintenanceRecord
+ * 
+ */
+export type UserMaintenanceRecord = Prisma.UserMaintenanceRecordModel
+/**
+ * Model CouponGrant
+ * 
+ */
+export type CouponGrant = Prisma.CouponGrantModel
+/**
  * Model AutomationRuleVersion
  * 
  */

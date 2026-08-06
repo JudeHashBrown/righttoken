@@ -120,6 +120,7 @@ async function deliverClaimedMailBatchRecipient(
             mailboxId: true,
             createdById: true,
             subject: true,
+            purpose: true,
             bodyText: true,
             bodyHtml: true,
             assets: {
@@ -152,6 +153,7 @@ async function deliverClaimedMailBatchRecipient(
         userId: recipient.userId,
         recipient: recipient.emailNormalized,
         subject: recipient.batch.subject,
+        purpose: recipient.batch.purpose,
         bodyText: recipient.batch.bodyText,
         bodyHtml: recipient.batch.bodyHtml,
         assets: recipient.batch.assets.map((asset) => ({

@@ -132,6 +132,34 @@ export const MailBatchRecipientStatus = {
 export type MailBatchRecipientStatus = (typeof MailBatchRecipientStatus)[keyof typeof MailBatchRecipientStatus]
 
 
+export const MailPurpose = {
+  PAYMENT_FOLLOW_UP: 'PAYMENT_FOLLOW_UP',
+  KNOWLEDGE_SHARE: 'KNOWLEDGE_SHARE',
+  PRODUCT_UPDATE: 'PRODUCT_UPDATE',
+  CAMPAIGN: 'CAMPAIGN',
+  OTHER: 'OTHER'
+} as const
+
+export type MailPurpose = (typeof MailPurpose)[keyof typeof MailPurpose]
+
+
+export const MaintenanceSource = {
+  MANUAL: 'MANUAL',
+  MAIL: 'MAIL'
+} as const
+
+export type MaintenanceSource = (typeof MaintenanceSource)[keyof typeof MaintenanceSource]
+
+
+export const CouponGrantStatus = {
+  PENDING: 'PENDING',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED'
+} as const
+
+export type CouponGrantStatus = (typeof CouponGrantStatus)[keyof typeof CouponGrantStatus]
+
+
 export const NotificationChannel = {
   IN_APP: 'IN_APP',
   WECOM_APP: 'WECOM_APP',

@@ -50,6 +50,10 @@ describe("AppSidebar", () => {
     );
 
     expect(screen.getByText("用户分组")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /B组/ })).toHaveAttribute(
+      "href",
+      "/groups/b"
+    );
     expect(screen.getByText("成员与权限")).toBeInTheDocument();
     expect(screen.getByText("访问看板")).toBeInTheDocument();
     expect(screen.getByText("系统设置")).toBeInTheDocument();

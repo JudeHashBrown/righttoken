@@ -60,6 +60,9 @@ export const ModelName = {
   SegmentHistory: 'SegmentHistory',
   SegmentOverride: 'SegmentOverride',
   UserNote: 'UserNote',
+  UserContact: 'UserContact',
+  UserMaintenanceRecord: 'UserMaintenanceRecord',
+  CouponGrant: 'CouponGrant',
   AutomationRuleVersion: 'AutomationRuleVersion',
   SegmentRecalculationRun: 'SegmentRecalculationRun',
   AssignmentRule: 'AssignmentRule',
@@ -281,6 +284,53 @@ export const UserNoteScalarFieldEnum = {
 } as const
 
 export type UserNoteScalarFieldEnum = (typeof UserNoteScalarFieldEnum)[keyof typeof UserNoteScalarFieldEnum]
+
+
+export const UserContactScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  wechatId: 'wechatId',
+  telegramHandle: 'telegramHandle',
+  phoneCountryCode: 'phoneCountryCode',
+  phoneNumber: 'phoneNumber',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserContactScalarFieldEnum = (typeof UserContactScalarFieldEnum)[keyof typeof UserContactScalarFieldEnum]
+
+
+export const UserMaintenanceRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  source: 'source',
+  sourceMessageId: 'sourceMessageId',
+  actorId: 'actorId',
+  occurredAt: 'occurredAt',
+  body: 'body',
+  createdAt: 'createdAt'
+} as const
+
+export type UserMaintenanceRecordScalarFieldEnum = (typeof UserMaintenanceRecordScalarFieldEnum)[keyof typeof UserMaintenanceRecordScalarFieldEnum]
+
+
+export const CouponGrantScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  requestedById: 'requestedById',
+  amountMinor: 'amountMinor',
+  currency: 'currency',
+  idempotencyKey: 'idempotencyKey',
+  status: 'status',
+  externalCouponId: 'externalCouponId',
+  failureCode: 'failureCode',
+  grantedAt: 'grantedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CouponGrantScalarFieldEnum = (typeof CouponGrantScalarFieldEnum)[keyof typeof CouponGrantScalarFieldEnum]
 
 
 export const AutomationRuleVersionScalarFieldEnum = {
@@ -562,6 +612,7 @@ export const MailMessageScalarFieldEnum = {
   bodyHtml: 'bodyHtml',
   templateKey: 'templateKey',
   templateVersion: 'templateVersion',
+  purpose: 'purpose',
   reviewedById: 'reviewedById',
   openedAt: 'openedAt',
   firstClickedAt: 'firstClickedAt',
@@ -645,6 +696,7 @@ export const MailBatchScalarFieldEnum = {
   createdById: 'createdById',
   audienceMode: 'audienceMode',
   segment: 'segment',
+  purpose: 'purpose',
   subject: 'subject',
   bodyText: 'bodyText',
   bodyHtml: 'bodyHtml',

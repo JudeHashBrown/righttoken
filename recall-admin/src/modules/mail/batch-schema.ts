@@ -6,6 +6,15 @@ import {
 const contentShape = {
   mailboxId: z.string().min(1),
   subject: z.string().trim().min(1).max(200),
+  purpose: z
+    .enum([
+      "PAYMENT_FOLLOW_UP",
+      "KNOWLEDGE_SHARE",
+      "PRODUCT_UPDATE",
+      "CAMPAIGN",
+      "OTHER"
+    ])
+    .default("OTHER"),
   bodyText: z.string().trim().min(1).max(100_000),
   bodyHtml: z.string().trim().max(200_000).default(""),
   assets: z

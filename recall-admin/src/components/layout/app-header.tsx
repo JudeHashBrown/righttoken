@@ -22,6 +22,7 @@ export function AppHeader({
       ["/automation/notifications", "提醒设置"],
       ["/automation/assignment", "客户分配"],
       ["/automation/segments", "用户分组"],
+      ["/groups/b", "B组 · 已发起支付但未完成"],
       ["/dashboard", "用户运营概览"],
       ["/tasks", "任务中心"],
       ["/users", "用户中心"],

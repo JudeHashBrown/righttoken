@@ -355,6 +355,40 @@ export type EnumSegmentCodeNullableWithAggregatesFilter<$PrismaModel = never> = 
   _max?: Prisma.NestedEnumSegmentCodeNullableFilter<$PrismaModel>
 }
 
+export type EnumMaintenanceSourceFilter<$PrismaModel = never> = {
+  equals?: $Enums.MaintenanceSource | Prisma.EnumMaintenanceSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.MaintenanceSource[] | Prisma.ListEnumMaintenanceSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MaintenanceSource[] | Prisma.ListEnumMaintenanceSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMaintenanceSourceFilter<$PrismaModel> | $Enums.MaintenanceSource
+}
+
+export type EnumMaintenanceSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MaintenanceSource | Prisma.EnumMaintenanceSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.MaintenanceSource[] | Prisma.ListEnumMaintenanceSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MaintenanceSource[] | Prisma.ListEnumMaintenanceSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMaintenanceSourceWithAggregatesFilter<$PrismaModel> | $Enums.MaintenanceSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMaintenanceSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMaintenanceSourceFilter<$PrismaModel>
+}
+
+export type EnumCouponGrantStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.CouponGrantStatus | Prisma.EnumCouponGrantStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.CouponGrantStatus[] | Prisma.ListEnumCouponGrantStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CouponGrantStatus[] | Prisma.ListEnumCouponGrantStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCouponGrantStatusFilter<$PrismaModel> | $Enums.CouponGrantStatus
+}
+
+export type EnumCouponGrantStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CouponGrantStatus | Prisma.EnumCouponGrantStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.CouponGrantStatus[] | Prisma.ListEnumCouponGrantStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CouponGrantStatus[] | Prisma.ListEnumCouponGrantStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCouponGrantStatusWithAggregatesFilter<$PrismaModel> | $Enums.CouponGrantStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCouponGrantStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCouponGrantStatusFilter<$PrismaModel>
+}
+
 export type EnumRecalculationStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.RecalculationStatus | Prisma.EnumRecalculationStatusFieldRefInput<$PrismaModel>
   in?: $Enums.RecalculationStatus[] | Prisma.ListEnumRecalculationStatusFieldRefInput<$PrismaModel>
@@ -505,6 +539,13 @@ export type EnumMailMessageStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumMailMessageStatusFilter<$PrismaModel> | $Enums.MailMessageStatus
 }
 
+export type EnumMailPurposeFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailPurpose | Prisma.EnumMailPurposeFieldRefInput<$PrismaModel>
+  in?: $Enums.MailPurpose[] | Prisma.ListEnumMailPurposeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailPurpose[] | Prisma.ListEnumMailPurposeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailPurposeFilter<$PrismaModel> | $Enums.MailPurpose
+}
+
 export type EnumMailDirectionWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.MailDirection | Prisma.EnumMailDirectionFieldRefInput<$PrismaModel>
   in?: $Enums.MailDirection[] | Prisma.ListEnumMailDirectionFieldRefInput<$PrismaModel>
@@ -523,6 +564,16 @@ export type EnumMailMessageStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumMailMessageStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumMailMessageStatusFilter<$PrismaModel>
+}
+
+export type EnumMailPurposeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailPurpose | Prisma.EnumMailPurposeFieldRefInput<$PrismaModel>
+  in?: $Enums.MailPurpose[] | Prisma.ListEnumMailPurposeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailPurpose[] | Prisma.ListEnumMailPurposeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailPurposeWithAggregatesFilter<$PrismaModel> | $Enums.MailPurpose
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMailPurposeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMailPurposeFilter<$PrismaModel>
 }
 
 export type EnumMailDeliveryActionFilter<$PrismaModel = never> = {
@@ -971,6 +1022,40 @@ export type NestedEnumSegmentCodeNullableWithAggregatesFilter<$PrismaModel = nev
   _max?: Prisma.NestedEnumSegmentCodeNullableFilter<$PrismaModel>
 }
 
+export type NestedEnumMaintenanceSourceFilter<$PrismaModel = never> = {
+  equals?: $Enums.MaintenanceSource | Prisma.EnumMaintenanceSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.MaintenanceSource[] | Prisma.ListEnumMaintenanceSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MaintenanceSource[] | Prisma.ListEnumMaintenanceSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMaintenanceSourceFilter<$PrismaModel> | $Enums.MaintenanceSource
+}
+
+export type NestedEnumMaintenanceSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MaintenanceSource | Prisma.EnumMaintenanceSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.MaintenanceSource[] | Prisma.ListEnumMaintenanceSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MaintenanceSource[] | Prisma.ListEnumMaintenanceSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMaintenanceSourceWithAggregatesFilter<$PrismaModel> | $Enums.MaintenanceSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMaintenanceSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMaintenanceSourceFilter<$PrismaModel>
+}
+
+export type NestedEnumCouponGrantStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.CouponGrantStatus | Prisma.EnumCouponGrantStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.CouponGrantStatus[] | Prisma.ListEnumCouponGrantStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CouponGrantStatus[] | Prisma.ListEnumCouponGrantStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCouponGrantStatusFilter<$PrismaModel> | $Enums.CouponGrantStatus
+}
+
+export type NestedEnumCouponGrantStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CouponGrantStatus | Prisma.EnumCouponGrantStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.CouponGrantStatus[] | Prisma.ListEnumCouponGrantStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CouponGrantStatus[] | Prisma.ListEnumCouponGrantStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCouponGrantStatusWithAggregatesFilter<$PrismaModel> | $Enums.CouponGrantStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCouponGrantStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCouponGrantStatusFilter<$PrismaModel>
+}
+
 export type NestedEnumRecalculationStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.RecalculationStatus | Prisma.EnumRecalculationStatusFieldRefInput<$PrismaModel>
   in?: $Enums.RecalculationStatus[] | Prisma.ListEnumRecalculationStatusFieldRefInput<$PrismaModel>
@@ -1094,6 +1179,13 @@ export type NestedEnumMailMessageStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumMailMessageStatusFilter<$PrismaModel> | $Enums.MailMessageStatus
 }
 
+export type NestedEnumMailPurposeFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailPurpose | Prisma.EnumMailPurposeFieldRefInput<$PrismaModel>
+  in?: $Enums.MailPurpose[] | Prisma.ListEnumMailPurposeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailPurpose[] | Prisma.ListEnumMailPurposeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailPurposeFilter<$PrismaModel> | $Enums.MailPurpose
+}
+
 export type NestedEnumMailDirectionWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.MailDirection | Prisma.EnumMailDirectionFieldRefInput<$PrismaModel>
   in?: $Enums.MailDirection[] | Prisma.ListEnumMailDirectionFieldRefInput<$PrismaModel>
@@ -1112,6 +1204,16 @@ export type NestedEnumMailMessageStatusWithAggregatesFilter<$PrismaModel = never
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumMailMessageStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumMailMessageStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumMailPurposeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MailPurpose | Prisma.EnumMailPurposeFieldRefInput<$PrismaModel>
+  in?: $Enums.MailPurpose[] | Prisma.ListEnumMailPurposeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MailPurpose[] | Prisma.ListEnumMailPurposeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMailPurposeWithAggregatesFilter<$PrismaModel> | $Enums.MailPurpose
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMailPurposeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMailPurposeFilter<$PrismaModel>
 }
 
 export type NestedEnumMailDeliveryActionFilter<$PrismaModel = never> = {
