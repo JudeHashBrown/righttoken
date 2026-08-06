@@ -12,9 +12,9 @@
 运营服务使用独立账号 `righttoken_recall_app`。该账号对指定
 `public` 表只有读取权限，只能写入 `recall` 和 `pgboss`。
 
-生产服务包括 `recall-migrate`、`recall-web` 和
-`recall-worker`，统一加入主站 `sub2api-network`。访问域名为
-`https://recall.righttoken.ai`。
+生产服务包括 `recall-migrate`、`recall-visit-verify`、
+`recall-web` 和 `recall-worker`，统一加入主站
+`sub2api-network`。访问域名为 `https://recall.righttoken.ai`。
 
 ## 2. 发布前备份
 
@@ -91,6 +91,11 @@ RECALL_SSO_BASE_URL=https://recall.righttoken.ai
 这些密钥不得互相复用。生产 Compose 固定
 `RIGHTTOKEN_SOURCE_MODE=database` 和 `DEPLOYMENT_ENV=production`；
 发现 `AUTH_MODE=development` 时应用会拒绝启动。
+
+访问地域预检还要求至少一个 GeoIP 来源可用：首选只读挂载的
+`RECALL_GEOIP_MMDB_PATH`，其次是 `RECALL_GEOIP_RIR_PATH`，也可配置
+`RECALL_GEOIP_HTTP_URL` 作为远程备用。本地文件必须存在于
+`/var/lib/righttoken-geoip` 宿主机目录并可由容器账号读取。
 
 生产邮件正文图片和图片附件必须写入私有 S3 或 S3 兼容对象存储：
 
@@ -174,6 +179,22 @@ psql "$RECALL_DATABASE_URL" \
 - `recall`、`pgboss` 可访问；
 - 成员身份和运营状态没有孤儿主站用户 ID。
 
+边界检查通过后，用新镜像执行访问链路预检。该命令只用
+`to_regclass` 检查 `recall."SiteVisit"` 是否存在，不读取访问明细；
+同时确认至少有一个 GeoIP 来源可用：
+
+```bash
+docker compose \
+  --env-file deploy/.env \
+  --env-file deploy/recall.env \
+  -f deploy/docker-compose.yml \
+  -f deploy/docker-compose.recall.yml \
+  run --rm --no-deps recall-visit-verify
+```
+
+成功时标准输出只有 `visit_pipeline_ready:<kind>`。任何非零退出都必须
+停止发布；不要为了启动 Web 或 Worker 跳过迁移或预检。
+
 全新部署此时还没有主管理员。主管理员邮箱必须是已经注册的
 RightToken 用户。在 `recall.env` 临时设置：
 
@@ -210,6 +231,20 @@ docker compose \
 
 迁移或权限检查失败时不得启动 Web 和 Worker。Prisma 只管理
 `recall`，不得修改 `public` 主站表。
+
+本次 Compose 依赖固定为 `recall-migrate` 成功后运行
+`recall-visit-verify`，只有预检成功才启动 Web 和 Worker。
+
+服务就绪后，先记录下面查询的两个聚合计数，产生一次内部测试访问，
+稍后再执行同一查询。`site_visit_rows` 应增加，且在测试 IP 可
+解析时 `geolocated_rows` 也应增加。查询只输出计数，不展示访客、
+路径或地域明细：
+
+```sql
+SELECT COUNT(*) AS site_visit_rows,
+       COUNT(*) FILTER (WHERE "countryCode" <> 'ZZ') AS geolocated_rows
+FROM recall."SiteVisit";
+```
 
 ## 6. 主站入口与自动登录验收
 

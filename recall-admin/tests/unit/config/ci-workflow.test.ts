@@ -32,6 +32,7 @@ describe("recall admin CI workflow", () => {
       "npm run lint",
       "npm run build",
       "npm run worker:build",
+      "npm run visit:verify:build",
       "npm run bootstrap:build"
     ]) {
       expect(workflow).toContain(command);

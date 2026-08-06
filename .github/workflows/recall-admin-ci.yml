@@ -81,6 +81,8 @@ jobs:
         run: npm run build
       - name: Build Worker
         run: npm run worker:build
+      - name: Build visit pipeline verifier
+        run: npm run visit:verify:build
       - name: Build primary-admin bootstrap
         run: npm run bootstrap:build
       - name: Build initial reconciliation command

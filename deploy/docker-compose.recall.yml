@@ -62,6 +62,16 @@ services:
     networks:
       - sub2api-network
 
+  recall-visit-verify:
+    <<: *recall-application
+    command: ["npm", "run", "visit:verify:prod"]
+    depends_on:
+      recall-migrate:
+        condition: service_completed_successfully
+    restart: "no"
+    networks:
+      - sub2api-network
+
   recall-bootstrap:
     <<: *recall-application
     profiles: ["recall-bootstrap"]
@@ -82,7 +92,7 @@ services:
     ports:
       - "127.0.0.1:${RECALL_SERVER_PORT:-3000}:3000"
     depends_on:
-      recall-migrate:
+      recall-visit-verify:
         condition: service_completed_successfully
     read_only: true
     tmpfs:
@@ -94,7 +104,7 @@ services:
     <<: *recall-application
     command: ["npm", "run", "worker:prod"]
     depends_on:
-      recall-migrate:
+      recall-visit-verify:
         condition: service_completed_successfully
     read_only: true
     tmpfs:

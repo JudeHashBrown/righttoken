@@ -113,6 +113,73 @@ describe("recall Compose environments", () => {
     );
   });
 
+  it("gates production Web and Worker on visit pipeline readiness", () => {
+    const compose = readRepository("deploy/docker-compose.recall.yml");
+    const verifierBlock = compose
+      .split("  recall-visit-verify:")[1]!
+      .split("\n  recall-bootstrap:")[0]!;
+    const webBlock = compose
+      .split("  recall-web:")[1]!
+      .split("\n  recall-worker:")[0]!;
+    const workerBlock = compose
+      .split("  recall-worker:")[1]!
+      .split("\nnetworks:")[0]!;
+
+    expect(verifierBlock).toContain(
+      'command: ["npm", "run", "visit:verify:prod"]'
+    );
+    expect(verifierBlock).toContain("recall-migrate:");
+    expect(verifierBlock).toContain(
+      "condition: service_completed_successfully"
+    );
+    for (const applicationBlock of [webBlock, workerBlock]) {
+      expect(applicationBlock).toContain("recall-visit-verify:");
+      expect(applicationBlock).toContain(
+        "condition: service_completed_successfully"
+      );
+    }
+    for (const mapping of [
+      "GEOIP_HTTP_URL: ${RECALL_GEOIP_HTTP_URL",
+      "GEOIP_HTTP_TOKEN: ${RECALL_GEOIP_HTTP_TOKEN",
+      "GEOIP_HTTP_TIMEOUT_MS: ${RECALL_GEOIP_HTTP_TIMEOUT_MS",
+      "GEOIP_MMDB_PATH: ${RECALL_GEOIP_MMDB_PATH",
+      "GEOIP_RIR_PATH: ${RECALL_GEOIP_RIR_PATH"
+    ]) {
+      expect(compose).toContain(mapping);
+    }
+
+    expect(readRepository("deploy/recall.env.example")).toContain(
+      "The deployment preflight requires at least one usable GeoIP source."
+    );
+  });
+
+  it("builds the visit verifier into the production image", () => {
+    const dockerfile = readRecall("Dockerfile");
+
+    expect(dockerfile).toContain("npm run visit:verify:build");
+    expect(dockerfile).toContain(
+      "COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist"
+    );
+  });
+
+  it("documents migrate, verify, and service startup in that order", () => {
+    const deployment = readRecall("docs/deployment.md");
+    const runbook = readRecall("docs/runbooks/deployment.md");
+    const migrate = deployment.indexOf("run --rm recall-migrate");
+    const verify = deployment.indexOf(
+      "run --rm --no-deps recall-visit-verify"
+    );
+    const start = deployment.indexOf("up -d recall-web recall-worker");
+
+    expect(migrate).toBeGreaterThanOrEqual(0);
+    expect(verify).toBeGreaterThan(migrate);
+    expect(start).toBeGreaterThan(verify);
+    expect(deployment).toContain("COUNT(*) AS site_visit_rows");
+    expect(deployment).toContain("COUNT(*) FILTER");
+    expect(runbook).toContain("recall-visit-verify");
+    expect(runbook).toContain("迁移 → 访问链路预检 → Web/Worker");
+  });
+
   it("ships root-level domain verification files in the web image", () => {
     const dockerfile = readRecall("Dockerfile");
     const verification = readRecall(
