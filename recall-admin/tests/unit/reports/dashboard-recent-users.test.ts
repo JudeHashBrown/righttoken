@@ -46,7 +46,7 @@ describe("dashboard recent user filters", () => {
 
   it("builds the active service-anomaly filter from either anomaly timestamp", () => {
     expect(
-      recentAnomalyWhere({ id: "admin-1", role: "SUPER_ADMIN" }, now)
+      recentAnomalyWhere({ id: "admin-1", role: "ADMIN" }, now)
     ).toEqual({
       sourceDeletedAt: null,
       currentSegment: "F",

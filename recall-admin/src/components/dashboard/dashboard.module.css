@@ -4,41 +4,72 @@
   padding: 28px;
 }
 
-.pageHeading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.pageHeading h1 {
-  margin: 0;
-  color: #182035;
-  font-size: 24px;
-  line-height: 1.3;
-  letter-spacing: -0.025em;
-}
-
-.pageHeading p {
-  margin: 7px 0 0;
-  color: #667087;
-  font-size: 15px;
-  line-height: 1.6;
-}
-
-.pageHeading time {
-  color: #788197;
-  padding-top: 5px;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
 .metrics {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 14px;
   margin-bottom: 16px;
+}
+
+.focusPanel {
+  margin-bottom: 16px;
+  scroll-margin-top: 20px;
+}
+
+.focusTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.focusTable th,
+.focusTable td {
+  border-bottom: 1px solid #eef0f5;
+  padding: 13px 16px;
+  color: #596278;
+  font-size: 13px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.focusTable th {
+  background: #fafbfc;
+  color: #798195;
+  font-size: 12px;
+  font-weight: 630;
+}
+
+.focusTable tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.focusTable tbody tr:hover {
+  background: #fafbfe;
+}
+
+.focusUser {
+  display: block;
+  color: #273047;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.focusUser:hover {
+  color: #5664d5;
+}
+
+.focusUserId {
+  display: block;
+  margin-top: 3px;
+  color: #8a92a4;
+  font-size: 11px;
+}
+
+.focusEmpty {
+  margin: 0;
+  padding: 44px 18px;
+  color: #81899b;
+  font-size: 13px;
+  text-align: center;
 }
 
 .metric {
@@ -530,10 +561,6 @@
     padding: 20px 16px 28px;
   }
 
-  .pageHeading time {
-    display: none;
-  }
-
   .metrics {
     display: flex;
     margin-inline: -16px;
@@ -558,6 +585,10 @@
 
   .taskTable th:first-child {
     width: 58%;
+  }
+
+  .focusTable {
+    min-width: 760px;
   }
 }
 
