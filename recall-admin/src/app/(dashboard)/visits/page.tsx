@@ -67,8 +67,8 @@ export default async function VisitsPage({
   );
   const unknownCopy =
     geoIpStatus.kind === "unavailable"
-      ? "GeoIP 数据源不可用，当前未知访问无法解析；请检查部署配置和数据文件。"
-      : "GeoIP 数据源已启用；剩余未知访问通常来自内网、保留地址或查询未命中。";
+      ? "GeoIP 数据源未通过就绪检查；请检查本地文件是否可读、非空、可解析且未过期，或检查远程 URL 契约。"
+      : "GeoIP 数据源已通过就绪检查；剩余未知访问通常来自内网、保留地址或查询未命中。";
 
   return (
     <main className={workspace.page}>

@@ -84,6 +84,38 @@ describe("parseServerEnv", () => {
       "https://geo.example.test/lookup/{ip}"
     );
     expect(env.GEOIP_HTTP_TIMEOUT_MS).toBe(1500);
+    expect(env.GEOIP_MAX_AGE_DAYS).toBe(45);
+  });
+
+  it.each([
+    "ftp://geo.example.test/lookup/{ip}",
+    "https://geo.example.test/lookup",
+    "not-a-url/{ip}"
+  ])("rejects an invalid GeoIP HTTP URL contract: %s", (url) => {
+    expect(() =>
+      parseServerEnv({
+        ...baseEnv,
+        GEOIP_HTTP_URL: url
+      })
+    ).toThrow();
+  });
+
+  it("accepts only bounded GeoIP freshness settings", () => {
+    expect(
+      parseServerEnv({
+        ...baseEnv,
+        GEOIP_MAX_AGE_DAYS: "60"
+      }).GEOIP_MAX_AGE_DAYS
+    ).toBe(60);
+
+    for (const value of ["0", "91", "not-a-number"]) {
+      expect(() =>
+        parseServerEnv({
+          ...baseEnv,
+          GEOIP_MAX_AGE_DAYS: value
+        })
+      ).toThrow();
+    }
   });
 
   it("accepts local MMDB and RIR snapshot paths", () => {
@@ -223,6 +255,7 @@ describe("parseServerEnv", () => {
       "RECALL_RIGHTTOKEN_NETWORK_NAME",
       "RECALL_SESSION_COOKIE_SECRET",
       "RECALL_APP_ENCRYPTION_KEY",
+      "RECALL_VISITOR_HASH_KEY",
       "RECALL_APP_URL",
       "RECALL_AUTH_MODE",
       "RECALL_INTERNAL_API_SECRET_CURRENT",
@@ -232,6 +265,7 @@ describe("parseServerEnv", () => {
       "RECALL_RECONCILE_ENABLED",
       "RECALL_GEOIP_MMDB_PATH",
       "RECALL_GEOIP_RIR_PATH",
+      "RECALL_GEOIP_MAX_AGE_DAYS",
       "RECALL_MAIL_ASSET_STORAGE",
       "RECALL_MAIL_ASSET_S3_BUCKET",
       "RECALL_MAIL_ASSET_S3_REGION",

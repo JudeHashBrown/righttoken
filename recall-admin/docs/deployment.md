@@ -12,9 +12,9 @@
 运营服务使用独立账号 `righttoken_recall_app`。该账号对指定
 `public` 表只有读取权限，只能写入 `recall` 和 `pgboss`。
 
-生产服务包括 `recall-migrate`、`recall-visit-verify`、
-`recall-web` 和 `recall-worker`，统一加入主站
-`sub2api-network`。访问域名为 `https://recall.righttoken.ai`。
+生产发布范围包括主站 `sub2api`，以及 `recall-migrate`、
+`recall-visit-verify`、`recall-web` 和 `recall-worker`。这些服务统一加入
+`sub2api-network`。运营后台访问域名为 `https://recall.righttoken.ai`。
 
 ## 2. 发布前备份
 
@@ -85,17 +85,20 @@ RECALL_SSO_BASE_URL=https://recall.righttoken.ai
 
 1. `RECALL_SESSION_COOKIE_SECRET`：至少 32 位随机值。
 2. `RECALL_APP_ENCRYPTION_KEY`：Base64 编码的 32 字节密钥。
-3. `RECALL_INTERNAL_API_SECRET_CURRENT`：至少 32 位随机值。
-4. `RECALL_RIGHTTOKEN_SSO_SECRET`：至少 32 位随机值。
+3. `RECALL_VISITOR_HASH_KEY`：至少 32 位独立随机值。
+4. `RECALL_INTERNAL_API_SECRET_CURRENT`：至少 32 位随机值。
+5. `RECALL_RIGHTTOKEN_SSO_SECRET`：至少 32 位随机值。
 
 这些密钥不得互相复用。生产 Compose 固定
 `RIGHTTOKEN_SOURCE_MODE=database` 和 `DEPLOYMENT_ENV=production`；
 发现 `AUTH_MODE=development` 时应用会拒绝启动。
 
-访问地域预检还要求至少一个 GeoIP 来源可用：首选只读挂载的
+访问地域预检还要求至少一个 GeoIP 来源真正可用：首选只读挂载的
 `RECALL_GEOIP_MMDB_PATH`，其次是 `RECALL_GEOIP_RIR_PATH`，也可配置
-`RECALL_GEOIP_HTTP_URL` 作为远程备用。本地文件必须存在于
-`/var/lib/righttoken-geoip` 宿主机目录并可由容器账号读取。
+`RECALL_GEOIP_HTTP_URL` 作为远程备用。本地文件必须可读、非空、可由
+对应解析器打开，且修改时间不得早于 `RECALL_GEOIP_MAX_AGE_DAYS`
+（默认 45 天，可配置 1–90 天）。远程 URL 必须使用 `http` 或 `https`，
+并包含字面量 `{ip}` 占位符；预检只验证 URL 契约，不会发送真实访客请求。
 
 生产邮件正文图片和图片附件必须写入私有 S3 或 S3 兼容对象存储：
 
@@ -115,11 +118,28 @@ GetObject、HeadObject 和 DeleteObject 的权限。使用 AWS S3 时 endpoint �
 
 ## 5. 数据库迁移与部署
 
-镜像必须使用不可变 Git SHA，不使用 `latest`：
+召回镜像必须使用不可变 Git SHA，不使用 `latest`：
 
 ```text
 RECALL_IMAGE=ghcr.io/judehashbrown/righttoken-recall:YOUR_GIT_SHA
 ```
+
+主站不引入第二套后端镜像流程。仓库现有 Release workflow 会用
+GoReleaser 发布 `ghcr.io/judehashbrown/sub2api:<version>`。先确认待发布代码
+已打版本标签并且 Release 成功，再查看该版本的 manifest：
+
+```bash
+docker buildx imagetools inspect ghcr.io/judehashbrown/sub2api:vX.Y.Z
+```
+
+将输出中的 `Digest: sha256:...` 完整复制到 `recall.env`：
+
+```text
+RIGHTTOKEN_IMAGE=ghcr.io/judehashbrown/sub2api@sha256:<64 位镜像清单摘要>
+```
+
+Compose overlay 用该 digest 覆盖基础文件中的历史 `latest`。因此可以确定
+信任代理和访问转发诊断修复与召回镜像一起进入本次发布。
 
 先解析配置：
 
@@ -135,6 +155,12 @@ docker compose \
 该命令必须在缺少任一邮件资产必填变量时失败。服务启动后，使用内部测试邮件
 分别上传一张正文图片和一张图片附件，再打开预览确认两者均可读取；失败时先
 检查 `recall-web` 日志和对象存储权限，不要改为公开桶或生产本地目录。
+
+配置解析成功后，在任何迁移或服务重建前拉取本次固定的两类镜像：
+
+```bash
+docker compose --env-file deploy/.env --env-file deploy/recall.env -f deploy/docker-compose.yml -f deploy/docker-compose.recall.yml pull sub2api recall-migrate recall-web recall-worker
+```
 
 先只运行数据库迁移：
 
@@ -181,7 +207,8 @@ psql "$RECALL_DATABASE_URL" \
 
 边界检查通过后，用新镜像执行访问链路预检。该命令只用
 `to_regclass` 检查 `recall."SiteVisit"` 是否存在，不读取访问明细；
-同时确认至少有一个 GeoIP 来源可用：
+同时确认至少有一个 GeoIP 来源通过文件完整性、新鲜度或远程 URL
+契约检查：
 
 ```bash
 docker compose \
@@ -219,7 +246,7 @@ docker compose \
 已有生产状态完成搬迁后不再重复创建主管理员。全新部署创建成功后立即
 清空临时邮箱。主管理员首次从主站进入时会绑定稳定的主站用户 ID。
 
-检查通过后再启动 Web 和 Worker：
+检查通过后同时强制重建主站、Web 和 Worker：
 
 ```bash
 docker compose \
@@ -227,10 +254,11 @@ docker compose \
   --env-file deploy/recall.env \
   -f deploy/docker-compose.yml \
   -f deploy/docker-compose.recall.yml \
-  up -d recall-web recall-worker
+  up -d --force-recreate sub2api recall-web recall-worker
 ```
 
-迁移或权限检查失败时不得启动 Web 和 Worker。Prisma 只管理
+不得省略 `sub2api`；否则新版召回服务会与旧版访问转发和代理解析
+代码混用。迁移或权限检查失败时不得启动 Web 和 Worker。Prisma 只管理
 `recall`，不得修改 `public` 主站表。
 
 本次 Compose 依赖固定为 `recall-migrate` 成功后运行
@@ -367,9 +395,10 @@ docker compose \
 
 1. 保留发布前数据库备份。
 2. 将 `RECALL_IMAGE` 改为上一条已验证 SHA。
-3. 先回滚 Web 和 Worker。
-4. 再验证健康接口、主站 SSO、成员权限和一条内部测试任务。
-5. 只有在隔离环境验证恢复方案后，才考虑恢复 `recall` schema。
+3. 将 `RIGHTTOKEN_IMAGE` 改为上一条已验证 manifest digest。
+4. 用与发布相同的 `--force-recreate` 命令同时回滚 `sub2api`、Web 和 Worker。
+5. 再验证健康接口、主站 SSO、成员权限和一条内部测试任务。
+6. 只有在隔离环境验证恢复方案后，才考虑恢复 `recall` schema。
 
 不要回滚或覆盖 `public` 主站业务表。分组业务规则回滚应在历史版本页面
 发布一个新版本完成，不直接修改历史记录。

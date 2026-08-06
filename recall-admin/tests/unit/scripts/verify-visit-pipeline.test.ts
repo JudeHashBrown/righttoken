@@ -7,6 +7,8 @@ import {
   verifyVisitPipeline
 } from "../../../scripts/verify-visit-pipeline";
 
+const validVisitorHashKey = "v".repeat(32);
+
 describe("visit pipeline verifier", () => {
   it("defines development, build, and production verifier commands", () => {
     const packageJson = JSON.parse(
@@ -25,6 +27,7 @@ describe("visit pipeline verifier", () => {
   it("fails when the SiteVisit table is missing", async () => {
     await expect(
       verifyVisitPipeline({
+        visitorHashKey: () => validVisitorHashKey,
         siteVisitTableExists: async () => false,
         geoIpStatus: async () => ({
           kind: "city",
@@ -37,6 +40,7 @@ describe("visit pipeline verifier", () => {
   it("fails when GeoIP has no usable source", async () => {
     await expect(
       verifyVisitPipeline({
+        visitorHashKey: () => validVisitorHashKey,
         siteVisitTableExists: async () => true,
         geoIpStatus: async () => ({
           kind: "unavailable",
@@ -56,6 +60,7 @@ describe("visit pipeline verifier", () => {
 
       await expect(
         verifyVisitPipeline({
+          visitorHashKey: () => validVisitorHashKey,
           siteVisitTableExists: async () => true,
           geoIpStatus
         })
@@ -63,6 +68,65 @@ describe("visit pipeline verifier", () => {
       expect(geoIpStatus).toHaveBeenCalledOnce();
     }
   );
+
+  it.each([undefined, "short"])(
+    "rejects a missing or short visitor hash key without exposing it: %s",
+    async (visitorHashKey) => {
+      const secret = visitorHashKey ?? "not-configured";
+
+      await expect(
+        verifyVisitPipeline({
+          visitorHashKey: () => visitorHashKey,
+          siteVisitTableExists: async () => true,
+          geoIpStatus: async () => ({
+            kind: "remote",
+            provinceCapable: false
+          })
+        })
+      ).rejects.toThrow("VISIT_PIPELINE_VISITOR_HASH_KEY_INVALID");
+
+      try {
+        await verifyVisitPipeline({
+          visitorHashKey: () => visitorHashKey,
+          siteVisitTableExists: async () => true,
+          geoIpStatus: async () => ({
+            kind: "remote",
+            provinceCapable: false
+          })
+        });
+      } catch (error) {
+        expect(String(error)).not.toContain(secret);
+      }
+    }
+  );
+
+  it("prints only the stable visitor hash key validation code", async () => {
+    const stdout = vi.fn();
+    const stderr = vi.fn();
+
+    await expect(
+      runVisitPipelineCli(
+        {
+          visitorHashKey: () => "secret-but-too-short",
+          siteVisitTableExists: async () => true,
+          geoIpStatus: async () => ({
+            kind: "remote",
+            provinceCapable: false
+          }),
+          disconnect: async () => undefined
+        },
+        { stdout, stderr }
+      )
+    ).resolves.toBe(1);
+
+    expect(stdout).not.toHaveBeenCalled();
+    expect(stderr).toHaveBeenCalledWith(
+      "VISIT_PIPELINE_VISITOR_HASH_KEY_INVALID\n"
+    );
+    expect(stderr.mock.calls.flat().join(" ")).not.toContain(
+      "secret-but-too-short"
+    );
+  });
 
   it("prints only the ready kind after a successful CLI check", async () => {
     const stdout = vi.fn();
@@ -72,6 +136,7 @@ describe("visit pipeline verifier", () => {
     await expect(
       runVisitPipelineCli(
         {
+          visitorHashKey: () => validVisitorHashKey,
           siteVisitTableExists: async () => true,
           geoIpStatus: async () => ({
             kind: "city",
@@ -96,6 +161,7 @@ describe("visit pipeline verifier", () => {
     await expect(
       runVisitPipelineCli(
         {
+          visitorHashKey: () => validVisitorHashKey,
           siteVisitTableExists: async () => false,
           geoIpStatus: async () => ({
             kind: "city",
@@ -122,6 +188,7 @@ describe("visit pipeline verifier", () => {
     await expect(
       runVisitPipelineCli(
         {
+          visitorHashKey: () => validVisitorHashKey,
           siteVisitTableExists: async () => {
             throw new Error(
               "postgresql://secret@db/recall?token=do-not-print"
@@ -152,6 +219,7 @@ describe("visit pipeline verifier", () => {
     await expect(
       runVisitPipelineCli(
         {
+          visitorHashKey: () => validVisitorHashKey,
           siteVisitTableExists: async () => true,
           geoIpStatus: async () => ({
             kind: "country",
@@ -183,10 +251,12 @@ describe("visit pipeline verifier", () => {
     }));
     const dependencies = createVisitPipelineRuntimeDependencies(
       { $queryRaw: queryRaw, $disconnect: disconnect },
-      geoIpStatus
+      geoIpStatus,
+      { VISITOR_HASH_KEY: validVisitorHashKey }
     );
 
     await expect(dependencies.siteVisitTableExists()).resolves.toBe(true);
+    expect(dependencies.visitorHashKey()).toBe(validVisitorHashKey);
     await expect(dependencies.geoIpStatus()).resolves.toEqual({
       kind: "remote",
       provinceCapable: false
@@ -213,7 +283,8 @@ describe("visit pipeline verifier", () => {
         }),
         $disconnect: vi.fn(async () => undefined)
       },
-      async () => ({ kind: "city", provinceCapable: true })
+      async () => ({ kind: "city", provinceCapable: true }),
+      { VISITOR_HASH_KEY: validVisitorHashKey }
     );
 
     await expect(dependencies.siteVisitTableExists()).resolves.toBe(false);

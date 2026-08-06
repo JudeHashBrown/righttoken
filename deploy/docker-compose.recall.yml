@@ -3,6 +3,7 @@ x-recall-environment: &recall-environment
   JOB_DATABASE_URL: ${RECALL_JOB_DATABASE_URL:?RECALL_JOB_DATABASE_URL is required}
   SESSION_COOKIE_SECRET: ${RECALL_SESSION_COOKIE_SECRET:?RECALL_SESSION_COOKIE_SECRET is required}
   APP_ENCRYPTION_KEY: ${RECALL_APP_ENCRYPTION_KEY:?RECALL_APP_ENCRYPTION_KEY is required}
+  VISITOR_HASH_KEY: ${RECALL_VISITOR_HASH_KEY:?RECALL_VISITOR_HASH_KEY is required}
   APP_URL: ${RECALL_APP_URL:-https://recall.righttoken.ai}
   AUTH_MODE: ${RECALL_AUTH_MODE:?RECALL_AUTH_MODE is required}
   DEPLOYMENT_ENV: production
@@ -19,6 +20,7 @@ x-recall-environment: &recall-environment
   GEOIP_HTTP_TIMEOUT_MS: ${RECALL_GEOIP_HTTP_TIMEOUT_MS:-2000}
   GEOIP_MMDB_PATH: ${RECALL_GEOIP_MMDB_PATH:-/var/lib/righttoken-geoip/GeoLite2-City.mmdb}
   GEOIP_RIR_PATH: ${RECALL_GEOIP_RIR_PATH:-/var/lib/righttoken-geoip/delegated-rir.txt}
+  GEOIP_MAX_AGE_DAYS: ${RECALL_GEOIP_MAX_AGE_DAYS:-45}
   RECONCILE_ENABLED: ${RECALL_RECONCILE_ENABLED:-false}
   RECONCILE_INTERVAL_MINUTES: ${RECALL_RECONCILE_INTERVAL_MINUTES:-15}
   FULL_RECONCILE_CRON: ${RECALL_FULL_RECONCILE_CRON:-0 2 * * *}
@@ -55,6 +57,9 @@ x-recall-application: &recall-application
     - /var/lib/righttoken-geoip:/var/lib/righttoken-geoip:ro
 
 services:
+  sub2api:
+    image: ${RIGHTTOKEN_IMAGE:?RIGHTTOKEN_IMAGE is required}
+
   recall-migrate:
     <<: *recall-application
     command: ["npm", "run", "db:deploy"]

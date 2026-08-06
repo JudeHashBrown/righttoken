@@ -12,6 +12,7 @@
 - `GEOIP_MMDB_PATH`：GeoLite2 City `.mmdb` 文件路径。
 - `GEOIP_RIR_PATH`：五大 RIR delegated stats 合并快照路径。
 - Web 和 Worker 均以只读方式挂载 `/var/lib/righttoken-geoip`。
+- `GEOIP_MAX_AGE_DAYS` 默认 `45`，可配置 1–90 天；空、损坏或过期文件不得通过发布预检。
 - 每月更新 GeoLite2，每周更新 RIR 快照；更新失败时保留上一版。
 - 在可写的宿主机目录执行
   `npm run geoip:update -- --output /var/lib/righttoken-geoip/delegated-rir.txt`
@@ -30,7 +31,7 @@ stats 文件拼接生成。本地查询顺序为 GeoLite2 City → RIR 地址段
 
 可选 HTTP GeoIP 仅作为最后备用：
 
-- `GEOIP_HTTP_URL`：查询地址，必须包含 `{ip}` 占位符。
+- `GEOIP_HTTP_URL`：必须是 `http`/`https` 查询地址，并包含 `{ip}` 占位符。
 - `GEOIP_HTTP_TOKEN`：可选 Bearer Token。
 - `GEOIP_HTTP_TIMEOUT_MS`：请求超时，默认 `2000`。
 
@@ -72,15 +73,17 @@ IP 结果；原始 IP 国家和地区仍会保留用于审计。
 - 手动收取成功后等待两到四分钟并刷新，最近成功同步时间应继续推进。
 - 页面提示自动同步可能未运行时，同时重新创建 Web 和 Worker，不能只更新 Web。
 
-固定发布门禁顺序是：迁移 → 访问链路预检 → Web/Worker。
+固定发布门禁顺序是：迁移 → 访问链路预检 → Web/Worker。在此之前先用
+仓库 Release 产出的 `sub2api:<version>` manifest digest 固定主站镜像；
+通过门禁后必须强制重建 `sub2api`，不能只更新召回服务。
 `recall-visit-verify` 必须使用与 Web 相同的数据库和 GeoIP 环境，
 并由容器直接执行预检 bundle；成功输出只包含
 `visit_pipeline_ready:<kind>`。
 
 1. 备份召回数据库。
 2. 执行 `npm run db:deploy` 或生产迁移容器。
-3. 执行 `recall-visit-verify`；如果缺少 `SiteVisit` 表或可用 GeoIP 来源，停止发布。
-4. 同时更新 Web 与 Worker，不能只更新 Web。
+3. 执行 `recall-visit-verify`；如果缺少 `SiteVisit` 表，或 GeoIP 文件为空、损坏、过期，或远程 URL 不符合契约，停止发布。
+4. 同时更新主站、Web 与 Worker，不能只更新召回 Web。
 5. 检查 Web 就绪接口和 Worker 健康状态。
 6. 使用模拟用户预览一次规则，不立即修改生产条件。
 7. 小范围修改注释并发布，确认全量重算进度能够完成。

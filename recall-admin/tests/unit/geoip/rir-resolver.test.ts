@@ -9,6 +9,13 @@ arin|US|ipv6|2600:1000::|24|20100101|allocated
 `;
 
 describe("RIR delegated-range fallback resolver", () => {
+  it("reports whether a snapshot contains at least one usable range", () => {
+    expect(RirGeoIpResolver.fromText(delegated).hasRanges()).toBe(true);
+    expect(
+      RirGeoIpResolver.fromText("# comments only\ninvalid|row").hasRanges()
+    ).toBe(false);
+  });
+
   it("uses binary-searchable IPv4 allocation ranges", async () => {
     const resolver = RirGeoIpResolver.fromText(delegated);
 

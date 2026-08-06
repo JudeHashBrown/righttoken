@@ -123,6 +123,13 @@ export class RirGeoIpResolver implements GeoIpResolver {
     return RirGeoIpResolver.fromText(await readFile(path, "utf8"));
   }
 
+  hasRanges(): boolean {
+    return (
+      this.rangesByVersion[4].length > 0 ||
+      this.rangesByVersion[6].length > 0
+    );
+  }
+
   async resolve(ip: string): Promise<GeoIpLocation | null> {
     if (!isPublicIp(ip)) return null;
     const version = isIP(ip) as IpVersion;

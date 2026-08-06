@@ -6,7 +6,16 @@ describe("GeoIP runtime status core", () => {
     await expect(
       getGeoIpRuntimeStatus(
         { GEOIP_MMDB_PATH: "/geo/city.mmdb" },
-        async () => true
+        {
+          now: () => Date.UTC(2026, 7, 6),
+          inspectFile: async () => ({
+            isFile: true,
+            size: 1,
+            mtimeMs: Date.UTC(2026, 7, 5)
+          }),
+          validateMmdb: async () => true,
+          validateRir: async () => false
+        }
       )
     ).resolves.toEqual({ kind: "city", provinceCapable: true });
   });

@@ -18,6 +18,38 @@ const readRepository = (path: string) =>
   readFileSync(resolve(repositoryRoot, path), "utf8");
 
 describe("recall Compose environments", () => {
+  it("pins the repository main-site release image by manifest digest", () => {
+    const compose = readRepository("deploy/docker-compose.recall.yml");
+    const productionExample = readRepository("deploy/recall.env.example");
+    const releaseConfig = readRepository(".goreleaser.yaml");
+    const deployment = readRecall("docs/deployment.md");
+    const mainServiceBlock = compose
+      .split("services:\n")[1]!
+      .split("\n  recall-migrate:")[0]!;
+
+    expect(mainServiceBlock).toContain("  sub2api:");
+    expect(mainServiceBlock).toContain(
+      "image: ${RIGHTTOKEN_IMAGE:?RIGHTTOKEN_IMAGE is required}"
+    );
+    expect(productionExample).toMatch(
+      /^RIGHTTOKEN_IMAGE=ghcr\.io\/judehashbrown\/sub2api@sha256:/m
+    );
+    expect(productionExample).not.toMatch(/^RIGHTTOKEN_IMAGE=.*:latest$/m);
+    expect(releaseConfig).toContain(
+      'ghcr.io/{{ .Env.GITHUB_REPO_OWNER_LOWER }}/sub2api:{{ .Version }}'
+    );
+    expect(deployment).toContain(
+      "docker buildx imagetools inspect ghcr.io/judehashbrown/sub2api:"
+    );
+    expect(deployment).toContain("pull sub2api recall-migrate recall-web recall-worker");
+    expect(deployment).toContain(
+      "up -d --force-recreate sub2api recall-web recall-worker"
+    );
+    expect(deployment).toContain(
+      "`RIGHTTOKEN_IMAGE` 改为上一条已验证 manifest digest"
+    );
+  });
+
   it("requires an explicit safe trusted proxy configuration for the main service", () => {
     const composeFiles = [
       "deploy/docker-compose.yml",
@@ -88,6 +120,9 @@ describe("recall Compose environments", () => {
     );
     expect(compose).toContain("external: true");
     expect(compose).toContain("RIGHTTOKEN_SOURCE_MODE: database");
+    expect(compose).toContain(
+      "VISITOR_HASH_KEY: ${RECALL_VISITOR_HASH_KEY:?RECALL_VISITOR_HASH_KEY is required}"
+    );
     expect(compose).not.toContain("RIGHTTOKEN_API_TOKEN");
     expect(compose).not.toContain("BOOTSTRAP_PRIMARY_ADMIN_PASSWORD");
     expect(compose).toContain(
@@ -98,6 +133,9 @@ describe("recall Compose environments", () => {
     );
     expect(compose).toContain(
       "GEOIP_RIR_PATH: ${RECALL_GEOIP_RIR_PATH"
+    );
+    expect(compose).toContain(
+      "GEOIP_MAX_AGE_DAYS: ${RECALL_GEOIP_MAX_AGE_DAYS:-45}"
     );
     expect(compose).toContain("DEPLOYMENT_ENV: production");
     for (const mapping of [
@@ -115,6 +153,9 @@ describe("recall Compose environments", () => {
       readRepository("deploy/recall.env.example")
     ).toContain(
       "RECALL_DATABASE_URL=postgresql://righttoken_recall_app:CHANGE_ME_PASSWORD@postgres:5432/sub2api?schema=recall"
+    );
+    expect(readRepository("deploy/recall.env.example")).toMatch(
+      /^RECALL_VISITOR_HASH_KEY=.{32,}$/m
     );
     expect(readRecall("docs/deployment.md")).toContain(
       "sub2api?schema=recall"
@@ -147,17 +188,22 @@ describe("recall Compose environments", () => {
       );
     }
     for (const mapping of [
+      "VISITOR_HASH_KEY: ${RECALL_VISITOR_HASH_KEY:",
       "GEOIP_HTTP_URL: ${RECALL_GEOIP_HTTP_URL",
       "GEOIP_HTTP_TOKEN: ${RECALL_GEOIP_HTTP_TOKEN",
       "GEOIP_HTTP_TIMEOUT_MS: ${RECALL_GEOIP_HTTP_TIMEOUT_MS",
       "GEOIP_MMDB_PATH: ${RECALL_GEOIP_MMDB_PATH",
-      "GEOIP_RIR_PATH: ${RECALL_GEOIP_RIR_PATH"
+      "GEOIP_RIR_PATH: ${RECALL_GEOIP_RIR_PATH",
+      "GEOIP_MAX_AGE_DAYS: ${RECALL_GEOIP_MAX_AGE_DAYS"
     ]) {
       expect(compose).toContain(mapping);
     }
 
     expect(readRepository("deploy/recall.env.example")).toContain(
-      "The deployment preflight requires at least one usable GeoIP source."
+      "The deployment preflight parses non-empty local files and rejects stale data."
+    );
+    expect(readRepository("deploy/recall.env.example")).toMatch(
+      /^RECALL_GEOIP_MAX_AGE_DAYS=45$/m
     );
   });
 
@@ -237,7 +283,9 @@ describe("recall Compose environments", () => {
     const verify = deployment.indexOf(
       "run --rm --no-deps recall-visit-verify"
     );
-    const start = deployment.indexOf("up -d recall-web recall-worker");
+    const start = deployment.indexOf(
+      "up -d --force-recreate sub2api recall-web recall-worker"
+    );
 
     expect(migrate).toBeGreaterThanOrEqual(0);
     expect(verify).toBeGreaterThan(migrate);
@@ -246,6 +294,7 @@ describe("recall Compose environments", () => {
     expect(deployment).toContain("COUNT(*) FILTER");
     expect(runbook).toContain("recall-visit-verify");
     expect(runbook).toContain("迁移 → 访问链路预检 → Web/Worker");
+    expect(runbook).toContain("强制重建 `sub2api`");
   });
 
   it("ships root-level domain verification files in the web image", () => {
@@ -323,5 +372,6 @@ describe("recall Compose environments", () => {
     expect(workflow).toContain(
       "npm run test -- --run src/composables/useRecallAccess.test.ts"
     );
+    expect(workflow).toContain("docker build -t righttoken-main:ci .");
   });
 });

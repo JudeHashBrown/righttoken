@@ -110,7 +110,9 @@ describe("VisitsPage", () => {
     expect(screen.getByText("英国")).toBeInTheDocument();
     expect(screen.getByText("60.0%")).toBeInTheDocument();
     expect(screen.getByText("40.0%")).toBeInTheDocument();
-    expect(screen.getByText(/GeoIP 数据源不可用/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/GeoIP 数据源未通过就绪检查/)
+    ).toBeInTheDocument();
     expect(screen.getByText("广东")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "7 天" })).toHaveAttribute(
       "aria-current",
@@ -134,7 +136,9 @@ describe("VisitsPage", () => {
       })
     );
 
-    expect(screen.getByText(/GeoIP 数据源已启用/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/GeoIP 数据源已通过就绪检查/)
+    ).toBeInTheDocument();
   });
 
   it("does not show an unknown-visit message without a ZZ country row", async () => {

@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -132,6 +133,23 @@ func TestAnalyticsVisitThrottlesSanitizedForwardingWarnings(t *testing.T) {
 	require.Equal(t, []string{"forward_failed", "forward_failed"}, warnings)
 }
 
+func TestAnalyticsVisitThrottlesWarningsWhenClockStartsAtZero(t *testing.T) {
+	tracker := &recallVisitTrackerStub{err: errors.New("forwarding failed")}
+	var warnings []string
+	handler := newAnalyticsHandlerWithDiagnostics(tracker, func() time.Time { return time.Time{} }, func(kind string) {
+		warnings = append(warnings, kind)
+	})
+	router := gin.New()
+	router.POST("/api/v1/analytics/visit", handler.Visit)
+
+	first := performVisitRequest(router, `{"path":"/"}`, nil)
+	second := performVisitRequest(router, `{"path":"/"}`, nil)
+
+	require.Equal(t, http.StatusNoContent, first.Code)
+	require.Equal(t, http.StatusNoContent, second.Code)
+	require.Equal(t, []string{"forward_failed"}, warnings)
+}
+
 func TestAnalyticsVisitClassifiesTrackingFailures(t *testing.T) {
 	tests := []struct {
 		name string
@@ -141,6 +159,9 @@ func TestAnalyticsVisitClassifiesTrackingFailures(t *testing.T) {
 		{name: "unconfigured", err: service.ErrRecallVisitUnavailable, want: "unconfigured"},
 		{name: "deadline", err: context.DeadlineExceeded, want: "timeout"},
 		{name: "cancelled", err: context.Canceled, want: "timeout"},
+		{name: "wrapped unconfigured", err: fmt.Errorf("wrapped: %w", service.ErrRecallVisitUnavailable), want: "unconfigured"},
+		{name: "wrapped deadline", err: fmt.Errorf("wrapped: %w", context.DeadlineExceeded), want: "timeout"},
+		{name: "wrapped cancelled", err: fmt.Errorf("wrapped: %w", context.Canceled), want: "timeout"},
 		{name: "other", err: errors.New("upstream host leaked.example failed"), want: "forward_failed"},
 	}
 

@@ -6,6 +6,7 @@ import {
 } from "@/modules/geoip/runtime-status-core";
 
 export type VisitPipelineDependencies = {
+  visitorHashKey: () => string | undefined;
   siteVisitTableExists: () => Promise<boolean>;
   geoIpStatus: () => Promise<GeoIpRuntimeStatus>;
 };
@@ -29,6 +30,7 @@ type VisitPipelineCliOutput = {
 };
 
 const validationCodes = new Set([
+  "VISIT_PIPELINE_VISITOR_HASH_KEY_INVALID",
   "VISIT_PIPELINE_TABLE_MISSING",
   "VISIT_PIPELINE_GEOIP_UNAVAILABLE"
 ]);
@@ -43,6 +45,10 @@ function stableFailureCode(error: unknown): string {
 export async function verifyVisitPipeline(
   dependencies: VisitPipelineDependencies
 ): Promise<void> {
+  if ((dependencies.visitorHashKey()?.length ?? 0) < 32) {
+    throw new Error("VISIT_PIPELINE_VISITOR_HASH_KEY_INVALID");
+  }
+
   if (!(await dependencies.siteVisitTableExists())) {
     throw new Error("VISIT_PIPELINE_TABLE_MISSING");
   }
@@ -55,9 +61,11 @@ export async function verifyVisitPipeline(
 
 export function createVisitPipelineRuntimeDependencies(
   database: VisitPipelineDatabase = prisma,
-  geoIpStatus: () => Promise<GeoIpRuntimeStatus> = getGeoIpRuntimeStatus
+  geoIpStatus: () => Promise<GeoIpRuntimeStatus> = getGeoIpRuntimeStatus,
+  environment: Readonly<Record<string, string | undefined>> = process.env
 ): VisitPipelineCliDependencies {
   return {
+    visitorHashKey: () => environment.VISITOR_HASH_KEY,
     siteVisitTableExists: async () => {
       const [result] = await database
         .$queryRaw`SELECT to_regclass('recall."SiteVisit"')::text AS relation`;
@@ -80,6 +88,7 @@ export async function runVisitPipelineCli(
 
   try {
     await verifyVisitPipeline({
+      visitorHashKey: dependencies.visitorHashKey,
       siteVisitTableExists: dependencies.siteVisitTableExists,
       geoIpStatus: async () => {
         const status = await dependencies.geoIpStatus();

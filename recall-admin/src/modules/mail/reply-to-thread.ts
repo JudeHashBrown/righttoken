@@ -107,7 +107,11 @@ export async function replyToMailThread(
           },
           messages: {
             where: { providerMessageId: { not: null } },
-            orderBy: { createdAt: "desc" },
+            orderBy: [
+              { createdAt: "desc" },
+              { direction: "desc" },
+              { id: "desc" }
+            ],
             take: 1,
             select: {
               providerMessageId: true,

@@ -31,6 +31,7 @@ type AnalyticsHandler struct {
 	now           func() time.Time
 	warn          func(string)
 	warningMu     sync.Mutex
+	hasWarned     bool
 	lastWarningAt time.Time
 }
 
@@ -153,10 +154,11 @@ func classifyRecallVisitTrackingError(err error) string {
 func (handler *AnalyticsHandler) warnTrackingFailure(kind string) {
 	now := handler.now()
 	handler.warningMu.Lock()
-	if !handler.lastWarningAt.IsZero() && now.Sub(handler.lastWarningAt) < time.Minute {
+	if handler.hasWarned && now.Sub(handler.lastWarningAt) < time.Minute {
 		handler.warningMu.Unlock()
 		return
 	}
+	handler.hasWarned = true
 	handler.lastWarningAt = now
 	handler.warningMu.Unlock()
 	handler.warn(kind)
