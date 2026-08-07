@@ -6,12 +6,6 @@ import type {
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import {
-  configuredMailboxWhere
-} from "@/modules/mail/mailbox-availability";
-import {
-  buildMailboxChannelHealth
-} from "@/modules/admin/settings-overview";
-import {
   dashboardTaskWindows
 } from "@/modules/reports/dashboard-task-windows";
 import {
@@ -63,17 +57,6 @@ export type DashboardSnapshot = {
   segmentDistribution: Array<{
     segment: SegmentCode;
     count: number;
-  }>;
-  channelHealth: Array<{
-    channel: string;
-    state: "healthy" | "warning" | "down";
-    detail: string;
-  }>;
-  teamWorkload: Array<{
-    memberId: string | null;
-    name: string;
-    openTasks: number;
-    capacityPercent: number;
   }>;
 };
 
@@ -194,7 +177,6 @@ export async function getDashboardSnapshot(
     sevenDayTasks,
     sevenDayCompleted,
     segmentRows,
-    workloadRows,
     unassignedUsers,
     recentUnpaid,
     recentAnomalies,
@@ -227,11 +209,6 @@ export async function getDashboardSnapshot(
         ...userScope(member),
         sourceDeletedAt: null
       },
-      _count: { _all: true }
-    }),
-    prisma.recallTask.groupBy({
-      by: ["assigneeId"],
-      where: openWhere,
       _count: { _all: true }
     }),
     member.role === "OPERATOR"
@@ -324,46 +301,6 @@ export async function getDashboardSnapshot(
     ])
   );
 
-  const assigneeIds = workloadRows
-    .map((row) => row.assigneeId)
-    .filter((id): id is string => Boolean(id));
-  const assignees = assigneeIds.length
-    ? await prisma.member.findMany({
-        where: { id: { in: assigneeIds } },
-        select: { id: true, displayName: true }
-      })
-    : [];
-  const assigneeNames = new Map(
-    assignees.map((assignee) => [
-      assignee.id,
-      assignee.displayName
-    ])
-  );
-  const workloadTotal = Math.max(
-    1,
-    workloadRows.reduce((total, row) => total + row._count._all, 0)
-  );
-  const [mailboxes, integrationCredentials] = await Promise.all([
-    prisma.mailbox.findMany({
-      where: configuredMailboxWhere,
-      select: { enabled: true }
-    }),
-    prisma.integrationCredential.findMany({
-      where: { kind: { in: ["WECOM_APP", "WECOM_ROBOT"] } },
-      select: { kind: true, enabled: true }
-    })
-  ]);
-  const configuredCredentials = new Set(
-    integrationCredentials
-      .filter((credential) => credential.enabled)
-      .map((credential) => credential.kind)
-  );
-  const wecomAppConfigured =
-    configuredCredentials.has("WECOM_APP");
-  const wecomRobotConfigured =
-    configuredCredentials.has("WECOM_ROBOT") ||
-    Boolean(process.env.WECOM_WEBHOOK_URL);
-
   return {
     metrics: {
       recentUnpaid,
@@ -383,31 +320,6 @@ export async function getDashboardSnapshot(
     segmentDistribution: SEGMENTS.map((segment) => ({
       segment,
       count: segmentCounts.get(segment) ?? 0
-    })),
-    channelHealth: [
-      buildMailboxChannelHealth(mailboxes),
-      {
-        channel: "企业微信应用",
-        state: wecomAppConfigured ? "healthy" : "warning",
-        detail: wecomAppConfigured ? "已经连接" : "尚未连接"
-      },
-      {
-        channel: "企微群机器人",
-        state: wecomRobotConfigured ? "healthy" : "warning",
-        detail: wecomRobotConfigured ? "已经连接" : "尚未连接"
-      }
-    ],
-    teamWorkload: workloadRows
-      .map((row) => ({
-        memberId: row.assigneeId,
-        name: row.assigneeId
-          ? (assigneeNames.get(row.assigneeId) ?? "已停用成员")
-          : "公共任务池",
-        openTasks: row._count._all,
-        capacityPercent: Math.round(
-          (row._count._all / workloadTotal) * 100
-        )
-      }))
-      .sort((left, right) => right.openTasks - left.openTasks)
+    }))
   };
 }

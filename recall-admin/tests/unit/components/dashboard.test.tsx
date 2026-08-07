@@ -40,37 +40,6 @@ const snapshot: DashboardSnapshot = {
     { segment: "F", count: 8 },
     { segment: "G", count: 140 }
   ],
-  channelHealth: [
-    {
-      channel: "Namecheap 客服邮箱",
-      state: "healthy",
-      detail: "运行正常"
-    },
-    {
-      channel: "企业微信邮箱",
-      state: "warning",
-      detail: "等待配置"
-    },
-    {
-      channel: "企微群机器人",
-      state: "healthy",
-      detail: "运行正常"
-    }
-  ],
-  teamWorkload: [
-    {
-      memberId: "member-1",
-      name: "林小雨",
-      openTasks: 16,
-      capacityPercent: 64
-    },
-    {
-      memberId: null,
-      name: "公共任务池",
-      openTasks: 9,
-      capacityPercent: 36
-    }
-  ]
 };
 
 describe("DashboardOverview", () => {
@@ -99,8 +68,8 @@ describe("DashboardOverview", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("服务调用失败")).toBeInTheDocument();
     expect(screen.getByText("A–G 用户分组")).toBeInTheDocument();
-    expect(screen.getByText("联系渠道")).toBeInTheDocument();
-    expect(screen.getByText("团队工作量")).toBeInTheDocument();
+    expect(screen.queryByText("联系渠道")).not.toBeInTheDocument();
+    expect(screen.queryByText("团队工作量")).not.toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /近72小时注册未支付 9/ })
     ).toHaveAttribute(

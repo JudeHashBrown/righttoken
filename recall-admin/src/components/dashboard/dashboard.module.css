@@ -177,19 +177,13 @@
   -webkit-line-clamp: 2;
 }
 
-.primaryGrid,
-.secondaryGrid {
+.primaryGrid {
   display: grid;
   gap: 16px;
 }
 
 .primaryGrid {
   grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.72fr);
-}
-
-.secondaryGrid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 16px;
 }
 
 .panel {
@@ -226,12 +220,6 @@
 .tableScroll {
   overflow-x: auto;
 }
-.compactEmpty {
-  margin: 6px 0 0;
-  color: #81899b;
-  font-size: 13px;
-}
-
 .segmentList {
   display: flex;
   flex-direction: column;
@@ -265,8 +253,7 @@
   white-space: nowrap;
 }
 
-.segmentTrack,
-.workloadTrack {
+.segmentTrack {
   display: block;
   overflow: hidden;
   height: 6px;
@@ -274,8 +261,7 @@
   background: #eef0f4;
 }
 
-.segmentFill,
-.workloadTrack > span {
+.segmentFill {
   display: block;
   height: 100%;
   border-radius: inherit;
@@ -315,109 +301,6 @@
   background: #2e9b72;
 }
 
-.healthList,
-.workloadList {
-  padding: 6px 18px 12px;
-}
-
-.healthRow {
-  display: grid;
-  grid-template-columns: 32px 1fr auto;
-  min-height: 54px;
-  align-items: center;
-  gap: 10px;
-  border-bottom: 1px solid #f0f1f5;
-}
-
-.healthRow:last-child {
-  border-bottom: 0;
-}
-
-.healthIcon {
-  display: grid;
-  width: 30px;
-  height: 30px;
-  place-items: center;
-  border-radius: 8px;
-  background: #f0f2f7;
-  color: #667087;
-}
-
-.healthName {
-  color: #3e465b;
-  font-size: 13px;
-}
-
-.healthState {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 620;
-}
-
-.healthState i {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-}
-
-.healthhealthy {
-  color: #197555;
-}
-
-.healthhealthy i {
-  background: #1e9a6e;
-}
-
-.healthwarning {
-  color: #9a650e;
-}
-
-.healthwarning i {
-  background: #e39a25;
-}
-
-.healthdown {
-  color: #b33a46;
-}
-
-.healthdown i {
-  background: #d84b59;
-}
-
-.workloadRow {
-  padding: 11px 0;
-}
-
-.workloadLabel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 8px;
-  color: #515a70;
-  font-size: 13px;
-}
-
-.workloadLabel strong {
-  color: #353d52;
-  font-size: 12px;
-}
-
-.workloadTrack {
-  height: 7px;
-}
-
-.workloadTrack > span {
-  background: #6874df;
-}
-
-.compactEmpty {
-  padding: 28px 18px 34px;
-  text-align: center;
-}
-
 @media (max-width: 1430px) {
   .metrics {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -452,10 +335,6 @@
   .metric {
     min-width: 220px;
     scroll-snap-align: start;
-  }
-
-  .secondaryGrid {
-    grid-template-columns: 1fr;
   }
 
   .focusTable {

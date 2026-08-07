@@ -7,11 +7,9 @@ import {
   UserRoundX
 } from "lucide-react";
 import type { DashboardSnapshot } from "@/modules/reports/dashboard-query";
-import { ChannelHealth } from "./channel-health";
 import { DashboardFocusList } from "./dashboard-focus-list";
 import { MetricCard } from "./metric-card";
 import { SegmentDistribution } from "./segment-distribution";
-import { TeamWorkload } from "./team-workload";
 import styles from "./dashboard.module.css";
 
 type DashboardOverviewProps = {
@@ -108,11 +106,6 @@ export function DashboardOverview({
           users={snapshot.focusUsers}
         />
         <SegmentDistribution rows={snapshot.segmentDistribution} />
-      </div>
-
-      <div className={styles.secondaryGrid}>
-        <ChannelHealth rows={snapshot.channelHealth} />
-        <TeamWorkload rows={snapshot.teamWorkload} />
       </div>
     </main>
   );
