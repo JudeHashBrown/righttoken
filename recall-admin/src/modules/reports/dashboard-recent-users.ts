@@ -6,7 +6,10 @@ import type {
 const RECENT_USER_WINDOW_MS = 72 * 60 * 60 * 1000;
 export const DASHBOARD_FOCUS_PAGE_SIZE = 100;
 
-export type DashboardFocus = "recent-unpaid" | "recent-anomaly";
+export type DashboardFocus =
+  | "recent-unpaid"
+  | "recent-anomaly"
+  | "recent-low-balance";
 
 type DashboardMember = {
   id: string;
@@ -19,7 +22,9 @@ type AnomalyDates = {
 };
 
 export function parseDashboardFocus(value: unknown): DashboardFocus | null {
-  return value === "recent-unpaid" || value === "recent-anomaly"
+  return value === "recent-unpaid" ||
+    value === "recent-anomaly" ||
+    value === "recent-low-balance"
     ? value
     : null;
 }
@@ -47,8 +52,20 @@ export function recentUnpaidWhere(
   return {
     ...operatorUserScope(member),
     sourceDeletedAt: null,
-    currentSegment: "A",
+    currentSegment: { in: ["A", "B"] },
     registeredAt: { gte: recentUserCutoff(now) }
+  };
+}
+
+export function recentLowBalanceWhere(
+  member: DashboardMember,
+  now: Date
+): Prisma.UserProfileWhereInput {
+  return {
+    ...operatorUserScope(member),
+    sourceDeletedAt: null,
+    currentSegment: "E",
+    lastCallAt: { gte: recentUserCutoff(now) }
   };
 }
 
@@ -99,6 +116,7 @@ type FocusSortable = {
   id: string;
   registeredAt: Date;
   anomalyAt: Date | null;
+  lastCallAt: Date | null;
 };
 
 export function limitDashboardFocusUsers<T extends FocusSortable>(
@@ -110,11 +128,15 @@ export function limitDashboardFocusUsers<T extends FocusSortable>(
       const leftTime =
         focus === "recent-unpaid"
           ? left.registeredAt.getTime()
-          : (left.anomalyAt?.getTime() ?? 0);
+          : focus === "recent-low-balance"
+            ? (left.lastCallAt?.getTime() ?? 0)
+            : (left.anomalyAt?.getTime() ?? 0);
       const rightTime =
         focus === "recent-unpaid"
           ? right.registeredAt.getTime()
-          : (right.anomalyAt?.getTime() ?? 0);
+          : focus === "recent-low-balance"
+            ? (right.lastCallAt?.getTime() ?? 0)
+            : (right.anomalyAt?.getTime() ?? 0);
       return rightTime - leftTime || right.id.localeCompare(left.id);
     })
     .slice(0, DASHBOARD_FOCUS_PAGE_SIZE);

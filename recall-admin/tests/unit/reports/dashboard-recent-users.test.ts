@@ -6,6 +6,7 @@ import {
   parseDashboardFocus,
   recentAnomalyWhere,
   recentAnomalyOrderBy,
+  recentLowBalanceWhere,
   recentUnpaidWhere,
   recentUserCutoff
 } from "@/modules/reports/dashboard-recent-users";
@@ -16,6 +17,9 @@ describe("dashboard recent user filters", () => {
   it("accepts only supported focus values", () => {
     expect(parseDashboardFocus("recent-unpaid")).toBe("recent-unpaid");
     expect(parseDashboardFocus("recent-anomaly")).toBe("recent-anomaly");
+    expect(parseDashboardFocus("recent-low-balance")).toBe(
+      "recent-low-balance"
+    );
     expect(parseDashboardFocus("anything-else")).toBeNull();
     expect(parseDashboardFocus(undefined)).toBeNull();
   });
@@ -37,7 +41,7 @@ describe("dashboard recent user filters", () => {
       recentUnpaidWhere({ id: "admin-1", role: "ADMIN" }, now)
     ).toEqual({
       sourceDeletedAt: null,
-      currentSegment: "A",
+      currentSegment: { in: ["A", "B"] },
       registeredAt: { gte: new Date("2026-08-03T12:00:00.000Z") }
     });
   });
@@ -48,8 +52,32 @@ describe("dashboard recent user filters", () => {
     ).toEqual({
       OR: [{ ownerId: "operator-1" }, { ownerId: null }],
       sourceDeletedAt: null,
-      currentSegment: "A",
+      currentSegment: { in: ["A", "B"] },
       registeredAt: { gte: new Date("2026-08-03T12:00:00.000Z") }
+    });
+  });
+
+  it("builds the recently-used low-balance filter", () => {
+    expect(
+      recentLowBalanceWhere({ id: "admin-1", role: "ADMIN" }, now)
+    ).toEqual({
+      sourceDeletedAt: null,
+      currentSegment: "E",
+      lastCallAt: { gte: new Date("2026-08-03T12:00:00.000Z") }
+    });
+  });
+
+  it("limits low-balance results to the operator scope", () => {
+    expect(
+      recentLowBalanceWhere(
+        { id: "operator-1", role: "OPERATOR" },
+        now
+      )
+    ).toEqual({
+      OR: [{ ownerId: "operator-1" }, { ownerId: null }],
+      sourceDeletedAt: null,
+      currentSegment: "E",
+      lastCallAt: { gte: new Date("2026-08-03T12:00:00.000Z") }
     });
   });
 
@@ -122,7 +150,8 @@ describe("dashboard recent user filters", () => {
     const rows = Array.from({ length: 101 }, (_, index) => ({
       id: `user-${String(index).padStart(3, "0")}`,
       registeredAt: new Date(now.getTime() - index * 1_000),
-      anomalyAt: new Date(now.getTime() - index * 2_000)
+      anomalyAt: new Date(now.getTime() - index * 2_000),
+      lastCallAt: new Date(now.getTime() - index * 3_000)
     }));
 
     const page = limitDashboardFocusUsers(rows.reverse(), "recent-anomaly");
@@ -130,6 +159,28 @@ describe("dashboard recent user filters", () => {
     expect(page).toHaveLength(100);
     expect(page[0]?.id).toBe("user-000");
     expect(page.at(-1)?.id).toBe("user-099");
+  });
+
+  it("sorts low-balance users by their most recent use", () => {
+    const page = limitDashboardFocusUsers(
+      [
+        {
+          id: "older",
+          registeredAt: now,
+          anomalyAt: null,
+          lastCallAt: new Date("2026-08-06T08:00:00.000Z")
+        },
+        {
+          id: "newer",
+          registeredAt: now,
+          anomalyAt: null,
+          lastCallAt: new Date("2026-08-06T10:00:00.000Z")
+        }
+      ],
+      "recent-low-balance"
+    );
+
+    expect(page.map((row) => row.id)).toEqual(["newer", "older"]);
   });
 
   it("sorts nullable anomaly timestamps with missing values last", () => {
