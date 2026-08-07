@@ -18,3 +18,8 @@
 .guidanceItem p { margin: 0; color: #3d4761; white-space: pre-wrap; }
 .guidanceItem small { color: #7a839a; }
 @media (max-width: 900px) { .inquiryHistory { grid-template-columns: 1fr; } .guidanceItem { grid-template-columns: 1fr; } }
+
+.inquiryHistory h3 { font-size: 17px; }
+.historyItem strong { font-size: 16px; }
+.historyItem span { font-size: 14px; }
+.emptyState { font-size: 15px; }

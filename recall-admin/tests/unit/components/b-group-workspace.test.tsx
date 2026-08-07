@@ -74,7 +74,7 @@ describe("BGroupWorkspace", () => {
     ).toBeInTheDocument();
     expect(screen.getByPlaceholderText("关键词或序号")).toBeInTheDocument();
     expect(screen.getAllByText("#10428")).toHaveLength(2);
-    expect(screen.getByRole("button", { name: /发邮件/ })).toHaveAttribute(
+    expect(screen.getByRole("button", { name: /邮件询问/ })).toHaveAttribute(
       "data-complete",
       "true"
     );

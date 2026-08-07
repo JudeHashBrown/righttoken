@@ -39,6 +39,18 @@
   gap: 8px;
 }
 
+.mailToolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.mailAnchorTarget,
+.mailWorkbench,
+.mailBatchHistory {
+  scroll-margin-top: 78px;
+}
+
 .filterBar {
   display: flex;
   flex-wrap: wrap;
@@ -825,6 +837,84 @@
   padding: 5px 8px;
   font-size: 12px;
   font-weight: 650;
+}
+
+.mailBatchHistory {
+  margin-top: 16px;
+  overflow-x: auto;
+  border: 1px solid #e1e5ed;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.mailBatchHistoryHeader {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #e7eaf0;
+  padding: 0 16px;
+}
+
+.mailBatchHistoryHeader h2 {
+  margin: 0;
+  color: #273149;
+  font-size: 16px;
+}
+
+.mailBatchHistoryHeader span {
+  color: #747e93;
+  font-size: 13px;
+}
+
+.mailBatchHistoryList {
+  min-width: 1040px;
+  max-height: 360px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mailBatchHistoryList li {
+  display: grid;
+  grid-template-columns: 138px minmax(180px, 1.6fr) repeat(6, minmax(72px, auto));
+  gap: 12px;
+  align-items: center;
+  min-height: 58px;
+  padding: 10px 16px;
+  color: #59647b;
+  font-size: 13px;
+}
+
+.mailBatchHistoryList li + li {
+  border-top: 1px solid #edf0f4;
+}
+
+.mailBatchHistoryList li > div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.mailBatchHistoryList strong {
+  overflow: hidden;
+  color: #273149;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mailBatchHistoryList time,
+.mailBatchHistoryList li > div span {
+  color: #7b8498;
+}
+
+.mailBatchHistoryEmpty {
+  margin: 0;
+  padding: 24px 16px;
+  color: #7b8498;
+  font-size: 13px;
 }
 
 .bounceListPanel {

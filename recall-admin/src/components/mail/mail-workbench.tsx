@@ -42,7 +42,7 @@ export function MailWorkbench({
   data: MailWorkspaceData;
 }): React.JSX.Element {
   return (
-    <section className={styles.mailWorkbench}>
+    <section className={styles.mailWorkbench} id="mail-workbench" tabIndex={-1}>
       <MailConversationList data={data} />
       <div className={styles.mailDetailPane}>
         {data.selected?.kind === "thread" ? (

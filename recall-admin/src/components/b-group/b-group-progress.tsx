@@ -10,7 +10,7 @@ export function BGroupProgress({ user, active, onSelect }: {
   onSelect(panel: BGroupPanel): void;
 }) {
   const steps = [
-    { key: "mail" as const, title: "发邮件", detail: `已发 ${user.mailStats.sent} · 收到 ${user.mailStats.received} · 退信 ${user.mailStats.bounced}`, complete: user.progress.mailComplete },
+    { key: "mail" as const, title: "邮件询问", detail: `已发 ${user.mailStats.sent} · 收到 ${user.mailStats.received} · 退信 ${user.mailStats.bounced}`, complete: user.progress.mailComplete },
     { key: "contact" as const, title: "登记联系方式", detail: "微信 · TG", complete: user.progress.contactComplete },
     { key: "coupon" as const, title: "完成首充激励", detail: user.coupon?.status === "SUCCEEDED" ? "额外 10 RMB · 已发放" : "额外 10 RMB · 待发放", complete: user.progress.couponComplete },
     { key: "maintenance" as const, title: "日常维护", detail: `共 ${user.maintenanceRecords.length} 条记录`, complete: user.progress.maintenanceComplete }

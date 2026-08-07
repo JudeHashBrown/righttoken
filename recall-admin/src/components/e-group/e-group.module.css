@@ -26,3 +26,11 @@
 .carePlanForm { display: grid; gap: 8px; }
 .carePlanForm label { color: #3d4761; font-weight: 680; }
 @media (max-width: 900px) { .historyGrid, .wechatForm { grid-template-columns: 1fr; } .tableHead, .tableRow { grid-template-columns: 1fr; } .tableHead { display: none; } }
+
+.wechatForm label { font-size: 15px; }
+.historyGrid h3 { font-size: 17px; }
+.historyItem strong, .historyItem p { font-size: 16px; }
+.historyItem span, .historyItem a { font-size: 14px; }
+.emptyState { font-size: 15px; }
+.tableHead { font-size: 14px; }
+.tableRow { font-size: 16px; }

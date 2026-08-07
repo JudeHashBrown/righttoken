@@ -20,7 +20,7 @@ export function AGroupProgress({
   const steps = [
     {
       key: "mail" as const,
-      title: "发邮件",
+      title: "邮件询问",
       detail: `已发 ${user.mailStats.sent} · 收到 ${user.mailStats.received} · 退信 ${user.mailStats.bounced}`,
       complete: user.progress.mailComplete
     },

@@ -90,7 +90,7 @@ describe("AGroupWorkspace", () => {
     );
 
     fireEvent.click(
-      screen.getByRole("button", { name: /发邮件/ })
+      screen.getByRole("button", { name: /邮件询问/ })
     );
     expect(screen.getByLabelText("邮件类型")).toHaveValue(
       "KNOWLEDGE_SHARE"

@@ -41,7 +41,7 @@ export function MailConversationList({
                   className={styles.mailListLink}
                   href={`/mail?view=${data.filter.view}&selected=${encodeURIComponent(
                     item.id
-                  )}`}
+                  )}#mail-workbench`}
                 >
                   <span className={styles.mailListTopline}>
                     <strong>{item.title}</strong>
