@@ -2,7 +2,7 @@
 DROP INDEX "recall"."NotificationIntent_taskId_channel_idx";
 
 -- DropIndex
-DROP INDEX "recall"."UserProfile_recent_low_balance_idx";
+DROP INDEX IF EXISTS "recall"."UserProfile_recent_low_balance_idx";
 
 -- AlterTable
 ALTER TABLE "recall"."MailTemplate" ALTER COLUMN "updatedAt" DROP DEFAULT;

@@ -410,6 +410,8 @@ export const ModelName = {
   UserMaintenanceRecord: 'UserMaintenanceRecord',
   RechargeOutreachRecord: 'RechargeOutreachRecord',
   PersonalizedCarePlan: 'PersonalizedCarePlan',
+  InactivityReasonRecord: 'InactivityReasonRecord',
+  UserGuidanceRecord: 'UserGuidanceRecord',
   CouponGrant: 'CouponGrant',
   AutomationRuleVersion: 'AutomationRuleVersion',
   SegmentRecalculationRun: 'SegmentRecalculationRun',
@@ -453,7 +455,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "member" | "ssoTicketRedemption" | "session" | "userProfile" | "userEvent" | "siteVisit" | "segmentHistory" | "segmentOverride" | "userNote" | "userContact" | "userMaintenanceRecord" | "rechargeOutreachRecord" | "personalizedCarePlan" | "couponGrant" | "automationRuleVersion" | "segmentRecalculationRun" | "assignmentRule" | "assignmentRecalculationRun" | "locationAttributionRule" | "locationRecalculationRun" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "mailDeliveryEvent" | "mailAsset" | "mailTemplateAsset" | "mailMessageAsset" | "mailBatch" | "mailBatchRecipient" | "mailDomainThrottle" | "mailBatchAsset" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
+    modelProps: "member" | "ssoTicketRedemption" | "session" | "userProfile" | "userEvent" | "siteVisit" | "segmentHistory" | "segmentOverride" | "userNote" | "userContact" | "userMaintenanceRecord" | "rechargeOutreachRecord" | "personalizedCarePlan" | "inactivityReasonRecord" | "userGuidanceRecord" | "couponGrant" | "automationRuleVersion" | "segmentRecalculationRun" | "assignmentRule" | "assignmentRecalculationRun" | "locationAttributionRule" | "locationRecalculationRun" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "mailDeliveryEvent" | "mailAsset" | "mailTemplateAsset" | "mailMessageAsset" | "mailBatch" | "mailBatchRecipient" | "mailDomainThrottle" | "mailBatchAsset" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1416,6 +1418,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.PersonalizedCarePlanCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.PersonalizedCarePlanCountAggregateOutputType> | number
+        }
+      }
+    }
+    InactivityReasonRecord: {
+      payload: Prisma.$InactivityReasonRecordPayload<ExtArgs>
+      fields: Prisma.InactivityReasonRecordFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InactivityReasonRecordFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InactivityReasonRecordPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InactivityReasonRecordFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InactivityReasonRecordPayload>
+        }
+        findFirst: {
+          args: Prisma.InactivityReasonRecordFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InactivityReasonRecordPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InactivityReasonRecordFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InactivityReasonRecordPayload>
+        }
+        findMany: {
+          args: Prisma.InactivityReasonRecordFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InactivityReasonRecordPayload>[]
+        }
+        create: {
+          args: Prisma.InactivityReasonRecordCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InactivityReasonRecordPayload>
+        }
+        createMany: {
+          args: Prisma.InactivityReasonRecordCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InactivityReasonRecordCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InactivityReasonRecordPayload>[]
+        }
+        delete: {
+          args: Prisma.InactivityReasonRecordDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InactivityReasonRecordPayload>
+        }
+        update: {
+          args: Prisma.InactivityReasonRecordUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InactivityReasonRecordPayload>
+        }
+        deleteMany: {
+          args: Prisma.InactivityReasonRecordDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InactivityReasonRecordUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InactivityReasonRecordUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InactivityReasonRecordPayload>[]
+        }
+        upsert: {
+          args: Prisma.InactivityReasonRecordUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InactivityReasonRecordPayload>
+        }
+        aggregate: {
+          args: Prisma.InactivityReasonRecordAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInactivityReasonRecord>
+        }
+        groupBy: {
+          args: Prisma.InactivityReasonRecordGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InactivityReasonRecordGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InactivityReasonRecordCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InactivityReasonRecordCountAggregateOutputType> | number
+        }
+      }
+    }
+    UserGuidanceRecord: {
+      payload: Prisma.$UserGuidanceRecordPayload<ExtArgs>
+      fields: Prisma.UserGuidanceRecordFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserGuidanceRecordFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGuidanceRecordPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserGuidanceRecordFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGuidanceRecordPayload>
+        }
+        findFirst: {
+          args: Prisma.UserGuidanceRecordFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGuidanceRecordPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserGuidanceRecordFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGuidanceRecordPayload>
+        }
+        findMany: {
+          args: Prisma.UserGuidanceRecordFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGuidanceRecordPayload>[]
+        }
+        create: {
+          args: Prisma.UserGuidanceRecordCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGuidanceRecordPayload>
+        }
+        createMany: {
+          args: Prisma.UserGuidanceRecordCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserGuidanceRecordCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGuidanceRecordPayload>[]
+        }
+        delete: {
+          args: Prisma.UserGuidanceRecordDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGuidanceRecordPayload>
+        }
+        update: {
+          args: Prisma.UserGuidanceRecordUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGuidanceRecordPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserGuidanceRecordDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserGuidanceRecordUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserGuidanceRecordUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGuidanceRecordPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserGuidanceRecordUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGuidanceRecordPayload>
+        }
+        aggregate: {
+          args: Prisma.UserGuidanceRecordAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserGuidanceRecord>
+        }
+        groupBy: {
+          args: Prisma.UserGuidanceRecordGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserGuidanceRecordGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserGuidanceRecordCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserGuidanceRecordCountAggregateOutputType> | number
         }
       }
     }
@@ -3762,6 +3912,29 @@ export const PersonalizedCarePlanScalarFieldEnum = {
 export type PersonalizedCarePlanScalarFieldEnum = (typeof PersonalizedCarePlanScalarFieldEnum)[keyof typeof PersonalizedCarePlanScalarFieldEnum]
 
 
+export const InactivityReasonRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  actorId: 'actorId',
+  body: 'body',
+  createdAt: 'createdAt'
+} as const
+
+export type InactivityReasonRecordScalarFieldEnum = (typeof InactivityReasonRecordScalarFieldEnum)[keyof typeof InactivityReasonRecordScalarFieldEnum]
+
+
+export const UserGuidanceRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  actorId: 'actorId',
+  category: 'category',
+  body: 'body',
+  createdAt: 'createdAt'
+} as const
+
+export type UserGuidanceRecordScalarFieldEnum = (typeof UserGuidanceRecordScalarFieldEnum)[keyof typeof UserGuidanceRecordScalarFieldEnum]
+
+
 export const CouponGrantScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -4859,6 +5032,8 @@ export type GlobalOmitConfig = {
   userMaintenanceRecord?: Prisma.UserMaintenanceRecordOmit
   rechargeOutreachRecord?: Prisma.RechargeOutreachRecordOmit
   personalizedCarePlan?: Prisma.PersonalizedCarePlanOmit
+  inactivityReasonRecord?: Prisma.InactivityReasonRecordOmit
+  userGuidanceRecord?: Prisma.UserGuidanceRecordOmit
   couponGrant?: Prisma.CouponGrantOmit
   automationRuleVersion?: Prisma.AutomationRuleVersionOmit
   segmentRecalculationRun?: Prisma.SegmentRecalculationRunOmit

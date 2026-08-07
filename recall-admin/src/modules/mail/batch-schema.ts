@@ -9,6 +9,7 @@ const contentShape = {
   purpose: z
     .enum([
       "PAYMENT_FOLLOW_UP",
+      "USAGE_FOLLOW_UP",
       "KNOWLEDGE_SHARE",
       "PRODUCT_UPDATE",
       "CAMPAIGN",

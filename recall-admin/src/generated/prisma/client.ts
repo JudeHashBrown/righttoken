@@ -107,6 +107,16 @@ export type RechargeOutreachRecord = Prisma.RechargeOutreachRecordModel
  */
 export type PersonalizedCarePlan = Prisma.PersonalizedCarePlanModel
 /**
+ * Model InactivityReasonRecord
+ * 
+ */
+export type InactivityReasonRecord = Prisma.InactivityReasonRecordModel
+/**
+ * Model UserGuidanceRecord
+ * 
+ */
+export type UserGuidanceRecord = Prisma.UserGuidanceRecordModel
+/**
  * Model CouponGrant
  * 
  */

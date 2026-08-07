@@ -134,6 +134,7 @@ export type MailBatchRecipientStatus = (typeof MailBatchRecipientStatus)[keyof t
 
 export const MailPurpose = {
   PAYMENT_FOLLOW_UP: 'PAYMENT_FOLLOW_UP',
+  USAGE_FOLLOW_UP: 'USAGE_FOLLOW_UP',
   KNOWLEDGE_SHARE: 'KNOWLEDGE_SHARE',
   PRODUCT_UPDATE: 'PRODUCT_UPDATE',
   CAMPAIGN: 'CAMPAIGN',

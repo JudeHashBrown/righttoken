@@ -121,6 +121,7 @@ enum MailBatchRecipientStatus {
 
 enum MailPurpose {
   PAYMENT_FOLLOW_UP
+  USAGE_FOLLOW_UP
   KNOWLEDGE_SHARE
   PRODUCT_UPDATE
   CAMPAIGN
@@ -236,6 +237,8 @@ model Member {
   requestedCouponGrants       CouponGrant[]                @relation("CouponGrantRequester")
   rechargeOutreachRecords     RechargeOutreachRecord[]     @relation("RechargeOutreachActor")
   personalizedCarePlans       PersonalizedCarePlan[]       @relation("PersonalizedCarePlanAuthor")
+  inactivityReasonRecords     InactivityReasonRecord[]     @relation("InactivityReasonActor")
+  userGuidanceRecords         UserGuidanceRecord[]         @relation("UserGuidanceActor")
 
   @@schema("recall")
 }
@@ -345,6 +348,8 @@ model UserProfile {
   couponGrant             CouponGrant?
   rechargeOutreachRecords RechargeOutreachRecord[]
   personalizedCarePlans   PersonalizedCarePlan[]
+  inactivityReasonRecords InactivityReasonRecord[]
+  guidanceRecords         UserGuidanceRecord[]
   locationRule            LocationAttributionRule? @relation(fields: [locationRuleId], references: [id], onDelete: SetNull)
   locationAssignedBy      Member?                  @relation("UserLocationAssigner", fields: [locationAssignedById], references: [id], onDelete: SetNull)
 
@@ -352,6 +357,7 @@ model UserProfile {
   @@index([currentSegment, sourceDeletedAt, registeredAt], map: "UserProfile_recent_unpaid_idx")
   @@index([currentSegment, anomalyActive, sourceDeletedAt, anomalyLastOccurredAt], map: "UserProfile_recent_anomaly_occurred_idx")
   @@index([currentSegment, anomalyActive, sourceDeletedAt, anomalyChangedAt], map: "UserProfile_recent_anomaly_changed_idx")
+  @@index([currentSegment, sourceDeletedAt, lastCallAt], map: "UserProfile_recent_low_balance_idx")
   @@index([countryCode, region])
   @@index([ipCountryCode, ipRegion])
   @@index([locationRuleId])
@@ -504,6 +510,35 @@ model PersonalizedCarePlan {
 
   user   UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
   author Member      @relation("PersonalizedCarePlanAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([userId, createdAt])
+  @@schema("recall")
+}
+
+model InactivityReasonRecord {
+  id        String   @id @default(cuid())
+  userId    String
+  actorId   String
+  body      String
+  createdAt DateTime @default(now())
+
+  user  UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  actor Member      @relation("InactivityReasonActor", fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([userId, createdAt])
+  @@schema("recall")
+}
+
+model UserGuidanceRecord {
+  id        String   @id @default(cuid())
+  userId    String
+  actorId   String
+  category  String
+  body      String
+  createdAt DateTime @default(now())
+
+  user  UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  actor Member      @relation("UserGuidanceActor", fields: [actorId], references: [id], onDelete: Restrict)
 
   @@index([userId, createdAt])
   @@schema("recall")
