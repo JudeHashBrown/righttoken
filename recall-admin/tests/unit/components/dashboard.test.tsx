@@ -10,6 +10,7 @@ const snapshot: DashboardSnapshot = {
   metrics: {
     recentUnpaid: 9,
     recentAnomalies: 4,
+    recentLowBalance: 3,
     awaitingReply: 17,
     unassignedUsers: 12,
     sevenDayRecallRate: 18.6
@@ -25,7 +26,9 @@ const snapshot: DashboardSnapshot = {
       ownerName: "林小雨",
       registeredAt: new Date("2026-07-23T06:30:00.000Z"),
       anomalyReason: "服务调用失败",
-      anomalyAt: new Date("2026-07-23T06:30:00.000Z")
+      anomalyAt: new Date("2026-07-23T06:30:00.000Z"),
+      balanceUsdMinor: 35,
+      lastCallAt: new Date("2026-08-06T10:00:00.000Z")
     }
   ],
   segmentDistribution: [
@@ -143,7 +146,9 @@ describe("DashboardOverview", () => {
               ownerName: "王运营",
               registeredAt: new Date("2026-08-06T08:00:00.000Z"),
               anomalyReason: null,
-              anomalyAt: null
+              anomalyAt: null,
+              balanceUsdMinor: 0,
+              lastCallAt: null
             }
           ]
         }}
@@ -177,7 +182,9 @@ describe("DashboardOverview", () => {
               ownerName: null,
               registeredAt: new Date("2026-07-01T08:00:00.000Z"),
               anomalyReason: "模型服务超时",
-              anomalyAt: new Date("2026-08-06T09:30:00.000Z")
+              anomalyAt: new Date("2026-08-06T09:30:00.000Z"),
+              balanceUsdMinor: 0,
+              lastCallAt: null
             }
           ]
         }}

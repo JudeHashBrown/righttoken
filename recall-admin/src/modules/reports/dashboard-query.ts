@@ -20,6 +20,7 @@ import {
   limitDashboardFocusUsers,
   recentAnomalyOrderBy,
   recentAnomalyWhere,
+  recentLowBalanceWhere,
   recentUnpaidWhere,
   type DashboardFocus
 } from "@/modules/reports/dashboard-recent-users";
@@ -44,12 +45,15 @@ export type DashboardFocusUser = {
   registeredAt: Date;
   anomalyReason: string | null;
   anomalyAt: Date | null;
+  balanceUsdMinor: number;
+  lastCallAt: Date | null;
 };
 
 export type DashboardSnapshot = {
   metrics: {
     recentUnpaid: number;
     recentAnomalies: number;
+    recentLowBalance: number;
     awaitingReply: number;
     unassignedUsers: number;
     sevenDayRecallRate: number | null;
@@ -92,6 +96,8 @@ const focusUserSelect = {
   region: true,
   countryCode: true,
   registeredAt: true,
+  balanceUsdMinor: true,
+  lastCallAt: true,
   anomalyErrorMessage: true,
   anomalyErrorType: true,
   anomalyChangedAt: true,
@@ -191,7 +197,8 @@ export async function getDashboardSnapshot(
     workloadRows,
     unassignedUsers,
     recentUnpaid,
-    recentAnomalies
+    recentAnomalies,
+    recentLowBalance
   ] = await Promise.all([
     prisma.recallTask.count({
       where: {
@@ -240,13 +247,18 @@ export async function getDashboardSnapshot(
     }),
     prisma.userProfile.count({
       where: recentAnomalyWhere(member, now)
+    }),
+    prisma.userProfile.count({
+      where: recentLowBalanceWhere(member, now)
     })
   ]);
 
   const focusWhere =
     focus === "recent-unpaid"
       ? recentUnpaidWhere(member, now)
-      : recentAnomalyWhere(member, now);
+      : focus === "recent-low-balance"
+        ? recentLowBalanceWhere(member, now)
+        : recentAnomalyWhere(member, now);
   const focusRows =
     focus === "recent-unpaid"
       ? await prisma.userProfile.findMany({
@@ -255,6 +267,13 @@ export async function getDashboardSnapshot(
           orderBy: [{ registeredAt: "desc" }, { id: "desc" }],
           take: DASHBOARD_FOCUS_PAGE_SIZE
         })
+      : focus === "recent-low-balance"
+        ? await prisma.userProfile.findMany({
+            where: focusWhere,
+            select: focusUserSelect,
+            orderBy: [{ lastCallAt: "desc" }, { id: "desc" }],
+            take: DASHBOARD_FOCUS_PAGE_SIZE
+          })
       : Array.from(
           new Map(
             (
@@ -291,7 +310,9 @@ export async function getDashboardSnapshot(
       registeredAt: row.registeredAt,
       anomalyReason:
         row.anomalyErrorMessage ?? row.anomalyErrorType ?? null,
-      anomalyAt: effectiveAnomalyAt(row)
+      anomalyAt: effectiveAnomalyAt(row),
+      balanceUsdMinor: row.balanceUsdMinor,
+      lastCallAt: row.lastCallAt
     })),
     focus
   );
@@ -347,6 +368,7 @@ export async function getDashboardSnapshot(
     metrics: {
       recentUnpaid,
       recentAnomalies,
+      recentLowBalance,
       awaitingReply,
       unassignedUsers,
       sevenDayRecallRate:
