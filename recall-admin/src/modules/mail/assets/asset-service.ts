@@ -10,6 +10,11 @@ import {
   type NormalizedMailImage
 } from "@/modules/mail/assets/image-normalizer";
 import {
+  MailDocumentError,
+  normalizeMailDocument,
+  type NormalizedMailDocument
+} from "@/modules/mail/assets/document-normalizer";
+import {
   getMailAssetStorage
 } from "@/modules/mail/assets/storage-factory";
 import type {
@@ -20,6 +25,9 @@ export type MailAssetServiceErrorCode =
   | "MAIL_IMAGE_UNSUPPORTED"
   | "MAIL_IMAGE_TOO_LARGE"
   | "MAIL_IMAGE_INVALID"
+  | "MAIL_FILE_UNSUPPORTED"
+  | "MAIL_FILE_TOO_LARGE"
+  | "MAIL_FILE_INVALID"
   | "MAIL_ASSET_INVALID_FILE"
   | "MAIL_ASSET_STORAGE_UNAVAILABLE"
   | "MAIL_ASSET_NOT_FOUND"
@@ -77,7 +85,8 @@ type CreateDependencies = {
   normalize(input: {
     bytes: Buffer;
     claimedContentType?: string;
-  }): Promise<NormalizedMailImage>;
+    fileName: string;
+  }): Promise<NormalizedMailImage | NormalizedMailDocument>;
   randomId(): string;
 };
 
@@ -93,8 +102,21 @@ function displayFileName(
   const parsed = path.parse(
     original.replaceAll(/[\u0000-\u001f\u007f]/g, "").trim()
   );
-  const base = parsed.name.trim().slice(0, 180) || "image";
+  const base = parsed.name.trim().slice(0, 180) || "file";
   return `${base}.${extension}`;
+}
+
+const imageExtensionPattern = /\.(?:jpe?g|png|webp)$/i;
+
+async function normalizeMailAsset(input: {
+  bytes: Buffer;
+  claimedContentType?: string;
+  fileName: string;
+}): Promise<NormalizedMailImage | NormalizedMailDocument> {
+  if (imageExtensionPattern.test(input.fileName)) {
+    return normalizeMailImage(input);
+  }
+  return normalizeMailDocument(input);
 }
 
 export async function createMailAsset(
@@ -109,7 +131,7 @@ export async function createMailAsset(
     runtime = dependencies ?? {
       database: prisma,
       storage: getMailAssetStorage(),
-      normalize: normalizeMailImage,
+      normalize: normalizeMailAsset,
       randomId: randomUUID
     };
   } catch {
@@ -120,14 +142,18 @@ export async function createMailAsset(
   if (!(input.file instanceof File) || input.file.size === 0) {
     throw new MailAssetServiceError("MAIL_ASSET_INVALID_FILE");
   }
-  let normalized: NormalizedMailImage;
+  let normalized: NormalizedMailImage | NormalizedMailDocument;
   try {
     normalized = await runtime.normalize({
       bytes: Buffer.from(await input.file.arrayBuffer()),
-      claimedContentType: input.file.type
+      claimedContentType: input.file.type,
+      fileName: input.file.name
     });
   } catch (error) {
-    if (error instanceof MailImageError) {
+    if (
+      error instanceof MailImageError ||
+      error instanceof MailDocumentError
+    ) {
       throw new MailAssetServiceError(error.code);
     }
     throw error;

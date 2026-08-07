@@ -130,7 +130,7 @@ describe("MailRichEditor", () => {
     );
     render(<Harness />);
 
-    fireEvent.change(screen.getByLabelText("选择图片附件"), {
+    fireEvent.change(screen.getByLabelText("选择附件"), {
       target: {
         files: [
           new File([Buffer.from("image")], "receipt.webp", {
@@ -153,6 +153,48 @@ describe("MailRichEditor", () => {
       })
     );
     expect(screen.queryByText("receipt.webp")).not.toBeInTheDocument();
+  });
+
+  it("adds a PDF as an ordinary attachment", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            asset: {
+              id: "asset-pdf",
+              fileName: "报价单.pdf",
+              contentType: "application/pdf",
+              byteSize: 1024,
+              width: 0,
+              height: 0,
+              previewUrl: "/api/mail/assets/asset-pdf"
+            }
+          })
+      })
+    );
+    render(<Harness />);
+
+    const input = screen.getByLabelText("选择附件");
+    expect(input).toHaveAttribute(
+      "accept",
+      expect.stringContaining(".pdf")
+    );
+    fireEvent.change(input, {
+      target: {
+        files: [
+          new File([Buffer.from("%PDF-1.7")], "报价单.pdf", {
+            type: "application/pdf"
+          })
+        ]
+      }
+    });
+
+    expect(await screen.findByText("报价单.pdf")).toBeInTheDocument();
+    expect(screen.getByTestId("value")).toHaveTextContent(
+      '"contentType":"application/pdf"'
+    );
   });
 
   it("shows a clear upload error and preserves the body", async () => {
@@ -197,7 +239,7 @@ describe("MailRichEditor", () => {
     );
     render(<Harness />);
 
-    fireEvent.change(screen.getByLabelText("选择图片附件"), {
+    fireEvent.change(screen.getByLabelText("选择附件"), {
       target: {
         files: [
           new File([Buffer.from("image")], "receipt.png", {
@@ -208,7 +250,7 @@ describe("MailRichEditor", () => {
     });
 
     expect(
-      await screen.findByText("图片存储暂不可用，请联系管理员")
+      await screen.findByText("附件存储暂不可用，请联系管理员")
     ).toBeInTheDocument();
   });
 

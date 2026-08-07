@@ -27,9 +27,11 @@ function errorResponse(error: unknown): NextResponse {
     const status =
       error.code === "MAIL_ASSET_STORAGE_UNAVAILABLE"
         ? 503
-        : error.code === "MAIL_IMAGE_UNSUPPORTED"
+        : error.code === "MAIL_IMAGE_UNSUPPORTED" ||
+            error.code === "MAIL_FILE_UNSUPPORTED"
         ? 415
-        : error.code === "MAIL_IMAGE_TOO_LARGE"
+        : error.code === "MAIL_IMAGE_TOO_LARGE" ||
+            error.code === "MAIL_FILE_TOO_LARGE"
           ? 413
           : 400;
     return NextResponse.json({ code: error.code }, { status });

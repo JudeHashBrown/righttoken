@@ -66,7 +66,7 @@ type MailPreviewResult = {
   canSend: boolean;
 };
 
-const MAX_IMAGE_COUNT = 10;
+const MAX_ASSET_COUNT = 10;
 const MAX_TOTAL_BYTES = 20 * 1024 * 1024;
 
 function isComplexHtml(value: string): boolean {
@@ -176,11 +176,15 @@ function uploadError(code: string | undefined): string {
       "图片格式不支持，请上传 JPG、PNG 或 WebP",
     MAIL_IMAGE_TOO_LARGE: "单张图片不能超过 5 MB",
     MAIL_IMAGE_INVALID: "图片无法识别，请重新选择",
+    MAIL_FILE_UNSUPPORTED:
+      "附件格式不支持，请上传 PDF、Word 或 Excel 文件",
+    MAIL_FILE_TOO_LARGE: "单个附件不能超过 10 MB",
+    MAIL_FILE_INVALID: "附件内容与文件格式不匹配，请重新选择",
     MAIL_ASSET_INVALID_FILE: "请选择有效的图片文件",
     MAIL_ASSET_STORAGE_UNAVAILABLE:
-      "图片存储暂不可用，请联系管理员"
+      "附件存储暂不可用，请联系管理员"
   };
-  return messages[code ?? ""] ?? "图片上传失败，请重试";
+  return messages[code ?? ""] ?? "附件上传失败，请重试";
 }
 
 export function MailRichEditor({
@@ -456,15 +460,15 @@ export function MailRichEditor({
     file: File,
     disposition: MailEditorAsset["disposition"]
   ): Promise<void> {
-    if (value.assets.length >= MAX_IMAGE_COUNT) {
-      setError("一封邮件最多添加 10 张图片");
+    if (value.assets.length >= MAX_ASSET_COUNT) {
+      setError("一封邮件最多添加 10 个文件");
       return;
     }
     const total =
       value.assets.reduce((sum, asset) => sum + asset.byteSize, 0) +
       file.size;
     if (total > MAX_TOTAL_BYTES) {
-      setError("图片总大小不能超过 20 MB");
+      setError("附件总大小不能超过 20 MB");
       return;
     }
     setUploading(true);
@@ -495,7 +499,7 @@ export function MailRichEditor({
       }
       emit(assets);
     } catch {
-      setError("图片上传失败，请重试");
+      setError("附件上传失败，请重试");
     } finally {
       setUploading(false);
     }
@@ -709,7 +713,7 @@ export function MailRichEditor({
               type="button"
             >
               <Paperclip aria-hidden="true" size={16} />
-              添加图片附件
+              添加附件
             </button>
             {uploading ? <span>上传中…</span> : null}
           </div>
@@ -836,8 +840,8 @@ export function MailRichEditor({
         type="file"
       />
       <input
-        accept="image/jpeg,image/png,image/webp"
-        aria-label="选择图片附件"
+        accept="image/jpeg,image/png,image/webp,.pdf,.doc,.docx,.xls,.xlsx,application/pdf,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        aria-label="选择附件"
         className={styles.visuallyHidden}
         multiple
         onChange={(event) => void selectFile(event, "ATTACHMENT")}
