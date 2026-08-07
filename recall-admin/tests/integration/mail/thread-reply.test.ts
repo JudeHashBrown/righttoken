@@ -76,6 +76,7 @@ describe("threaded user mail replies", () => {
       }
     });
     threadId = thread.id;
+    const sharedCreatedAt = new Date("2026-07-27T10:05:00.000Z");
     await prisma.mailMessage.createMany({
       data: [
         {
@@ -90,7 +91,8 @@ describe("threaded user mail replies", () => {
           toAddresses: [userEmail],
           subject: "RightToken 支付协助",
           bodyText: "如需协助请回复。",
-          sentAt: new Date("2026-07-27T09:00:00.000Z")
+          sentAt: new Date("2026-07-27T09:00:00.000Z"),
+          createdAt: sharedCreatedAt
         },
         {
           mailboxId,
@@ -105,7 +107,8 @@ describe("threaded user mail replies", () => {
           toAddresses: [mailbox.emailAddress],
           subject: "Re: RightToken 支付协助",
           bodyText: "我需要帮助。",
-          receivedAt: new Date("2026-07-27T10:00:00.000Z")
+          receivedAt: new Date("2026-07-27T10:00:00.000Z"),
+          createdAt: sharedCreatedAt
         }
       ]
     });

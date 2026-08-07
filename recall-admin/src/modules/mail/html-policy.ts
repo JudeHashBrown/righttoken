@@ -119,9 +119,6 @@ function isSafeHttpsUrl(value: string): boolean {
 }
 
 function isSafeLinkUrl(value: string): boolean {
-  if (value.startsWith("#")) {
-    return true;
-  }
   try {
     const url = new URL(value);
     return url.protocol === "https:" || url.protocol === "mailto:";
@@ -253,11 +250,17 @@ function transformAttributes(
       delete next.style;
     }
   }
-  if (tagName === "a" && next.href && !isSafeLinkUrl(next.href)) {
-    delete next.href;
-  }
-  if (tagName === "a" && next.target === "_blank") {
-    next.rel = "noopener noreferrer";
+  if (tagName === "a") {
+    if (next.href && isSafeLinkUrl(next.href)) {
+      if (!next.href.startsWith("#")) {
+        next.target = "_blank";
+        next.rel = "noopener noreferrer";
+      }
+    } else {
+      delete next.href;
+      delete next.target;
+      delete next.rel;
+    }
   }
   if (tagName === "img") {
     const assetId = next["data-mail-asset-id"] ?? "";

@@ -1,0 +1,25 @@
+.status { color: #28745c; font-weight: 650; }
+.inquiryHistory { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 22px; }
+.inquiryHistory > section { border-top: 1px solid #e3e7f0; padding-top: 14px; }
+.inquiryHistory h3 { margin: 0 0 10px; color: #35405a; font-size: 15px; }
+.historyItem { display: grid; gap: 5px; border-bottom: 1px solid #edf0f5; padding: 10px 0; }
+.historyItem strong { color: #39445e; font-size: 14px; }
+.historyItem span { color: #747e97; font-size: 12px; }
+.emptyState { color: #7a849c; font-size: 13px; }
+.reasonForm { display: grid; gap: 10px; margin-bottom: 10px; }
+.guidanceForm { display: grid; gap: 14px; margin-top: 16px; }
+.guidanceForm > label { display: grid; gap: 7px; color: #3c4660; font-weight: 650; }
+.categoryPicker { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; border: 0; padding: 0; }
+.categoryPicker legend { width: 100%; margin-bottom: 7px; color: #3c4660; font-weight: 650; }
+.categoryPicker label { display: inline-flex; min-height: 38px; align-items: center; gap: 7px; border: 1px solid #d8deea; border-radius: 10px; padding: 0 13px; color: #4c5670; cursor: pointer; }
+.guidanceRecords { display: grid; gap: 10px; margin-top: 20px; }
+.guidanceItem { display: grid; grid-template-columns: 130px 1fr auto; gap: 12px; align-items: center; border-top: 1px solid #e7eaf1; padding-top: 12px; }
+.guidanceItem > span { color: #555bc8; font-weight: 700; }
+.guidanceItem p { margin: 0; color: #3d4761; white-space: pre-wrap; }
+.guidanceItem small { color: #7a839a; }
+@media (max-width: 900px) { .inquiryHistory { grid-template-columns: 1fr; } .guidanceItem { grid-template-columns: 1fr; } }
+
+.inquiryHistory h3 { font-size: 17px; }
+.historyItem strong { font-size: 16px; }
+.historyItem span { font-size: 14px; }
+.emptyState { font-size: 15px; }

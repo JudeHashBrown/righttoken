@@ -1,17 +1,23 @@
 import type {
   MemberRole,
+  Prisma,
   SegmentCode,
-  TaskPriority,
   TaskStatus
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
-import { getProductionRightTokenUserFactsByIds } from "@/modules/users/righttoken-facts";
 import {
-  configuredMailboxWhere
-} from "@/modules/mail/mailbox-availability";
+  dashboardTaskWindows
+} from "@/modules/reports/dashboard-task-windows";
 import {
-  buildMailboxChannelHealth
-} from "@/modules/admin/settings-overview";
+  DASHBOARD_FOCUS_PAGE_SIZE,
+  effectiveAnomalyAt,
+  limitDashboardFocusUsers,
+  recentAnomalyOrderBy,
+  recentAnomalyWhere,
+  recentLowBalanceWhere,
+  recentUnpaidWhere,
+  type DashboardFocus
+} from "@/modules/reports/dashboard-recent-users";
 
 const OPEN_TASK_STATUSES: TaskStatus[] = [
   "UNASSIGNED",
@@ -23,50 +29,34 @@ const OPEN_TASK_STATUSES: TaskStatus[] = [
 
 const SEGMENTS: SegmentCode[] = ["A", "B", "C", "D", "E", "F", "G"];
 
-const PRIORITY_ORDER: Record<TaskPriority, number> = {
-  URGENT: 0,
-  IMPORTANT: 1,
-  NORMAL: 2
-};
-
-export type DashboardTask = {
+export type DashboardFocusUser = {
   id: string;
-  userId: string;
   externalUserId: string;
-  userLabel: string;
-  segment: SegmentCode;
-  title: string;
-  priority: TaskPriority;
-  status: TaskStatus;
-  dueAt: Date;
-  assigneeName: string | null;
+  displayName: string | null;
+  email: string;
   region: string | null;
+  ownerName: string | null;
+  registeredAt: Date;
+  anomalyReason: string | null;
+  anomalyAt: Date | null;
+  balanceUsdMinor: number;
+  lastCallAt: Date | null;
 };
 
 export type DashboardSnapshot = {
   metrics: {
-    dueToday: number;
-    overdue: number;
-    urgent: number;
+    recentUnpaid: number;
+    recentAnomalies: number;
+    recentLowBalance: number;
     awaitingReply: number;
     unassignedUsers: number;
     sevenDayRecallRate: number | null;
   };
-  priorityTasks: DashboardTask[];
+  focus: DashboardFocus;
+  focusUsers: DashboardFocusUser[];
   segmentDistribution: Array<{
     segment: SegmentCode;
     count: number;
-  }>;
-  channelHealth: Array<{
-    channel: string;
-    state: "healthy" | "warning" | "down";
-    detail: string;
-  }>;
-  teamWorkload: Array<{
-    memberId: string | null;
-    name: string;
-    openTasks: number;
-    capacityPercent: number;
   }>;
 };
 
@@ -74,6 +64,29 @@ type DashboardMember = {
   id: string;
   role: MemberRole;
 };
+
+export type DashboardNavigationMetrics = {
+  dueToday: number;
+  urgent: number;
+  awaitingReply: number;
+};
+
+const focusUserSelect = {
+  id: true,
+  externalUserId: true,
+  displayName: true,
+  email: true,
+  region: true,
+  countryCode: true,
+  registeredAt: true,
+  balanceUsdMinor: true,
+  lastCallAt: true,
+  anomalyErrorMessage: true,
+  anomalyErrorType: true,
+  anomalyChangedAt: true,
+  anomalyLastOccurredAt: true,
+  owner: { select: { displayName: true } }
+} satisfies Prisma.UserProfileSelect;
 
 function shanghaiDayRange(now: Date): { start: Date; end: Date } {
   const offset = 8 * 60 * 60 * 1000;
@@ -107,11 +120,49 @@ function userScope(member: DashboardMember) {
     : {};
 }
 
-export async function getDashboardSnapshot(
+export async function getDashboardNavigationMetrics(
   member: DashboardMember,
   now = new Date()
-): Promise<DashboardSnapshot> {
+): Promise<DashboardNavigationMetrics> {
   const { start, end } = shanghaiDayRange(now);
+  const { dueTodayCreatedAfter, urgentCreatedAfter } =
+    dashboardTaskWindows(now);
+  const openWhere = {
+    ...taskScope(member),
+    status: { in: OPEN_TASK_STATUSES }
+  };
+
+  const [dueToday, urgent, awaitingReply] = await Promise.all([
+    prisma.recallTask.count({
+      where: {
+        ...openWhere,
+        createdAt: { gte: dueTodayCreatedAfter },
+        dueAt: { gte: start, lt: end }
+      }
+    }),
+    prisma.recallTask.count({
+      where: {
+        ...openWhere,
+        createdAt: { gte: urgentCreatedAfter },
+        priority: "URGENT"
+      }
+    }),
+    prisma.recallTask.count({
+      where: {
+        ...openWhere,
+        origin: "EMAIL_REPLY"
+      }
+    })
+  ]);
+
+  return { dueToday, urgent, awaitingReply };
+}
+
+export async function getDashboardSnapshot(
+  member: DashboardMember,
+  now = new Date(),
+  focus: DashboardFocus = "recent-anomaly"
+): Promise<DashboardSnapshot> {
   const sevenDaysAgo = new Date(
     now.getTime() - 7 * 24 * 60 * 60 * 1000
   );
@@ -122,35 +173,15 @@ export async function getDashboardSnapshot(
   };
 
   const [
-    dueToday,
-    overdue,
-    urgent,
     awaitingReply,
     sevenDayTasks,
     sevenDayCompleted,
-    taskRows,
     segmentRows,
-    workloadRows,
-    unassignedUsers
+    unassignedUsers,
+    recentUnpaid,
+    recentAnomalies,
+    recentLowBalance
   ] = await Promise.all([
-    prisma.recallTask.count({
-      where: {
-        ...openWhere,
-        dueAt: { gte: start, lt: end }
-      }
-    }),
-    prisma.recallTask.count({
-      where: {
-        ...openWhere,
-        dueAt: { lt: now }
-      }
-    }),
-    prisma.recallTask.count({
-      where: {
-        ...openWhere,
-        priority: "URGENT"
-      }
-    }),
     prisma.recallTask.count({
       where: {
         ...openWhere,
@@ -172,36 +203,12 @@ export async function getDashboardSnapshot(
         completedAt: { gte: sevenDaysAgo }
       }
     }),
-    prisma.recallTask.findMany({
-      where: openWhere,
-      include: {
-        user: {
-          select: {
-            externalUserId: true,
-            displayName: true,
-            currentSegment: true,
-            region: true,
-            countryCode: true
-          }
-        },
-        assignee: {
-          select: { displayName: true }
-        }
-      },
-      orderBy: { dueAt: "asc" },
-      take: 40
-    }),
     prisma.userProfile.groupBy({
       by: ["currentSegment"],
       where: {
         ...userScope(member),
         sourceDeletedAt: null
       },
-      _count: { _all: true }
-    }),
-    prisma.recallTask.groupBy({
-      by: ["assigneeId"],
-      where: openWhere,
       _count: { _all: true }
     }),
     member.role === "OPERATOR"
@@ -211,39 +218,81 @@ export async function getDashboardSnapshot(
             sourceDeletedAt: null,
             ownerId: null
           }
-        })
+        }),
+    prisma.userProfile.count({
+      where: recentUnpaidWhere(member, now)
+    }),
+    prisma.userProfile.count({
+      where: recentAnomalyWhere(member, now)
+    }),
+    prisma.userProfile.count({
+      where: recentLowBalanceWhere(member, now)
+    })
   ]);
 
-  const liveFacts = await getProductionRightTokenUserFactsByIds(
-    taskRows.map((task) => task.user.externalUserId)
+  const focusWhere =
+    focus === "recent-unpaid"
+      ? recentUnpaidWhere(member, now)
+      : focus === "recent-low-balance"
+        ? recentLowBalanceWhere(member, now)
+        : recentAnomalyWhere(member, now);
+  const focusRows =
+    focus === "recent-unpaid"
+      ? await prisma.userProfile.findMany({
+          where: focusWhere,
+          select: focusUserSelect,
+          orderBy: [{ registeredAt: "desc" }, { id: "desc" }],
+          take: DASHBOARD_FOCUS_PAGE_SIZE
+        })
+      : focus === "recent-low-balance"
+        ? await prisma.userProfile.findMany({
+            where: focusWhere,
+            select: focusUserSelect,
+            orderBy: [{ lastCallAt: "desc" }, { id: "desc" }],
+            take: DASHBOARD_FOCUS_PAGE_SIZE
+          })
+      : Array.from(
+          new Map(
+            (
+              await Promise.all([
+                prisma.userProfile.findMany({
+                  where: focusWhere,
+                  select: focusUserSelect,
+                  orderBy: recentAnomalyOrderBy(
+                    "anomalyLastOccurredAt"
+                  ),
+                  take: DASHBOARD_FOCUS_PAGE_SIZE
+                }),
+                prisma.userProfile.findMany({
+                  where: focusWhere,
+                  select: focusUserSelect,
+                  orderBy: recentAnomalyOrderBy("anomalyChangedAt"),
+                  take: DASHBOARD_FOCUS_PAGE_SIZE
+                })
+              ])
+            )
+              .flat()
+              .map((row) => [row.id, row])
+          ).values()
+        );
+
+  const focusUsers = limitDashboardFocusUsers(
+    focusRows.map((row) => ({
+      id: row.id,
+      externalUserId: row.externalUserId,
+      displayName: row.displayName,
+      email: row.email,
+      region: row.region ?? row.countryCode,
+      ownerName: row.owner?.displayName ?? null,
+      registeredAt: row.registeredAt,
+      anomalyReason:
+        row.anomalyErrorMessage ?? row.anomalyErrorType ?? null,
+      anomalyAt: effectiveAnomalyAt(row),
+      balanceUsdMinor: row.balanceUsdMinor,
+      lastCallAt: row.lastCallAt
+    })),
+    focus
   );
-  const priorityTasks = taskRows
-    .sort((left, right) => {
-      const priorityDelta =
-        PRIORITY_ORDER[left.priority] - PRIORITY_ORDER[right.priority];
-      return priorityDelta || left.dueAt.getTime() - right.dueAt.getTime();
-    })
-    .slice(0, 8)
-    .map((task) => {
-      const facts = liveFacts.get(task.user.externalUserId);
-      return {
-        id: task.id,
-        userId: task.userId,
-        externalUserId: task.user.externalUserId,
-        userLabel:
-          facts?.displayName ??
-          task.user.displayName ??
-          `用户 ${task.user.externalUserId.slice(-6)}`,
-        segment: task.user.currentSegment,
-        title: task.title,
-        priority: task.priority,
-        status: task.status,
-        dueAt: task.dueAt,
-        assigneeName: task.assignee?.displayName ?? null,
-        region:
-          task.user.region ?? task.user.countryCode ?? null
-      };
-    });
 
   const segmentCounts = new Map(
     segmentRows.map((row) => [
@@ -252,51 +301,11 @@ export async function getDashboardSnapshot(
     ])
   );
 
-  const assigneeIds = workloadRows
-    .map((row) => row.assigneeId)
-    .filter((id): id is string => Boolean(id));
-  const assignees = assigneeIds.length
-    ? await prisma.member.findMany({
-        where: { id: { in: assigneeIds } },
-        select: { id: true, displayName: true }
-      })
-    : [];
-  const assigneeNames = new Map(
-    assignees.map((assignee) => [
-      assignee.id,
-      assignee.displayName
-    ])
-  );
-  const workloadTotal = Math.max(
-    1,
-    workloadRows.reduce((total, row) => total + row._count._all, 0)
-  );
-  const [mailboxes, integrationCredentials] = await Promise.all([
-    prisma.mailbox.findMany({
-      where: configuredMailboxWhere,
-      select: { enabled: true }
-    }),
-    prisma.integrationCredential.findMany({
-      where: { kind: { in: ["WECOM_APP", "WECOM_ROBOT"] } },
-      select: { kind: true, enabled: true }
-    })
-  ]);
-  const configuredCredentials = new Set(
-    integrationCredentials
-      .filter((credential) => credential.enabled)
-      .map((credential) => credential.kind)
-  );
-  const wecomAppConfigured =
-    configuredCredentials.has("WECOM_APP");
-  const wecomRobotConfigured =
-    configuredCredentials.has("WECOM_ROBOT") ||
-    Boolean(process.env.WECOM_WEBHOOK_URL);
-
   return {
     metrics: {
-      dueToday,
-      overdue,
-      urgent,
+      recentUnpaid,
+      recentAnomalies,
+      recentLowBalance,
       awaitingReply,
       unassignedUsers,
       sevenDayRecallRate:
@@ -306,35 +315,11 @@ export async function getDashboardSnapshot(
               ((sevenDayCompleted / sevenDayTasks) * 100).toFixed(1)
             )
     },
-    priorityTasks,
+    focus,
+    focusUsers,
     segmentDistribution: SEGMENTS.map((segment) => ({
       segment,
       count: segmentCounts.get(segment) ?? 0
-    })),
-    channelHealth: [
-      buildMailboxChannelHealth(mailboxes),
-      {
-        channel: "企业微信应用",
-        state: wecomAppConfigured ? "healthy" : "warning",
-        detail: wecomAppConfigured ? "已经连接" : "尚未连接"
-      },
-      {
-        channel: "企微群机器人",
-        state: wecomRobotConfigured ? "healthy" : "warning",
-        detail: wecomRobotConfigured ? "已经连接" : "尚未连接"
-      }
-    ],
-    teamWorkload: workloadRows
-      .map((row) => ({
-        memberId: row.assigneeId,
-        name: row.assigneeId
-          ? (assigneeNames.get(row.assigneeId) ?? "已停用成员")
-          : "公共任务池",
-        openTasks: row._count._all,
-        capacityPercent: Math.round(
-          (row._count._all / workloadTotal) * 100
-        )
-      }))
-      .sort((left, right) => right.openTasks - left.openTasks)
+    }))
   };
 }

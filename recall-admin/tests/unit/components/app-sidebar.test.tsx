@@ -25,14 +25,13 @@ describe("AppSidebar", () => {
     render(
       <AppSidebar
         member={member("OPERATOR")}
-        unreadTasks={28}
         unreadMail={17}
       />
     );
 
     expect(screen.getByText("用户运营概览")).toBeInTheDocument();
-    expect(screen.getByText("任务中心")).toBeInTheDocument();
-    expect(screen.getByText("28")).toBeInTheDocument();
+    expect(screen.queryByText("任务中心")).not.toBeInTheDocument();
+    expect(screen.queryByText("28")).not.toBeInTheDocument();
     expect(screen.queryByText("成员与权限")).not.toBeInTheDocument();
     expect(screen.queryByText("访问看板")).not.toBeInTheDocument();
     expect(
@@ -44,12 +43,46 @@ describe("AppSidebar", () => {
     render(
       <AppSidebar
         member={member("ADMIN")}
-        unreadTasks={0}
         unreadMail={0}
       />
     );
 
     expect(screen.getByText("用户分组")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "B-未完成支付" })).toHaveAttribute(
+      "href",
+      "/groups/b"
+    );
+    expect(screen.getByRole("link", { name: "A-仅注册" })).toHaveAttribute(
+      "href",
+      "/groups/a"
+    );
+    expect(screen.getByRole("link", { name: "E-余额不足" })).toHaveAttribute(
+      "href",
+      "/groups/e"
+    );
+    expect(screen.getByRole("link", { name: "C-充值未调用" })).toHaveAttribute(
+      "href",
+      "/groups/c"
+    );
+    expect(screen.getByRole("link", { name: "D-长期未调用" })).toHaveAttribute(
+      "href",
+      "/groups/d"
+    );
+    const groupLinks = screen
+      .getAllByRole("link")
+      .filter((link) =>
+        ["/groups/b", "/groups/a", "/groups/e", "/groups/c", "/groups/d"].includes(
+          link.getAttribute("href") ?? ""
+        )
+      );
+    expect(groupLinks.map((link) => link.getAttribute("href"))).toEqual([
+      "/groups/b",
+      "/groups/a",
+      "/groups/e",
+      "/groups/c",
+      "/groups/d"
+    ]);
+    expect(screen.queryByRole("link", { name: /任务中心/ })).not.toBeInTheDocument();
     expect(screen.getByText("成员与权限")).toBeInTheDocument();
     expect(screen.getByText("访问看板")).toBeInTheDocument();
     expect(screen.getByText("系统设置")).toBeInTheDocument();

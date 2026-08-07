@@ -9,10 +9,11 @@ describe("mail compose link", () => {
       mailComposeHref({
         userId: "user/a",
         taskId: "task?1",
+        retryMessageId: "message#1",
         view: "replies"
       })
     ).toBe(
-      "/mail?view=replies&compose=1&userId=user%2Fa&taskId=task%3F1"
+      "/mail?view=replies&compose=1&userId=user%2Fa&taskId=task%3F1&retryMessageId=message%231"
     );
   });
 });

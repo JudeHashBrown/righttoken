@@ -26,7 +26,10 @@ export default defineConfig({
     command: `npm run dev -- -H 127.0.0.1 -p ${e2ePort}`,
     env: {
       ...process.env,
-      APP_URL: e2eBaseUrl
+      APP_URL: e2eBaseUrl,
+      VISITOR_HASH_KEY:
+        process.env.VISITOR_HASH_KEY ??
+        "e2e-visitor-hash-key-at-least-32-characters"
     },
     url: `${e2eBaseUrl}/login`,
     reuseExistingServer: !process.env.CI

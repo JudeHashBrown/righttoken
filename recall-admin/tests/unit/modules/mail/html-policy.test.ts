@@ -4,6 +4,15 @@ import {
 } from "@/modules/mail/html-policy";
 
 describe("processMailHtml", () => {
+  it("removes fragment-only links because only HTTPS and mailto are allowed", () => {
+    const result = processMailHtml(
+      '<p><a href="#internal">内部跳转</a></p>'
+    );
+
+    expect(result.html).not.toContain('href="#internal"');
+    expect(result.diagnostics.blockedUrls).toBeGreaterThan(0);
+  });
+
   it("preserves a complete static email document", () => {
     const result = processMailHtml(`<!DOCTYPE html>
       <html>
@@ -50,6 +59,23 @@ describe("processMailHtml", () => {
     expect(result.diagnostics.removedTags).toEqual(
       expect.arrayContaining(["form", "iframe", "input", "script"])
     );
+  });
+
+  it("hardens safe external links and clears unsafe link metadata", () => {
+    const result = processMailHtml(`
+      <a href="https://example.com/help">帮助</a>
+      <a href="mailto:help@example.com" target="_self">邮件</a>
+      <a href="javascript:alert(1)" target="_blank" rel="opener">危险</a>
+    `);
+
+    expect(result.html).toContain(
+      '<a href="https://example.com/help" target="_blank" rel="noopener noreferrer">帮助</a>'
+    );
+    expect(result.html).toContain(
+      '<a href="mailto:help@example.com" target="_blank" rel="noopener noreferrer">邮件</a>'
+    );
+    expect(result.html).not.toContain("javascript:");
+    expect(result.html).not.toContain('rel="opener"');
   });
 
   it("allows https images and rejects other external sources", () => {
@@ -115,5 +141,17 @@ describe("processMailHtml", () => {
         "<html><head><style>.x{color:red}</style></head><body><table><tr><td>复杂</td></tr></table></body></html>"
       ).visualEditorCompatible
     ).toBe(false);
+  });
+
+  it("preserves essential visual-editor formatting", () => {
+    const result = processMailHtml(`
+      <p style="text-align: center"><span style="font-size: 18px">标题</span></p>
+      <ol><li>第一步</li><li>第二步</li></ol>
+    `);
+
+    expect(result.html).toContain("text-align:center");
+    expect(result.html).toContain("font-size:18px");
+    expect(result.html).toContain("<ol>");
+    expect(result.html).toContain("<li>第一步</li>");
   });
 });

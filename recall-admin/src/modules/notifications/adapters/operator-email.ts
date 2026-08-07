@@ -11,7 +11,7 @@ export function createOperatorEmailAdapter(
       const result = await sendSmtpMessage(config, {
         to: [input.recipient],
         subject: input.title,
-        text: `${input.summary}\n\n打开任务：${input.taskUrl}`
+        text: `${input.summary}\n\n查看用户：${input.taskUrl}`
       });
       return { providerMessageId: result.providerMessageId };
     }

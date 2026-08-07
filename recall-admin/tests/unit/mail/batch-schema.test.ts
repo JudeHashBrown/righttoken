@@ -12,6 +12,15 @@ const content = {
 };
 
 describe("mail batch request schema", () => {
+  it("defaults batch purpose to OTHER", () => {
+    expect(
+      mailBatchRequestSchema.parse({
+        ...content,
+        mode: "ALL"
+      }).purpose
+    ).toBe("OTHER");
+  });
+
   it("accepts one explicit segment", () => {
     expect(
       mailBatchRequestSchema.safeParse({

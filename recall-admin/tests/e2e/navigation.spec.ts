@@ -9,8 +9,13 @@ const pool = new pg.Pool({
 });
 const e2ePort = process.env.RECALL_E2E_PORT ?? "3101";
 const routes = [
-  { path: "/dashboard", heading: "用户运营概览" },
-  { path: "/tasks", heading: "任务中心" },
+  { path: "/dashboard", heading: "运营仪表盘" },
+  { path: "/groups/b", heading: "B-未完成支付" },
+  { path: "/groups/a", heading: "A-仅注册" },
+  { path: "/groups/e", heading: "E-余额不足" },
+  { path: "/groups/c", heading: "C-充值未调用" },
+  { path: "/groups/d", heading: "D-长期未调用" },
+  { path: "/visits", heading: "访问看板" },
   { path: "/users", heading: "用户中心" },
   { path: "/mail", heading: "邮件中心" },
   { path: "/automation/segments", heading: "用户分组" },
@@ -64,7 +69,7 @@ test("local development opens the dashboard without login", async ({
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(
     page.getByRole("heading", {
-      name: "用户运营概览",
+      name: "运营仪表盘",
       exact: true
     })
   ).toBeVisible();
@@ -120,8 +125,8 @@ test("every administrator navigation item opens a real page", async ({
       await expect(segmentButtons).toHaveText([
         "全部全部用户",
         "F服务异常",
-        "A注册未支付",
-        "B支付未完成",
+        "A仅注册",
+        "B未完成支付",
         "C充值未调用",
         "D长期未调用",
         "E余额不足",
@@ -146,14 +151,6 @@ test("every administrator navigation item opens a real page", async ({
       await expect(
         page.getByRole("button", { name: "F 服务异常" })
       ).toHaveAttribute("aria-pressed", "true");
-    }
-    if (route.path === "/tasks") {
-      const segmentFilter = page.getByLabel("筛选分组");
-
-      await expect(segmentFilter).toBeVisible();
-      await expect(page.getByLabel("筛选负责人")).toBeVisible();
-      await segmentFilter.selectOption("B");
-      await expect(page).toHaveURL(/segment=B/);
     }
     if (route.path === "/automation/assignment") {
       await expect(

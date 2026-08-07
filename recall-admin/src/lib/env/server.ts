@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isValidGeoIpHttpUrl } from "@/modules/geoip/source-contract";
 
 const emptyStringToUndefined = (value: unknown) =>
   value === "" ? undefined : value;
@@ -10,6 +11,16 @@ const optionalString = z.preprocess(
 const optionalUrl = z.preprocess(
   emptyStringToUndefined,
   z.string().url().optional()
+);
+const optionalGeoIpUrl = z.preprocess(
+  emptyStringToUndefined,
+  z
+    .string()
+    .refine(
+      isValidGeoIpHttpUrl,
+      "must be an HTTP(S) URL containing {ip}"
+    )
+    .optional()
 );
 const optionalPort = z.preprocess(
   emptyStringToUndefined,
@@ -83,13 +94,17 @@ const serverEnvSchema = z
     RIGHTTOKEN_SOURCE_MODE: z
       .enum(["database", "simulator"])
       .default("database"),
-    GEOIP_HTTP_URL: optionalString,
+    GEOIP_HTTP_URL: optionalGeoIpUrl,
     GEOIP_HTTP_TOKEN: optionalString,
     GEOIP_MMDB_PATH: optionalString,
     GEOIP_RIR_PATH: optionalString,
     GEOIP_HTTP_TIMEOUT_MS: z.preprocess(
       emptyStringToUndefined,
       z.coerce.number().int().min(100).max(10_000).default(2_000)
+    ),
+    GEOIP_MAX_AGE_DAYS: z.preprocess(
+      emptyStringToUndefined,
+      z.coerce.number().int().min(1).max(90).default(45)
     ),
     RECONCILE_ENABLED: requiredEnvBoolean,
     RECONCILE_INTERVAL_MINUTES: z.coerce

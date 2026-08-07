@@ -21,8 +21,11 @@ describe("AppHeader", () => {
 
   it.each([
     ["/dashboard", "用户运营概览"],
-    ["/tasks", "任务中心"],
-    ["/tasks/task-1", "任务中心"],
+    ["/groups/b", "B-未完成支付"],
+    ["/groups/a", "A-仅注册"],
+    ["/groups/e", "E-余额不足"],
+    ["/groups/d", "D-长期未调用"],
+    ["/groups/c", "C-充值未调用"],
     ["/users", "用户中心"],
     ["/users/user-1", "用户中心"],
     ["/mail", "邮件中心"],
@@ -38,7 +41,6 @@ describe("AppHeader", () => {
     render(
       <AppHeader
         memberName="林小雨"
-        urgentCount={2}
         mainSiteUrl={mainSiteUrl}
       />
     );
@@ -50,7 +52,6 @@ describe("AppHeader", () => {
     render(
       <AppHeader
         memberName="林小雨"
-        urgentCount={0}
         mainSiteUrl={mainSiteUrl}
       />
     );
@@ -63,11 +64,22 @@ describe("AppHeader", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("does not expose task-center controls", () => {
+    render(
+      <AppHeader
+        memberName="林小雨"
+        mainSiteUrl={mainSiteUrl}
+      />
+    );
+
+    expect(screen.queryByRole("link", { name: /紧急任务/ })).not.toBeInTheDocument();
+    expect(screen.queryByText("任务中心")).not.toBeInTheDocument();
+  });
+
   it("returns to the configured RightToken dashboard in the same tab", () => {
     render(
       <AppHeader
         memberName="主管理员"
-        urgentCount={0}
         mainSiteUrl={mainSiteUrl}
       />
     );

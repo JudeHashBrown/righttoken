@@ -85,6 +85,7 @@ export async function POST(
             }
           : { mode: "ALL" },
       subject: data.subject,
+      purpose: data.purpose,
       bodyText: data.bodyText,
       bodyHtml: data.bodyHtml,
       assets: data.assets,

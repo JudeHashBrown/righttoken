@@ -1,13 +1,18 @@
 "use client";
 
 import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
   Bold,
   Code2,
   Eye,
   FileUp,
   ImagePlus,
   Italic,
+  Link2,
   List,
+  ListOrdered,
   Monitor,
   Paperclip,
   Underline
@@ -27,6 +32,13 @@ import {
 import type {
   MailHtmlDiagnostics
 } from "@/modules/mail/html-policy";
+import { normalizeEditorLink } from "@/modules/mail/editor-link";
+import {
+  applyMailEditorFormat,
+  MAIL_FONT_SIZE_OPTIONS,
+  type MailEditorFormat,
+  type MailFontSize
+} from "@/modules/mail/editor-format";
 import styles from "@/components/workspaces/workspace.module.css";
 
 export type MailEditorAsset = {
@@ -64,7 +76,7 @@ type MailPreviewResult = {
   canSend: boolean;
 };
 
-const MAX_IMAGE_COUNT = 10;
+const MAX_ASSET_COUNT = 10;
 const MAX_TOTAL_BYTES = 20 * 1024 * 1024;
 
 function isComplexHtml(value: string): boolean {
@@ -174,11 +186,15 @@ function uploadError(code: string | undefined): string {
       "图片格式不支持，请上传 JPG、PNG 或 WebP",
     MAIL_IMAGE_TOO_LARGE: "单张图片不能超过 5 MB",
     MAIL_IMAGE_INVALID: "图片无法识别，请重新选择",
+    MAIL_FILE_UNSUPPORTED:
+      "附件格式不支持，请上传 PDF、Word 或 Excel 文件",
+    MAIL_FILE_TOO_LARGE: "单个附件不能超过 10 MB",
+    MAIL_FILE_INVALID: "附件内容与文件格式不匹配，请重新选择",
     MAIL_ASSET_INVALID_FILE: "请选择有效的图片文件",
     MAIL_ASSET_STORAGE_UNAVAILABLE:
-      "图片存储暂不可用，请联系管理员"
+      "附件存储暂不可用，请联系管理员"
   };
-  return messages[code ?? ""] ?? "图片上传失败，请重试";
+  return messages[code ?? ""] ?? "附件上传失败，请重试";
 }
 
 export function MailRichEditor({
@@ -199,6 +215,7 @@ export function MailRichEditor({
   const attachmentInputRef = useRef<HTMLInputElement>(null);
   const htmlInputRef = useRef<HTMLInputElement>(null);
   const savedRangeRef = useRef<Range | null>(null);
+  const activeAnchorRef = useRef<HTMLAnchorElement | null>(null);
   const valueRef = useRef(value);
   const onChangeRef = useRef(onChange);
   const [mode, setMode] = useState<EditorMode>(() =>
@@ -209,6 +226,10 @@ export function MailRichEditor({
   );
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [editingLink, setEditingLink] = useState(false);
+  const [linkValue, setLinkValue] = useState("");
+  const [linkError, setLinkError] = useState<string | null>(null);
   const [preview, setPreview] =
     useState<MailPreviewResult | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
@@ -335,6 +356,114 @@ export function MailRichEditor({
     savedRangeRef.current = selection.getRangeAt(0).cloneRange();
   }
 
+  function restoreSelection(): void {
+    const editor = editorRef.current;
+    const range = savedRangeRef.current;
+    const selection = window.getSelection();
+    if (
+      !editor ||
+      !range ||
+      !selection ||
+      !editor.contains(range.commonAncestorContainer)
+    ) {
+      return;
+    }
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
+  function anchorForRange(
+    range: Range,
+    editor: HTMLElement
+  ): HTMLAnchorElement | null {
+    const node = range.startContainer;
+    const element =
+      node.nodeType === Node.ELEMENT_NODE
+        ? (node as Element)
+        : node.parentElement;
+    const anchor = element?.closest("a") ?? null;
+    return anchor instanceof HTMLAnchorElement &&
+      editor.contains(anchor)
+      ? anchor
+      : null;
+  }
+
+  function openLinkDialog(): void {
+    saveSelection();
+    const editor = editorRef.current;
+    const range = savedRangeRef.current;
+    const anchor =
+      editor && range ? anchorForRange(range, editor) : null;
+    activeAnchorRef.current = anchor;
+    setEditingLink(Boolean(anchor));
+    setLinkValue(anchor?.getAttribute("href") ?? "");
+    setLinkError(null);
+    setLinkDialogOpen(true);
+  }
+
+  function closeLinkDialog(): void {
+    setLinkDialogOpen(false);
+    setLinkValue("");
+    setLinkError(null);
+    activeAnchorRef.current = null;
+    setEditingLink(false);
+  }
+
+  function applyLink(): void {
+    const editor = editorRef.current;
+    const range = savedRangeRef.current;
+    if (
+      !editor ||
+      !range ||
+      !editor.contains(range.commonAncestorContainer)
+    ) {
+      setLinkError("请先在正文中选择文字或放置光标");
+      return;
+    }
+    const normalized = normalizeEditorLink(linkValue);
+    if (!normalized.ok) {
+      setLinkError(
+        {
+          EMPTY_LINK: "请输入链接地址",
+          UNSAFE_LINK: "仅支持 HTTPS 或邮件地址链接",
+          INVALID_LINK: "链接地址格式不正确"
+        }[normalized.code]
+      );
+      return;
+    }
+    const activeAnchor = activeAnchorRef.current;
+    if (activeAnchor && editor.contains(activeAnchor)) {
+      activeAnchor.setAttribute("href", normalized.href);
+      activeAnchor.setAttribute("target", "_blank");
+      activeAnchor.setAttribute("rel", "noopener noreferrer");
+    } else {
+      const anchor = document.createElement("a");
+      anchor.setAttribute("href", normalized.href);
+      anchor.setAttribute("target", "_blank");
+      anchor.setAttribute("rel", "noopener noreferrer");
+      if (range.collapsed) {
+        anchor.textContent = normalized.href;
+      } else {
+        anchor.append(range.extractContents());
+      }
+      range.insertNode(anchor);
+    }
+    emit();
+    closeLinkDialog();
+  }
+
+  function removeLink(): void {
+    const editor = editorRef.current;
+    const anchor = activeAnchorRef.current;
+    if (!editor || !anchor || !editor.contains(anchor)) {
+      setLinkError("当前选中的文字没有超链接");
+      return;
+    }
+    anchor.replaceWith(...Array.from(anchor.childNodes));
+    emit();
+    closeLinkDialog();
+  }
+
   function insertInlineImage(asset: MailEditorAsset): void {
     const editor = editorRef.current;
     if (!editor) return;
@@ -357,15 +486,15 @@ export function MailRichEditor({
     file: File,
     disposition: MailEditorAsset["disposition"]
   ): Promise<void> {
-    if (value.assets.length >= MAX_IMAGE_COUNT) {
-      setError("一封邮件最多添加 10 张图片");
+    if (value.assets.length >= MAX_ASSET_COUNT) {
+      setError("一封邮件最多添加 10 个文件");
       return;
     }
     const total =
       value.assets.reduce((sum, asset) => sum + asset.byteSize, 0) +
       file.size;
     if (total > MAX_TOTAL_BYTES) {
-      setError("图片总大小不能超过 20 MB");
+      setError("附件总大小不能超过 20 MB");
       return;
     }
     setUploading(true);
@@ -396,7 +525,7 @@ export function MailRichEditor({
       }
       emit(assets);
     } catch {
-      setError("图片上传失败，请重试");
+      setError("附件上传失败，请重试");
     } finally {
       setUploading(false);
     }
@@ -429,8 +558,20 @@ export function MailRichEditor({
 
   function format(command: "bold" | "italic" | "underline" | "insertUnorderedList"): void {
     editorRef.current?.focus();
+    restoreSelection();
     document.execCommand(command);
     emit();
+    saveSelection();
+  }
+
+  function formatEssential(format: MailEditorFormat): void {
+    const editor = editorRef.current;
+    if (!editor) return;
+    editor.focus();
+    restoreSelection();
+    applyMailEditorFormat(editor, format);
+    emit();
+    saveSelection();
   }
 
   function selectMode(nextMode: EditorMode): void {
@@ -580,6 +721,76 @@ export function MailRichEditor({
             >
               <List aria-hidden="true" size={16} />
             </button>
+            <button
+              aria-label="有序编号"
+              onClick={() =>
+                formatEssential({ type: "orderedList" })
+              }
+              type="button"
+            >
+              <ListOrdered aria-hidden="true" size={16} />
+            </button>
+            <span
+              aria-hidden="true"
+              className={styles.toolbarDivider}
+            />
+            <button
+              aria-label="左对齐"
+              onClick={() =>
+                formatEssential({ type: "alignLeft" })
+              }
+              type="button"
+            >
+              <AlignLeft aria-hidden="true" size={16} />
+            </button>
+            <button
+              aria-label="居中对齐"
+              onClick={() =>
+                formatEssential({ type: "alignCenter" })
+              }
+              type="button"
+            >
+              <AlignCenter aria-hidden="true" size={16} />
+            </button>
+            <button
+              aria-label="右对齐"
+              onClick={() =>
+                formatEssential({ type: "alignRight" })
+              }
+              type="button"
+            >
+              <AlignRight aria-hidden="true" size={16} />
+            </button>
+            <label className={styles.mailEditorSelectLabel}>
+              <span>字号</span>
+              <select
+                aria-label="字号"
+                defaultValue="14px"
+                onChange={(event) =>
+                  formatEssential({
+                    type: "fontSize",
+                    value: event.target.value as MailFontSize
+                  })
+                }
+              >
+                {MAIL_FONT_SIZE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <span
+              aria-hidden="true"
+              className={styles.toolbarDivider}
+            />
+            <button
+              aria-label="超链接"
+              onClick={openLinkDialog}
+              type="button"
+            >
+              <Link2 aria-hidden="true" size={16} />
+            </button>
             <span
               aria-hidden="true"
               className={styles.toolbarDivider}
@@ -603,7 +814,7 @@ export function MailRichEditor({
               type="button"
             >
               <Paperclip aria-hidden="true" size={16} />
-              添加图片附件
+              添加附件
             </button>
             {uploading ? <span>上传中…</span> : null}
           </div>
@@ -615,10 +826,72 @@ export function MailRichEditor({
             id={`${idPrefix}-body`}
             onBlur={saveSelection}
             onInput={() => emit()}
+            onKeyUp={saveSelection}
+            onMouseUp={saveSelection}
             ref={editorRef}
             role="textbox"
             suppressContentEditableWarning
           />
+          {linkDialogOpen ? (
+            <div
+              aria-labelledby={`${idPrefix}-link-title`}
+              aria-modal="true"
+              className={styles.mailLinkDialog}
+              role="dialog"
+            >
+              <strong id={`${idPrefix}-link-title`}>
+                {editingLink
+                  ? "编辑超链接"
+                  : "插入超链接"}
+              </strong>
+              <div className={styles.field}>
+                <label htmlFor={`${idPrefix}-link-value`}>
+                  链接地址
+                </label>
+                <input
+                  autoFocus
+                  className={styles.input}
+                  id={`${idPrefix}-link-value`}
+                  onChange={(event) => {
+                    setLinkValue(event.target.value);
+                    setLinkError(null);
+                  }}
+                  placeholder="example.com 或 mailto:name@example.com"
+                  value={linkValue}
+                />
+              </div>
+              {linkError ? (
+                <p className={styles.error} role="alert">
+                  {linkError}
+                </p>
+              ) : null}
+              <div className={styles.inlineActions}>
+                <button
+                  className={styles.secondaryButton}
+                  onClick={closeLinkDialog}
+                  type="button"
+                >
+                  取消
+                </button>
+                {editingLink ? (
+                  <button
+                    className={styles.dangerButton}
+                    onClick={removeLink}
+                    type="button"
+                  >
+                    移除链接
+                  </button>
+                ) : null}
+                <button
+                  className={styles.button}
+                  onClick={applyLink}
+                  type="button"
+                >
+                  保存链接
+                </button>
+              </div>
+            </div>
+          ) : null}
         </>
       ) : null}
       {mode === "SOURCE" ? (
@@ -668,8 +941,8 @@ export function MailRichEditor({
         type="file"
       />
       <input
-        accept="image/jpeg,image/png,image/webp"
-        aria-label="选择图片附件"
+        accept="image/jpeg,image/png,image/webp,.pdf,.doc,.docx,.xls,.xlsx,application/pdf,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        aria-label="选择附件"
         className={styles.visuallyHidden}
         multiple
         onChange={(event) => void selectFile(event, "ATTACHMENT")}

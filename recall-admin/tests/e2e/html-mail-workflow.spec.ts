@@ -197,3 +197,36 @@ test("authors, sanitizes, previews, and submits a complete HTML email", async ({
     page.getByText("邮件已发送，任务已进入等待用户回复")
   ).toBeVisible();
 });
+
+test("adds a safe hyperlink and preserves it in send preview", async ({
+  context,
+  page
+}) => {
+  await context.addCookies([
+    {
+      name: "rt_recall_session",
+      value: sessionToken,
+      url: `http://127.0.0.1:${e2ePort}`
+    }
+  ]);
+  await page.goto(
+    `/mail?view=replies&compose=1&userId=${encodeURIComponent(
+      userId
+    )}`
+  );
+  await page.getByLabel("邮件主题").fill("超链接测试");
+  const editor = page.getByRole("textbox", { name: "邮件正文" });
+  await editor.fill("查看帮助");
+  await editor.selectText();
+  await page.getByRole("button", { name: "超链接" }).click();
+  await page.getByLabel("链接地址").fill("righttoken.ai/help");
+  await page.getByRole("button", { name: "保存链接" }).click();
+  await page.getByRole("button", { name: "发送预览" }).click();
+
+  const preview = page.getByTitle("HTML 邮件发送预览");
+  await expect(preview).toBeVisible();
+  const source = await preview.getAttribute("srcdoc");
+  expect(source).toContain('href="https://righttoken.ai/help"');
+  expect(source).toContain('target="_blank"');
+  expect(source).toContain('rel="noopener noreferrer"');
+});

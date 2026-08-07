@@ -8,7 +8,10 @@ export type MailSendDraft = {
   reviewedById: string | null;
   subject: string;
   bodyText: string;
-  lastSentAt: Date | null;
+  latestOutbound: {
+    status: "SENT" | "BOUNCED";
+    sentAt: Date;
+  } | null;
   minimumContactIntervalMinutes: number;
 };
 
@@ -56,9 +59,9 @@ export function assertMailSendAllowed(
     );
   }
   if (
-    draft.lastSentAt &&
+    draft.latestOutbound?.status === "SENT" &&
     draft.minimumContactIntervalMinutes > 0 &&
-    now.getTime() - draft.lastSentAt.getTime() <
+    now.getTime() - draft.latestOutbound.sentAt.getTime() <
       draft.minimumContactIntervalMinutes * 60 * 1000
   ) {
     throw new MailSendBlockedError("CONTACT_FREQUENCY_LIMIT");

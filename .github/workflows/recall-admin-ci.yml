@@ -6,6 +6,11 @@ on:
       - "recall-admin/**"
       - "backend/**"
       - "frontend/**"
+      - "Dockerfile"
+      - "Dockerfile.goreleaser"
+      - ".goreleaser.yaml"
+      - ".goreleaser.simple.yaml"
+      - ".github/workflows/release.yml"
       - "deploy/docker-compose.recall.yml"
       - "deploy/recall.env.example"
       - "deploy/Caddyfile.recall"
@@ -16,6 +21,11 @@ on:
       - "recall-admin/**"
       - "backend/**"
       - "frontend/**"
+      - "Dockerfile"
+      - "Dockerfile.goreleaser"
+      - ".goreleaser.yaml"
+      - ".goreleaser.simple.yaml"
+      - ".github/workflows/release.yml"
       - "deploy/docker-compose.recall.yml"
       - "deploy/recall.env.example"
       - "deploy/Caddyfile.recall"
@@ -50,6 +60,7 @@ jobs:
       JOB_DATABASE_URL: postgresql://righttoken:righttoken@127.0.0.1:5432/righttoken_recall
       SESSION_COOKIE_SECRET: ci-session-cookie-secret-at-least-32
       APP_ENCRYPTION_KEY: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      VISITOR_HASH_KEY: ci-visitor-hash-key-at-least-32
       APP_URL: http://127.0.0.1:3000
       AUTH_MODE: development
       DEPLOYMENT_ENV: local
@@ -81,6 +92,8 @@ jobs:
         run: npm run build
       - name: Build Worker
         run: npm run worker:build
+      - name: Build visit pipeline verifier
+        run: npm run visit:verify:build
       - name: Build primary-admin bootstrap
         run: npm run bootstrap:build
       - name: Build initial reconciliation command
@@ -151,6 +164,8 @@ jobs:
       - name: Build production image
         working-directory: recall-admin
         run: docker build -t righttoken-recall-admin:ci .
+      - name: Build main-site production image
+        run: docker build -t righttoken-main:ci .
       - name: Validate local Compose
         working-directory: recall-admin
         run: docker compose --env-file .env.example config --quiet

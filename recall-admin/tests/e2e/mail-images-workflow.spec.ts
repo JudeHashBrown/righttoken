@@ -279,7 +279,7 @@ test("template images flow into replies and incoming images remain private", asy
   await page.goto("/mail?view=templates");
   await page.getByRole("tab", { name: "图片协助" }).click();
   await page
-    .getByLabel("选择图片附件")
+    .getByLabel("选择附件")
     .setInputFiles({
       name: "new-guide.png",
       mimeType: "image/png",

@@ -60,6 +60,13 @@ export const ModelName = {
   SegmentHistory: 'SegmentHistory',
   SegmentOverride: 'SegmentOverride',
   UserNote: 'UserNote',
+  UserContact: 'UserContact',
+  UserMaintenanceRecord: 'UserMaintenanceRecord',
+  RechargeOutreachRecord: 'RechargeOutreachRecord',
+  PersonalizedCarePlan: 'PersonalizedCarePlan',
+  InactivityReasonRecord: 'InactivityReasonRecord',
+  UserGuidanceRecord: 'UserGuidanceRecord',
+  CouponGrant: 'CouponGrant',
   AutomationRuleVersion: 'AutomationRuleVersion',
   SegmentRecalculationRun: 'SegmentRecalculationRun',
   AssignmentRule: 'AssignmentRule',
@@ -76,6 +83,7 @@ export const ModelName = {
   MailTemplate: 'MailTemplate',
   MailThread: 'MailThread',
   MailMessage: 'MailMessage',
+  MailDeliveryEvent: 'MailDeliveryEvent',
   MailAsset: 'MailAsset',
   MailTemplateAsset: 'MailTemplateAsset',
   MailMessageAsset: 'MailMessageAsset',
@@ -280,6 +288,101 @@ export const UserNoteScalarFieldEnum = {
 } as const
 
 export type UserNoteScalarFieldEnum = (typeof UserNoteScalarFieldEnum)[keyof typeof UserNoteScalarFieldEnum]
+
+
+export const UserContactScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  wechatId: 'wechatId',
+  telegramHandle: 'telegramHandle',
+  phoneCountryCode: 'phoneCountryCode',
+  phoneNumber: 'phoneNumber',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserContactScalarFieldEnum = (typeof UserContactScalarFieldEnum)[keyof typeof UserContactScalarFieldEnum]
+
+
+export const UserMaintenanceRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  source: 'source',
+  sourceMessageId: 'sourceMessageId',
+  actorId: 'actorId',
+  occurredAt: 'occurredAt',
+  body: 'body',
+  createdAt: 'createdAt'
+} as const
+
+export type UserMaintenanceRecordScalarFieldEnum = (typeof UserMaintenanceRecordScalarFieldEnum)[keyof typeof UserMaintenanceRecordScalarFieldEnum]
+
+
+export const RechargeOutreachRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  actorId: 'actorId',
+  reason: 'reason',
+  body: 'body',
+  assetId: 'assetId',
+  occurredAt: 'occurredAt',
+  createdAt: 'createdAt'
+} as const
+
+export type RechargeOutreachRecordScalarFieldEnum = (typeof RechargeOutreachRecordScalarFieldEnum)[keyof typeof RechargeOutreachRecordScalarFieldEnum]
+
+
+export const PersonalizedCarePlanScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  authorId: 'authorId',
+  body: 'body',
+  createdAt: 'createdAt'
+} as const
+
+export type PersonalizedCarePlanScalarFieldEnum = (typeof PersonalizedCarePlanScalarFieldEnum)[keyof typeof PersonalizedCarePlanScalarFieldEnum]
+
+
+export const InactivityReasonRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  actorId: 'actorId',
+  body: 'body',
+  createdAt: 'createdAt'
+} as const
+
+export type InactivityReasonRecordScalarFieldEnum = (typeof InactivityReasonRecordScalarFieldEnum)[keyof typeof InactivityReasonRecordScalarFieldEnum]
+
+
+export const UserGuidanceRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  actorId: 'actorId',
+  category: 'category',
+  body: 'body',
+  createdAt: 'createdAt'
+} as const
+
+export type UserGuidanceRecordScalarFieldEnum = (typeof UserGuidanceRecordScalarFieldEnum)[keyof typeof UserGuidanceRecordScalarFieldEnum]
+
+
+export const CouponGrantScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  requestedById: 'requestedById',
+  amountMinor: 'amountMinor',
+  currency: 'currency',
+  idempotencyKey: 'idempotencyKey',
+  status: 'status',
+  externalCouponId: 'externalCouponId',
+  failureCode: 'failureCode',
+  grantedAt: 'grantedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CouponGrantScalarFieldEnum = (typeof CouponGrantScalarFieldEnum)[keyof typeof CouponGrantScalarFieldEnum]
 
 
 export const AutomationRuleVersionScalarFieldEnum = {
@@ -561,6 +664,7 @@ export const MailMessageScalarFieldEnum = {
   bodyHtml: 'bodyHtml',
   templateKey: 'templateKey',
   templateVersion: 'templateVersion',
+  purpose: 'purpose',
   reviewedById: 'reviewedById',
   openedAt: 'openedAt',
   firstClickedAt: 'firstClickedAt',
@@ -568,6 +672,9 @@ export const MailMessageScalarFieldEnum = {
   clickCount: 'clickCount',
   sentAt: 'sentAt',
   receivedAt: 'receivedAt',
+  bouncedAt: 'bouncedAt',
+  bounceStatusCode: 'bounceStatusCode',
+  bounceDiagnostic: 'bounceDiagnostic',
   lastErrorCode: 'lastErrorCode',
   externalImagesBlocked: 'externalImagesBlocked',
   createdAt: 'createdAt',
@@ -575,6 +682,22 @@ export const MailMessageScalarFieldEnum = {
 } as const
 
 export type MailMessageScalarFieldEnum = (typeof MailMessageScalarFieldEnum)[keyof typeof MailMessageScalarFieldEnum]
+
+
+export const MailDeliveryEventScalarFieldEnum = {
+  id: 'id',
+  mailboxId: 'mailboxId',
+  outboundMessageId: 'outboundMessageId',
+  inboundProviderMessageId: 'inboundProviderMessageId',
+  action: 'action',
+  recipientNormalized: 'recipientNormalized',
+  statusCode: 'statusCode',
+  diagnosticCode: 'diagnosticCode',
+  reportedAt: 'reportedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type MailDeliveryEventScalarFieldEnum = (typeof MailDeliveryEventScalarFieldEnum)[keyof typeof MailDeliveryEventScalarFieldEnum]
 
 
 export const MailAssetScalarFieldEnum = {
@@ -625,10 +748,12 @@ export const MailBatchScalarFieldEnum = {
   createdById: 'createdById',
   audienceMode: 'audienceMode',
   segment: 'segment',
+  purpose: 'purpose',
   subject: 'subject',
   bodyText: 'bodyText',
   bodyHtml: 'bodyHtml',
   idempotencyKey: 'idempotencyKey',
+  retryRootBatchId: 'retryRootBatchId',
   status: 'status',
   totalRecipients: 'totalRecipients',
   pendingRecipients: 'pendingRecipients',
@@ -653,10 +778,14 @@ export const MailBatchRecipientScalarFieldEnum = {
   reasonCode: 'reasonCode',
   messageId: 'messageId',
   taskId: 'taskId',
+  retryOfRecipientId: 'retryOfRecipientId',
   attempts: 'attempts',
   claimedAt: 'claimedAt',
   lastAttemptAt: 'lastAttemptAt',
   completedAt: 'completedAt',
+  bouncedAt: 'bouncedAt',
+  bounceStatusCode: 'bounceStatusCode',
+  bounceDiagnostic: 'bounceDiagnostic',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

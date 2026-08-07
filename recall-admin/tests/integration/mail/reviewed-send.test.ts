@@ -336,4 +336,96 @@ describe("reviewed user mail", () => {
       })
     ).resolves.toBeTruthy();
   });
+
+  it("allows a bounced latest attempt then immediately guards the accepted retry", async () => {
+    const suffix = randomUUID();
+    const email = `bounce-guard-${suffix}@example.test`;
+    const user = await prisma.userProfile.create({
+      data: {
+        externalUserId: `bounce-guard-${suffix}`,
+        email,
+        emailNormalized: email,
+        registeredAt: new Date("2026-08-01T08:00:00.000Z"),
+        currentSegment: "F"
+      }
+    });
+    await prisma.mailMessage.createMany({
+      data: [
+        {
+          mailboxId,
+          userId: user.id,
+          direction: "OUTBOUND",
+          status: "SENT",
+          providerMessageId: `<older-${suffix}@example.test>`,
+          references: [],
+          fromAddress: `support@${senderDomain}`,
+          toAddresses: [email],
+          subject: "旧邮件",
+          bodyText: "旧邮件正文",
+          sentAt: new Date("2026-08-04T07:00:00.000Z")
+        },
+        {
+          mailboxId,
+          userId: user.id,
+          direction: "OUTBOUND",
+          status: "BOUNCED",
+          providerMessageId: `<bounced-${suffix}@example.test>`,
+          references: [],
+          fromAddress: `support@${senderDomain}`,
+          toAddresses: [email],
+          subject: "退信邮件",
+          bodyText: "退信邮件正文",
+          sentAt: new Date("2026-08-04T08:00:00.000Z"),
+          bouncedAt: new Date("2026-08-04T08:05:00.000Z")
+        }
+      ]
+    });
+    const adapter = {
+      send: vi.fn().mockResolvedValue({
+        providerMessageId: `<retry-${suffix}@example.test>`
+      })
+    };
+    try {
+      await expect(
+        sendReviewedMail(
+          {
+            actorId: memberId,
+            mailboxId,
+            userId: user.id,
+            recipient: email,
+            subject: "退信重试",
+            bodyText: "再次尝试联系。",
+            minimumContactIntervalMinutes: 24 * 60,
+            now: new Date("2026-08-04T08:10:00.000Z")
+          },
+          adapter
+        )
+      ).resolves.toMatchObject({ message: { status: "SENT" } });
+
+      await expect(
+        sendReviewedMail(
+          {
+            actorId: memberId,
+            mailboxId,
+            userId: user.id,
+            recipient: email,
+            subject: "不应立即重复",
+            bodyText: "这封邮件应被保护。",
+            minimumContactIntervalMinutes: 24 * 60,
+            now: new Date("2026-08-04T08:11:00.000Z")
+          },
+          adapter
+        )
+      ).rejects.toMatchObject({
+        code: "CONTACT_FREQUENCY_LIMIT"
+      });
+    } finally {
+      await prisma.auditLog.deleteMany({
+        where: { actorId: memberId, entityType: "MailMessage" }
+      });
+      await prisma.mailMessage.deleteMany({ where: { userId: user.id } });
+      await prisma.recallTask.deleteMany({ where: { userId: user.id } });
+      await prisma.userProfile.delete({ where: { id: user.id } });
+    }
+  });
 });

@@ -24,7 +24,7 @@ export function MailAssetList({
   if (!attachments.length) return null;
   return (
     <div
-      aria-label="图片附件"
+      aria-label="附件"
       className={styles.mailAttachmentList}
     >
       {attachments.map((asset) => (

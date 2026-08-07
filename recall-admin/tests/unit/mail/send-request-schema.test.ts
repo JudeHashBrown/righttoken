@@ -11,6 +11,19 @@ const valid = {
 };
 
 describe("mailSendRequestSchema", () => {
+  it("defaults direct mail purpose to OTHER", () => {
+    expect(mailSendRequestSchema.parse(valid).purpose).toBe("OTHER");
+  });
+
+  it("accepts knowledge-sharing purpose", () => {
+    expect(
+      mailSendRequestSchema.parse({
+        ...valid,
+        purpose: "KNOWLEDGE_SHARE"
+      }).purpose
+    ).toBe("KNOWLEDGE_SHARE");
+  });
+
   it("normalizes a reviewed recipient", () => {
     expect(mailSendRequestSchema.parse(valid).recipient).toBe(
       "test.user@example.test"

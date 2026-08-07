@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   collectFetchedMessages,
+  parseFetchedMessage,
   parsedMailToMailboxMessage,
   smtpImapConfigSchema
 } from "@/modules/mail/adapters/smtp-imap";
@@ -146,6 +147,41 @@ describe("SMTP/IMAP mailbox adapter", () => {
         }
       ]
     });
+  });
+
+  it("preserves delivery-status MIME parts for DSN parsing", async () => {
+    const source = Buffer.from([
+      "From: Mailer Daemon <mailer-daemon@example.test>",
+      "To: support@righttoken.test",
+      "Message-ID: <dsn-mime@example.test>",
+      "Subject: Delivery Status Notification",
+      'Content-Type: multipart/report; boundary="dsn"; report-type=delivery-status',
+      "",
+      "--dsn",
+      "Content-Type: text/plain; charset=utf-8",
+      "",
+      "Delivery failed.",
+      "--dsn",
+      "Content-Type: message/delivery-status",
+      "",
+      "Final-Recipient: rfc822; person@example.test",
+      "Action: failed",
+      "Status: 5.1.1",
+      "",
+      "--dsn--"
+    ].join("\r\n"));
+
+    const message = await parseFetchedMessage(
+      source,
+      new Date("2026-08-04T08:00:00.000Z")
+    );
+
+    expect(message?.attachments).toEqual([
+      expect.objectContaining({
+        contentType: "message/delivery-status",
+        content: expect.any(Buffer)
+      })
+    ]);
   });
 
   it("rejects incomplete server configuration", () => {

@@ -178,7 +178,11 @@ describe("mailbox reply synchronization", () => {
       matched: 1,
       unmatched: 0,
       replyTasksCreated: 0,
-      replyTasksReopened: 1
+      replyTasksReopened: 1,
+      deliveryEvents: 0,
+      finalBounces: 0,
+      delayedDeliveries: 0,
+      unmatchedBounces: 0
     });
     const storedMessage = await prisma.mailMessage.findUnique({
       where: {

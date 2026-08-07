@@ -1,0 +1,75 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import type { BGroupSelectedUser } from "@/modules/b-group/types";
+import styles from "./b-group.module.css";
+
+export function BGroupContactPanel({ user }: { user: BGroupSelectedUser }) {
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPending(true);
+    setMessage(null);
+    const form = new FormData(event.currentTarget);
+    const response = await fetch(`/api/b-group/users/${user.id}/contact`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        wechatId: form.get("wechatId"),
+        telegramHandle: form.get("telegramHandle")
+      })
+    });
+    setPending(false);
+    if (!response.ok) {
+      setMessage("联系方式未能保存，请检查填写内容。");
+      return;
+    }
+    setMessage("联系方式已保存");
+    router.refresh();
+  }
+
+  return (
+    <section className={styles.panel}>
+      <h2>登记联系方式</h2>
+      <p className={styles.panelHint}>
+        根据主页页面引导、活动或者运营邮件引导，加到客户的微信/TG。
+      </p>
+      <form onSubmit={submit}>
+        <div
+          className={styles.formGrid}
+          style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}
+        >
+          <label>
+            微信号
+            <input
+              aria-label="微信号"
+              className={styles.input}
+              defaultValue={user.contact?.wechatId ?? ""}
+              name="wechatId"
+            />
+          </label>
+          <label>
+            Telegram
+            <input
+              aria-label="Telegram"
+              className={styles.input}
+              defaultValue={user.contact?.telegramHandle ?? ""}
+              name="telegramHandle"
+              placeholder="例如 @username"
+            />
+          </label>
+        </div>
+        <div className={styles.actions}>
+          {message ? <span role="status">{message}</span> : null}
+          <button className={styles.primary} disabled={pending}>
+            {pending ? "保存中…" : "保存联系方式"}
+          </button>
+        </div>
+      </form>
+    </section>
+  );
+}

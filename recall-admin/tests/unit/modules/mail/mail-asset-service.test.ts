@@ -82,6 +82,62 @@ describe("mail asset service", () => {
     expect(asset.id).toBe("asset-1");
   });
 
+  it("passes the original filename to document normalization and stores zero dimensions", async () => {
+    const storage = {
+      put: vi.fn().mockResolvedValue(undefined),
+      get: vi.fn(),
+      delete: vi.fn(),
+      exists: vi.fn()
+    };
+    const database = {
+      mailAsset: {
+        create: vi.fn().mockImplementation(({ data }) =>
+          Promise.resolve({ id: "document-1", ...data })
+        ),
+        findFirst: vi.fn()
+      }
+    };
+    const normalize = vi.fn().mockResolvedValue({
+      bytes: Buffer.from("%PDF-1.7\nbody"),
+      contentType: "application/pdf",
+      extension: "pdf",
+      byteSize: 13,
+      width: 0,
+      height: 0,
+      sha256: "d".repeat(64)
+    });
+    const file = new File(
+      [Buffer.from("%PDF-1.7\nbody")],
+      "报价单.pdf",
+      { type: "application/pdf" }
+    );
+
+    await createMailAsset(
+      { actorId: "operator-1", file },
+      {
+        database,
+        storage,
+        normalize,
+        randomId: () => "document-id"
+      }
+    );
+
+    expect(normalize).toHaveBeenCalledWith({
+      bytes: Buffer.from("%PDF-1.7\nbody"),
+      claimedContentType: "application/pdf",
+      fileName: "报价单.pdf"
+    });
+    expect(database.mailAsset.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        storageKey: "mail-assets/document-id.pdf",
+        fileName: "报价单.pdf",
+        contentType: "application/pdf",
+        width: 0,
+        height: 0
+      })
+    });
+  });
+
   it("translates object storage write failures", async () => {
     const storage = {
       put: vi.fn().mockRejectedValue(new Error("S3 unavailable")),

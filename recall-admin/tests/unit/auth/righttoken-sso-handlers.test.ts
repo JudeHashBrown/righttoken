@@ -117,7 +117,7 @@ describe("RightToken SSO callback handler", () => {
 
     expect(response.status).toBe(307);
     expect(response.headers.get("location")).toBe(
-      "https://recall.righttoken.ai/tasks?status=TODO"
+      "https://recall.righttoken.ai/dashboard"
     );
     expect(response.cookies.get("rt_recall_session")?.value).toBe(
       "session-token"

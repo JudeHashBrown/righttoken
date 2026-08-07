@@ -1,6 +1,7 @@
 export function mailComposeHref(input: {
   userId: string;
   taskId?: string | null;
+  retryMessageId?: string | null;
   view?: string;
 }): string {
   const params = new URLSearchParams();
@@ -9,6 +10,9 @@ export function mailComposeHref(input: {
   params.set("userId", input.userId);
   if (input.taskId) {
     params.set("taskId", input.taskId);
+  }
+  if (input.retryMessageId) {
+    params.set("retryMessageId", input.retryMessageId);
   }
   return `/mail?${params.toString()}`;
 }

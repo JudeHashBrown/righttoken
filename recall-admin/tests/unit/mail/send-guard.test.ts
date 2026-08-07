@@ -14,7 +14,7 @@ const draft = {
   reviewedById: "member-1",
   subject: "RightToken 使用提醒",
   bodyText: "你好，欢迎继续使用 RightToken。",
-  lastSentAt: null,
+  latestOutbound: null,
   minimumContactIntervalMinutes: 24 * 60
 };
 
@@ -40,7 +40,10 @@ describe("assertMailSendAllowed", () => {
       user,
       {
         ...draft,
-        lastSentAt: new Date("2026-07-24T09:00:00.000Z")
+        latestOutbound: {
+          status: "SENT" as const,
+          sentAt: new Date("2026-07-24T09:00:00.000Z")
+        }
       },
       "CONTACT_FREQUENCY_LIMIT"
     ]
@@ -55,6 +58,22 @@ describe("assertMailSendAllowed", () => {
   it("allows a reviewed, resolved and eligible message", () => {
     expect(() =>
       assertMailSendAllowed(user, draft, now)
+    ).not.toThrow();
+  });
+
+  it("allows retry when the latest outbound message finally bounced", () => {
+    expect(() =>
+      assertMailSendAllowed(
+        user,
+        {
+          ...draft,
+          latestOutbound: {
+            status: "BOUNCED",
+            sentAt: new Date("2026-07-24T09:59:00.000Z")
+          }
+        },
+        now
+      )
     ).not.toThrow();
   });
 });

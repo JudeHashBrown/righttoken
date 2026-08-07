@@ -11,9 +11,14 @@ const workflow = readFileSync(
 );
 
 describe("recall admin CI workflow", () => {
-  it("runs only for recall source and deployment changes", () => {
+  it("runs for recall source, deployment, and production image inputs", () => {
     for (const path of [
       "recall-admin/**",
+      "Dockerfile",
+      "Dockerfile.goreleaser",
+      ".goreleaser.yaml",
+      ".goreleaser.simple.yaml",
+      ".github/workflows/release.yml",
       "deploy/docker-compose.recall.yml",
       "deploy/Caddyfile.recall",
       ".github/workflows/recall-admin-ci.yml"
@@ -24,6 +29,9 @@ describe("recall admin CI workflow", () => {
 
   it("uses Node 24.18 and runs every application quality gate", () => {
     expect(workflow).toContain("node-version: 24.18.0");
+    expect(workflow).toMatch(
+      /^\s+VISITOR_HASH_KEY: ci-visitor-hash-key-at-least-32$/m
+    );
     for (const command of [
       "npm ci",
       "npm test",
@@ -32,6 +40,7 @@ describe("recall admin CI workflow", () => {
       "npm run lint",
       "npm run build",
       "npm run worker:build",
+      "npm run visit:verify:build",
       "npm run bootstrap:build"
     ]) {
       expect(workflow).toContain(command);
@@ -42,6 +51,7 @@ describe("recall admin CI workflow", () => {
     expect(workflow).toContain(
       "docker build -t righttoken-recall-admin:ci ."
     );
+    expect(workflow).toContain("docker build -t righttoken-main:ci .");
     expect(workflow).toContain(
       "docker compose --env-file .env.example config --quiet"
     );

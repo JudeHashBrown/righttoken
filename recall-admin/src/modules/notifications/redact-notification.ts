@@ -42,6 +42,6 @@ export function redactForNotification(
       `原因：${source.reason}`,
       `时限：剩余 ${minutes} 分钟`
     ].join("\n"),
-    taskUrl: `${appUrl}/tasks/${encodeURIComponent(source.taskId)}`
+    taskUrl: `${appUrl}/users?query=${encodeURIComponent(source.externalUserId)}`
   };
 }

@@ -3,6 +3,7 @@ import { isPublicIp } from "@/modules/geoip/private-ip";
 import { MmdbGeoIpResolver } from "@/modules/geoip/mmdb-resolver";
 import { LazyRirGeoIpResolver } from "@/modules/geoip/rir-resolver";
 import { FallbackGeoIpResolver } from "@/modules/geoip/resolver-chain";
+import { isValidGeoIpHttpUrl } from "@/modules/geoip/source-contract";
 import type {
   GeoIpLocation,
   GeoIpResolver
@@ -78,7 +79,11 @@ export function createGeoIpResolver(
   environment?: GeoIpEnvironment
 ): GeoIpResolver {
   const source = environment ?? process.env;
-  const url = source.GEOIP_HTTP_URL?.trim();
+  const configuredUrl = source.GEOIP_HTTP_URL?.trim();
+  const url =
+    configuredUrl && isValidGeoIpHttpUrl(configuredUrl)
+      ? configuredUrl
+      : undefined;
   const rawTimeout = Number(source.GEOIP_HTTP_TIMEOUT_MS ?? 2_000);
   const resolvers: GeoIpResolver[] = [];
   const mmdbPath = source.GEOIP_MMDB_PATH?.trim();

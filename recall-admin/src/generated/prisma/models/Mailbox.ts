@@ -299,6 +299,7 @@ export type MailboxWhereInput = {
   threads?: Prisma.MailThreadListRelationFilter
   messages?: Prisma.MailMessageListRelationFilter
   mailBatches?: Prisma.MailBatchListRelationFilter
+  deliveryEvents?: Prisma.MailDeliveryEventListRelationFilter
 }
 
 export type MailboxOrderByWithRelationInput = {
@@ -320,6 +321,7 @@ export type MailboxOrderByWithRelationInput = {
   threads?: Prisma.MailThreadOrderByRelationAggregateInput
   messages?: Prisma.MailMessageOrderByRelationAggregateInput
   mailBatches?: Prisma.MailBatchOrderByRelationAggregateInput
+  deliveryEvents?: Prisma.MailDeliveryEventOrderByRelationAggregateInput
 }
 
 export type MailboxWhereUniqueInput = Prisma.AtLeast<{
@@ -344,6 +346,7 @@ export type MailboxWhereUniqueInput = Prisma.AtLeast<{
   threads?: Prisma.MailThreadListRelationFilter
   messages?: Prisma.MailMessageListRelationFilter
   mailBatches?: Prisma.MailBatchListRelationFilter
+  deliveryEvents?: Prisma.MailDeliveryEventListRelationFilter
 }, "id" | "emailAddress">
 
 export type MailboxOrderByWithAggregationInput = {
@@ -409,6 +412,7 @@ export type MailboxCreateInput = {
   threads?: Prisma.MailThreadCreateNestedManyWithoutMailboxInput
   messages?: Prisma.MailMessageCreateNestedManyWithoutMailboxInput
   mailBatches?: Prisma.MailBatchCreateNestedManyWithoutMailboxInput
+  deliveryEvents?: Prisma.MailDeliveryEventCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxUncheckedCreateInput = {
@@ -430,6 +434,7 @@ export type MailboxUncheckedCreateInput = {
   threads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutMailboxInput
   messages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutMailboxInput
   mailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutMailboxInput
+  deliveryEvents?: Prisma.MailDeliveryEventUncheckedCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxUpdateInput = {
@@ -451,6 +456,7 @@ export type MailboxUpdateInput = {
   threads?: Prisma.MailThreadUpdateManyWithoutMailboxNestedInput
   messages?: Prisma.MailMessageUpdateManyWithoutMailboxNestedInput
   mailBatches?: Prisma.MailBatchUpdateManyWithoutMailboxNestedInput
+  deliveryEvents?: Prisma.MailDeliveryEventUpdateManyWithoutMailboxNestedInput
 }
 
 export type MailboxUncheckedUpdateInput = {
@@ -472,6 +478,7 @@ export type MailboxUncheckedUpdateInput = {
   threads?: Prisma.MailThreadUncheckedUpdateManyWithoutMailboxNestedInput
   messages?: Prisma.MailMessageUncheckedUpdateManyWithoutMailboxNestedInput
   mailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutMailboxNestedInput
+  deliveryEvents?: Prisma.MailDeliveryEventUncheckedUpdateManyWithoutMailboxNestedInput
 }
 
 export type MailboxCreateManyInput = {
@@ -623,6 +630,20 @@ export type MailboxUpdateOneRequiredWithoutMessagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MailboxUpdateToOneWithWhereWithoutMessagesInput, Prisma.MailboxUpdateWithoutMessagesInput>, Prisma.MailboxUncheckedUpdateWithoutMessagesInput>
 }
 
+export type MailboxCreateNestedOneWithoutDeliveryEventsInput = {
+  create?: Prisma.XOR<Prisma.MailboxCreateWithoutDeliveryEventsInput, Prisma.MailboxUncheckedCreateWithoutDeliveryEventsInput>
+  connectOrCreate?: Prisma.MailboxCreateOrConnectWithoutDeliveryEventsInput
+  connect?: Prisma.MailboxWhereUniqueInput
+}
+
+export type MailboxUpdateOneRequiredWithoutDeliveryEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.MailboxCreateWithoutDeliveryEventsInput, Prisma.MailboxUncheckedCreateWithoutDeliveryEventsInput>
+  connectOrCreate?: Prisma.MailboxCreateOrConnectWithoutDeliveryEventsInput
+  upsert?: Prisma.MailboxUpsertWithoutDeliveryEventsInput
+  connect?: Prisma.MailboxWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MailboxUpdateToOneWithWhereWithoutDeliveryEventsInput, Prisma.MailboxUpdateWithoutDeliveryEventsInput>, Prisma.MailboxUncheckedUpdateWithoutDeliveryEventsInput>
+}
+
 export type MailboxCreateNestedOneWithoutMailBatchesInput = {
   create?: Prisma.XOR<Prisma.MailboxCreateWithoutMailBatchesInput, Prisma.MailboxUncheckedCreateWithoutMailBatchesInput>
   connectOrCreate?: Prisma.MailboxCreateOrConnectWithoutMailBatchesInput
@@ -655,6 +676,7 @@ export type MailboxCreateWithoutThreadsInput = {
   updatedAt?: Date | string
   messages?: Prisma.MailMessageCreateNestedManyWithoutMailboxInput
   mailBatches?: Prisma.MailBatchCreateNestedManyWithoutMailboxInput
+  deliveryEvents?: Prisma.MailDeliveryEventCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxUncheckedCreateWithoutThreadsInput = {
@@ -675,6 +697,7 @@ export type MailboxUncheckedCreateWithoutThreadsInput = {
   updatedAt?: Date | string
   messages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutMailboxInput
   mailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutMailboxInput
+  deliveryEvents?: Prisma.MailDeliveryEventUncheckedCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxCreateOrConnectWithoutThreadsInput = {
@@ -711,6 +734,7 @@ export type MailboxUpdateWithoutThreadsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.MailMessageUpdateManyWithoutMailboxNestedInput
   mailBatches?: Prisma.MailBatchUpdateManyWithoutMailboxNestedInput
+  deliveryEvents?: Prisma.MailDeliveryEventUpdateManyWithoutMailboxNestedInput
 }
 
 export type MailboxUncheckedUpdateWithoutThreadsInput = {
@@ -731,6 +755,7 @@ export type MailboxUncheckedUpdateWithoutThreadsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.MailMessageUncheckedUpdateManyWithoutMailboxNestedInput
   mailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutMailboxNestedInput
+  deliveryEvents?: Prisma.MailDeliveryEventUncheckedUpdateManyWithoutMailboxNestedInput
 }
 
 export type MailboxCreateWithoutMessagesInput = {
@@ -751,6 +776,7 @@ export type MailboxCreateWithoutMessagesInput = {
   updatedAt?: Date | string
   threads?: Prisma.MailThreadCreateNestedManyWithoutMailboxInput
   mailBatches?: Prisma.MailBatchCreateNestedManyWithoutMailboxInput
+  deliveryEvents?: Prisma.MailDeliveryEventCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxUncheckedCreateWithoutMessagesInput = {
@@ -771,6 +797,7 @@ export type MailboxUncheckedCreateWithoutMessagesInput = {
   updatedAt?: Date | string
   threads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutMailboxInput
   mailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutMailboxInput
+  deliveryEvents?: Prisma.MailDeliveryEventUncheckedCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxCreateOrConnectWithoutMessagesInput = {
@@ -807,6 +834,7 @@ export type MailboxUpdateWithoutMessagesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   threads?: Prisma.MailThreadUpdateManyWithoutMailboxNestedInput
   mailBatches?: Prisma.MailBatchUpdateManyWithoutMailboxNestedInput
+  deliveryEvents?: Prisma.MailDeliveryEventUpdateManyWithoutMailboxNestedInput
 }
 
 export type MailboxUncheckedUpdateWithoutMessagesInput = {
@@ -826,6 +854,107 @@ export type MailboxUncheckedUpdateWithoutMessagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   threads?: Prisma.MailThreadUncheckedUpdateManyWithoutMailboxNestedInput
+  mailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutMailboxNestedInput
+  deliveryEvents?: Prisma.MailDeliveryEventUncheckedUpdateManyWithoutMailboxNestedInput
+}
+
+export type MailboxCreateWithoutDeliveryEventsInput = {
+  id?: string
+  name: string
+  emailAddress: string
+  encryptedConfig?: string | null
+  configurationDeletedAt?: Date | string | null
+  configurationVersion?: number
+  enabled?: boolean
+  trackingEnabled?: boolean
+  trackingDisclosure?: string | null
+  lastSyncedAt?: Date | string | null
+  lastTestedAt?: Date | string | null
+  lastSuccessAt?: Date | string | null
+  lastErrorCode?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  threads?: Prisma.MailThreadCreateNestedManyWithoutMailboxInput
+  messages?: Prisma.MailMessageCreateNestedManyWithoutMailboxInput
+  mailBatches?: Prisma.MailBatchCreateNestedManyWithoutMailboxInput
+}
+
+export type MailboxUncheckedCreateWithoutDeliveryEventsInput = {
+  id?: string
+  name: string
+  emailAddress: string
+  encryptedConfig?: string | null
+  configurationDeletedAt?: Date | string | null
+  configurationVersion?: number
+  enabled?: boolean
+  trackingEnabled?: boolean
+  trackingDisclosure?: string | null
+  lastSyncedAt?: Date | string | null
+  lastTestedAt?: Date | string | null
+  lastSuccessAt?: Date | string | null
+  lastErrorCode?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  threads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutMailboxInput
+  messages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutMailboxInput
+  mailBatches?: Prisma.MailBatchUncheckedCreateNestedManyWithoutMailboxInput
+}
+
+export type MailboxCreateOrConnectWithoutDeliveryEventsInput = {
+  where: Prisma.MailboxWhereUniqueInput
+  create: Prisma.XOR<Prisma.MailboxCreateWithoutDeliveryEventsInput, Prisma.MailboxUncheckedCreateWithoutDeliveryEventsInput>
+}
+
+export type MailboxUpsertWithoutDeliveryEventsInput = {
+  update: Prisma.XOR<Prisma.MailboxUpdateWithoutDeliveryEventsInput, Prisma.MailboxUncheckedUpdateWithoutDeliveryEventsInput>
+  create: Prisma.XOR<Prisma.MailboxCreateWithoutDeliveryEventsInput, Prisma.MailboxUncheckedCreateWithoutDeliveryEventsInput>
+  where?: Prisma.MailboxWhereInput
+}
+
+export type MailboxUpdateToOneWithWhereWithoutDeliveryEventsInput = {
+  where?: Prisma.MailboxWhereInput
+  data: Prisma.XOR<Prisma.MailboxUpdateWithoutDeliveryEventsInput, Prisma.MailboxUncheckedUpdateWithoutDeliveryEventsInput>
+}
+
+export type MailboxUpdateWithoutDeliveryEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  configurationDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  configurationVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trackingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trackingDisclosure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastTestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastSuccessAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  threads?: Prisma.MailThreadUpdateManyWithoutMailboxNestedInput
+  messages?: Prisma.MailMessageUpdateManyWithoutMailboxNestedInput
+  mailBatches?: Prisma.MailBatchUpdateManyWithoutMailboxNestedInput
+}
+
+export type MailboxUncheckedUpdateWithoutDeliveryEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  encryptedConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  configurationDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  configurationVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trackingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trackingDisclosure?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastTestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastSuccessAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  threads?: Prisma.MailThreadUncheckedUpdateManyWithoutMailboxNestedInput
+  messages?: Prisma.MailMessageUncheckedUpdateManyWithoutMailboxNestedInput
   mailBatches?: Prisma.MailBatchUncheckedUpdateManyWithoutMailboxNestedInput
 }
 
@@ -847,6 +976,7 @@ export type MailboxCreateWithoutMailBatchesInput = {
   updatedAt?: Date | string
   threads?: Prisma.MailThreadCreateNestedManyWithoutMailboxInput
   messages?: Prisma.MailMessageCreateNestedManyWithoutMailboxInput
+  deliveryEvents?: Prisma.MailDeliveryEventCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxUncheckedCreateWithoutMailBatchesInput = {
@@ -867,6 +997,7 @@ export type MailboxUncheckedCreateWithoutMailBatchesInput = {
   updatedAt?: Date | string
   threads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutMailboxInput
   messages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutMailboxInput
+  deliveryEvents?: Prisma.MailDeliveryEventUncheckedCreateNestedManyWithoutMailboxInput
 }
 
 export type MailboxCreateOrConnectWithoutMailBatchesInput = {
@@ -903,6 +1034,7 @@ export type MailboxUpdateWithoutMailBatchesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   threads?: Prisma.MailThreadUpdateManyWithoutMailboxNestedInput
   messages?: Prisma.MailMessageUpdateManyWithoutMailboxNestedInput
+  deliveryEvents?: Prisma.MailDeliveryEventUpdateManyWithoutMailboxNestedInput
 }
 
 export type MailboxUncheckedUpdateWithoutMailBatchesInput = {
@@ -923,6 +1055,7 @@ export type MailboxUncheckedUpdateWithoutMailBatchesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   threads?: Prisma.MailThreadUncheckedUpdateManyWithoutMailboxNestedInput
   messages?: Prisma.MailMessageUncheckedUpdateManyWithoutMailboxNestedInput
+  deliveryEvents?: Prisma.MailDeliveryEventUncheckedUpdateManyWithoutMailboxNestedInput
 }
 
 
@@ -934,12 +1067,14 @@ export type MailboxCountOutputType = {
   threads: number
   messages: number
   mailBatches: number
+  deliveryEvents: number
 }
 
 export type MailboxCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   threads?: boolean | MailboxCountOutputTypeCountThreadsArgs
   messages?: boolean | MailboxCountOutputTypeCountMessagesArgs
   mailBatches?: boolean | MailboxCountOutputTypeCountMailBatchesArgs
+  deliveryEvents?: boolean | MailboxCountOutputTypeCountDeliveryEventsArgs
 }
 
 /**
@@ -973,6 +1108,13 @@ export type MailboxCountOutputTypeCountMailBatchesArgs<ExtArgs extends runtime.T
   where?: Prisma.MailBatchWhereInput
 }
 
+/**
+ * MailboxCountOutputType without action
+ */
+export type MailboxCountOutputTypeCountDeliveryEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MailDeliveryEventWhereInput
+}
+
 
 export type MailboxSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -993,6 +1135,7 @@ export type MailboxSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   threads?: boolean | Prisma.Mailbox$threadsArgs<ExtArgs>
   messages?: boolean | Prisma.Mailbox$messagesArgs<ExtArgs>
   mailBatches?: boolean | Prisma.Mailbox$mailBatchesArgs<ExtArgs>
+  deliveryEvents?: boolean | Prisma.Mailbox$deliveryEventsArgs<ExtArgs>
   _count?: boolean | Prisma.MailboxCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mailbox"]>
 
@@ -1055,6 +1198,7 @@ export type MailboxInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   threads?: boolean | Prisma.Mailbox$threadsArgs<ExtArgs>
   messages?: boolean | Prisma.Mailbox$messagesArgs<ExtArgs>
   mailBatches?: boolean | Prisma.Mailbox$mailBatchesArgs<ExtArgs>
+  deliveryEvents?: boolean | Prisma.Mailbox$deliveryEventsArgs<ExtArgs>
   _count?: boolean | Prisma.MailboxCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MailboxIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1066,6 +1210,7 @@ export type $MailboxPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     threads: Prisma.$MailThreadPayload<ExtArgs>[]
     messages: Prisma.$MailMessagePayload<ExtArgs>[]
     mailBatches: Prisma.$MailBatchPayload<ExtArgs>[]
+    deliveryEvents: Prisma.$MailDeliveryEventPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1480,6 +1625,7 @@ export interface Prisma__MailboxClient<T, Null = never, ExtArgs extends runtime.
   threads<T extends Prisma.Mailbox$threadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Mailbox$threadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messages<T extends Prisma.Mailbox$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Mailbox$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mailBatches<T extends Prisma.Mailbox$mailBatchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Mailbox$mailBatchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailBatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deliveryEvents<T extends Prisma.Mailbox$deliveryEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Mailbox$deliveryEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailDeliveryEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1986,6 +2132,30 @@ export type Mailbox$mailBatchesArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.MailBatchScalarFieldEnum | Prisma.MailBatchScalarFieldEnum[]
+}
+
+/**
+ * Mailbox.deliveryEvents
+ */
+export type Mailbox$deliveryEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailDeliveryEvent
+   */
+  select?: Prisma.MailDeliveryEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailDeliveryEvent
+   */
+  omit?: Prisma.MailDeliveryEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailDeliveryEventInclude<ExtArgs> | null
+  where?: Prisma.MailDeliveryEventWhereInput
+  orderBy?: Prisma.MailDeliveryEventOrderByWithRelationInput | Prisma.MailDeliveryEventOrderByWithRelationInput[]
+  cursor?: Prisma.MailDeliveryEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MailDeliveryEventScalarFieldEnum | Prisma.MailDeliveryEventScalarFieldEnum[]
 }
 
 /**

@@ -1,16 +1,25 @@
 import type { TaskOrigin } from "@/generated/prisma/client";
 import { openTaskStatuses } from "@/modules/tasks/close-obsolete-tasks";
 import type { TaskFilters } from "@/modules/tasks/task-queries";
+import {
+  dashboardTaskWindows
+} from "@/modules/reports/dashboard-task-windows";
 
 type ShortcutParams = {
   due?: string;
   origin?: string;
+  priority?: string;
   scope?: string;
+  recent?: string;
 };
 
 type ShortcutFilters = Pick<
   TaskFilters,
-  "statuses" | "origins" | "dueFrom" | "dueBefore"
+  | "statuses"
+  | "origins"
+  | "dueFrom"
+  | "dueBefore"
+  | "createdFrom"
 > & {
   label?: string;
 };
@@ -49,21 +58,33 @@ export function taskShortcutFilters(
     : null;
   if (params.due === "today") {
     const range = shanghaiDayRange(now);
+    const { dueTodayCreatedAfter } = dashboardTaskWindows(now);
     return {
       statuses: [...openTaskStatuses],
       dueFrom: range.start,
       dueBefore: range.end,
+      ...(params.recent === "168h"
+        ? { createdFrom: dueTodayCreatedAfter }
+        : {}),
       label: "今天到期且尚未完成的任务"
     };
   }
   if (params.scope === "open") {
+    const { urgentCreatedAfter } = dashboardTaskWindows(now);
+    const recentUrgent =
+      params.priority === "URGENT" && params.recent === "72h";
     return {
       statuses: [...openTaskStatuses],
       ...(origin ? { origins: [origin] } : {}),
+      ...(recentUrgent
+        ? { createdFrom: urgentCreatedAfter }
+        : {}),
       label:
         origin === "EMAIL_REPLY"
           ? "用户来信生成且尚未完成的任务"
-          : "尚未完成的任务"
+          : recentUrgent
+            ? "最近 72 小时创建且尚未完成的任务"
+            : "尚未完成的任务"
     };
   }
   return origin

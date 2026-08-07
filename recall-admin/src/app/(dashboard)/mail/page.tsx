@@ -22,6 +22,7 @@ import {
   findComposeUsers,
   getComposeContext
 } from "@/modules/mail/compose-context";
+import { plainTextToMailHtml } from "@/modules/mail/rich-content";
 
 type MailPageProps = {
   searchParams: Promise<
@@ -43,11 +44,13 @@ export default async function MailPage({
       filter.compose
         ? getComposeContext(member, {
             userId: filter.composeUserId,
-            taskId: filter.composeTaskId
+            taskId: filter.composeTaskId,
+            retryMessageId: filter.composeRetryMessageId
           })
         : Promise.resolve({
-            selectedUser: null,
-            selectedTask: null
+          selectedUser: null,
+          selectedTask: null,
+          retryMessage: null
           })
     ]);
   const composeUsers = composeContext.selectedUser
@@ -77,18 +80,12 @@ export default async function MailPage({
 
   return (
     <main className={styles.page}>
-      <header className={styles.heading}>
-        <div>
-          <h1>邮件中心</h1>
-          <p>
-            查看用户来信、处理待回复会话并维护公共邮件模板。
-          </p>
-        </div>
+      <div className={styles.mailToolbar}>
         <div className={styles.headingActions}>
           {filter.view === "templates" ? null : (
             <Link
               className={styles.button}
-              href={`/mail?view=${filter.view}&compose=1`}
+              href={`/mail?view=${filter.view}&compose=1#mail-composer`}
             >
               写邮件
             </Link>
@@ -106,7 +103,7 @@ export default async function MailPage({
               : "模板管理"}
           </Link>
         </div>
-      </header>
+      </div>
 
       {filter.view === "templates" ? (
         <MailTemplateLibrary
@@ -118,7 +115,8 @@ export default async function MailPage({
       ) : (
         <>
           {filter.compose ? (
-            <MailComposer
+            <div id="mail-composer" className={styles.mailAnchorTarget}>
+              <MailComposer
               tasks={composeTasks}
               users={composeUsers}
               mailboxes={data.mailboxes
@@ -144,15 +142,40 @@ export default async function MailPage({
               initialTaskId={
                 composeContext.selectedTask?.id ?? null
               }
-              initialSubject=""
+              initialSubject={
+                composeContext.retryMessage?.subject ?? ""
+              }
               initialBody=""
-              closeHref={`/mail?view=${filter.view}`}
-            />
+              initialContent={
+                composeContext.retryMessage
+                  ? {
+                      bodyText:
+                        composeContext.retryMessage.bodyText,
+                      bodyHtml:
+                        composeContext.retryMessage.bodyHtml ??
+                        plainTextToMailHtml(
+                          composeContext.retryMessage.bodyText
+                        ),
+                      assets:
+                        composeContext.retryMessage.assets
+                    }
+                  : null
+              }
+                closeHref={`/mail?view=${filter.view}#mail-workbench`}
+              />
+            </div>
           ) : null}
 
-          <MailBatchList batches={data.mailBatches} />
+          <MailStatLinks
+            batchCount={data.mailBatches.length}
+            currentView={filter.view}
+            stats={data.stats}
+          />
 
-          <MailStatLinks stats={data.stats} />
+          <MailBatchList
+            batches={data.mailBatches}
+            visible={filter.batchHistory}
+          />
 
           {data.mailboxes.some((mailbox) => mailbox.enabled) ? null : (
             <p className={styles.notice}>

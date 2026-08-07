@@ -14,8 +14,10 @@ describe("mail workspace filter", () => {
       view: "pending",
       selectedId: "thread-1",
       compose: false,
+      batchHistory: false,
       composeUserId: null,
-      composeTaskId: null
+      composeTaskId: null,
+      composeRetryMessageId: null
     });
   });
 
@@ -28,8 +30,10 @@ describe("mail workspace filter", () => {
       view: "templates",
       selectedId: null,
       compose: false,
+      batchHistory: false,
       composeUserId: null,
-      composeTaskId: null
+      composeTaskId: null,
+      composeRetryMessageId: null
     });
   });
 
@@ -43,8 +47,10 @@ describe("mail workspace filter", () => {
       view: "sent",
       selectedId: "message-1",
       compose: false,
+      batchHistory: false,
       composeUserId: null,
-      composeTaskId: null
+      composeTaskId: null,
+      composeRetryMessageId: null
     });
   });
 
@@ -54,14 +60,17 @@ describe("mail workspace filter", () => {
         view: "replies",
         compose: "1",
         userId: "user-1",
-        taskId: "task-1"
+        taskId: "task-1",
+        retryMessageId: "message-1"
       })
     ).toEqual({
       view: "replies",
       selectedId: null,
       compose: true,
+      batchHistory: false,
       composeUserId: "user-1",
-      composeTaskId: "task-1"
+      composeTaskId: "task-1",
+      composeRetryMessageId: "message-1"
     });
   });
 
@@ -75,8 +84,22 @@ describe("mail workspace filter", () => {
       view: "replies",
       selectedId: null,
       compose: false,
+      batchHistory: false,
       composeUserId: null,
-      composeTaskId: null
+      composeTaskId: null,
+      composeRetryMessageId: null
+    });
+  });
+
+  it("opens batch history only when explicitly requested", () => {
+    expect(
+      parseMailWorkspaceFilter({
+        view: "sent",
+        batchHistory: "1"
+      })
+    ).toMatchObject({
+      view: "sent",
+      batchHistory: true
     });
   });
 });

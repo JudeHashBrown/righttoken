@@ -157,7 +157,7 @@ export async function getMailWorkspaceData(
       where: {
         ...messages,
         direction: "OUTBOUND",
-        status: "FAILED"
+        status: { in: ["FAILED", "BOUNCED"] }
       }
     }),
     prisma.mailTemplate.findMany({
@@ -216,8 +216,14 @@ export async function getMailWorkspaceData(
   }));
 
   const items = await listItems(viewer, filter);
-  const selected = filter.selectedId
-    ? await selectedItem(viewer, filter)
+  const effectiveFilter =
+    filter.view === "pending" &&
+    !filter.selectedId &&
+    items[0]
+      ? { ...filter, selectedId: items[0].id }
+      : filter;
+  const selected = effectiveFilter.selectedId
+    ? await selectedItem(viewer, effectiveFilter)
     : null;
   const assignableUsers =
     filter.view === "unmatched"
@@ -239,7 +245,7 @@ export async function getMailWorkspaceData(
       : [];
 
   return {
-    filter,
+    filter: effectiveFilter,
     stats: {
       replyTasks,
       openReplyTasks,
@@ -344,7 +350,7 @@ async function listItems(
           ? "DRAFT"
           : filter.view === "sent"
             ? "SENT"
-            : "FAILED";
+            : { in: ["FAILED" as const, "BOUNCED" as const] };
     const rows = await prisma.mailMessage.findMany({
       where: {
         ...messages,
@@ -377,17 +383,19 @@ async function listItems(
     });
     return rows.map((message) => ({
       id:
-        filter.view === "sent"
+        filter.view === "sent" || message.status === "BOUNCED"
           ? message.id
           : message.threadId ?? message.id,
       messageId: message.id,
       kind:
-        filter.view !== "sent" && message.threadId !== null
+        filter.view !== "sent" &&
+        message.status !== "BOUNCED" &&
+        message.threadId !== null
           ? ("THREAD" as const)
           : ("MESSAGE" as const),
       title: message.subject,
       subtitle:
-        filter.view === "sent"
+        filter.view === "sent" || message.status === "BOUNCED"
           ? message.toAddresses.join("、")
           : message.user?.displayName ||
             message.user?.externalUserId ||
@@ -397,15 +405,33 @@ async function listItems(
         message.receivedAt ?? message.sentAt ?? message.createdAt
       ),
       status:
-        filter.view === "sent" ? "已发送" : message.status
+        filter.view === "sent"
+          ? "已发送"
+          : message.status === "BOUNCED"
+            ? "最终退信"
+            : message.status
     }));
   }
 
   const pending = filter.view === "pending";
+  const activeThreads = await prisma.mailMessage.groupBy({
+    by: ["threadId"],
+    where: {
+      threadId: { not: null },
+      thread: threadScope(viewer, pending)
+    },
+    _max: { createdAt: true },
+    orderBy: [
+      { _max: { createdAt: "desc" } },
+      { threadId: "desc" }
+    ],
+    take: 100
+  });
+  const threadIds = activeThreads.flatMap((row) =>
+    row.threadId ? [row.threadId] : []
+  );
   const rows = await prisma.mailThread.findMany({
-    where: threadScope(viewer, pending),
-    orderBy: { updatedAt: "desc" },
-    take: 100,
+    where: { id: { in: threadIds } },
     select: {
       id: true,
       subject: true,
@@ -430,9 +456,14 @@ async function listItems(
       }
     }
   });
-  return rows.map((thread) => {
+  const threadsById = new Map(
+    rows.map((thread) => [thread.id, thread])
+  );
+  return threadIds.flatMap((threadId) => {
+    const thread = threadsById.get(threadId);
+    if (!thread) return [];
     const latest = thread.messages[0];
-    return {
+    return [{
       id: thread.id,
       kind: "THREAD" as const,
       title: thread.subject,
@@ -448,7 +479,7 @@ async function listItems(
           thread.updatedAt
       ),
       status: latest?.status ?? "RECEIVED"
-    };
+    }];
   });
 }
 
@@ -554,16 +585,25 @@ async function selectedItem(
         }
       : null;
   }
-  if (filter.view === "sent" && filter.selectedId) {
+  if (
+    (filter.view === "sent" || filter.view === "failed") &&
+    filter.selectedId
+  ) {
     const message = await prisma.mailMessage.findFirst({
       where: {
         id: filter.selectedId,
         ...messageScope(viewer),
         direction: "OUTBOUND",
-        status: "SENT"
+        status:
+          filter.view === "sent"
+            ? "SENT"
+            : { in: ["FAILED", "BOUNCED"] }
       },
       select: {
         id: true,
+        userId: true,
+        taskId: true,
+        status: true,
         fromAddress: true,
         toAddresses: true,
         subject: true,
@@ -589,11 +629,14 @@ async function selectedItem(
           }
         },
         sentAt: true,
+        bouncedAt: true,
+        bounceStatusCode: true,
+        bounceDiagnostic: true,
         createdAt: true
       }
     });
-    return message
-      ? {
+    if (message) {
+      return {
           kind: "message" as const,
           message: {
             ...message,
@@ -605,10 +648,14 @@ async function selectedItem(
               previewUrl: `/api/mail/assets/${usage.asset.id}`
             })),
             sentAt: iso(message.sentAt),
+            bouncedAt: iso(message.bouncedAt),
             createdAt: message.createdAt.toISOString()
           }
-        }
-      : null;
+        };
+    }
+    if (filter.view === "sent") {
+      return null;
+    }
   }
   if (!filter.selectedId) {
     return null;

@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log/slog"
+	"net/netip"
 	"net/url"
 	"os"
 	"strings"
@@ -953,6 +954,47 @@ func NormalizeRunMode(value string) string {
 	}
 }
 
+// ParseTrustedProxies parses a comma-separated list of exact proxy addresses or
+// CIDRs. Trust-all prefixes are intentionally rejected.
+func ParseTrustedProxies(raw string) ([]string, error) {
+	return normalizeTrustedProxies(strings.Split(raw, ","))
+}
+
+func normalizeTrustedProxies(entries []string) ([]string, error) {
+	trustedProxies := make([]string, 0, len(entries))
+	for index, rawEntry := range entries {
+		entry := strings.TrimSpace(rawEntry)
+		if entry == "" {
+			return nil, fmt.Errorf("trusted proxy entry %d is empty", index+1)
+		}
+
+		if strings.Contains(entry, "/") {
+			prefix, err := netip.ParsePrefix(entry)
+			if err != nil {
+				return nil, fmt.Errorf("trusted proxy entry %d is not a valid CIDR", index+1)
+			}
+			addr := prefix.Addr()
+			bits := prefix.Bits()
+			if addr.Is4In6() {
+				addr = addr.Unmap()
+				bits -= 96
+			}
+			if bits <= 0 {
+				return nil, fmt.Errorf("trusted proxy entry %d must not trust all addresses", index+1)
+			}
+			trustedProxies = append(trustedProxies, netip.PrefixFrom(addr, bits).Masked().String())
+			continue
+		}
+
+		addr, err := netip.ParseAddr(entry)
+		if err != nil || addr.Zone() != "" {
+			return nil, fmt.Errorf("trusted proxy entry %d is not a valid IP address", index+1)
+		}
+		trustedProxies = append(trustedProxies, addr.Unmap().String())
+	}
+	return trustedProxies, nil
+}
+
 // Load 读取并校验完整配置（要求 jwt.secret 已显式提供）。
 func Load() (*Config, error) {
 	return load(false)
@@ -996,10 +1038,22 @@ func load(allowMissingJWTSecret bool) (*Config, error) {
 		}
 		// 配置文件不存在时使用默认值
 	}
-
 	var cfg Config
 	if err := viper.Unmarshal(&cfg); err != nil {
 		return nil, fmt.Errorf("unmarshal config error: %w", err)
+	}
+	if rawTrustedProxies, present := os.LookupEnv("SERVER_TRUSTED_PROXIES"); present {
+		trustedProxies, err := ParseTrustedProxies(rawTrustedProxies)
+		if err != nil {
+			return nil, fmt.Errorf("parse SERVER_TRUSTED_PROXIES: %w", err)
+		}
+		cfg.Server.TrustedProxies = trustedProxies
+	} else if len(cfg.Server.TrustedProxies) > 0 {
+		trustedProxies, err := normalizeTrustedProxies(cfg.Server.TrustedProxies)
+		if err != nil {
+			return nil, fmt.Errorf("parse server.trusted_proxies: %w", err)
+		}
+		cfg.Server.TrustedProxies = trustedProxies
 	}
 
 	cfg.RunMode = NormalizeRunMode(cfg.RunMode)

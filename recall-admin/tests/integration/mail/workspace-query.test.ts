@@ -19,8 +19,10 @@ vi.mock("server-only", () => ({}));
 describe("scoped mail workspace query", () => {
   const noCompose = {
     compose: false,
+    batchHistory: false,
     composeUserId: null,
-    composeTaskId: null
+    composeTaskId: null,
+    composeRetryMessageId: null
   } as const;
   let adminId: string;
   let operatorId: string;
@@ -32,6 +34,7 @@ describe("scoped mail workspace query", () => {
   let otherThreadId: string;
   let ownSentMessageId: string;
   let otherSentMessageId: string;
+  let ownBouncedMessageId: string;
   let templateId: string;
   let inactiveTemplateKey: string;
 
@@ -187,6 +190,37 @@ describe("scoped mail workspace query", () => {
       ]);
     ownSentMessageId = ownSentMessage.id;
     otherSentMessageId = otherSentMessage.id;
+    const ownBouncedMessage = await prisma.mailMessage.create({
+      data: {
+        mailboxId,
+        threadId: ownThreadId,
+        userId: ownUserId,
+        direction: "OUTBOUND",
+        status: "BOUNCED",
+        providerMessageId: `<workspace-own-bounced-${randomUUID()}@example.test>`,
+        references: [],
+        fromAddress: mailbox.emailAddress,
+        toAddresses: [ownEmail],
+        subject: "最终退信邮件",
+        bodyText: "这封邮件被收件服务器最终拒收。",
+        bodyHtml: "<p>这封邮件被收件服务器最终拒收。</p>",
+        sentAt: new Date("2026-07-27T11:00:00.000Z"),
+        bouncedAt: new Date("2026-07-27T11:05:00.000Z"),
+        bounceStatusCode: "5.1.1",
+        bounceDiagnostic: "smtp; 550 mailbox unavailable"
+      }
+    });
+    ownBouncedMessageId = ownBouncedMessage.id;
+    await Promise.all([
+      prisma.mailThread.update({
+        where: { id: ownThreadId },
+        data: { updatedAt: new Date("2026-07-27T08:00:00.000Z") }
+      }),
+      prisma.mailThread.update({
+        where: { id: otherThreadId },
+        data: { updatedAt: new Date("2026-07-27T12:00:00.000Z") }
+      })
+    ]);
     await prisma.recallTask.createMany({
       data: [
         {
@@ -309,6 +343,38 @@ describe("scoped mail workspace query", () => {
     expect(pendingData.stats.openReplyTasks).toBe(
       pendingData.items.length
     );
+    expect(pendingData.filter.selectedId).toBe(ownThreadId);
+    expect(pendingData.selected).toMatchObject({
+      kind: "thread",
+      thread: { id: ownThreadId }
+    });
+
+    const adminPending = await getMailWorkspaceData(
+      { id: adminId, role: "ADMIN" },
+      { view: "pending", selectedId: null, ...noCompose }
+    );
+    expect(adminPending.items[0]?.id).toBe(ownThreadId);
+    expect(adminPending.filter.selectedId).toBe(ownThreadId);
+    expect(adminPending.selected).toMatchObject({
+      kind: "thread",
+      thread: { id: ownThreadId }
+    });
+
+    const explicitlySelected = await getMailWorkspaceData(
+      { id: adminId, role: "ADMIN" },
+      {
+        view: "pending",
+        selectedId: otherThreadId,
+        ...noCompose
+      }
+    );
+    expect(explicitlySelected.filter.selectedId).toBe(
+      otherThreadId
+    );
+    expect(explicitlySelected.selected).toMatchObject({
+      kind: "thread",
+      thread: { id: otherThreadId }
+    });
   });
 
   it("lets an admin see all conversations and full selected body", async () => {
@@ -403,6 +469,31 @@ describe("scoped mail workspace query", () => {
         (item) => item.id === otherSentMessageId
       )
     ).toBe(true);
+  });
+
+  it("lists final bounces in failed mail with safe retry diagnostics", async () => {
+    const data = await getMailWorkspaceData(
+      { id: operatorId, role: "OPERATOR" },
+      {
+        view: "failed",
+        selectedId: ownBouncedMessageId,
+        ...noCompose
+      }
+    );
+
+    expect(
+      data.items.find((item) => item.id === ownBouncedMessageId)
+    ).toMatchObject({ status: "最终退信" });
+    expect(data.selected).toMatchObject({
+      kind: "message",
+      message: {
+        id: ownBouncedMessageId,
+        status: "BOUNCED",
+        userId: ownUserId,
+        bounceStatusCode: "5.1.1",
+        bounceDiagnostic: "smtp; 550 mailbox unavailable"
+      }
+    });
   });
 
   it("returns operational mailbox status and selected recovery detail", async () => {

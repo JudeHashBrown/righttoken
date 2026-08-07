@@ -1,5 +1,8 @@
 import { randomUUID } from "node:crypto";
-import type { MailMessage } from "@/generated/prisma/client";
+import type {
+  MailMessage,
+  MailPurpose
+} from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import {
   assertMemberPermission,
@@ -26,6 +29,10 @@ import {
 import {
   processMailHtml
 } from "@/modules/mail/html-policy";
+import {
+  findLatestOutboundContact
+} from "@/modules/mail/latest-outbound-contact";
+import { recordMailMaintenance } from "@/modules/b-group/mail-maintenance";
 
 export type ReviewedMailInput = {
   actorId: string;
@@ -36,6 +43,7 @@ export type ReviewedMailInput = {
   subject: string;
   bodyText: string;
   bodyHtml?: string;
+  purpose?: MailPurpose;
   assets?: OutboundAssetReference[];
   minimumContactIntervalMinutes: number;
   authorizationScope?: "CURRENT" | "BATCH_SNAPSHOT";
@@ -159,7 +167,7 @@ export async function sendReviewedMail(
     );
   }
 
-  const [userSuppressed, recipientSuppressed, lastSent] =
+  const [userSuppressed, recipientSuppressed, latestOutbound] =
     await Promise.all([
     prisma.suppressionEntry.findUnique({
       where: { emailNormalized: user.emailNormalized },
@@ -169,15 +177,7 @@ export async function sendReviewedMail(
       where: { emailNormalized: recipient },
       select: { id: true }
     }),
-    prisma.mailMessage.findFirst({
-      where: {
-        userId: user.id,
-        direction: "OUTBOUND",
-        status: "SENT"
-      },
-      orderBy: { sentAt: "desc" },
-      select: { sentAt: true }
-    })
+    findLatestOutboundContact(user.id)
     ]);
   assertMailSendAllowed(
     {
@@ -191,7 +191,7 @@ export async function sendReviewedMail(
       reviewedById: actor.id,
       subject: input.subject,
       bodyText: reviewedBodyText,
-      lastSentAt: lastSent?.sentAt ?? null,
+      latestOutbound,
       minimumContactIntervalMinutes:
         input.minimumContactIntervalMinutes
     },
@@ -267,6 +267,7 @@ export async function sendReviewedMail(
       subject: input.subject.trim(),
       bodyText: richContent.bodyText,
       bodyHtml: richContent.bodyHtml,
+      purpose: input.purpose ?? "OTHER",
       reviewedById: actor.id,
       assets: {
         create: richContent.messageAssets
@@ -367,5 +368,6 @@ export async function sendReviewedMail(
     });
     return sent;
   });
+  await recordMailMaintenance(message.id);
   return { message, taskId: task.id };
 }

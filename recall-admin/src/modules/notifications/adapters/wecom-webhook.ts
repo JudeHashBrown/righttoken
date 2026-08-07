@@ -40,7 +40,7 @@ export function createWecomWebhookAdapter(
               content: [
                 `### ${input.title}`,
                 input.summary,
-                `[打开任务](${input.taskUrl})`
+                `[查看用户](${input.taskUrl})`
               ].join("\n")
             }
           }),

@@ -68,7 +68,12 @@ async function recipientCounts(
     if (row.status === "SENDING") counts.sending = count;
     if (row.status === "SENT") counts.sent = count;
     if (row.status === "SKIPPED") counts.skipped = count;
-    if (row.status === "FAILED") counts.failed = count;
+    if (
+      row.status === "FAILED" ||
+      row.status === "BOUNCED"
+    ) {
+      counts.failed += count;
+    }
   }
   return counts;
 }
@@ -115,6 +120,7 @@ async function deliverClaimedMailBatchRecipient(
             mailboxId: true,
             createdById: true,
             subject: true,
+            purpose: true,
             bodyText: true,
             bodyHtml: true,
             assets: {
@@ -147,6 +153,7 @@ async function deliverClaimedMailBatchRecipient(
         userId: recipient.userId,
         recipient: recipient.emailNormalized,
         subject: recipient.batch.subject,
+        purpose: recipient.batch.purpose,
         bodyText: recipient.batch.bodyText,
         bodyHtml: recipient.batch.bodyHtml,
         assets: recipient.batch.assets.map((asset) => ({

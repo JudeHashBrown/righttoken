@@ -26,6 +26,8 @@ server:
   frontend_url: ""
   # Trusted proxies for X-Forwarded-For parsing (CIDR/IP). Empty disables trusted proxies.
   # 信任的代理地址（CIDR/IP 格式），用于解析 X-Forwarded-For 头。留空则禁用代理信任。
+  # Production deployments must use the exact reverse-proxy or Docker gateway IP/CIDR; never use 0.0.0.0/0 or ::/0.
+  # 生产部署必须填写精确的反向代理或 Docker 网关 IP/CIDR；禁止使用 0.0.0.0/0 或 ::/0。
   trusted_proxies: []
   # Global max request body size in bytes (default: 256MB)
   # 全局最大请求体大小（字节，默认 256MB）

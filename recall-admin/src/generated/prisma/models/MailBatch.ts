@@ -48,10 +48,12 @@ export type MailBatchMinAggregateOutputType = {
   createdById: string | null
   audienceMode: $Enums.MailAudienceMode | null
   segment: $Enums.SegmentCode | null
+  purpose: $Enums.MailPurpose | null
   subject: string | null
   bodyText: string | null
   bodyHtml: string | null
   idempotencyKey: string | null
+  retryRootBatchId: string | null
   status: $Enums.MailBatchStatus | null
   totalRecipients: number | null
   pendingRecipients: number | null
@@ -70,10 +72,12 @@ export type MailBatchMaxAggregateOutputType = {
   createdById: string | null
   audienceMode: $Enums.MailAudienceMode | null
   segment: $Enums.SegmentCode | null
+  purpose: $Enums.MailPurpose | null
   subject: string | null
   bodyText: string | null
   bodyHtml: string | null
   idempotencyKey: string | null
+  retryRootBatchId: string | null
   status: $Enums.MailBatchStatus | null
   totalRecipients: number | null
   pendingRecipients: number | null
@@ -92,10 +96,12 @@ export type MailBatchCountAggregateOutputType = {
   createdById: number
   audienceMode: number
   segment: number
+  purpose: number
   subject: number
   bodyText: number
   bodyHtml: number
   idempotencyKey: number
+  retryRootBatchId: number
   status: number
   totalRecipients: number
   pendingRecipients: number
@@ -132,10 +138,12 @@ export type MailBatchMinAggregateInputType = {
   createdById?: true
   audienceMode?: true
   segment?: true
+  purpose?: true
   subject?: true
   bodyText?: true
   bodyHtml?: true
   idempotencyKey?: true
+  retryRootBatchId?: true
   status?: true
   totalRecipients?: true
   pendingRecipients?: true
@@ -154,10 +162,12 @@ export type MailBatchMaxAggregateInputType = {
   createdById?: true
   audienceMode?: true
   segment?: true
+  purpose?: true
   subject?: true
   bodyText?: true
   bodyHtml?: true
   idempotencyKey?: true
+  retryRootBatchId?: true
   status?: true
   totalRecipients?: true
   pendingRecipients?: true
@@ -176,10 +186,12 @@ export type MailBatchCountAggregateInputType = {
   createdById?: true
   audienceMode?: true
   segment?: true
+  purpose?: true
   subject?: true
   bodyText?: true
   bodyHtml?: true
   idempotencyKey?: true
+  retryRootBatchId?: true
   status?: true
   totalRecipients?: true
   pendingRecipients?: true
@@ -285,10 +297,12 @@ export type MailBatchGroupByOutputType = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment: $Enums.SegmentCode | null
+  purpose: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
   idempotencyKey: string
+  retryRootBatchId: string | null
   status: $Enums.MailBatchStatus
   totalRecipients: number
   pendingRecipients: number
@@ -330,10 +344,12 @@ export type MailBatchWhereInput = {
   createdById?: Prisma.StringFilter<"MailBatch"> | string
   audienceMode?: Prisma.EnumMailAudienceModeFilter<"MailBatch"> | $Enums.MailAudienceMode
   segment?: Prisma.EnumSegmentCodeNullableFilter<"MailBatch"> | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFilter<"MailBatch"> | $Enums.MailPurpose
   subject?: Prisma.StringFilter<"MailBatch"> | string
   bodyText?: Prisma.StringFilter<"MailBatch"> | string
   bodyHtml?: Prisma.StringFilter<"MailBatch"> | string
   idempotencyKey?: Prisma.StringFilter<"MailBatch"> | string
+  retryRootBatchId?: Prisma.StringNullableFilter<"MailBatch"> | string | null
   status?: Prisma.EnumMailBatchStatusFilter<"MailBatch"> | $Enums.MailBatchStatus
   totalRecipients?: Prisma.IntFilter<"MailBatch"> | number
   pendingRecipients?: Prisma.IntFilter<"MailBatch"> | number
@@ -348,6 +364,8 @@ export type MailBatchWhereInput = {
   createdBy?: Prisma.XOR<Prisma.MemberScalarRelationFilter, Prisma.MemberWhereInput>
   recipients?: Prisma.MailBatchRecipientListRelationFilter
   assets?: Prisma.MailBatchAssetListRelationFilter
+  retryRoot?: Prisma.XOR<Prisma.MailBatchNullableScalarRelationFilter, Prisma.MailBatchWhereInput> | null
+  retries?: Prisma.MailBatchListRelationFilter
 }
 
 export type MailBatchOrderByWithRelationInput = {
@@ -356,10 +374,12 @@ export type MailBatchOrderByWithRelationInput = {
   createdById?: Prisma.SortOrder
   audienceMode?: Prisma.SortOrder
   segment?: Prisma.SortOrderInput | Prisma.SortOrder
+  purpose?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
   bodyHtml?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
+  retryRootBatchId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   totalRecipients?: Prisma.SortOrder
   pendingRecipients?: Prisma.SortOrder
@@ -374,6 +394,8 @@ export type MailBatchOrderByWithRelationInput = {
   createdBy?: Prisma.MemberOrderByWithRelationInput
   recipients?: Prisma.MailBatchRecipientOrderByRelationAggregateInput
   assets?: Prisma.MailBatchAssetOrderByRelationAggregateInput
+  retryRoot?: Prisma.MailBatchOrderByWithRelationInput
+  retries?: Prisma.MailBatchOrderByRelationAggregateInput
 }
 
 export type MailBatchWhereUniqueInput = Prisma.AtLeast<{
@@ -386,9 +408,11 @@ export type MailBatchWhereUniqueInput = Prisma.AtLeast<{
   createdById?: Prisma.StringFilter<"MailBatch"> | string
   audienceMode?: Prisma.EnumMailAudienceModeFilter<"MailBatch"> | $Enums.MailAudienceMode
   segment?: Prisma.EnumSegmentCodeNullableFilter<"MailBatch"> | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFilter<"MailBatch"> | $Enums.MailPurpose
   subject?: Prisma.StringFilter<"MailBatch"> | string
   bodyText?: Prisma.StringFilter<"MailBatch"> | string
   bodyHtml?: Prisma.StringFilter<"MailBatch"> | string
+  retryRootBatchId?: Prisma.StringNullableFilter<"MailBatch"> | string | null
   status?: Prisma.EnumMailBatchStatusFilter<"MailBatch"> | $Enums.MailBatchStatus
   totalRecipients?: Prisma.IntFilter<"MailBatch"> | number
   pendingRecipients?: Prisma.IntFilter<"MailBatch"> | number
@@ -403,6 +427,8 @@ export type MailBatchWhereUniqueInput = Prisma.AtLeast<{
   createdBy?: Prisma.XOR<Prisma.MemberScalarRelationFilter, Prisma.MemberWhereInput>
   recipients?: Prisma.MailBatchRecipientListRelationFilter
   assets?: Prisma.MailBatchAssetListRelationFilter
+  retryRoot?: Prisma.XOR<Prisma.MailBatchNullableScalarRelationFilter, Prisma.MailBatchWhereInput> | null
+  retries?: Prisma.MailBatchListRelationFilter
 }, "id" | "idempotencyKey">
 
 export type MailBatchOrderByWithAggregationInput = {
@@ -411,10 +437,12 @@ export type MailBatchOrderByWithAggregationInput = {
   createdById?: Prisma.SortOrder
   audienceMode?: Prisma.SortOrder
   segment?: Prisma.SortOrderInput | Prisma.SortOrder
+  purpose?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
   bodyHtml?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
+  retryRootBatchId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   totalRecipients?: Prisma.SortOrder
   pendingRecipients?: Prisma.SortOrder
@@ -441,10 +469,12 @@ export type MailBatchScalarWhereWithAggregatesInput = {
   createdById?: Prisma.StringWithAggregatesFilter<"MailBatch"> | string
   audienceMode?: Prisma.EnumMailAudienceModeWithAggregatesFilter<"MailBatch"> | $Enums.MailAudienceMode
   segment?: Prisma.EnumSegmentCodeNullableWithAggregatesFilter<"MailBatch"> | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeWithAggregatesFilter<"MailBatch"> | $Enums.MailPurpose
   subject?: Prisma.StringWithAggregatesFilter<"MailBatch"> | string
   bodyText?: Prisma.StringWithAggregatesFilter<"MailBatch"> | string
   bodyHtml?: Prisma.StringWithAggregatesFilter<"MailBatch"> | string
   idempotencyKey?: Prisma.StringWithAggregatesFilter<"MailBatch"> | string
+  retryRootBatchId?: Prisma.StringNullableWithAggregatesFilter<"MailBatch"> | string | null
   status?: Prisma.EnumMailBatchStatusWithAggregatesFilter<"MailBatch"> | $Enums.MailBatchStatus
   totalRecipients?: Prisma.IntWithAggregatesFilter<"MailBatch"> | number
   pendingRecipients?: Prisma.IntWithAggregatesFilter<"MailBatch"> | number
@@ -461,6 +491,7 @@ export type MailBatchCreateInput = {
   id?: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -479,6 +510,8 @@ export type MailBatchCreateInput = {
   createdBy: Prisma.MemberCreateNestedOneWithoutCreatedMailBatchesInput
   recipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutBatchInput
   assets?: Prisma.MailBatchAssetCreateNestedManyWithoutBatchInput
+  retryRoot?: Prisma.MailBatchCreateNestedOneWithoutRetriesInput
+  retries?: Prisma.MailBatchCreateNestedManyWithoutRetryRootInput
 }
 
 export type MailBatchUncheckedCreateInput = {
@@ -487,10 +520,12 @@ export type MailBatchUncheckedCreateInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
   idempotencyKey: string
+  retryRootBatchId?: string | null
   status?: $Enums.MailBatchStatus
   totalRecipients?: number
   pendingRecipients?: number
@@ -503,12 +538,14 @@ export type MailBatchUncheckedCreateInput = {
   updatedAt?: Date | string
   recipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutBatchInput
   assets?: Prisma.MailBatchAssetUncheckedCreateNestedManyWithoutBatchInput
+  retries?: Prisma.MailBatchUncheckedCreateNestedManyWithoutRetryRootInput
 }
 
 export type MailBatchUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -527,6 +564,8 @@ export type MailBatchUpdateInput = {
   createdBy?: Prisma.MemberUpdateOneRequiredWithoutCreatedMailBatchesNestedInput
   recipients?: Prisma.MailBatchRecipientUpdateManyWithoutBatchNestedInput
   assets?: Prisma.MailBatchAssetUpdateManyWithoutBatchNestedInput
+  retryRoot?: Prisma.MailBatchUpdateOneWithoutRetriesNestedInput
+  retries?: Prisma.MailBatchUpdateManyWithoutRetryRootNestedInput
 }
 
 export type MailBatchUncheckedUpdateInput = {
@@ -535,10 +574,12 @@ export type MailBatchUncheckedUpdateInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  retryRootBatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMailBatchStatusFieldUpdateOperationsInput | $Enums.MailBatchStatus
   totalRecipients?: Prisma.IntFieldUpdateOperationsInput | number
   pendingRecipients?: Prisma.IntFieldUpdateOperationsInput | number
@@ -551,6 +592,7 @@ export type MailBatchUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   recipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutBatchNestedInput
   assets?: Prisma.MailBatchAssetUncheckedUpdateManyWithoutBatchNestedInput
+  retries?: Prisma.MailBatchUncheckedUpdateManyWithoutRetryRootNestedInput
 }
 
 export type MailBatchCreateManyInput = {
@@ -559,10 +601,12 @@ export type MailBatchCreateManyInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
   idempotencyKey: string
+  retryRootBatchId?: string | null
   status?: $Enums.MailBatchStatus
   totalRecipients?: number
   pendingRecipients?: number
@@ -579,6 +623,7 @@ export type MailBatchUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -601,10 +646,12 @@ export type MailBatchUncheckedUpdateManyInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  retryRootBatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMailBatchStatusFieldUpdateOperationsInput | $Enums.MailBatchStatus
   totalRecipients?: Prisma.IntFieldUpdateOperationsInput | number
   pendingRecipients?: Prisma.IntFieldUpdateOperationsInput | number
@@ -627,16 +674,23 @@ export type MailBatchOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type MailBatchNullableScalarRelationFilter = {
+  is?: Prisma.MailBatchWhereInput | null
+  isNot?: Prisma.MailBatchWhereInput | null
+}
+
 export type MailBatchCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   mailboxId?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   audienceMode?: Prisma.SortOrder
   segment?: Prisma.SortOrder
+  purpose?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
   bodyHtml?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
+  retryRootBatchId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   totalRecipients?: Prisma.SortOrder
   pendingRecipients?: Prisma.SortOrder
@@ -663,10 +717,12 @@ export type MailBatchMaxOrderByAggregateInput = {
   createdById?: Prisma.SortOrder
   audienceMode?: Prisma.SortOrder
   segment?: Prisma.SortOrder
+  purpose?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
   bodyHtml?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
+  retryRootBatchId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   totalRecipients?: Prisma.SortOrder
   pendingRecipients?: Prisma.SortOrder
@@ -685,10 +741,12 @@ export type MailBatchMinOrderByAggregateInput = {
   createdById?: Prisma.SortOrder
   audienceMode?: Prisma.SortOrder
   segment?: Prisma.SortOrder
+  purpose?: Prisma.SortOrder
   subject?: Prisma.SortOrder
   bodyText?: Prisma.SortOrder
   bodyHtml?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
+  retryRootBatchId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   totalRecipients?: Prisma.SortOrder
   pendingRecipients?: Prisma.SortOrder
@@ -798,12 +856,70 @@ export type MailBatchUncheckedUpdateManyWithoutMailboxNestedInput = {
   deleteMany?: Prisma.MailBatchScalarWhereInput | Prisma.MailBatchScalarWhereInput[]
 }
 
+export type MailBatchCreateNestedOneWithoutRetriesInput = {
+  create?: Prisma.XOR<Prisma.MailBatchCreateWithoutRetriesInput, Prisma.MailBatchUncheckedCreateWithoutRetriesInput>
+  connectOrCreate?: Prisma.MailBatchCreateOrConnectWithoutRetriesInput
+  connect?: Prisma.MailBatchWhereUniqueInput
+}
+
+export type MailBatchCreateNestedManyWithoutRetryRootInput = {
+  create?: Prisma.XOR<Prisma.MailBatchCreateWithoutRetryRootInput, Prisma.MailBatchUncheckedCreateWithoutRetryRootInput> | Prisma.MailBatchCreateWithoutRetryRootInput[] | Prisma.MailBatchUncheckedCreateWithoutRetryRootInput[]
+  connectOrCreate?: Prisma.MailBatchCreateOrConnectWithoutRetryRootInput | Prisma.MailBatchCreateOrConnectWithoutRetryRootInput[]
+  createMany?: Prisma.MailBatchCreateManyRetryRootInputEnvelope
+  connect?: Prisma.MailBatchWhereUniqueInput | Prisma.MailBatchWhereUniqueInput[]
+}
+
+export type MailBatchUncheckedCreateNestedManyWithoutRetryRootInput = {
+  create?: Prisma.XOR<Prisma.MailBatchCreateWithoutRetryRootInput, Prisma.MailBatchUncheckedCreateWithoutRetryRootInput> | Prisma.MailBatchCreateWithoutRetryRootInput[] | Prisma.MailBatchUncheckedCreateWithoutRetryRootInput[]
+  connectOrCreate?: Prisma.MailBatchCreateOrConnectWithoutRetryRootInput | Prisma.MailBatchCreateOrConnectWithoutRetryRootInput[]
+  createMany?: Prisma.MailBatchCreateManyRetryRootInputEnvelope
+  connect?: Prisma.MailBatchWhereUniqueInput | Prisma.MailBatchWhereUniqueInput[]
+}
+
 export type EnumMailAudienceModeFieldUpdateOperationsInput = {
   set?: $Enums.MailAudienceMode
 }
 
 export type EnumMailBatchStatusFieldUpdateOperationsInput = {
   set?: $Enums.MailBatchStatus
+}
+
+export type MailBatchUpdateOneWithoutRetriesNestedInput = {
+  create?: Prisma.XOR<Prisma.MailBatchCreateWithoutRetriesInput, Prisma.MailBatchUncheckedCreateWithoutRetriesInput>
+  connectOrCreate?: Prisma.MailBatchCreateOrConnectWithoutRetriesInput
+  upsert?: Prisma.MailBatchUpsertWithoutRetriesInput
+  disconnect?: Prisma.MailBatchWhereInput | boolean
+  delete?: Prisma.MailBatchWhereInput | boolean
+  connect?: Prisma.MailBatchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MailBatchUpdateToOneWithWhereWithoutRetriesInput, Prisma.MailBatchUpdateWithoutRetriesInput>, Prisma.MailBatchUncheckedUpdateWithoutRetriesInput>
+}
+
+export type MailBatchUpdateManyWithoutRetryRootNestedInput = {
+  create?: Prisma.XOR<Prisma.MailBatchCreateWithoutRetryRootInput, Prisma.MailBatchUncheckedCreateWithoutRetryRootInput> | Prisma.MailBatchCreateWithoutRetryRootInput[] | Prisma.MailBatchUncheckedCreateWithoutRetryRootInput[]
+  connectOrCreate?: Prisma.MailBatchCreateOrConnectWithoutRetryRootInput | Prisma.MailBatchCreateOrConnectWithoutRetryRootInput[]
+  upsert?: Prisma.MailBatchUpsertWithWhereUniqueWithoutRetryRootInput | Prisma.MailBatchUpsertWithWhereUniqueWithoutRetryRootInput[]
+  createMany?: Prisma.MailBatchCreateManyRetryRootInputEnvelope
+  set?: Prisma.MailBatchWhereUniqueInput | Prisma.MailBatchWhereUniqueInput[]
+  disconnect?: Prisma.MailBatchWhereUniqueInput | Prisma.MailBatchWhereUniqueInput[]
+  delete?: Prisma.MailBatchWhereUniqueInput | Prisma.MailBatchWhereUniqueInput[]
+  connect?: Prisma.MailBatchWhereUniqueInput | Prisma.MailBatchWhereUniqueInput[]
+  update?: Prisma.MailBatchUpdateWithWhereUniqueWithoutRetryRootInput | Prisma.MailBatchUpdateWithWhereUniqueWithoutRetryRootInput[]
+  updateMany?: Prisma.MailBatchUpdateManyWithWhereWithoutRetryRootInput | Prisma.MailBatchUpdateManyWithWhereWithoutRetryRootInput[]
+  deleteMany?: Prisma.MailBatchScalarWhereInput | Prisma.MailBatchScalarWhereInput[]
+}
+
+export type MailBatchUncheckedUpdateManyWithoutRetryRootNestedInput = {
+  create?: Prisma.XOR<Prisma.MailBatchCreateWithoutRetryRootInput, Prisma.MailBatchUncheckedCreateWithoutRetryRootInput> | Prisma.MailBatchCreateWithoutRetryRootInput[] | Prisma.MailBatchUncheckedCreateWithoutRetryRootInput[]
+  connectOrCreate?: Prisma.MailBatchCreateOrConnectWithoutRetryRootInput | Prisma.MailBatchCreateOrConnectWithoutRetryRootInput[]
+  upsert?: Prisma.MailBatchUpsertWithWhereUniqueWithoutRetryRootInput | Prisma.MailBatchUpsertWithWhereUniqueWithoutRetryRootInput[]
+  createMany?: Prisma.MailBatchCreateManyRetryRootInputEnvelope
+  set?: Prisma.MailBatchWhereUniqueInput | Prisma.MailBatchWhereUniqueInput[]
+  disconnect?: Prisma.MailBatchWhereUniqueInput | Prisma.MailBatchWhereUniqueInput[]
+  delete?: Prisma.MailBatchWhereUniqueInput | Prisma.MailBatchWhereUniqueInput[]
+  connect?: Prisma.MailBatchWhereUniqueInput | Prisma.MailBatchWhereUniqueInput[]
+  update?: Prisma.MailBatchUpdateWithWhereUniqueWithoutRetryRootInput | Prisma.MailBatchUpdateWithWhereUniqueWithoutRetryRootInput[]
+  updateMany?: Prisma.MailBatchUpdateManyWithWhereWithoutRetryRootInput | Prisma.MailBatchUpdateManyWithWhereWithoutRetryRootInput[]
+  deleteMany?: Prisma.MailBatchScalarWhereInput | Prisma.MailBatchScalarWhereInput[]
 }
 
 export type MailBatchCreateNestedOneWithoutRecipientsInput = {
@@ -838,6 +954,7 @@ export type MailBatchCreateWithoutCreatedByInput = {
   id?: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -855,6 +972,8 @@ export type MailBatchCreateWithoutCreatedByInput = {
   mailbox: Prisma.MailboxCreateNestedOneWithoutMailBatchesInput
   recipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutBatchInput
   assets?: Prisma.MailBatchAssetCreateNestedManyWithoutBatchInput
+  retryRoot?: Prisma.MailBatchCreateNestedOneWithoutRetriesInput
+  retries?: Prisma.MailBatchCreateNestedManyWithoutRetryRootInput
 }
 
 export type MailBatchUncheckedCreateWithoutCreatedByInput = {
@@ -862,10 +981,12 @@ export type MailBatchUncheckedCreateWithoutCreatedByInput = {
   mailboxId: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
   idempotencyKey: string
+  retryRootBatchId?: string | null
   status?: $Enums.MailBatchStatus
   totalRecipients?: number
   pendingRecipients?: number
@@ -878,6 +999,7 @@ export type MailBatchUncheckedCreateWithoutCreatedByInput = {
   updatedAt?: Date | string
   recipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutBatchInput
   assets?: Prisma.MailBatchAssetUncheckedCreateNestedManyWithoutBatchInput
+  retries?: Prisma.MailBatchUncheckedCreateNestedManyWithoutRetryRootInput
 }
 
 export type MailBatchCreateOrConnectWithoutCreatedByInput = {
@@ -915,10 +1037,12 @@ export type MailBatchScalarWhereInput = {
   createdById?: Prisma.StringFilter<"MailBatch"> | string
   audienceMode?: Prisma.EnumMailAudienceModeFilter<"MailBatch"> | $Enums.MailAudienceMode
   segment?: Prisma.EnumSegmentCodeNullableFilter<"MailBatch"> | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFilter<"MailBatch"> | $Enums.MailPurpose
   subject?: Prisma.StringFilter<"MailBatch"> | string
   bodyText?: Prisma.StringFilter<"MailBatch"> | string
   bodyHtml?: Prisma.StringFilter<"MailBatch"> | string
   idempotencyKey?: Prisma.StringFilter<"MailBatch"> | string
+  retryRootBatchId?: Prisma.StringNullableFilter<"MailBatch"> | string | null
   status?: Prisma.EnumMailBatchStatusFilter<"MailBatch"> | $Enums.MailBatchStatus
   totalRecipients?: Prisma.IntFilter<"MailBatch"> | number
   pendingRecipients?: Prisma.IntFilter<"MailBatch"> | number
@@ -935,6 +1059,7 @@ export type MailBatchCreateWithoutMailboxInput = {
   id?: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -952,6 +1077,8 @@ export type MailBatchCreateWithoutMailboxInput = {
   createdBy: Prisma.MemberCreateNestedOneWithoutCreatedMailBatchesInput
   recipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutBatchInput
   assets?: Prisma.MailBatchAssetCreateNestedManyWithoutBatchInput
+  retryRoot?: Prisma.MailBatchCreateNestedOneWithoutRetriesInput
+  retries?: Prisma.MailBatchCreateNestedManyWithoutRetryRootInput
 }
 
 export type MailBatchUncheckedCreateWithoutMailboxInput = {
@@ -959,10 +1086,12 @@ export type MailBatchUncheckedCreateWithoutMailboxInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
   idempotencyKey: string
+  retryRootBatchId?: string | null
   status?: $Enums.MailBatchStatus
   totalRecipients?: number
   pendingRecipients?: number
@@ -975,6 +1104,7 @@ export type MailBatchUncheckedCreateWithoutMailboxInput = {
   updatedAt?: Date | string
   recipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutBatchInput
   assets?: Prisma.MailBatchAssetUncheckedCreateNestedManyWithoutBatchInput
+  retries?: Prisma.MailBatchUncheckedCreateNestedManyWithoutRetryRootInput
 }
 
 export type MailBatchCreateOrConnectWithoutMailboxInput = {
@@ -1003,10 +1133,209 @@ export type MailBatchUpdateManyWithWhereWithoutMailboxInput = {
   data: Prisma.XOR<Prisma.MailBatchUpdateManyMutationInput, Prisma.MailBatchUncheckedUpdateManyWithoutMailboxInput>
 }
 
+export type MailBatchCreateWithoutRetriesInput = {
+  id?: string
+  audienceMode: $Enums.MailAudienceMode
+  segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
+  subject: string
+  bodyText: string
+  bodyHtml: string
+  idempotencyKey: string
+  status?: $Enums.MailBatchStatus
+  totalRecipients?: number
+  pendingRecipients?: number
+  sentRecipients?: number
+  skippedRecipients?: number
+  failedRecipients?: number
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  mailbox: Prisma.MailboxCreateNestedOneWithoutMailBatchesInput
+  createdBy: Prisma.MemberCreateNestedOneWithoutCreatedMailBatchesInput
+  recipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutBatchInput
+  assets?: Prisma.MailBatchAssetCreateNestedManyWithoutBatchInput
+  retryRoot?: Prisma.MailBatchCreateNestedOneWithoutRetriesInput
+}
+
+export type MailBatchUncheckedCreateWithoutRetriesInput = {
+  id?: string
+  mailboxId: string
+  createdById: string
+  audienceMode: $Enums.MailAudienceMode
+  segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
+  subject: string
+  bodyText: string
+  bodyHtml: string
+  idempotencyKey: string
+  retryRootBatchId?: string | null
+  status?: $Enums.MailBatchStatus
+  totalRecipients?: number
+  pendingRecipients?: number
+  sentRecipients?: number
+  skippedRecipients?: number
+  failedRecipients?: number
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  recipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutBatchInput
+  assets?: Prisma.MailBatchAssetUncheckedCreateNestedManyWithoutBatchInput
+}
+
+export type MailBatchCreateOrConnectWithoutRetriesInput = {
+  where: Prisma.MailBatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.MailBatchCreateWithoutRetriesInput, Prisma.MailBatchUncheckedCreateWithoutRetriesInput>
+}
+
+export type MailBatchCreateWithoutRetryRootInput = {
+  id?: string
+  audienceMode: $Enums.MailAudienceMode
+  segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
+  subject: string
+  bodyText: string
+  bodyHtml: string
+  idempotencyKey: string
+  status?: $Enums.MailBatchStatus
+  totalRecipients?: number
+  pendingRecipients?: number
+  sentRecipients?: number
+  skippedRecipients?: number
+  failedRecipients?: number
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  mailbox: Prisma.MailboxCreateNestedOneWithoutMailBatchesInput
+  createdBy: Prisma.MemberCreateNestedOneWithoutCreatedMailBatchesInput
+  recipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutBatchInput
+  assets?: Prisma.MailBatchAssetCreateNestedManyWithoutBatchInput
+  retries?: Prisma.MailBatchCreateNestedManyWithoutRetryRootInput
+}
+
+export type MailBatchUncheckedCreateWithoutRetryRootInput = {
+  id?: string
+  mailboxId: string
+  createdById: string
+  audienceMode: $Enums.MailAudienceMode
+  segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
+  subject: string
+  bodyText: string
+  bodyHtml: string
+  idempotencyKey: string
+  status?: $Enums.MailBatchStatus
+  totalRecipients?: number
+  pendingRecipients?: number
+  sentRecipients?: number
+  skippedRecipients?: number
+  failedRecipients?: number
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  recipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutBatchInput
+  assets?: Prisma.MailBatchAssetUncheckedCreateNestedManyWithoutBatchInput
+  retries?: Prisma.MailBatchUncheckedCreateNestedManyWithoutRetryRootInput
+}
+
+export type MailBatchCreateOrConnectWithoutRetryRootInput = {
+  where: Prisma.MailBatchWhereUniqueInput
+  create: Prisma.XOR<Prisma.MailBatchCreateWithoutRetryRootInput, Prisma.MailBatchUncheckedCreateWithoutRetryRootInput>
+}
+
+export type MailBatchCreateManyRetryRootInputEnvelope = {
+  data: Prisma.MailBatchCreateManyRetryRootInput | Prisma.MailBatchCreateManyRetryRootInput[]
+  skipDuplicates?: boolean
+}
+
+export type MailBatchUpsertWithoutRetriesInput = {
+  update: Prisma.XOR<Prisma.MailBatchUpdateWithoutRetriesInput, Prisma.MailBatchUncheckedUpdateWithoutRetriesInput>
+  create: Prisma.XOR<Prisma.MailBatchCreateWithoutRetriesInput, Prisma.MailBatchUncheckedCreateWithoutRetriesInput>
+  where?: Prisma.MailBatchWhereInput
+}
+
+export type MailBatchUpdateToOneWithWhereWithoutRetriesInput = {
+  where?: Prisma.MailBatchWhereInput
+  data: Prisma.XOR<Prisma.MailBatchUpdateWithoutRetriesInput, Prisma.MailBatchUncheckedUpdateWithoutRetriesInput>
+}
+
+export type MailBatchUpdateWithoutRetriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
+  segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMailBatchStatusFieldUpdateOperationsInput | $Enums.MailBatchStatus
+  totalRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  pendingRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  sentRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  skippedRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  failedRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailbox?: Prisma.MailboxUpdateOneRequiredWithoutMailBatchesNestedInput
+  createdBy?: Prisma.MemberUpdateOneRequiredWithoutCreatedMailBatchesNestedInput
+  recipients?: Prisma.MailBatchRecipientUpdateManyWithoutBatchNestedInput
+  assets?: Prisma.MailBatchAssetUpdateManyWithoutBatchNestedInput
+  retryRoot?: Prisma.MailBatchUpdateOneWithoutRetriesNestedInput
+}
+
+export type MailBatchUncheckedUpdateWithoutRetriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  mailboxId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
+  segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  retryRootBatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumMailBatchStatusFieldUpdateOperationsInput | $Enums.MailBatchStatus
+  totalRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  pendingRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  sentRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  skippedRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  failedRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutBatchNestedInput
+  assets?: Prisma.MailBatchAssetUncheckedUpdateManyWithoutBatchNestedInput
+}
+
+export type MailBatchUpsertWithWhereUniqueWithoutRetryRootInput = {
+  where: Prisma.MailBatchWhereUniqueInput
+  update: Prisma.XOR<Prisma.MailBatchUpdateWithoutRetryRootInput, Prisma.MailBatchUncheckedUpdateWithoutRetryRootInput>
+  create: Prisma.XOR<Prisma.MailBatchCreateWithoutRetryRootInput, Prisma.MailBatchUncheckedCreateWithoutRetryRootInput>
+}
+
+export type MailBatchUpdateWithWhereUniqueWithoutRetryRootInput = {
+  where: Prisma.MailBatchWhereUniqueInput
+  data: Prisma.XOR<Prisma.MailBatchUpdateWithoutRetryRootInput, Prisma.MailBatchUncheckedUpdateWithoutRetryRootInput>
+}
+
+export type MailBatchUpdateManyWithWhereWithoutRetryRootInput = {
+  where: Prisma.MailBatchScalarWhereInput
+  data: Prisma.XOR<Prisma.MailBatchUpdateManyMutationInput, Prisma.MailBatchUncheckedUpdateManyWithoutRetryRootInput>
+}
+
 export type MailBatchCreateWithoutRecipientsInput = {
   id?: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1024,6 +1353,8 @@ export type MailBatchCreateWithoutRecipientsInput = {
   mailbox: Prisma.MailboxCreateNestedOneWithoutMailBatchesInput
   createdBy: Prisma.MemberCreateNestedOneWithoutCreatedMailBatchesInput
   assets?: Prisma.MailBatchAssetCreateNestedManyWithoutBatchInput
+  retryRoot?: Prisma.MailBatchCreateNestedOneWithoutRetriesInput
+  retries?: Prisma.MailBatchCreateNestedManyWithoutRetryRootInput
 }
 
 export type MailBatchUncheckedCreateWithoutRecipientsInput = {
@@ -1032,10 +1363,12 @@ export type MailBatchUncheckedCreateWithoutRecipientsInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
   idempotencyKey: string
+  retryRootBatchId?: string | null
   status?: $Enums.MailBatchStatus
   totalRecipients?: number
   pendingRecipients?: number
@@ -1047,6 +1380,7 @@ export type MailBatchUncheckedCreateWithoutRecipientsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   assets?: Prisma.MailBatchAssetUncheckedCreateNestedManyWithoutBatchInput
+  retries?: Prisma.MailBatchUncheckedCreateNestedManyWithoutRetryRootInput
 }
 
 export type MailBatchCreateOrConnectWithoutRecipientsInput = {
@@ -1069,6 +1403,7 @@ export type MailBatchUpdateWithoutRecipientsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1086,6 +1421,8 @@ export type MailBatchUpdateWithoutRecipientsInput = {
   mailbox?: Prisma.MailboxUpdateOneRequiredWithoutMailBatchesNestedInput
   createdBy?: Prisma.MemberUpdateOneRequiredWithoutCreatedMailBatchesNestedInput
   assets?: Prisma.MailBatchAssetUpdateManyWithoutBatchNestedInput
+  retryRoot?: Prisma.MailBatchUpdateOneWithoutRetriesNestedInput
+  retries?: Prisma.MailBatchUpdateManyWithoutRetryRootNestedInput
 }
 
 export type MailBatchUncheckedUpdateWithoutRecipientsInput = {
@@ -1094,10 +1431,12 @@ export type MailBatchUncheckedUpdateWithoutRecipientsInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  retryRootBatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMailBatchStatusFieldUpdateOperationsInput | $Enums.MailBatchStatus
   totalRecipients?: Prisma.IntFieldUpdateOperationsInput | number
   pendingRecipients?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1109,12 +1448,14 @@ export type MailBatchUncheckedUpdateWithoutRecipientsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assets?: Prisma.MailBatchAssetUncheckedUpdateManyWithoutBatchNestedInput
+  retries?: Prisma.MailBatchUncheckedUpdateManyWithoutRetryRootNestedInput
 }
 
 export type MailBatchCreateWithoutAssetsInput = {
   id?: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
@@ -1132,6 +1473,8 @@ export type MailBatchCreateWithoutAssetsInput = {
   mailbox: Prisma.MailboxCreateNestedOneWithoutMailBatchesInput
   createdBy: Prisma.MemberCreateNestedOneWithoutCreatedMailBatchesInput
   recipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutBatchInput
+  retryRoot?: Prisma.MailBatchCreateNestedOneWithoutRetriesInput
+  retries?: Prisma.MailBatchCreateNestedManyWithoutRetryRootInput
 }
 
 export type MailBatchUncheckedCreateWithoutAssetsInput = {
@@ -1140,10 +1483,12 @@ export type MailBatchUncheckedCreateWithoutAssetsInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
   idempotencyKey: string
+  retryRootBatchId?: string | null
   status?: $Enums.MailBatchStatus
   totalRecipients?: number
   pendingRecipients?: number
@@ -1155,6 +1500,7 @@ export type MailBatchUncheckedCreateWithoutAssetsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   recipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutBatchInput
+  retries?: Prisma.MailBatchUncheckedCreateNestedManyWithoutRetryRootInput
 }
 
 export type MailBatchCreateOrConnectWithoutAssetsInput = {
@@ -1177,6 +1523,7 @@ export type MailBatchUpdateWithoutAssetsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1194,6 +1541,8 @@ export type MailBatchUpdateWithoutAssetsInput = {
   mailbox?: Prisma.MailboxUpdateOneRequiredWithoutMailBatchesNestedInput
   createdBy?: Prisma.MemberUpdateOneRequiredWithoutCreatedMailBatchesNestedInput
   recipients?: Prisma.MailBatchRecipientUpdateManyWithoutBatchNestedInput
+  retryRoot?: Prisma.MailBatchUpdateOneWithoutRetriesNestedInput
+  retries?: Prisma.MailBatchUpdateManyWithoutRetryRootNestedInput
 }
 
 export type MailBatchUncheckedUpdateWithoutAssetsInput = {
@@ -1202,10 +1551,12 @@ export type MailBatchUncheckedUpdateWithoutAssetsInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  retryRootBatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMailBatchStatusFieldUpdateOperationsInput | $Enums.MailBatchStatus
   totalRecipients?: Prisma.IntFieldUpdateOperationsInput | number
   pendingRecipients?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1217,6 +1568,7 @@ export type MailBatchUncheckedUpdateWithoutAssetsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   recipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutBatchNestedInput
+  retries?: Prisma.MailBatchUncheckedUpdateManyWithoutRetryRootNestedInput
 }
 
 export type MailBatchCreateManyCreatedByInput = {
@@ -1224,10 +1576,12 @@ export type MailBatchCreateManyCreatedByInput = {
   mailboxId: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
   idempotencyKey: string
+  retryRootBatchId?: string | null
   status?: $Enums.MailBatchStatus
   totalRecipients?: number
   pendingRecipients?: number
@@ -1244,6 +1598,7 @@ export type MailBatchUpdateWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1261,6 +1616,8 @@ export type MailBatchUpdateWithoutCreatedByInput = {
   mailbox?: Prisma.MailboxUpdateOneRequiredWithoutMailBatchesNestedInput
   recipients?: Prisma.MailBatchRecipientUpdateManyWithoutBatchNestedInput
   assets?: Prisma.MailBatchAssetUpdateManyWithoutBatchNestedInput
+  retryRoot?: Prisma.MailBatchUpdateOneWithoutRetriesNestedInput
+  retries?: Prisma.MailBatchUpdateManyWithoutRetryRootNestedInput
 }
 
 export type MailBatchUncheckedUpdateWithoutCreatedByInput = {
@@ -1268,10 +1625,12 @@ export type MailBatchUncheckedUpdateWithoutCreatedByInput = {
   mailboxId?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  retryRootBatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMailBatchStatusFieldUpdateOperationsInput | $Enums.MailBatchStatus
   totalRecipients?: Prisma.IntFieldUpdateOperationsInput | number
   pendingRecipients?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1284,6 +1643,7 @@ export type MailBatchUncheckedUpdateWithoutCreatedByInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   recipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutBatchNestedInput
   assets?: Prisma.MailBatchAssetUncheckedUpdateManyWithoutBatchNestedInput
+  retries?: Prisma.MailBatchUncheckedUpdateManyWithoutRetryRootNestedInput
 }
 
 export type MailBatchUncheckedUpdateManyWithoutCreatedByInput = {
@@ -1291,10 +1651,12 @@ export type MailBatchUncheckedUpdateManyWithoutCreatedByInput = {
   mailboxId?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
   idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  retryRootBatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumMailBatchStatusFieldUpdateOperationsInput | $Enums.MailBatchStatus
   totalRecipients?: Prisma.IntFieldUpdateOperationsInput | number
   pendingRecipients?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1312,10 +1674,12 @@ export type MailBatchCreateManyMailboxInput = {
   createdById: string
   audienceMode: $Enums.MailAudienceMode
   segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
   subject: string
   bodyText: string
   bodyHtml: string
   idempotencyKey: string
+  retryRootBatchId?: string | null
   status?: $Enums.MailBatchStatus
   totalRecipients?: number
   pendingRecipients?: number
@@ -1332,6 +1696,7 @@ export type MailBatchUpdateWithoutMailboxInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1349,6 +1714,8 @@ export type MailBatchUpdateWithoutMailboxInput = {
   createdBy?: Prisma.MemberUpdateOneRequiredWithoutCreatedMailBatchesNestedInput
   recipients?: Prisma.MailBatchRecipientUpdateManyWithoutBatchNestedInput
   assets?: Prisma.MailBatchAssetUpdateManyWithoutBatchNestedInput
+  retryRoot?: Prisma.MailBatchUpdateOneWithoutRetriesNestedInput
+  retries?: Prisma.MailBatchUpdateManyWithoutRetryRootNestedInput
 }
 
 export type MailBatchUncheckedUpdateWithoutMailboxInput = {
@@ -1356,6 +1723,106 @@ export type MailBatchUncheckedUpdateWithoutMailboxInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  retryRootBatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumMailBatchStatusFieldUpdateOperationsInput | $Enums.MailBatchStatus
+  totalRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  pendingRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  sentRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  skippedRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  failedRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutBatchNestedInput
+  assets?: Prisma.MailBatchAssetUncheckedUpdateManyWithoutBatchNestedInput
+  retries?: Prisma.MailBatchUncheckedUpdateManyWithoutRetryRootNestedInput
+}
+
+export type MailBatchUncheckedUpdateManyWithoutMailboxInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
+  segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  retryRootBatchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumMailBatchStatusFieldUpdateOperationsInput | $Enums.MailBatchStatus
+  totalRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  pendingRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  sentRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  skippedRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  failedRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type MailBatchCreateManyRetryRootInput = {
+  id?: string
+  mailboxId: string
+  createdById: string
+  audienceMode: $Enums.MailAudienceMode
+  segment?: $Enums.SegmentCode | null
+  purpose?: $Enums.MailPurpose
+  subject: string
+  bodyText: string
+  bodyHtml: string
+  idempotencyKey: string
+  status?: $Enums.MailBatchStatus
+  totalRecipients?: number
+  pendingRecipients?: number
+  sentRecipients?: number
+  skippedRecipients?: number
+  failedRecipients?: number
+  startedAt?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type MailBatchUpdateWithoutRetryRootInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
+  segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyText?: Prisma.StringFieldUpdateOperationsInput | string
+  bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
+  idempotencyKey?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMailBatchStatusFieldUpdateOperationsInput | $Enums.MailBatchStatus
+  totalRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  pendingRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  sentRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  skippedRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  failedRecipients?: Prisma.IntFieldUpdateOperationsInput | number
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mailbox?: Prisma.MailboxUpdateOneRequiredWithoutMailBatchesNestedInput
+  createdBy?: Prisma.MemberUpdateOneRequiredWithoutCreatedMailBatchesNestedInput
+  recipients?: Prisma.MailBatchRecipientUpdateManyWithoutBatchNestedInput
+  assets?: Prisma.MailBatchAssetUpdateManyWithoutBatchNestedInput
+  retries?: Prisma.MailBatchUpdateManyWithoutRetryRootNestedInput
+}
+
+export type MailBatchUncheckedUpdateWithoutRetryRootInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  mailboxId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
+  segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1372,13 +1839,16 @@ export type MailBatchUncheckedUpdateWithoutMailboxInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   recipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutBatchNestedInput
   assets?: Prisma.MailBatchAssetUncheckedUpdateManyWithoutBatchNestedInput
+  retries?: Prisma.MailBatchUncheckedUpdateManyWithoutRetryRootNestedInput
 }
 
-export type MailBatchUncheckedUpdateManyWithoutMailboxInput = {
+export type MailBatchUncheckedUpdateManyWithoutRetryRootInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  mailboxId?: Prisma.StringFieldUpdateOperationsInput | string
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   audienceMode?: Prisma.EnumMailAudienceModeFieldUpdateOperationsInput | $Enums.MailAudienceMode
   segment?: Prisma.NullableEnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode | null
+  purpose?: Prisma.EnumMailPurposeFieldUpdateOperationsInput | $Enums.MailPurpose
   subject?: Prisma.StringFieldUpdateOperationsInput | string
   bodyText?: Prisma.StringFieldUpdateOperationsInput | string
   bodyHtml?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1403,11 +1873,13 @@ export type MailBatchUncheckedUpdateManyWithoutMailboxInput = {
 export type MailBatchCountOutputType = {
   recipients: number
   assets: number
+  retries: number
 }
 
 export type MailBatchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   recipients?: boolean | MailBatchCountOutputTypeCountRecipientsArgs
   assets?: boolean | MailBatchCountOutputTypeCountAssetsArgs
+  retries?: boolean | MailBatchCountOutputTypeCountRetriesArgs
 }
 
 /**
@@ -1434,6 +1906,13 @@ export type MailBatchCountOutputTypeCountAssetsArgs<ExtArgs extends runtime.Type
   where?: Prisma.MailBatchAssetWhereInput
 }
 
+/**
+ * MailBatchCountOutputType without action
+ */
+export type MailBatchCountOutputTypeCountRetriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MailBatchWhereInput
+}
+
 
 export type MailBatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1441,10 +1920,12 @@ export type MailBatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   createdById?: boolean
   audienceMode?: boolean
   segment?: boolean
+  purpose?: boolean
   subject?: boolean
   bodyText?: boolean
   bodyHtml?: boolean
   idempotencyKey?: boolean
+  retryRootBatchId?: boolean
   status?: boolean
   totalRecipients?: boolean
   pendingRecipients?: boolean
@@ -1459,6 +1940,8 @@ export type MailBatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   createdBy?: boolean | Prisma.MemberDefaultArgs<ExtArgs>
   recipients?: boolean | Prisma.MailBatch$recipientsArgs<ExtArgs>
   assets?: boolean | Prisma.MailBatch$assetsArgs<ExtArgs>
+  retryRoot?: boolean | Prisma.MailBatch$retryRootArgs<ExtArgs>
+  retries?: boolean | Prisma.MailBatch$retriesArgs<ExtArgs>
   _count?: boolean | Prisma.MailBatchCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mailBatch"]>
 
@@ -1468,10 +1951,12 @@ export type MailBatchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   createdById?: boolean
   audienceMode?: boolean
   segment?: boolean
+  purpose?: boolean
   subject?: boolean
   bodyText?: boolean
   bodyHtml?: boolean
   idempotencyKey?: boolean
+  retryRootBatchId?: boolean
   status?: boolean
   totalRecipients?: boolean
   pendingRecipients?: boolean
@@ -1484,6 +1969,7 @@ export type MailBatchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   updatedAt?: boolean
   mailbox?: boolean | Prisma.MailboxDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.MemberDefaultArgs<ExtArgs>
+  retryRoot?: boolean | Prisma.MailBatch$retryRootArgs<ExtArgs>
 }, ExtArgs["result"]["mailBatch"]>
 
 export type MailBatchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1492,10 +1978,12 @@ export type MailBatchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   createdById?: boolean
   audienceMode?: boolean
   segment?: boolean
+  purpose?: boolean
   subject?: boolean
   bodyText?: boolean
   bodyHtml?: boolean
   idempotencyKey?: boolean
+  retryRootBatchId?: boolean
   status?: boolean
   totalRecipients?: boolean
   pendingRecipients?: boolean
@@ -1508,6 +1996,7 @@ export type MailBatchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   updatedAt?: boolean
   mailbox?: boolean | Prisma.MailboxDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.MemberDefaultArgs<ExtArgs>
+  retryRoot?: boolean | Prisma.MailBatch$retryRootArgs<ExtArgs>
 }, ExtArgs["result"]["mailBatch"]>
 
 export type MailBatchSelectScalar = {
@@ -1516,10 +2005,12 @@ export type MailBatchSelectScalar = {
   createdById?: boolean
   audienceMode?: boolean
   segment?: boolean
+  purpose?: boolean
   subject?: boolean
   bodyText?: boolean
   bodyHtml?: boolean
   idempotencyKey?: boolean
+  retryRootBatchId?: boolean
   status?: boolean
   totalRecipients?: boolean
   pendingRecipients?: boolean
@@ -1532,21 +2023,25 @@ export type MailBatchSelectScalar = {
   updatedAt?: boolean
 }
 
-export type MailBatchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "mailboxId" | "createdById" | "audienceMode" | "segment" | "subject" | "bodyText" | "bodyHtml" | "idempotencyKey" | "status" | "totalRecipients" | "pendingRecipients" | "sentRecipients" | "skippedRecipients" | "failedRecipients" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["mailBatch"]>
+export type MailBatchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "mailboxId" | "createdById" | "audienceMode" | "segment" | "purpose" | "subject" | "bodyText" | "bodyHtml" | "idempotencyKey" | "retryRootBatchId" | "status" | "totalRecipients" | "pendingRecipients" | "sentRecipients" | "skippedRecipients" | "failedRecipients" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["mailBatch"]>
 export type MailBatchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   mailbox?: boolean | Prisma.MailboxDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.MemberDefaultArgs<ExtArgs>
   recipients?: boolean | Prisma.MailBatch$recipientsArgs<ExtArgs>
   assets?: boolean | Prisma.MailBatch$assetsArgs<ExtArgs>
+  retryRoot?: boolean | Prisma.MailBatch$retryRootArgs<ExtArgs>
+  retries?: boolean | Prisma.MailBatch$retriesArgs<ExtArgs>
   _count?: boolean | Prisma.MailBatchCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MailBatchIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   mailbox?: boolean | Prisma.MailboxDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.MemberDefaultArgs<ExtArgs>
+  retryRoot?: boolean | Prisma.MailBatch$retryRootArgs<ExtArgs>
 }
 export type MailBatchIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   mailbox?: boolean | Prisma.MailboxDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.MemberDefaultArgs<ExtArgs>
+  retryRoot?: boolean | Prisma.MailBatch$retryRootArgs<ExtArgs>
 }
 
 export type $MailBatchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1556,6 +2051,8 @@ export type $MailBatchPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     createdBy: Prisma.$MemberPayload<ExtArgs>
     recipients: Prisma.$MailBatchRecipientPayload<ExtArgs>[]
     assets: Prisma.$MailBatchAssetPayload<ExtArgs>[]
+    retryRoot: Prisma.$MailBatchPayload<ExtArgs> | null
+    retries: Prisma.$MailBatchPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1563,10 +2060,12 @@ export type $MailBatchPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     createdById: string
     audienceMode: $Enums.MailAudienceMode
     segment: $Enums.SegmentCode | null
+    purpose: $Enums.MailPurpose
     subject: string
     bodyText: string
     bodyHtml: string
     idempotencyKey: string
+    retryRootBatchId: string | null
     status: $Enums.MailBatchStatus
     totalRecipients: number
     pendingRecipients: number
@@ -1975,6 +2474,8 @@ export interface Prisma__MailBatchClient<T, Null = never, ExtArgs extends runtim
   createdBy<T extends Prisma.MemberDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MemberDefaultArgs<ExtArgs>>): Prisma.Prisma__MemberClient<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   recipients<T extends Prisma.MailBatch$recipientsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailBatch$recipientsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailBatchRecipientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assets<T extends Prisma.MailBatch$assetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailBatch$assetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailBatchAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  retryRoot<T extends Prisma.MailBatch$retryRootArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailBatch$retryRootArgs<ExtArgs>>): Prisma.Prisma__MailBatchClient<runtime.Types.Result.GetResult<Prisma.$MailBatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  retries<T extends Prisma.MailBatch$retriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MailBatch$retriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MailBatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2009,10 +2510,12 @@ export interface MailBatchFieldRefs {
   readonly createdById: Prisma.FieldRef<"MailBatch", 'String'>
   readonly audienceMode: Prisma.FieldRef<"MailBatch", 'MailAudienceMode'>
   readonly segment: Prisma.FieldRef<"MailBatch", 'SegmentCode'>
+  readonly purpose: Prisma.FieldRef<"MailBatch", 'MailPurpose'>
   readonly subject: Prisma.FieldRef<"MailBatch", 'String'>
   readonly bodyText: Prisma.FieldRef<"MailBatch", 'String'>
   readonly bodyHtml: Prisma.FieldRef<"MailBatch", 'String'>
   readonly idempotencyKey: Prisma.FieldRef<"MailBatch", 'String'>
+  readonly retryRootBatchId: Prisma.FieldRef<"MailBatch", 'String'>
   readonly status: Prisma.FieldRef<"MailBatch", 'MailBatchStatus'>
   readonly totalRecipients: Prisma.FieldRef<"MailBatch", 'Int'>
   readonly pendingRecipients: Prisma.FieldRef<"MailBatch", 'Int'>
@@ -2469,6 +2972,49 @@ export type MailBatch$assetsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.MailBatchAssetScalarFieldEnum | Prisma.MailBatchAssetScalarFieldEnum[]
+}
+
+/**
+ * MailBatch.retryRoot
+ */
+export type MailBatch$retryRootArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailBatch
+   */
+  select?: Prisma.MailBatchSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailBatch
+   */
+  omit?: Prisma.MailBatchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailBatchInclude<ExtArgs> | null
+  where?: Prisma.MailBatchWhereInput
+}
+
+/**
+ * MailBatch.retries
+ */
+export type MailBatch$retriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MailBatch
+   */
+  select?: Prisma.MailBatchSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MailBatch
+   */
+  omit?: Prisma.MailBatchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MailBatchInclude<ExtArgs> | null
+  where?: Prisma.MailBatchWhereInput
+  orderBy?: Prisma.MailBatchOrderByWithRelationInput | Prisma.MailBatchOrderByWithRelationInput[]
+  cursor?: Prisma.MailBatchWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MailBatchScalarFieldEnum | Prisma.MailBatchScalarFieldEnum[]
 }
 
 /**

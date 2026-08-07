@@ -14,6 +14,7 @@ WORKDIR /app
 COPY . .
 RUN npm run build \
     && npm run worker:build \
+    && npm run visit:verify:build \
     && npm run bootstrap:build \
     && npm run initial-reconcile:build
 

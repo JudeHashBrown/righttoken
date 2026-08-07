@@ -108,6 +108,28 @@ describe("mail asset routes", () => {
     });
   });
 
+  it.each([
+    ["MAIL_FILE_UNSUPPORTED", 415],
+    ["MAIL_FILE_TOO_LARGE", 413],
+    ["MAIL_FILE_INVALID", 400]
+  ])("maps %s to HTTP %s", async (code, status) => {
+    mocks.createMailAsset.mockRejectedValue(
+      new mocks.MailAssetServiceError(code)
+    );
+    const { POST } = await import("@/app/api/mail/assets/route");
+
+    const response = await POST(
+      uploadRequest(
+        new File([Buffer.from("file")], "document.pdf", {
+          type: "application/pdf"
+        })
+      )
+    );
+
+    expect(response.status).toBe(status);
+    await expect(response.json()).resolves.toEqual({ code });
+  });
+
   it("returns service unavailable when asset storage is not configured", async () => {
     mocks.createMailAsset.mockRejectedValue(
       new mocks.MailAssetServiceError(

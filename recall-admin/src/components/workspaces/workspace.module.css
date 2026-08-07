@@ -39,6 +39,18 @@
   gap: 8px;
 }
 
+.mailToolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.mailAnchorTarget,
+.mailWorkbench,
+.mailBatchHistory {
+  scroll-margin-top: 78px;
+}
+
 .filterBar {
   display: flex;
   flex-wrap: wrap;
@@ -730,6 +742,31 @@
   margin-bottom: 16px;
 }
 
+.mailStatGrid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.mailStatGrid .statCard {
+  min-height: 80px;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.mailStatGrid .statCard span {
+  font-size: 12px;
+}
+
+.mailStatGrid .statCard strong {
+  margin-top: 8px;
+  font-size: 20px;
+}
+
+.mailStatGrid .statCard small {
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .statCard {
   min-width: 0;
   border: 1px solid #e3e6ee;
@@ -825,6 +862,156 @@
   padding: 5px 8px;
   font-size: 12px;
   font-weight: 650;
+}
+
+.mailBatchHistory {
+  margin-top: 16px;
+  overflow-x: auto;
+  border: 1px solid #e1e5ed;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.mailBatchHistoryHeader {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #e7eaf0;
+  padding: 0 16px;
+}
+
+.mailBatchHistoryHeader h2 {
+  margin: 0;
+  color: #273149;
+  font-size: 16px;
+}
+
+.mailBatchHistoryHeader span {
+  color: #747e93;
+  font-size: 13px;
+}
+
+.mailBatchHistoryList {
+  min-width: 1040px;
+  max-height: 360px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mailBatchHistoryList li {
+  display: grid;
+  grid-template-columns: 138px minmax(180px, 1.6fr) repeat(6, minmax(72px, auto));
+  gap: 12px;
+  align-items: center;
+  min-height: 58px;
+  padding: 10px 16px;
+  color: #59647b;
+  font-size: 13px;
+}
+
+.mailBatchHistoryList li + li {
+  border-top: 1px solid #edf0f4;
+}
+
+.mailBatchHistoryList li > div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.mailBatchHistoryList strong {
+  overflow: hidden;
+  color: #273149;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mailBatchHistoryList time,
+.mailBatchHistoryList li > div span {
+  color: #7b8498;
+}
+
+.mailBatchHistoryEmpty {
+  margin: 0;
+  padding: 24px 16px;
+  color: #7b8498;
+  font-size: 13px;
+}
+
+.bounceListPanel {
+  display: grid;
+  gap: 9px;
+  border-top: 1px solid #e8eaf1;
+  padding-top: 12px;
+}
+
+.bounceListPanel label {
+  color: #58647c;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.bounceListPanel p {
+  margin: 0;
+  color: #747e93;
+  font-size: 13px;
+}
+
+.bounceListPanel .textarea {
+  min-height: 72px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+  overflow-wrap: anywhere;
+}
+
+.bounceConfirmDialog {
+  display: grid;
+  gap: 9px;
+  border: 1px solid #cfd5ef;
+  border-radius: 10px;
+  background: #f8f9ff;
+  box-shadow: 0 8px 22px rgb(54 65 118 / 12%);
+  padding: 14px;
+}
+
+.bounceConfirmDialog strong {
+  color: #202a40;
+}
+
+.bounceConfirmDialog p {
+  color: #5f6a82;
+  line-height: 1.55;
+}
+
+.bounceDiagnosticPanel {
+  display: grid;
+  gap: 8px;
+  margin: 14px 16px 0;
+  border: 1px solid #edc8cd;
+  border-radius: 10px;
+  background: #fff7f8;
+  padding: 14px;
+}
+
+.bounceDiagnosticPanel strong {
+  color: #a02c3c;
+}
+
+.bounceDiagnosticPanel p {
+  margin: 0;
+  color: #6f5159;
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.bounceDiagnosticPanel .button {
+  justify-self: start;
+  margin-top: 3px;
 }
 
 .templateBar {
@@ -1123,9 +1310,31 @@
 }
 
 .mailEditorToolbar button:focus-visible,
+.mailEditorToolbar select:focus-visible,
 .mailAttachmentItem button:focus-visible {
   outline: 3px solid rgb(89 103 215 / 20%);
   outline-offset: 1px;
+}
+
+.mailEditorSelectLabel {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  gap: 5px;
+  color: #4e5a72;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.mailEditorSelectLabel select {
+  height: 30px;
+  border: 1px solid #cfd6e4;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #303b52;
+  padding: 0 24px 0 7px;
+  font: inherit;
+  cursor: pointer;
 }
 
 .mailEditorToolbar button:disabled {
@@ -1137,6 +1346,24 @@
   margin-left: auto;
   color: #657087;
   font-size: 12px;
+}
+
+.mailLinkDialog {
+  display: grid;
+  gap: 12px;
+  border: 1px solid #d8dced;
+  border-top: 0;
+  background: #f8f9fd;
+  padding: 14px;
+}
+
+.mailLinkDialog > strong {
+  color: #2d374f;
+  font-size: 14px;
+}
+
+.mailLinkDialog .inlineActions {
+  justify-content: flex-end;
 }
 
 .toolbarDivider {
@@ -2295,6 +2522,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .mailStatGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .editorGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2313,6 +2544,10 @@
 @media (max-width: 760px) {
   .mailBatchGrid {
     grid-template-columns: 1fr;
+  }
+
+  .mailStatGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .page {

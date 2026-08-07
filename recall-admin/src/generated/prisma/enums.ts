@@ -73,12 +73,23 @@ export type MailDirection = (typeof MailDirection)[keyof typeof MailDirection]
 export const MailMessageStatus = {
   DRAFT: 'DRAFT',
   SENT: 'SENT',
+  BOUNCED: 'BOUNCED',
   RECEIVED: 'RECEIVED',
   FAILED: 'FAILED',
   UNMATCHED: 'UNMATCHED'
 } as const
 
 export type MailMessageStatus = (typeof MailMessageStatus)[keyof typeof MailMessageStatus]
+
+
+export const MailDeliveryAction = {
+  FAILED: 'FAILED',
+  DELAYED: 'DELAYED',
+  DELIVERED: 'DELIVERED',
+  OTHER: 'OTHER'
+} as const
+
+export type MailDeliveryAction = (typeof MailDeliveryAction)[keyof typeof MailDeliveryAction]
 
 
 export const MailAssetDisposition = {
@@ -113,11 +124,41 @@ export const MailBatchRecipientStatus = {
   PENDING: 'PENDING',
   SENDING: 'SENDING',
   SENT: 'SENT',
+  BOUNCED: 'BOUNCED',
   SKIPPED: 'SKIPPED',
   FAILED: 'FAILED'
 } as const
 
 export type MailBatchRecipientStatus = (typeof MailBatchRecipientStatus)[keyof typeof MailBatchRecipientStatus]
+
+
+export const MailPurpose = {
+  PAYMENT_FOLLOW_UP: 'PAYMENT_FOLLOW_UP',
+  USAGE_FOLLOW_UP: 'USAGE_FOLLOW_UP',
+  KNOWLEDGE_SHARE: 'KNOWLEDGE_SHARE',
+  PRODUCT_UPDATE: 'PRODUCT_UPDATE',
+  CAMPAIGN: 'CAMPAIGN',
+  OTHER: 'OTHER'
+} as const
+
+export type MailPurpose = (typeof MailPurpose)[keyof typeof MailPurpose]
+
+
+export const MaintenanceSource = {
+  MANUAL: 'MANUAL',
+  MAIL: 'MAIL'
+} as const
+
+export type MaintenanceSource = (typeof MaintenanceSource)[keyof typeof MaintenanceSource]
+
+
+export const CouponGrantStatus = {
+  PENDING: 'PENDING',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED'
+} as const
+
+export type CouponGrantStatus = (typeof CouponGrantStatus)[keyof typeof CouponGrantStatus]
 
 
 export const NotificationChannel = {

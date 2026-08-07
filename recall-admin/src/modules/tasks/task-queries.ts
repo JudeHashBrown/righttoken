@@ -30,6 +30,7 @@ export type TaskFilters = {
   dueFrom?: Date;
   dueTo?: Date;
   dueBefore?: Date;
+  createdFrom?: Date;
   cursor?: string | null;
   pageSize?: number;
   now?: Date;
@@ -152,6 +153,9 @@ function buildTaskWhere(
                 : {})
             }
           }
+        : {},
+      filters.createdFrom
+        ? { createdAt: { gte: filters.createdFrom } }
         : {},
       filters.segments?.length ||
       filters.countryCode ||

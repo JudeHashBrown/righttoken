@@ -87,6 +87,41 @@ export type SegmentOverride = Prisma.SegmentOverrideModel
  */
 export type UserNote = Prisma.UserNoteModel
 /**
+ * Model UserContact
+ * 
+ */
+export type UserContact = Prisma.UserContactModel
+/**
+ * Model UserMaintenanceRecord
+ * 
+ */
+export type UserMaintenanceRecord = Prisma.UserMaintenanceRecordModel
+/**
+ * Model RechargeOutreachRecord
+ * 
+ */
+export type RechargeOutreachRecord = Prisma.RechargeOutreachRecordModel
+/**
+ * Model PersonalizedCarePlan
+ * 
+ */
+export type PersonalizedCarePlan = Prisma.PersonalizedCarePlanModel
+/**
+ * Model InactivityReasonRecord
+ * 
+ */
+export type InactivityReasonRecord = Prisma.InactivityReasonRecordModel
+/**
+ * Model UserGuidanceRecord
+ * 
+ */
+export type UserGuidanceRecord = Prisma.UserGuidanceRecordModel
+/**
+ * Model CouponGrant
+ * 
+ */
+export type CouponGrant = Prisma.CouponGrantModel
+/**
  * Model AutomationRuleVersion
  * 
  */
@@ -166,6 +201,11 @@ export type MailThread = Prisma.MailThreadModel
  * 
  */
 export type MailMessage = Prisma.MailMessageModel
+/**
+ * Model MailDeliveryEvent
+ * 
+ */
+export type MailDeliveryEvent = Prisma.MailDeliveryEventModel
 /**
  * Model MailAsset
  * 

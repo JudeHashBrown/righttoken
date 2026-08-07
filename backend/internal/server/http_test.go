@@ -1,12 +1,42 @@
 package server
 
 import (
+	"bytes"
+	"log"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/Wei-Shaw/sub2api/internal/config"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 )
+
+func TestConfigureTrustedProxiesDisablesAllTrustAfterInvalidConfiguration(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	var logs bytes.Buffer
+	originalOutput := log.Writer()
+	log.SetOutput(&logs)
+	t.Cleanup(func() { log.SetOutput(originalOutput) })
+
+	configureTrustedProxies(router, []string{"192.0.2.10", "sensitive-invalid-proxy"})
+	router.GET("/client-ip", func(c *gin.Context) {
+		c.String(http.StatusOK, c.ClientIP())
+	})
+	request := httptest.NewRequest(http.MethodGet, "/client-ip", nil)
+	request.RemoteAddr = "192.0.2.10:4321"
+	request.Header.Set("X-Forwarded-For", "198.51.100.24")
+	response := httptest.NewRecorder()
+
+	router.ServeHTTP(response, request)
+
+	require.Equal(t, http.StatusOK, response.Code)
+	require.Equal(t, "192.0.2.10", strings.TrimSpace(response.Body.String()))
+	require.Contains(t, logs.String(), "trusted proxy configuration is invalid; proxy trust disabled")
+	require.NotContains(t, logs.String(), "sensitive-invalid-proxy")
+}
 
 func TestProvideHTTPServerEnablesNativeH2C(t *testing.T) {
 	cfg := &config.Config{

@@ -1,6 +1,7 @@
 import type {
   MailBatch,
   MailBatchRecipientStatus,
+  MailPurpose,
   Prisma
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
@@ -31,6 +32,7 @@ export type CreateMailBatchInput = {
   mailboxId: string;
   audience: MailBatchAudience;
   subject: string;
+  purpose?: MailPurpose;
   bodyText: string;
   bodyHtml: string;
   assets: OutboundAssetReference[];
@@ -212,6 +214,7 @@ export async function createMailBatch(
             ? input.audience.segment
             : null,
         subject: input.subject.trim(),
+        purpose: input.purpose ?? "OTHER",
         bodyText: richContent.bodyText,
         bodyHtml: richContent.bodyHtml,
         idempotencyKey,

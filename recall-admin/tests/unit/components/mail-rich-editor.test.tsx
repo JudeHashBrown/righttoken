@@ -40,10 +40,61 @@ function Harness({
 
 import React from "react";
 
+function selectEditorText(text: string): void {
+  const editor = screen.getByRole("textbox", {
+    name: "邮件正文"
+  });
+  const walker = document.createTreeWalker(
+    editor,
+    NodeFilter.SHOW_TEXT
+  );
+  let node = walker.nextNode();
+  while (node && !node.textContent?.includes(text)) {
+    node = walker.nextNode();
+  }
+  if (!node) throw new Error(`Text not found: ${text}`);
+  const range = document.createRange();
+  range.selectNodeContents(node);
+  const selection = window.getSelection()!;
+  selection.removeAllRanges();
+  selection.addRange(range);
+  fireEvent.mouseUp(editor);
+}
+
 describe("MailRichEditor", () => {
   afterEach(() => {
     cleanup();
     vi.unstubAllGlobals();
+  });
+
+  it("offers ordered lists, alignment, and four fixed font sizes", () => {
+    const execCommand = vi.fn().mockReturnValue(true);
+    Object.defineProperty(document, "execCommand", {
+      configurable: true,
+      value: execCommand
+    });
+    render(<Harness />);
+
+    fireEvent.click(screen.getByRole("button", { name: "有序编号" }));
+    fireEvent.click(screen.getByRole("button", { name: "居中对齐" }));
+    fireEvent.change(screen.getByRole("combobox", { name: "字号" }), {
+      target: { value: "18px" }
+    });
+
+    expect(execCommand).toHaveBeenCalledWith(
+      "insertOrderedList",
+      false,
+      undefined
+    );
+    expect(execCommand).toHaveBeenCalledWith(
+      "justifyCenter",
+      false,
+      undefined
+    );
+    expect(execCommand).toHaveBeenCalledWith("fontSize", false, "5");
+    expect(
+      screen.getByRole("combobox", { name: "字号" })
+    ).toHaveTextContent("小正常大标题");
   });
 
   it("uploads and inserts an inline image", async () => {
@@ -109,7 +160,7 @@ describe("MailRichEditor", () => {
     );
     render(<Harness />);
 
-    fireEvent.change(screen.getByLabelText("选择图片附件"), {
+    fireEvent.change(screen.getByLabelText("选择附件"), {
       target: {
         files: [
           new File([Buffer.from("image")], "receipt.webp", {
@@ -132,6 +183,48 @@ describe("MailRichEditor", () => {
       })
     );
     expect(screen.queryByText("receipt.webp")).not.toBeInTheDocument();
+  });
+
+  it("adds a PDF as an ordinary attachment", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            asset: {
+              id: "asset-pdf",
+              fileName: "报价单.pdf",
+              contentType: "application/pdf",
+              byteSize: 1024,
+              width: 0,
+              height: 0,
+              previewUrl: "/api/mail/assets/asset-pdf"
+            }
+          })
+      })
+    );
+    render(<Harness />);
+
+    const input = screen.getByLabelText("选择附件");
+    expect(input).toHaveAttribute(
+      "accept",
+      expect.stringContaining(".pdf")
+    );
+    fireEvent.change(input, {
+      target: {
+        files: [
+          new File([Buffer.from("%PDF-1.7")], "报价单.pdf", {
+            type: "application/pdf"
+          })
+        ]
+      }
+    });
+
+    expect(await screen.findByText("报价单.pdf")).toBeInTheDocument();
+    expect(screen.getByTestId("value")).toHaveTextContent(
+      '"contentType":"application/pdf"'
+    );
   });
 
   it("shows a clear upload error and preserves the body", async () => {
@@ -176,7 +269,7 @@ describe("MailRichEditor", () => {
     );
     render(<Harness />);
 
-    fireEvent.change(screen.getByLabelText("选择图片附件"), {
+    fireEvent.change(screen.getByLabelText("选择附件"), {
       target: {
         files: [
           new File([Buffer.from("image")], "receipt.png", {
@@ -187,7 +280,7 @@ describe("MailRichEditor", () => {
     });
 
     expect(
-      await screen.findByText("图片存储暂不可用，请联系管理员")
+      await screen.findByText("附件存储暂不可用，请联系管理员")
     ).toBeInTheDocument();
   });
 
@@ -537,6 +630,85 @@ describe("MailRichEditor", () => {
       ).toHaveValue(
         "<!DOCTYPE html><html><body><p>导入内容</p></body></html>"
       )
+    );
+  });
+
+  it("inserts, edits, and removes a safe hyperlink", async () => {
+    render(<Harness />);
+
+    selectEditorText("初始正文");
+    fireEvent.click(
+      screen.getByRole("button", { name: "超链接" })
+    );
+    fireEvent.change(screen.getByLabelText("链接地址"), {
+      target: { value: "example.com/help" }
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "保存链接" })
+    );
+    await waitFor(() => {
+      expect(screen.getByTestId("value")).toHaveTextContent(
+        'href=\\"https://example.com/help\\"'
+      );
+    });
+    expect(screen.getByTestId("value")).toHaveTextContent(
+      'rel=\\"noopener noreferrer\\"'
+    );
+
+    selectEditorText("初始正文");
+    fireEvent.click(
+      screen.getByRole("button", { name: "超链接" })
+    );
+    expect(screen.getByLabelText("链接地址")).toHaveValue(
+      "https://example.com/help"
+    );
+    fireEvent.change(screen.getByLabelText("链接地址"), {
+      target: { value: "https://example.com/updated" }
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "保存链接" })
+    );
+    await waitFor(() => {
+      expect(screen.getByTestId("value")).toHaveTextContent(
+        "https://example.com/updated"
+      );
+    });
+
+    selectEditorText("初始正文");
+    fireEvent.click(
+      screen.getByRole("button", { name: "超链接" })
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "移除链接" })
+    );
+    await waitFor(() => {
+      expect(screen.getByTestId("value")).not.toHaveTextContent(
+        "<a"
+      );
+    });
+    expect(screen.getByText("初始正文")).toBeInTheDocument();
+  });
+
+  it("rejects unsafe hyperlink schemes without changing content", () => {
+    render(<Harness />);
+    selectEditorText("初始正文");
+    fireEvent.click(
+      screen.getByRole("button", { name: "超链接" })
+    );
+    fireEvent.change(screen.getByLabelText("链接地址"), {
+      target: { value: "javascript:alert(1)" }
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "保存链接" })
+    );
+
+    expect(
+      screen.getByRole("alert", {
+        name: ""
+      })
+    ).toHaveTextContent("仅支持 HTTPS 或邮件地址链接");
+    expect(screen.getByTestId("value")).not.toHaveTextContent(
+      "javascript:"
     );
   });
 });

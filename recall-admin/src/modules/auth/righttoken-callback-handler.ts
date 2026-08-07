@@ -12,7 +12,6 @@ import type {
 
 const allowedNextRoots = new Set([
   "/dashboard",
-  "/tasks",
   "/users",
   "/mail",
   "/automation",
