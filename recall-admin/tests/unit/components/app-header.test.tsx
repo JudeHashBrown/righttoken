@@ -21,8 +21,11 @@ describe("AppHeader", () => {
 
   it.each([
     ["/dashboard", "用户运营概览"],
-    ["/groups/b", "B组 · 已发起支付但未完成"],
-    ["/groups/a", "A组 · 新注册但未发起支付"],
+    ["/groups/b", "B-未完成支付"],
+    ["/groups/a", "A-仅注册"],
+    ["/groups/e", "E-余额不足"],
+    ["/groups/d", "D-长期未调用"],
+    ["/groups/c", "C-充值未调用"],
     ["/tasks", "任务中心"],
     ["/tasks/task-1", "任务中心"],
     ["/users", "用户中心"],

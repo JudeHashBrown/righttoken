@@ -408,6 +408,8 @@ export const ModelName = {
   UserNote: 'UserNote',
   UserContact: 'UserContact',
   UserMaintenanceRecord: 'UserMaintenanceRecord',
+  RechargeOutreachRecord: 'RechargeOutreachRecord',
+  PersonalizedCarePlan: 'PersonalizedCarePlan',
   CouponGrant: 'CouponGrant',
   AutomationRuleVersion: 'AutomationRuleVersion',
   SegmentRecalculationRun: 'SegmentRecalculationRun',
@@ -451,7 +453,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "member" | "ssoTicketRedemption" | "session" | "userProfile" | "userEvent" | "siteVisit" | "segmentHistory" | "segmentOverride" | "userNote" | "userContact" | "userMaintenanceRecord" | "couponGrant" | "automationRuleVersion" | "segmentRecalculationRun" | "assignmentRule" | "assignmentRecalculationRun" | "locationAttributionRule" | "locationRecalculationRun" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "mailDeliveryEvent" | "mailAsset" | "mailTemplateAsset" | "mailMessageAsset" | "mailBatch" | "mailBatchRecipient" | "mailDomainThrottle" | "mailBatchAsset" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
+    modelProps: "member" | "ssoTicketRedemption" | "session" | "userProfile" | "userEvent" | "siteVisit" | "segmentHistory" | "segmentOverride" | "userNote" | "userContact" | "userMaintenanceRecord" | "rechargeOutreachRecord" | "personalizedCarePlan" | "couponGrant" | "automationRuleVersion" | "segmentRecalculationRun" | "assignmentRule" | "assignmentRecalculationRun" | "locationAttributionRule" | "locationRecalculationRun" | "recallTask" | "taskActivity" | "auditLog" | "loginAttempt" | "invitation" | "recoveryCode" | "mailbox" | "mailTemplate" | "mailThread" | "mailMessage" | "mailDeliveryEvent" | "mailAsset" | "mailTemplateAsset" | "mailMessageAsset" | "mailBatch" | "mailBatchRecipient" | "mailDomainThrottle" | "mailBatchAsset" | "suppressionEntry" | "notificationIntent" | "integrationCredential"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1266,6 +1268,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserMaintenanceRecordCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserMaintenanceRecordCountAggregateOutputType> | number
+        }
+      }
+    }
+    RechargeOutreachRecord: {
+      payload: Prisma.$RechargeOutreachRecordPayload<ExtArgs>
+      fields: Prisma.RechargeOutreachRecordFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RechargeOutreachRecordFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RechargeOutreachRecordPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RechargeOutreachRecordFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RechargeOutreachRecordPayload>
+        }
+        findFirst: {
+          args: Prisma.RechargeOutreachRecordFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RechargeOutreachRecordPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RechargeOutreachRecordFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RechargeOutreachRecordPayload>
+        }
+        findMany: {
+          args: Prisma.RechargeOutreachRecordFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RechargeOutreachRecordPayload>[]
+        }
+        create: {
+          args: Prisma.RechargeOutreachRecordCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RechargeOutreachRecordPayload>
+        }
+        createMany: {
+          args: Prisma.RechargeOutreachRecordCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RechargeOutreachRecordCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RechargeOutreachRecordPayload>[]
+        }
+        delete: {
+          args: Prisma.RechargeOutreachRecordDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RechargeOutreachRecordPayload>
+        }
+        update: {
+          args: Prisma.RechargeOutreachRecordUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RechargeOutreachRecordPayload>
+        }
+        deleteMany: {
+          args: Prisma.RechargeOutreachRecordDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RechargeOutreachRecordUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RechargeOutreachRecordUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RechargeOutreachRecordPayload>[]
+        }
+        upsert: {
+          args: Prisma.RechargeOutreachRecordUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RechargeOutreachRecordPayload>
+        }
+        aggregate: {
+          args: Prisma.RechargeOutreachRecordAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRechargeOutreachRecord>
+        }
+        groupBy: {
+          args: Prisma.RechargeOutreachRecordGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RechargeOutreachRecordGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RechargeOutreachRecordCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RechargeOutreachRecordCountAggregateOutputType> | number
+        }
+      }
+    }
+    PersonalizedCarePlan: {
+      payload: Prisma.$PersonalizedCarePlanPayload<ExtArgs>
+      fields: Prisma.PersonalizedCarePlanFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PersonalizedCarePlanFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonalizedCarePlanPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PersonalizedCarePlanFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonalizedCarePlanPayload>
+        }
+        findFirst: {
+          args: Prisma.PersonalizedCarePlanFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonalizedCarePlanPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PersonalizedCarePlanFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonalizedCarePlanPayload>
+        }
+        findMany: {
+          args: Prisma.PersonalizedCarePlanFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonalizedCarePlanPayload>[]
+        }
+        create: {
+          args: Prisma.PersonalizedCarePlanCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonalizedCarePlanPayload>
+        }
+        createMany: {
+          args: Prisma.PersonalizedCarePlanCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PersonalizedCarePlanCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonalizedCarePlanPayload>[]
+        }
+        delete: {
+          args: Prisma.PersonalizedCarePlanDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonalizedCarePlanPayload>
+        }
+        update: {
+          args: Prisma.PersonalizedCarePlanUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonalizedCarePlanPayload>
+        }
+        deleteMany: {
+          args: Prisma.PersonalizedCarePlanDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PersonalizedCarePlanUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PersonalizedCarePlanUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonalizedCarePlanPayload>[]
+        }
+        upsert: {
+          args: Prisma.PersonalizedCarePlanUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonalizedCarePlanPayload>
+        }
+        aggregate: {
+          args: Prisma.PersonalizedCarePlanAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePersonalizedCarePlan>
+        }
+        groupBy: {
+          args: Prisma.PersonalizedCarePlanGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PersonalizedCarePlanGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PersonalizedCarePlanCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PersonalizedCarePlanCountAggregateOutputType> | number
         }
       }
     }
@@ -3587,6 +3737,31 @@ export const UserMaintenanceRecordScalarFieldEnum = {
 export type UserMaintenanceRecordScalarFieldEnum = (typeof UserMaintenanceRecordScalarFieldEnum)[keyof typeof UserMaintenanceRecordScalarFieldEnum]
 
 
+export const RechargeOutreachRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  actorId: 'actorId',
+  reason: 'reason',
+  body: 'body',
+  assetId: 'assetId',
+  occurredAt: 'occurredAt',
+  createdAt: 'createdAt'
+} as const
+
+export type RechargeOutreachRecordScalarFieldEnum = (typeof RechargeOutreachRecordScalarFieldEnum)[keyof typeof RechargeOutreachRecordScalarFieldEnum]
+
+
+export const PersonalizedCarePlanScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  authorId: 'authorId',
+  body: 'body',
+  createdAt: 'createdAt'
+} as const
+
+export type PersonalizedCarePlanScalarFieldEnum = (typeof PersonalizedCarePlanScalarFieldEnum)[keyof typeof PersonalizedCarePlanScalarFieldEnum]
+
+
 export const CouponGrantScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -4682,6 +4857,8 @@ export type GlobalOmitConfig = {
   userNote?: Prisma.UserNoteOmit
   userContact?: Prisma.UserContactOmit
   userMaintenanceRecord?: Prisma.UserMaintenanceRecordOmit
+  rechargeOutreachRecord?: Prisma.RechargeOutreachRecordOmit
+  personalizedCarePlan?: Prisma.PersonalizedCarePlanOmit
   couponGrant?: Prisma.CouponGrantOmit
   automationRuleVersion?: Prisma.AutomationRuleVersionOmit
   segmentRecalculationRun?: Prisma.SegmentRecalculationRunOmit

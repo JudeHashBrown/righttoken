@@ -50,24 +50,39 @@ describe("AppSidebar", () => {
     );
 
     expect(screen.getByText("用户分组")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /B组/ })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "B-未完成支付" })).toHaveAttribute(
       "href",
       "/groups/b"
     );
-    expect(screen.getByRole("link", { name: /A组/ })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "A-仅注册" })).toHaveAttribute(
       "href",
       "/groups/a"
+    );
+    expect(screen.getByRole("link", { name: "E-余额不足" })).toHaveAttribute(
+      "href",
+      "/groups/e"
+    );
+    expect(screen.getByRole("link", { name: "D-长期未调用" })).toHaveAttribute(
+      "href",
+      "/groups/d"
+    );
+    expect(screen.getByRole("link", { name: "C-充值未调用" })).toHaveAttribute(
+      "href",
+      "/groups/c"
     );
     const groupLinks = screen
       .getAllByRole("link")
       .filter((link) =>
-        ["/groups/b", "/groups/a"].includes(
+        ["/groups/b", "/groups/a", "/groups/e", "/groups/d", "/groups/c"].includes(
           link.getAttribute("href") ?? ""
         )
       );
     expect(groupLinks.map((link) => link.getAttribute("href"))).toEqual([
       "/groups/b",
-      "/groups/a"
+      "/groups/a",
+      "/groups/e",
+      "/groups/d",
+      "/groups/c"
     ]);
     expect(screen.getByText("成员与权限")).toBeInTheDocument();
     expect(screen.getByText("访问看板")).toBeInTheDocument();

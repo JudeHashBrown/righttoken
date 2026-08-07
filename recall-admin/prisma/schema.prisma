@@ -234,6 +234,8 @@ model Member {
   contactUpdates              UserContact[]                @relation("UserContactUpdater")
   maintenanceRecords          UserMaintenanceRecord[]      @relation("MaintenanceActor")
   requestedCouponGrants       CouponGrant[]                @relation("CouponGrantRequester")
+  rechargeOutreachRecords     RechargeOutreachRecord[]     @relation("RechargeOutreachActor")
+  personalizedCarePlans       PersonalizedCarePlan[]       @relation("PersonalizedCarePlanAuthor")
 
   @@schema("recall")
 }
@@ -328,21 +330,23 @@ model UserProfile {
   createdAt                  DateTime                   @default(now())
   updatedAt                  DateTime                   @updatedAt
 
-  owner               Member?                  @relation("UserOwner", fields: [ownerId], references: [id])
-  ownerAssignedBy     Member?                  @relation("UserOwnerAssigner", fields: [ownerAssignedById], references: [id], onDelete: SetNull)
-  events              UserEvent[]
-  segmentHistory      SegmentHistory[]
-  segmentOverrides    SegmentOverride[]
-  tasks               RecallTask[]
-  notes               UserNote[]
-  mailThreads         MailThread[]
-  mailMessages        MailMessage[]
-  mailBatchRecipients MailBatchRecipient[]
-  contact             UserContact?
-  maintenanceRecords  UserMaintenanceRecord[]
-  couponGrant         CouponGrant?
-  locationRule        LocationAttributionRule? @relation(fields: [locationRuleId], references: [id], onDelete: SetNull)
-  locationAssignedBy  Member?                  @relation("UserLocationAssigner", fields: [locationAssignedById], references: [id], onDelete: SetNull)
+  owner                   Member?                  @relation("UserOwner", fields: [ownerId], references: [id])
+  ownerAssignedBy         Member?                  @relation("UserOwnerAssigner", fields: [ownerAssignedById], references: [id], onDelete: SetNull)
+  events                  UserEvent[]
+  segmentHistory          SegmentHistory[]
+  segmentOverrides        SegmentOverride[]
+  tasks                   RecallTask[]
+  notes                   UserNote[]
+  mailThreads             MailThread[]
+  mailMessages            MailMessage[]
+  mailBatchRecipients     MailBatchRecipient[]
+  contact                 UserContact?
+  maintenanceRecords      UserMaintenanceRecord[]
+  couponGrant             CouponGrant?
+  rechargeOutreachRecords RechargeOutreachRecord[]
+  personalizedCarePlans   PersonalizedCarePlan[]
+  locationRule            LocationAttributionRule? @relation(fields: [locationRuleId], references: [id], onDelete: SetNull)
+  locationAssignedBy      Member?                  @relation("UserLocationAssigner", fields: [locationAssignedById], references: [id], onDelete: SetNull)
 
   @@index([currentSegment, updatedAt])
   @@index([currentSegment, sourceDeletedAt, registeredAt], map: "UserProfile_recent_unpaid_idx")
@@ -469,6 +473,39 @@ model UserMaintenanceRecord {
   actor         Member?      @relation("MaintenanceActor", fields: [actorId], references: [id], onDelete: SetNull)
 
   @@index([userId, occurredAt])
+  @@schema("recall")
+}
+
+model RechargeOutreachRecord {
+  id         String   @id @default(cuid())
+  userId     String
+  actorId    String
+  reason     String?
+  body       String
+  assetId    String?
+  occurredAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  user  UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  actor Member      @relation("RechargeOutreachActor", fields: [actorId], references: [id], onDelete: Restrict)
+  asset MailAsset?  @relation("RechargeOutreachAsset", fields: [assetId], references: [id], onDelete: SetNull)
+
+  @@index([userId, occurredAt])
+  @@index([assetId])
+  @@schema("recall")
+}
+
+model PersonalizedCarePlan {
+  id        String   @id @default(cuid())
+  userId    String
+  authorId  String
+  body      String
+  createdAt DateTime @default(now())
+
+  user   UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  author Member      @relation("PersonalizedCarePlanAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([userId, createdAt])
   @@schema("recall")
 }
 
@@ -885,9 +922,10 @@ model MailAsset {
   createdById String?
   createdAt   DateTime @default(now())
 
-  templateUsages MailTemplateAsset[]
-  messageUsages  MailMessageAsset[]
-  batchUsages    MailBatchAsset[]
+  templateUsages          MailTemplateAsset[]
+  messageUsages           MailMessageAsset[]
+  batchUsages             MailBatchAsset[]
+  rechargeOutreachRecords RechargeOutreachRecord[] @relation("RechargeOutreachAsset")
 
   @@index([createdById, createdAt])
   @@schema("recall")

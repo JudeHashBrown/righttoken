@@ -97,6 +97,16 @@ export type UserContact = Prisma.UserContactModel
  */
 export type UserMaintenanceRecord = Prisma.UserMaintenanceRecordModel
 /**
+ * Model RechargeOutreachRecord
+ * 
+ */
+export type RechargeOutreachRecord = Prisma.RechargeOutreachRecordModel
+/**
+ * Model PersonalizedCarePlan
+ * 
+ */
+export type PersonalizedCarePlan = Prisma.PersonalizedCarePlanModel
+/**
  * Model CouponGrant
  * 
  */

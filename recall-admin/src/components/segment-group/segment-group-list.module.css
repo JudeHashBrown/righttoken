@@ -1,0 +1,10 @@
+.listPanel { overflow: hidden; border: 1px solid #dfe4ee; border-radius: 14px; background: #fff; }
+.listHead, .userRow { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 18px; }
+.listHead { background: #f5f7fb; color: #38425c; }
+.listHead span { color: #707a94; }
+.userRow { border-top: 1px solid #e8ebf2; color: #34405b; text-decoration: none; }
+.userRow:hover { background: #f8f9ff; }
+.userRow > span { display: grid; gap: 4px; }
+.userRow > span:last-child { text-align: right; }
+.userRow small { color: #727c95; }
+@media (max-width: 620px) { .userRow { align-items: flex-start; flex-direction: column; } .userRow > span:last-child { text-align: left; } }

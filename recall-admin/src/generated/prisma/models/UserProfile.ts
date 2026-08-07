@@ -717,6 +717,8 @@ export type UserProfileWhereInput = {
   contact?: Prisma.XOR<Prisma.UserContactNullableScalarRelationFilter, Prisma.UserContactWhereInput> | null
   maintenanceRecords?: Prisma.UserMaintenanceRecordListRelationFilter
   couponGrant?: Prisma.XOR<Prisma.CouponGrantNullableScalarRelationFilter, Prisma.CouponGrantWhereInput> | null
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordListRelationFilter
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanListRelationFilter
   locationRule?: Prisma.XOR<Prisma.LocationAttributionRuleNullableScalarRelationFilter, Prisma.LocationAttributionRuleWhereInput> | null
   locationAssignedBy?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
 }
@@ -797,6 +799,8 @@ export type UserProfileOrderByWithRelationInput = {
   contact?: Prisma.UserContactOrderByWithRelationInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordOrderByRelationAggregateInput
   couponGrant?: Prisma.CouponGrantOrderByWithRelationInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordOrderByRelationAggregateInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanOrderByRelationAggregateInput
   locationRule?: Prisma.LocationAttributionRuleOrderByWithRelationInput
   locationAssignedBy?: Prisma.MemberOrderByWithRelationInput
 }
@@ -880,6 +884,8 @@ export type UserProfileWhereUniqueInput = Prisma.AtLeast<{
   contact?: Prisma.XOR<Prisma.UserContactNullableScalarRelationFilter, Prisma.UserContactWhereInput> | null
   maintenanceRecords?: Prisma.UserMaintenanceRecordListRelationFilter
   couponGrant?: Prisma.XOR<Prisma.CouponGrantNullableScalarRelationFilter, Prisma.CouponGrantWhereInput> | null
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordListRelationFilter
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanListRelationFilter
   locationRule?: Prisma.XOR<Prisma.LocationAttributionRuleNullableScalarRelationFilter, Prisma.LocationAttributionRuleWhereInput> | null
   locationAssignedBy?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
 }, "id" | "externalUserId">
@@ -1094,6 +1100,8 @@ export type UserProfileCreateInput = {
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -1172,6 +1180,8 @@ export type UserProfileUncheckedCreateInput = {
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileUpdateInput = {
@@ -1246,6 +1256,8 @@ export type UserProfileUpdateInput = {
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -1324,6 +1336,8 @@ export type UserProfileUncheckedUpdateInput = {
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateManyInput = {
@@ -1998,6 +2012,34 @@ export type UserProfileUpdateOneRequiredWithoutMaintenanceRecordsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserProfileUpdateToOneWithWhereWithoutMaintenanceRecordsInput, Prisma.UserProfileUpdateWithoutMaintenanceRecordsInput>, Prisma.UserProfileUncheckedUpdateWithoutMaintenanceRecordsInput>
 }
 
+export type UserProfileCreateNestedOneWithoutRechargeOutreachRecordsInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutRechargeOutreachRecordsInput, Prisma.UserProfileUncheckedCreateWithoutRechargeOutreachRecordsInput>
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutRechargeOutreachRecordsInput
+  connect?: Prisma.UserProfileWhereUniqueInput
+}
+
+export type UserProfileUpdateOneRequiredWithoutRechargeOutreachRecordsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutRechargeOutreachRecordsInput, Prisma.UserProfileUncheckedCreateWithoutRechargeOutreachRecordsInput>
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutRechargeOutreachRecordsInput
+  upsert?: Prisma.UserProfileUpsertWithoutRechargeOutreachRecordsInput
+  connect?: Prisma.UserProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserProfileUpdateToOneWithWhereWithoutRechargeOutreachRecordsInput, Prisma.UserProfileUpdateWithoutRechargeOutreachRecordsInput>, Prisma.UserProfileUncheckedUpdateWithoutRechargeOutreachRecordsInput>
+}
+
+export type UserProfileCreateNestedOneWithoutPersonalizedCarePlansInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutPersonalizedCarePlansInput, Prisma.UserProfileUncheckedCreateWithoutPersonalizedCarePlansInput>
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutPersonalizedCarePlansInput
+  connect?: Prisma.UserProfileWhereUniqueInput
+}
+
+export type UserProfileUpdateOneRequiredWithoutPersonalizedCarePlansNestedInput = {
+  create?: Prisma.XOR<Prisma.UserProfileCreateWithoutPersonalizedCarePlansInput, Prisma.UserProfileUncheckedCreateWithoutPersonalizedCarePlansInput>
+  connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutPersonalizedCarePlansInput
+  upsert?: Prisma.UserProfileUpsertWithoutPersonalizedCarePlansInput
+  connect?: Prisma.UserProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserProfileUpdateToOneWithWhereWithoutPersonalizedCarePlansInput, Prisma.UserProfileUpdateWithoutPersonalizedCarePlansInput>, Prisma.UserProfileUncheckedUpdateWithoutPersonalizedCarePlansInput>
+}
+
 export type UserProfileCreateNestedOneWithoutCouponGrantInput = {
   create?: Prisma.XOR<Prisma.UserProfileCreateWithoutCouponGrantInput, Prisma.UserProfileUncheckedCreateWithoutCouponGrantInput>
   connectOrCreate?: Prisma.UserProfileCreateOrConnectWithoutCouponGrantInput
@@ -2183,6 +2225,8 @@ export type UserProfileCreateWithoutOwnerInput = {
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -2260,6 +2304,8 @@ export type UserProfileUncheckedCreateWithoutOwnerInput = {
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutOwnerInput = {
@@ -2343,6 +2389,8 @@ export type UserProfileCreateWithoutOwnerAssignedByInput = {
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -2420,6 +2468,8 @@ export type UserProfileUncheckedCreateWithoutOwnerAssignedByInput = {
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutOwnerAssignedByInput = {
@@ -2504,6 +2554,8 @@ export type UserProfileCreateWithoutLocationAssignedByInput = {
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
 }
 
@@ -2580,6 +2632,8 @@ export type UserProfileUncheckedCreateWithoutLocationAssignedByInput = {
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutLocationAssignedByInput = {
@@ -2779,6 +2833,8 @@ export type UserProfileCreateWithoutEventsInput = {
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -2856,6 +2912,8 @@ export type UserProfileUncheckedCreateWithoutEventsInput = {
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutEventsInput = {
@@ -2945,6 +3003,8 @@ export type UserProfileUpdateWithoutEventsInput = {
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -3022,6 +3082,8 @@ export type UserProfileUncheckedUpdateWithoutEventsInput = {
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutSegmentHistoryInput = {
@@ -3095,6 +3157,8 @@ export type UserProfileCreateWithoutSegmentHistoryInput = {
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -3172,6 +3236,8 @@ export type UserProfileUncheckedCreateWithoutSegmentHistoryInput = {
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutSegmentHistoryInput = {
@@ -3261,6 +3327,8 @@ export type UserProfileUpdateWithoutSegmentHistoryInput = {
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -3338,6 +3406,8 @@ export type UserProfileUncheckedUpdateWithoutSegmentHistoryInput = {
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutSegmentOverridesInput = {
@@ -3411,6 +3481,8 @@ export type UserProfileCreateWithoutSegmentOverridesInput = {
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -3488,6 +3560,8 @@ export type UserProfileUncheckedCreateWithoutSegmentOverridesInput = {
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutSegmentOverridesInput = {
@@ -3577,6 +3651,8 @@ export type UserProfileUpdateWithoutSegmentOverridesInput = {
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -3654,6 +3730,8 @@ export type UserProfileUncheckedUpdateWithoutSegmentOverridesInput = {
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutNotesInput = {
@@ -3727,6 +3805,8 @@ export type UserProfileCreateWithoutNotesInput = {
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -3804,6 +3884,8 @@ export type UserProfileUncheckedCreateWithoutNotesInput = {
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutNotesInput = {
@@ -3893,6 +3975,8 @@ export type UserProfileUpdateWithoutNotesInput = {
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -3970,6 +4054,8 @@ export type UserProfileUncheckedUpdateWithoutNotesInput = {
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutContactInput = {
@@ -4043,6 +4129,8 @@ export type UserProfileCreateWithoutContactInput = {
   mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -4120,6 +4208,8 @@ export type UserProfileUncheckedCreateWithoutContactInput = {
   mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutContactInput = {
@@ -4209,6 +4299,8 @@ export type UserProfileUpdateWithoutContactInput = {
   mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -4286,6 +4378,8 @@ export type UserProfileUncheckedUpdateWithoutContactInput = {
   mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutMaintenanceRecordsInput = {
@@ -4359,6 +4453,8 @@ export type UserProfileCreateWithoutMaintenanceRecordsInput = {
   mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -4436,6 +4532,8 @@ export type UserProfileUncheckedCreateWithoutMaintenanceRecordsInput = {
   mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutMaintenanceRecordsInput = {
@@ -4525,6 +4623,8 @@ export type UserProfileUpdateWithoutMaintenanceRecordsInput = {
   mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -4602,6 +4702,656 @@ export type UserProfileUncheckedUpdateWithoutMaintenanceRecordsInput = {
   mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserProfileCreateWithoutRechargeOutreachRecordsInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  ipCountryCode?: string | null
+  ipRegion?: string | null
+  locationSource?: $Enums.LocationAttributionSource | null
+  locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
+  events?: Prisma.UserEventCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
+  contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
+  maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
+  couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
+  locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
+}
+
+export type UserProfileUncheckedCreateWithoutRechargeOutreachRecordsInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  ipCountryCode?: string | null
+  ipRegion?: string | null
+  locationSource?: $Enums.LocationAttributionSource | null
+  locationRuleId?: string | null
+  locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
+  contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
+  maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
+  couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserProfileCreateOrConnectWithoutRechargeOutreachRecordsInput = {
+  where: Prisma.UserProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutRechargeOutreachRecordsInput, Prisma.UserProfileUncheckedCreateWithoutRechargeOutreachRecordsInput>
+}
+
+export type UserProfileUpsertWithoutRechargeOutreachRecordsInput = {
+  update: Prisma.XOR<Prisma.UserProfileUpdateWithoutRechargeOutreachRecordsInput, Prisma.UserProfileUncheckedUpdateWithoutRechargeOutreachRecordsInput>
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutRechargeOutreachRecordsInput, Prisma.UserProfileUncheckedCreateWithoutRechargeOutreachRecordsInput>
+  where?: Prisma.UserProfileWhereInput
+}
+
+export type UserProfileUpdateToOneWithWhereWithoutRechargeOutreachRecordsInput = {
+  where?: Prisma.UserProfileWhereInput
+  data: Prisma.XOR<Prisma.UserProfileUpdateWithoutRechargeOutreachRecordsInput, Prisma.UserProfileUncheckedUpdateWithoutRechargeOutreachRecordsInput>
+}
+
+export type UserProfileUpdateWithoutRechargeOutreachRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
+  locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
+  events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
+  contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
+  maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
+  couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
+  locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
+}
+
+export type UserProfileUncheckedUpdateWithoutRechargeOutreachRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
+  locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
+  contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
+  maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
+  couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserProfileCreateWithoutPersonalizedCarePlansInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  ipCountryCode?: string | null
+  ipRegion?: string | null
+  locationSource?: $Enums.LocationAttributionSource | null
+  locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignmentReason?: string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignmentReason?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  owner?: Prisma.MemberCreateNestedOneWithoutOwnedUsersInput
+  ownerAssignedBy?: Prisma.MemberCreateNestedOneWithoutOwnerAssignmentsMadeInput
+  events?: Prisma.UserEventCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
+  contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
+  maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
+  couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
+  locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
+}
+
+export type UserProfileUncheckedCreateWithoutPersonalizedCarePlansInput = {
+  id?: string
+  externalUserId: string
+  email: string
+  emailNormalized: string
+  displayName?: string | null
+  registeredAt: Date | string
+  registrationIpEnc?: string | null
+  registrationIpHash?: string | null
+  countryCode?: string | null
+  region?: string | null
+  ipCountryCode?: string | null
+  ipRegion?: string | null
+  locationSource?: $Enums.LocationAttributionSource | null
+  locationRuleId?: string | null
+  locationEvaluatedAt?: Date | string | null
+  locationAssignmentMode?: $Enums.LocationAssignmentMode
+  locationAssignedAt?: Date | string | null
+  locationAssignedById?: string | null
+  locationAssignmentReason?: string | null
+  language?: string | null
+  timezone?: string | null
+  source?: string | null
+  checkoutStartedAt?: Date | string | null
+  checkoutChangedAt?: Date | string | null
+  paymentStatus?: string
+  firstPaidAt?: Date | string | null
+  totalPaidMinor?: number
+  firstCallAt?: Date | string | null
+  lastCallAt?: Date | string | null
+  successfulCallCount?: number
+  balanceMinor?: number
+  balanceCurrency?: string
+  balanceUsdMinor?: number
+  balanceChangedAt?: Date | string | null
+  anomalyActive?: boolean
+  anomalyChangedAt?: Date | string | null
+  anomalyErrorPhase?: string | null
+  anomalyErrorType?: string | null
+  anomalyErrorMessage?: string | null
+  anomalyErrorOwner?: string | null
+  anomalyStatusCode?: number | null
+  anomalyModel?: string | null
+  anomalyPlatform?: string | null
+  anomalyRequestCount?: number | null
+  anomalyFailureCount?: number | null
+  anomalyConsecutiveFailures?: number | null
+  anomalyLastOccurredAt?: Date | string | null
+  currentSegment: $Enums.SegmentCode
+  segmentRuleVersion?: number
+  ownerId?: string | null
+  ownerAssignmentMode?: $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Date | string | null
+  ownerAssignedById?: string | null
+  ownerAssignmentReason?: string | null
+  reasonLabel?: string | null
+  unsubscribedAt?: Date | string | null
+  pausedAt?: Date | string | null
+  profileChangedAt?: Date | string | null
+  lastExternalEventAt?: Date | string | null
+  sourceDeletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  events?: Prisma.UserEventUncheckedCreateNestedManyWithoutUserInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedCreateNestedManyWithoutUserInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedCreateNestedManyWithoutUserInput
+  tasks?: Prisma.RecallTaskUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.UserNoteUncheckedCreateNestedManyWithoutUserInput
+  mailThreads?: Prisma.MailThreadUncheckedCreateNestedManyWithoutUserInput
+  mailMessages?: Prisma.MailMessageUncheckedCreateNestedManyWithoutUserInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
+  contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
+  maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
+  couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserProfileCreateOrConnectWithoutPersonalizedCarePlansInput = {
+  where: Prisma.UserProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutPersonalizedCarePlansInput, Prisma.UserProfileUncheckedCreateWithoutPersonalizedCarePlansInput>
+}
+
+export type UserProfileUpsertWithoutPersonalizedCarePlansInput = {
+  update: Prisma.XOR<Prisma.UserProfileUpdateWithoutPersonalizedCarePlansInput, Prisma.UserProfileUncheckedUpdateWithoutPersonalizedCarePlansInput>
+  create: Prisma.XOR<Prisma.UserProfileCreateWithoutPersonalizedCarePlansInput, Prisma.UserProfileUncheckedCreateWithoutPersonalizedCarePlansInput>
+  where?: Prisma.UserProfileWhereInput
+}
+
+export type UserProfileUpdateToOneWithWhereWithoutPersonalizedCarePlansInput = {
+  where?: Prisma.UserProfileWhereInput
+  data: Prisma.XOR<Prisma.UserProfileUpdateWithoutPersonalizedCarePlansInput, Prisma.UserProfileUncheckedUpdateWithoutPersonalizedCarePlansInput>
+}
+
+export type UserProfileUpdateWithoutPersonalizedCarePlansInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
+  locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.MemberUpdateOneWithoutOwnedUsersNestedInput
+  ownerAssignedBy?: Prisma.MemberUpdateOneWithoutOwnerAssignmentsMadeNestedInput
+  events?: Prisma.UserEventUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
+  contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
+  maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
+  couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
+  locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
+}
+
+export type UserProfileUncheckedUpdateWithoutPersonalizedCarePlansInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registeredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  registrationIpEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationIpHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationSource?: Prisma.NullableEnumLocationAttributionSourceFieldUpdateOperationsInput | $Enums.LocationAttributionSource | null
+  locationRuleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationEvaluatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignmentMode?: Prisma.EnumLocationAssignmentModeFieldUpdateOperationsInput | $Enums.LocationAssignmentMode
+  locationAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  checkoutChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  firstPaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalPaidMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  firstCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastCallAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  successfulCallCount?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  balanceUsdMinor?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  anomalyChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  anomalyErrorPhase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyErrorOwner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyStatusCode?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  anomalyRequestCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyFailureCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyConsecutiveFailures?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  anomalyLastOccurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentSegment?: Prisma.EnumSegmentCodeFieldUpdateOperationsInput | $Enums.SegmentCode
+  segmentRuleVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentMode?: Prisma.EnumOwnerAssignmentModeFieldUpdateOperationsInput | $Enums.OwnerAssignmentMode
+  ownerAssignedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ownerAssignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerAssignmentReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reasonLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unsubscribedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profileChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastExternalEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sourceDeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  events?: Prisma.UserEventUncheckedUpdateManyWithoutUserNestedInput
+  segmentHistory?: Prisma.SegmentHistoryUncheckedUpdateManyWithoutUserNestedInput
+  segmentOverrides?: Prisma.SegmentOverrideUncheckedUpdateManyWithoutUserNestedInput
+  tasks?: Prisma.RecallTaskUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.UserNoteUncheckedUpdateManyWithoutUserNestedInput
+  mailThreads?: Prisma.MailThreadUncheckedUpdateManyWithoutUserNestedInput
+  mailMessages?: Prisma.MailMessageUncheckedUpdateManyWithoutUserNestedInput
+  mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
+  contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
+  maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
+  couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutCouponGrantInput = {
@@ -4675,6 +5425,8 @@ export type UserProfileCreateWithoutCouponGrantInput = {
   mailBatchRecipients?: Prisma.MailBatchRecipientCreateNestedManyWithoutUserInput
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -4752,6 +5504,8 @@ export type UserProfileUncheckedCreateWithoutCouponGrantInput = {
   mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedCreateNestedManyWithoutUserInput
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutCouponGrantInput = {
@@ -4841,6 +5595,8 @@ export type UserProfileUpdateWithoutCouponGrantInput = {
   mailBatchRecipients?: Prisma.MailBatchRecipientUpdateManyWithoutUserNestedInput
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -4918,6 +5674,8 @@ export type UserProfileUncheckedUpdateWithoutCouponGrantInput = {
   mailBatchRecipients?: Prisma.MailBatchRecipientUncheckedUpdateManyWithoutUserNestedInput
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutLocationRuleInput = {
@@ -4992,6 +5750,8 @@ export type UserProfileCreateWithoutLocationRuleInput = {
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
 
@@ -5068,6 +5828,8 @@ export type UserProfileUncheckedCreateWithoutLocationRuleInput = {
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutLocationRuleInput = {
@@ -5167,6 +5929,8 @@ export type UserProfileCreateWithoutTasksInput = {
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -5244,6 +6008,8 @@ export type UserProfileUncheckedCreateWithoutTasksInput = {
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutTasksInput = {
@@ -5333,6 +6099,8 @@ export type UserProfileUpdateWithoutTasksInput = {
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -5410,6 +6178,8 @@ export type UserProfileUncheckedUpdateWithoutTasksInput = {
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutMailThreadsInput = {
@@ -5483,6 +6253,8 @@ export type UserProfileCreateWithoutMailThreadsInput = {
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -5560,6 +6332,8 @@ export type UserProfileUncheckedCreateWithoutMailThreadsInput = {
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutMailThreadsInput = {
@@ -5649,6 +6423,8 @@ export type UserProfileUpdateWithoutMailThreadsInput = {
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -5726,6 +6502,8 @@ export type UserProfileUncheckedUpdateWithoutMailThreadsInput = {
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutMailMessagesInput = {
@@ -5799,6 +6577,8 @@ export type UserProfileCreateWithoutMailMessagesInput = {
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -5876,6 +6656,8 @@ export type UserProfileUncheckedCreateWithoutMailMessagesInput = {
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutMailMessagesInput = {
@@ -5965,6 +6747,8 @@ export type UserProfileUpdateWithoutMailMessagesInput = {
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -6042,6 +6826,8 @@ export type UserProfileUncheckedUpdateWithoutMailMessagesInput = {
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateWithoutMailBatchRecipientsInput = {
@@ -6115,6 +6901,8 @@ export type UserProfileCreateWithoutMailBatchRecipientsInput = {
   contact?: Prisma.UserContactCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanCreateNestedManyWithoutUserInput
   locationRule?: Prisma.LocationAttributionRuleCreateNestedOneWithoutUsersInput
   locationAssignedBy?: Prisma.MemberCreateNestedOneWithoutLocationAssignmentsMadeInput
 }
@@ -6192,6 +6980,8 @@ export type UserProfileUncheckedCreateWithoutMailBatchRecipientsInput = {
   contact?: Prisma.UserContactUncheckedCreateNestedOneWithoutUserInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedCreateNestedManyWithoutUserInput
   couponGrant?: Prisma.CouponGrantUncheckedCreateNestedOneWithoutUserInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedCreateNestedManyWithoutUserInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserProfileCreateOrConnectWithoutMailBatchRecipientsInput = {
@@ -6281,6 +7071,8 @@ export type UserProfileUpdateWithoutMailBatchRecipientsInput = {
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -6358,6 +7150,8 @@ export type UserProfileUncheckedUpdateWithoutMailBatchRecipientsInput = {
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileCreateManyOwnerInput = {
@@ -6623,6 +7417,8 @@ export type UserProfileUpdateWithoutOwnerInput = {
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -6700,6 +7496,8 @@ export type UserProfileUncheckedUpdateWithoutOwnerInput = {
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateManyWithoutOwnerInput = {
@@ -6837,6 +7635,8 @@ export type UserProfileUpdateWithoutOwnerAssignedByInput = {
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
@@ -6914,6 +7714,8 @@ export type UserProfileUncheckedUpdateWithoutOwnerAssignedByInput = {
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateManyWithoutOwnerAssignedByInput = {
@@ -7052,6 +7854,8 @@ export type UserProfileUpdateWithoutLocationAssignedByInput = {
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationRule?: Prisma.LocationAttributionRuleUpdateOneWithoutUsersNestedInput
 }
 
@@ -7128,6 +7932,8 @@ export type UserProfileUncheckedUpdateWithoutLocationAssignedByInput = {
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateManyWithoutLocationAssignedByInput = {
@@ -7330,6 +8136,8 @@ export type UserProfileUpdateWithoutLocationRuleInput = {
   contact?: Prisma.UserContactUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUpdateManyWithoutUserNestedInput
   locationAssignedBy?: Prisma.MemberUpdateOneWithoutLocationAssignmentsMadeNestedInput
 }
 
@@ -7406,6 +8214,8 @@ export type UserProfileUncheckedUpdateWithoutLocationRuleInput = {
   contact?: Prisma.UserContactUncheckedUpdateOneWithoutUserNestedInput
   maintenanceRecords?: Prisma.UserMaintenanceRecordUncheckedUpdateManyWithoutUserNestedInput
   couponGrant?: Prisma.CouponGrantUncheckedUpdateOneWithoutUserNestedInput
+  rechargeOutreachRecords?: Prisma.RechargeOutreachRecordUncheckedUpdateManyWithoutUserNestedInput
+  personalizedCarePlans?: Prisma.PersonalizedCarePlanUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserProfileUncheckedUpdateManyWithoutLocationRuleInput = {
@@ -7487,6 +8297,8 @@ export type UserProfileCountOutputType = {
   mailMessages: number
   mailBatchRecipients: number
   maintenanceRecords: number
+  rechargeOutreachRecords: number
+  personalizedCarePlans: number
 }
 
 export type UserProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -7499,6 +8311,8 @@ export type UserProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Exten
   mailMessages?: boolean | UserProfileCountOutputTypeCountMailMessagesArgs
   mailBatchRecipients?: boolean | UserProfileCountOutputTypeCountMailBatchRecipientsArgs
   maintenanceRecords?: boolean | UserProfileCountOutputTypeCountMaintenanceRecordsArgs
+  rechargeOutreachRecords?: boolean | UserProfileCountOutputTypeCountRechargeOutreachRecordsArgs
+  personalizedCarePlans?: boolean | UserProfileCountOutputTypeCountPersonalizedCarePlansArgs
 }
 
 /**
@@ -7572,6 +8386,20 @@ export type UserProfileCountOutputTypeCountMailBatchRecipientsArgs<ExtArgs exten
  */
 export type UserProfileCountOutputTypeCountMaintenanceRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.UserMaintenanceRecordWhereInput
+}
+
+/**
+ * UserProfileCountOutputType without action
+ */
+export type UserProfileCountOutputTypeCountRechargeOutreachRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RechargeOutreachRecordWhereInput
+}
+
+/**
+ * UserProfileCountOutputType without action
+ */
+export type UserProfileCountOutputTypeCountPersonalizedCarePlansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PersonalizedCarePlanWhereInput
 }
 
 
@@ -7651,6 +8479,8 @@ export type UserProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   contact?: boolean | Prisma.UserProfile$contactArgs<ExtArgs>
   maintenanceRecords?: boolean | Prisma.UserProfile$maintenanceRecordsArgs<ExtArgs>
   couponGrant?: boolean | Prisma.UserProfile$couponGrantArgs<ExtArgs>
+  rechargeOutreachRecords?: boolean | Prisma.UserProfile$rechargeOutreachRecordsArgs<ExtArgs>
+  personalizedCarePlans?: boolean | Prisma.UserProfile$personalizedCarePlansArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
   locationAssignedBy?: boolean | Prisma.UserProfile$locationAssignedByArgs<ExtArgs>
   _count?: boolean | Prisma.UserProfileCountOutputTypeDefaultArgs<ExtArgs>
@@ -7874,6 +8704,8 @@ export type UserProfileInclude<ExtArgs extends runtime.Types.Extensions.Internal
   contact?: boolean | Prisma.UserProfile$contactArgs<ExtArgs>
   maintenanceRecords?: boolean | Prisma.UserProfile$maintenanceRecordsArgs<ExtArgs>
   couponGrant?: boolean | Prisma.UserProfile$couponGrantArgs<ExtArgs>
+  rechargeOutreachRecords?: boolean | Prisma.UserProfile$rechargeOutreachRecordsArgs<ExtArgs>
+  personalizedCarePlans?: boolean | Prisma.UserProfile$personalizedCarePlansArgs<ExtArgs>
   locationRule?: boolean | Prisma.UserProfile$locationRuleArgs<ExtArgs>
   locationAssignedBy?: boolean | Prisma.UserProfile$locationAssignedByArgs<ExtArgs>
   _count?: boolean | Prisma.UserProfileCountOutputTypeDefaultArgs<ExtArgs>
@@ -7907,6 +8739,8 @@ export type $UserProfilePayload<ExtArgs extends runtime.Types.Extensions.Interna
     contact: Prisma.$UserContactPayload<ExtArgs> | null
     maintenanceRecords: Prisma.$UserMaintenanceRecordPayload<ExtArgs>[]
     couponGrant: Prisma.$CouponGrantPayload<ExtArgs> | null
+    rechargeOutreachRecords: Prisma.$RechargeOutreachRecordPayload<ExtArgs>[]
+    personalizedCarePlans: Prisma.$PersonalizedCarePlanPayload<ExtArgs>[]
     locationRule: Prisma.$LocationAttributionRulePayload<ExtArgs> | null
     locationAssignedBy: Prisma.$MemberPayload<ExtArgs> | null
   }
@@ -8380,6 +9214,8 @@ export interface Prisma__UserProfileClient<T, Null = never, ExtArgs extends runt
   contact<T extends Prisma.UserProfile$contactArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$contactArgs<ExtArgs>>): Prisma.Prisma__UserContactClient<runtime.Types.Result.GetResult<Prisma.$UserContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   maintenanceRecords<T extends Prisma.UserProfile$maintenanceRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$maintenanceRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserMaintenanceRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   couponGrant<T extends Prisma.UserProfile$couponGrantArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$couponGrantArgs<ExtArgs>>): Prisma.Prisma__CouponGrantClient<runtime.Types.Result.GetResult<Prisma.$CouponGrantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  rechargeOutreachRecords<T extends Prisma.UserProfile$rechargeOutreachRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$rechargeOutreachRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RechargeOutreachRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  personalizedCarePlans<T extends Prisma.UserProfile$personalizedCarePlansArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$personalizedCarePlansArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PersonalizedCarePlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   locationRule<T extends Prisma.UserProfile$locationRuleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$locationRuleArgs<ExtArgs>>): Prisma.Prisma__LocationAttributionRuleClient<runtime.Types.Result.GetResult<Prisma.$LocationAttributionRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   locationAssignedBy<T extends Prisma.UserProfile$locationAssignedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserProfile$locationAssignedByArgs<ExtArgs>>): Prisma.Prisma__MemberClient<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
@@ -9163,6 +9999,54 @@ export type UserProfile$couponGrantArgs<ExtArgs extends runtime.Types.Extensions
    */
   include?: Prisma.CouponGrantInclude<ExtArgs> | null
   where?: Prisma.CouponGrantWhereInput
+}
+
+/**
+ * UserProfile.rechargeOutreachRecords
+ */
+export type UserProfile$rechargeOutreachRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RechargeOutreachRecord
+   */
+  select?: Prisma.RechargeOutreachRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RechargeOutreachRecord
+   */
+  omit?: Prisma.RechargeOutreachRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RechargeOutreachRecordInclude<ExtArgs> | null
+  where?: Prisma.RechargeOutreachRecordWhereInput
+  orderBy?: Prisma.RechargeOutreachRecordOrderByWithRelationInput | Prisma.RechargeOutreachRecordOrderByWithRelationInput[]
+  cursor?: Prisma.RechargeOutreachRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RechargeOutreachRecordScalarFieldEnum | Prisma.RechargeOutreachRecordScalarFieldEnum[]
+}
+
+/**
+ * UserProfile.personalizedCarePlans
+ */
+export type UserProfile$personalizedCarePlansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PersonalizedCarePlan
+   */
+  select?: Prisma.PersonalizedCarePlanSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PersonalizedCarePlan
+   */
+  omit?: Prisma.PersonalizedCarePlanOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonalizedCarePlanInclude<ExtArgs> | null
+  where?: Prisma.PersonalizedCarePlanWhereInput
+  orderBy?: Prisma.PersonalizedCarePlanOrderByWithRelationInput | Prisma.PersonalizedCarePlanOrderByWithRelationInput[]
+  cursor?: Prisma.PersonalizedCarePlanWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PersonalizedCarePlanScalarFieldEnum | Prisma.PersonalizedCarePlanScalarFieldEnum[]
 }
 
 /**

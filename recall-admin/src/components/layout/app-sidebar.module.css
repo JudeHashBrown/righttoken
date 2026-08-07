@@ -82,6 +82,7 @@
   color: #f8f9ff;
 }
 
+
 .item:focus-visible,
 .brand:focus-visible {
   outline: 2px solid #9299ff;
@@ -201,6 +202,7 @@
     justify-content: center;
     padding: 0;
   }
+
 
   .item[data-count]::before {
     position: absolute;

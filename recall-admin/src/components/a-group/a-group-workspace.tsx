@@ -59,7 +59,7 @@ export function AGroupWorkspace({
   return (
     <main className={styles.page}>
       <header>
-        <h1>新注册但未发起支付</h1>
+        <h1>A-仅注册</h1>
         <p className={styles.reasons}>
           <span>还不清楚 RightToken 的用途</span>
           <span>偶然在社交媒体看到，出于好奇注册</span>
@@ -69,7 +69,7 @@ export function AGroupWorkspace({
       <section className={styles.workspace}>
         <aside className={styles.queue}>
           <div className={styles.queueTitle}>
-            <strong>A组用户</strong>
+            <strong>A-仅注册用户</strong>
             <span>{initialData.users.length}</span>
           </div>
           <label className={styles.search}>

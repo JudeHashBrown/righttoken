@@ -69,7 +69,7 @@ describe("BGroupWorkspace", () => {
     );
     expect(
       screen.getByRole("heading", {
-        name: "已发起支付但未完成"
+        name: "B-未完成支付"
       })
     ).toBeInTheDocument();
     expect(screen.getByPlaceholderText("关键词或序号")).toBeInTheDocument();

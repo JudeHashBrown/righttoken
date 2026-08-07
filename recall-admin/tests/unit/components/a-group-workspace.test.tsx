@@ -62,7 +62,7 @@ describe("AGroupWorkspace", () => {
 
     expect(
       screen.getByRole("heading", {
-        name: "新注册但未发起支付"
+        name: "A-仅注册"
       })
     ).toBeInTheDocument();
     expect(
@@ -70,7 +70,7 @@ describe("AGroupWorkspace", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("浏览价格后认为价格偏高"))
       .toBeInTheDocument();
-    expect(screen.getByText("A组用户")).toBeInTheDocument();
+    expect(screen.getByText("A-仅注册用户")).toBeInTheDocument();
     expect(screen.getAllByText("#20428")).toHaveLength(2);
   });
 

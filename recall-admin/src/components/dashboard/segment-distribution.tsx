@@ -2,11 +2,11 @@ import type { DashboardSnapshot } from "@/modules/reports/dashboard-query";
 import styles from "./dashboard.module.css";
 
 const segmentNames = {
-  A: "注册未支付",
-  B: "支付未完成",
+  A: "仅注册",
+  B: "未完成支付",
   C: "充值未调用",
-  D: "调用后停用",
-  E: "余额耗尽",
+  D: "长期未调用",
+  E: "余额不足",
   F: "服务异常",
   G: "正常活跃"
 } as const;

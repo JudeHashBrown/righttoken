@@ -10,8 +10,11 @@ const pool = new pg.Pool({
 const e2ePort = process.env.RECALL_E2E_PORT ?? "3101";
 const routes = [
   { path: "/dashboard", heading: "运营仪表盘" },
-  { path: "/groups/b", heading: "已发起支付但未完成" },
-  { path: "/groups/a", heading: "新注册但未发起支付" },
+  { path: "/groups/b", heading: "B-未完成支付" },
+  { path: "/groups/a", heading: "A-仅注册" },
+  { path: "/groups/e", heading: "E-余额不足" },
+  { path: "/groups/d", heading: "D-长期未调用" },
+  { path: "/groups/c", heading: "C-充值未调用" },
   { path: "/visits", heading: "访问看板" },
   { path: "/tasks", heading: "任务中心" },
   { path: "/users", heading: "用户中心" },
@@ -123,8 +126,8 @@ test("every administrator navigation item opens a real page", async ({
       await expect(segmentButtons).toHaveText([
         "全部全部用户",
         "F服务异常",
-        "A注册未支付",
-        "B支付未完成",
+        "A仅注册",
+        "B未完成支付",
         "C充值未调用",
         "D长期未调用",
         "E余额不足",

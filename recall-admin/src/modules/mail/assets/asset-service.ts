@@ -217,6 +217,20 @@ function visibilityScope(actor: {
             }
           }
         }
+      },
+      {
+        rechargeOutreachRecords: {
+          some: {
+            user: {
+              OR: [
+                { ownerId: actor.id },
+                { ownerId: null },
+                { tasks: { some: { assigneeId: actor.id } } },
+                { tasks: { some: { assigneeId: null, status: "UNASSIGNED" } } }
+              ]
+            }
+          }
+        }
       }
     ]
   };

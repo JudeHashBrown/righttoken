@@ -68,14 +68,29 @@ export function AppSidebar({
           icon: LayoutDashboard
         },
         {
-          label: "B组",
+          label: "B-未完成支付",
           href: "/groups/b",
           icon: CircleDollarSign
         },
         {
-          label: "A组",
+          label: "A-仅注册",
           href: "/groups/a",
           icon: UserRoundPlus
+        },
+        {
+          label: "E-余额不足",
+          href: "/groups/e",
+          icon: CircleDollarSign
+        },
+        {
+          label: "D-长期未调用",
+          href: "/groups/d",
+          icon: CircleDollarSign
+        },
+        {
+          label: "C-充值未调用",
+          href: "/groups/c",
+          icon: CircleDollarSign
         },
         {
           label: "任务中心",

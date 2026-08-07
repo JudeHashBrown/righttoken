@@ -62,6 +62,8 @@ export const ModelName = {
   UserNote: 'UserNote',
   UserContact: 'UserContact',
   UserMaintenanceRecord: 'UserMaintenanceRecord',
+  RechargeOutreachRecord: 'RechargeOutreachRecord',
+  PersonalizedCarePlan: 'PersonalizedCarePlan',
   CouponGrant: 'CouponGrant',
   AutomationRuleVersion: 'AutomationRuleVersion',
   SegmentRecalculationRun: 'SegmentRecalculationRun',
@@ -313,6 +315,31 @@ export const UserMaintenanceRecordScalarFieldEnum = {
 } as const
 
 export type UserMaintenanceRecordScalarFieldEnum = (typeof UserMaintenanceRecordScalarFieldEnum)[keyof typeof UserMaintenanceRecordScalarFieldEnum]
+
+
+export const RechargeOutreachRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  actorId: 'actorId',
+  reason: 'reason',
+  body: 'body',
+  assetId: 'assetId',
+  occurredAt: 'occurredAt',
+  createdAt: 'createdAt'
+} as const
+
+export type RechargeOutreachRecordScalarFieldEnum = (typeof RechargeOutreachRecordScalarFieldEnum)[keyof typeof RechargeOutreachRecordScalarFieldEnum]
+
+
+export const PersonalizedCarePlanScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  authorId: 'authorId',
+  body: 'body',
+  createdAt: 'createdAt'
+} as const
+
+export type PersonalizedCarePlanScalarFieldEnum = (typeof PersonalizedCarePlanScalarFieldEnum)[keyof typeof PersonalizedCarePlanScalarFieldEnum]
 
 
 export const CouponGrantScalarFieldEnum = {

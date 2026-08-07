@@ -3,8 +3,8 @@ import styles from "@/components/workspaces/workspace.module.css";
 const segments = [
   { value: "", label: "全部", description: "全部用户" },
   { value: "F", label: "F", description: "服务异常" },
-  { value: "A", label: "A", description: "注册未支付" },
-  { value: "B", label: "B", description: "支付未完成" },
+  { value: "A", label: "A", description: "仅注册" },
+  { value: "B", label: "B", description: "未完成支付" },
   { value: "C", label: "C", description: "充值未调用" },
   { value: "D", label: "D", description: "长期未调用" },
   { value: "E", label: "E", description: "余额不足" },
