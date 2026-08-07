@@ -67,6 +67,36 @@ describe("MailRichEditor", () => {
     vi.unstubAllGlobals();
   });
 
+  it("offers ordered lists, alignment, and four fixed font sizes", () => {
+    const execCommand = vi.fn().mockReturnValue(true);
+    Object.defineProperty(document, "execCommand", {
+      configurable: true,
+      value: execCommand
+    });
+    render(<Harness />);
+
+    fireEvent.click(screen.getByRole("button", { name: "有序编号" }));
+    fireEvent.click(screen.getByRole("button", { name: "居中对齐" }));
+    fireEvent.change(screen.getByRole("combobox", { name: "字号" }), {
+      target: { value: "18px" }
+    });
+
+    expect(execCommand).toHaveBeenCalledWith(
+      "insertOrderedList",
+      false,
+      undefined
+    );
+    expect(execCommand).toHaveBeenCalledWith(
+      "justifyCenter",
+      false,
+      undefined
+    );
+    expect(execCommand).toHaveBeenCalledWith("fontSize", false, "5");
+    expect(
+      screen.getByRole("combobox", { name: "字号" })
+    ).toHaveTextContent("小正常大标题");
+  });
+
   it("uploads and inserts an inline image", async () => {
     vi.stubGlobal(
       "fetch",

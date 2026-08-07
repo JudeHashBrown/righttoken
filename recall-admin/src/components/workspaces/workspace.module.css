@@ -1195,9 +1195,31 @@
 }
 
 .mailEditorToolbar button:focus-visible,
+.mailEditorToolbar select:focus-visible,
 .mailAttachmentItem button:focus-visible {
   outline: 3px solid rgb(89 103 215 / 20%);
   outline-offset: 1px;
+}
+
+.mailEditorSelectLabel {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  gap: 5px;
+  color: #4e5a72;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.mailEditorSelectLabel select {
+  height: 30px;
+  border: 1px solid #cfd6e4;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #303b52;
+  padding: 0 24px 0 7px;
+  font: inherit;
+  cursor: pointer;
 }
 
 .mailEditorToolbar button:disabled {

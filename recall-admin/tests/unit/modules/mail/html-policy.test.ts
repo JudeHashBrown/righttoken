@@ -142,4 +142,16 @@ describe("processMailHtml", () => {
       ).visualEditorCompatible
     ).toBe(false);
   });
+
+  it("preserves essential visual-editor formatting", () => {
+    const result = processMailHtml(`
+      <p style="text-align: center"><span style="font-size: 18px">标题</span></p>
+      <ol><li>第一步</li><li>第二步</li></ol>
+    `);
+
+    expect(result.html).toContain("text-align:center");
+    expect(result.html).toContain("font-size:18px");
+    expect(result.html).toContain("<ol>");
+    expect(result.html).toContain("<li>第一步</li>");
+  });
 });

@@ -1,6 +1,9 @@
 "use client";
 
 import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
   Bold,
   Code2,
   Eye,
@@ -9,6 +12,7 @@ import {
   Italic,
   Link2,
   List,
+  ListOrdered,
   Monitor,
   Paperclip,
   Underline
@@ -29,6 +33,12 @@ import type {
   MailHtmlDiagnostics
 } from "@/modules/mail/html-policy";
 import { normalizeEditorLink } from "@/modules/mail/editor-link";
+import {
+  applyMailEditorFormat,
+  MAIL_FONT_SIZE_OPTIONS,
+  type MailEditorFormat,
+  type MailFontSize
+} from "@/modules/mail/editor-format";
 import styles from "@/components/workspaces/workspace.module.css";
 
 export type MailEditorAsset = {
@@ -346,6 +356,22 @@ export function MailRichEditor({
     savedRangeRef.current = selection.getRangeAt(0).cloneRange();
   }
 
+  function restoreSelection(): void {
+    const editor = editorRef.current;
+    const range = savedRangeRef.current;
+    const selection = window.getSelection();
+    if (
+      !editor ||
+      !range ||
+      !selection ||
+      !editor.contains(range.commonAncestorContainer)
+    ) {
+      return;
+    }
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
   function anchorForRange(
     range: Range,
     editor: HTMLElement
@@ -532,8 +558,20 @@ export function MailRichEditor({
 
   function format(command: "bold" | "italic" | "underline" | "insertUnorderedList"): void {
     editorRef.current?.focus();
+    restoreSelection();
     document.execCommand(command);
     emit();
+    saveSelection();
+  }
+
+  function formatEssential(format: MailEditorFormat): void {
+    const editor = editorRef.current;
+    if (!editor) return;
+    editor.focus();
+    restoreSelection();
+    applyMailEditorFormat(editor, format);
+    emit();
+    saveSelection();
   }
 
   function selectMode(nextMode: EditorMode): void {
@@ -683,6 +721,69 @@ export function MailRichEditor({
             >
               <List aria-hidden="true" size={16} />
             </button>
+            <button
+              aria-label="有序编号"
+              onClick={() =>
+                formatEssential({ type: "orderedList" })
+              }
+              type="button"
+            >
+              <ListOrdered aria-hidden="true" size={16} />
+            </button>
+            <span
+              aria-hidden="true"
+              className={styles.toolbarDivider}
+            />
+            <button
+              aria-label="左对齐"
+              onClick={() =>
+                formatEssential({ type: "alignLeft" })
+              }
+              type="button"
+            >
+              <AlignLeft aria-hidden="true" size={16} />
+            </button>
+            <button
+              aria-label="居中对齐"
+              onClick={() =>
+                formatEssential({ type: "alignCenter" })
+              }
+              type="button"
+            >
+              <AlignCenter aria-hidden="true" size={16} />
+            </button>
+            <button
+              aria-label="右对齐"
+              onClick={() =>
+                formatEssential({ type: "alignRight" })
+              }
+              type="button"
+            >
+              <AlignRight aria-hidden="true" size={16} />
+            </button>
+            <label className={styles.mailEditorSelectLabel}>
+              <span>字号</span>
+              <select
+                aria-label="字号"
+                defaultValue="14px"
+                onChange={(event) =>
+                  formatEssential({
+                    type: "fontSize",
+                    value: event.target.value as MailFontSize
+                  })
+                }
+              >
+                {MAIL_FONT_SIZE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <span
+              aria-hidden="true"
+              className={styles.toolbarDivider}
+            />
             <button
               aria-label="超链接"
               onClick={openLinkDialog}
