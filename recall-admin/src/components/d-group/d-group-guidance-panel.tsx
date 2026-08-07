@@ -13,7 +13,11 @@ const categories: Array<{ value: GuidanceCategory; label: string }> = [
 ];
 const labelOf = (value: GuidanceCategory) => categories.find((item) => item.value === value)?.label ?? "发教程";
 
-export function DGroupGuidancePanel({ user }: { user: DGroupSelectedUser }) {
+export function DGroupGuidancePanel({ user, apiBase = "/api/d-group", hint }: {
+  user: DGroupSelectedUser;
+  apiBase?: string;
+  hint?: string;
+}) {
   const router = useRouter();
   const [category, setCategory] = useState<GuidanceCategory>("GROUP_GUIDANCE");
   const [pending, setPending] = useState(false);
@@ -24,7 +28,7 @@ export function DGroupGuidancePanel({ user }: { user: DGroupSelectedUser }) {
     const form = new FormData(formElement);
     setPending(true);
     setMessage(null);
-    const response = await fetch(`/api/d-group/users/${user.id}/guidance`, {
+    const response = await fetch(`${apiBase}/users/${user.id}/guidance`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ category, body: form.get("body") })
@@ -36,7 +40,7 @@ export function DGroupGuidancePanel({ user }: { user: DGroupSelectedUser }) {
   return (
     <section className={styles.panel}>
       <h2>详细辅导</h2>
-      <p className={styles.panelHint}>根据客户的未调用原因，选择拉群指导、发送教程或制定个性化促销方案。</p>
+      <p className={styles.panelHint}>{hint ?? "根据客户的未调用原因，选择拉群指导、发送教程或制定个性化促销方案。"}</p>
       <form className={dStyles.guidanceForm} onSubmit={submit}>
         <fieldset className={dStyles.categoryPicker}>
           <legend>辅导方式</legend>

@@ -1,9 +1,26 @@
-import { SegmentGroupList } from "@/components/segment-group/segment-group-list";
+import { CGroupWorkspace } from "@/components/c-group/c-group-workspace";
+import { prisma } from "@/lib/db/prisma";
 import { requireWorkspaceMember } from "@/modules/admin/page-access";
-import { getSegmentGroupUsers } from "@/modules/segment-group/list-query";
+import { getDGroupWorkspace } from "@/modules/d-group/workspace-query";
 
-export default async function CGroupPage() {
+export default async function CGroupPage({ searchParams }: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const member = await requireWorkspaceMember("/groups/c");
-  const users = await getSegmentGroupUsers(member, "C");
-  return <SegmentGroupList code="C" title="C-充值未调用" description="已完成充值，但尚未开始调用服务" users={users} />;
+  const params = await searchParams;
+  const selectedId = typeof params.userId === "string" ? params.userId : null;
+  const [data, mailboxes, templates] = await Promise.all([
+    getDGroupWorkspace(member, selectedId, "C"),
+    prisma.mailbox.findMany({
+      where: { enabled: true, configurationDeletedAt: null },
+      select: { id: true, name: true, emailAddress: true },
+      orderBy: { name: "asc" }
+    }),
+    prisma.mailTemplate.findMany({
+      where: { active: true, archivedAt: null, OR: [{ segment: "C" }, { segment: null }] },
+      select: { id: true, name: true, subject: true, bodyText: true },
+      orderBy: { name: "asc" }
+    })
+  ]);
+  return <CGroupWorkspace initialData={data} mailboxes={mailboxes} templates={templates} />;
 }

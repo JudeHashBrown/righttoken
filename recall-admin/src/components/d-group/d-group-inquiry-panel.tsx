@@ -9,18 +9,24 @@ import dStyles from "./d-group.module.css";
 type Mailbox = { id: string; name: string; emailAddress: string };
 type Template = { id: string; name: string; subject: string; bodyText: string };
 
-const defaultSubject = "想了解您近期未调用 RightToken 的原因";
-const defaultBody = "您好，我们注意到您近期没有继续使用 RightToken。想了解是暂时没有使用场景、遇到操作问题，还是充值后忘记了平台？您也可以添加我们的微信/TG，我们会为您提供一对一指导。";
+const dGroupCopy = {
+  subject: "想了解您近期未调用 RightToken 的原因",
+  body: "您好，我们注意到您近期没有继续使用 RightToken。想了解是暂时没有使用场景、遇到操作问题，还是充值后忘记了平台？您也可以添加我们的微信/TG，我们会为您提供一对一指导。",
+  hint: "询问客户是否没有场景、遇到调用问题，或充值后忘记平台，并引导客户添加微信/TG。",
+  reasonPlaceholder: "例如：充值后忘记平台、暂时没有场景、不会配置 API"
+};
 const dateTime = (date: Date) => new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }).format(date);
 
-export function DGroupInquiryPanel({ user, mailboxes, templates }: {
+export function DGroupInquiryPanel({ user, mailboxes, templates, apiBase = "/api/d-group", copy = dGroupCopy }: {
   user: DGroupSelectedUser;
   mailboxes: Mailbox[];
   templates: Template[];
+  apiBase?: string;
+  copy?: { subject: string; body: string; hint: string; reasonPlaceholder: string };
 }) {
   const router = useRouter();
-  const [subject, setSubject] = useState(defaultSubject);
-  const [body, setBody] = useState(defaultBody);
+  const [subject, setSubject] = useState(copy.subject);
+  const [body, setBody] = useState(copy.body);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   function applyTemplate(id: string) {
@@ -50,7 +56,7 @@ export function DGroupInquiryPanel({ user, mailboxes, templates }: {
     const form = new FormData(formElement);
     setPending(true);
     setMessage(null);
-    const response = await fetch(`/api/d-group/users/${user.id}/reason`, {
+    const response = await fetch(`${apiBase}/users/${user.id}/reason`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ body: form.get("body") })
@@ -62,7 +68,7 @@ export function DGroupInquiryPanel({ user, mailboxes, templates }: {
   return (
     <section className={styles.panel}>
       <h2>邮件询问未调用原因</h2>
-      <p className={styles.panelHint}>询问客户是否没有场景、遇到调用问题，或充值后忘记平台，并引导客户添加微信/TG。</p>
+      <p className={styles.panelHint}>{copy.hint}</p>
       <form className={styles.mailGrid} onSubmit={sendMail}>
         <div className={styles.mailMain}>
           <input className={styles.input} disabled value={user.email} />
@@ -86,7 +92,7 @@ export function DGroupInquiryPanel({ user, mailboxes, templates }: {
         <section>
           <h3>手工记录未调用原因</h3>
           <form className={dStyles.reasonForm} onSubmit={saveReason}>
-            <textarea aria-label="未调用原因" className={styles.textarea} name="body" placeholder="例如：充值后忘记平台、暂时没有场景、不会配置 API" required />
+            <textarea aria-label="未调用原因" className={styles.textarea} name="body" placeholder={copy.reasonPlaceholder} required />
             <button className={styles.primary} disabled={pending}>{pending ? "保存中…" : "保存原因"}</button>
           </form>
           {user.reasons.map((item) => <div className={dStyles.historyItem} key={item.id}><strong>{item.body}</strong><span>{item.actorName} · {dateTime(item.createdAt)}</span></div>)}

@@ -7,7 +7,7 @@ import styles from "@/components/a-group/a-group.module.css";
 
 const today = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 
-export function DGroupMaintenancePanel({ user }: { user: DGroupSelectedUser }) {
+export function DGroupMaintenancePanel({ user, apiBase = "/api/d-group" }: { user: DGroupSelectedUser; apiBase?: string }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,7 +17,7 @@ export function DGroupMaintenancePanel({ user }: { user: DGroupSelectedUser }) {
     const form = new FormData(formElement);
     setPending(true);
     setError(null);
-    const response = await fetch(`/api/d-group/users/${user.id}/maintenance`, {
+    const response = await fetch(`${apiBase}/users/${user.id}/maintenance`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ occurredOn: form.get("occurredOn"), body: form.get("body") })

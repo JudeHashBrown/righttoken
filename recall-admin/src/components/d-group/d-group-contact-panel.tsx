@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { DGroupSelectedUser } from "@/modules/d-group/types";
 import styles from "@/components/a-group/a-group.module.css";
 
-export function DGroupContactPanel({ user }: { user: DGroupSelectedUser }) {
+export function DGroupContactPanel({ user, apiBase = "/api/d-group" }: { user: DGroupSelectedUser; apiBase?: string }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -14,7 +14,7 @@ export function DGroupContactPanel({ user }: { user: DGroupSelectedUser }) {
     const form = new FormData(event.currentTarget);
     setPending(true);
     setMessage(null);
-    const response = await fetch(`/api/d-group/users/${user.id}/contact`, {
+    const response = await fetch(`${apiBase}/users/${user.id}/contact`, {
       method: "PUT",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ wechatId: form.get("wechatId"), telegramHandle: form.get("telegramHandle") })

@@ -12,8 +12,8 @@ function authorizedScope(viewer: Viewer): Prisma.UserProfileWhereInput {
   ] };
 }
 
-export function buildDGroupWhere(viewer: Viewer): Prisma.UserProfileWhereInput {
-  return { AND: [{ sourceDeletedAt: null, currentSegment: "D" }, authorizedScope(viewer)] };
+export function buildDGroupWhere(viewer: Viewer, segment: "C" | "D" = "D"): Prisma.UserProfileWhereInput {
+  return { AND: [{ sourceDeletedAt: null, currentSegment: segment }, authorizedScope(viewer)] };
 }
 
 function queueItem(user: {
@@ -37,9 +37,10 @@ const guidanceCategory = (value: string): GuidanceCategory =>
 
 export async function getDGroupWorkspace(
   viewer: Viewer,
-  selectedUserId: string | null = null
+  selectedUserId: string | null = null,
+  segment: "C" | "D" = "D"
 ): Promise<DGroupWorkspaceData> {
-  const where = buildDGroupWhere(viewer);
+  const where = buildDGroupWhere(viewer, segment);
   const users = await prisma.userProfile.findMany({
     where,
     orderBy: [{ lastCallAt: "desc" }, { id: "desc" }],
