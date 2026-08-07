@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "@/components/workspaces/workspace.module.css";
+import type { MailWorkspaceView } from "@/modules/mail/workspace-filter";
 
 type MailStats = {
   replyTasks: number;
@@ -16,10 +17,12 @@ type MailStats = {
 
 export function MailStatLinks({
   stats,
-  batchCount
+  batchCount,
+  currentView
 }: {
   stats: MailStats;
   batchCount: number;
+  currentView: MailWorkspaceView;
 }): React.JSX.Element {
   const cards = [
     {
@@ -77,7 +80,7 @@ export function MailStatLinks({
       detail: "查看各邮箱最近一次收信结果"
     },
     {
-      href: "#mail-batch-history",
+      href: `/mail?view=${currentView}&batchHistory=1#mail-batch-history`,
       label: "群发进度",
       value: String(batchCount),
       detail: "查看历史群发明细"
@@ -85,7 +88,7 @@ export function MailStatLinks({
   ];
 
   return (
-    <div className={styles.cardGrid}>
+    <div className={`${styles.cardGrid} ${styles.mailStatGrid}`}>
       {cards.map((card) => (
         <Link
           aria-label={`${card.label} ${card.value}`}

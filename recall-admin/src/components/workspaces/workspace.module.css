@@ -742,6 +742,31 @@
   margin-bottom: 16px;
 }
 
+.mailStatGrid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.mailStatGrid .statCard {
+  min-height: 80px;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.mailStatGrid .statCard span {
+  font-size: 12px;
+}
+
+.mailStatGrid .statCard strong {
+  margin-top: 8px;
+  font-size: 20px;
+}
+
+.mailStatGrid .statCard small {
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .statCard {
   min-width: 0;
   border: 1px solid #e3e6ee;
@@ -2497,6 +2522,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .mailStatGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .editorGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2515,6 +2544,10 @@
 @media (max-width: 760px) {
   .mailBatchGrid {
     grid-template-columns: 1fr;
+  }
+
+  .mailStatGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .page {

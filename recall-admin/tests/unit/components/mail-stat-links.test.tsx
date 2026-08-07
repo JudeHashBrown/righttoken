@@ -11,9 +11,10 @@ describe("MailStatLinks", () => {
   afterEach(cleanup);
 
   it("turns every mail statistic into a filter link", () => {
-    render(
+    const { container } = render(
       <MailStatLinks
         batchCount={6}
+        currentView="sent"
         stats={{
           replyTasks: 8,
           openReplyTasks: 3,
@@ -43,7 +44,13 @@ describe("MailStatLinks", () => {
     ).toHaveAttribute("href", "/mail?view=sent#mail-workbench");
     expect(
       screen.getByRole("link", { name: /群发进度 6/ })
-    ).toHaveAttribute("href", "#mail-batch-history");
+    ).toHaveAttribute(
+      "href",
+      "/mail?view=sent&batchHistory=1#mail-batch-history"
+    );
     expect(screen.getAllByRole("link")).toHaveLength(10);
+    expect(container.firstElementChild?.className).toContain(
+      "mailStatGrid"
+    );
   });
 });

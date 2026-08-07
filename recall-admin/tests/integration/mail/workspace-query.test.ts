@@ -19,6 +19,7 @@ vi.mock("server-only", () => ({}));
 describe("scoped mail workspace query", () => {
   const noCompose = {
     compose: false,
+    batchHistory: false,
     composeUserId: null,
     composeTaskId: null,
     composeRetryMessageId: null

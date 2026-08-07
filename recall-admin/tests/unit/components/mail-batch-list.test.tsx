@@ -8,9 +8,18 @@ import { MailBatchList } from "@/components/mail/mail-batch-list";
 describe("MailBatchList", () => {
   afterEach(cleanup);
 
+  it("stays hidden until the batch progress capsule is opened", () => {
+    render(<MailBatchList batches={[]} />);
+
+    expect(
+      screen.queryByRole("region", { name: "群发进度" })
+    ).not.toBeInTheDocument();
+  });
+
   it("lists each historical batch as one compact record", () => {
     render(
       <MailBatchList
+        visible
         batches={[
           {
             id: "batch-1",
@@ -53,7 +62,7 @@ describe("MailBatchList", () => {
   });
 
   it("keeps the history target when no batch has been sent", () => {
-    render(<MailBatchList batches={[]} />);
+    render(<MailBatchList batches={[]} visible />);
 
     expect(screen.getByRole("region", { name: "群发进度" })).toHaveAttribute(
       "id",

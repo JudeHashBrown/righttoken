@@ -166,9 +166,16 @@ export default async function MailPage({
             </div>
           ) : null}
 
-          <MailStatLinks batchCount={data.mailBatches.length} stats={data.stats} />
+          <MailStatLinks
+            batchCount={data.mailBatches.length}
+            currentView={filter.view}
+            stats={data.stats}
+          />
 
-          <MailBatchList batches={data.mailBatches} />
+          <MailBatchList
+            batches={data.mailBatches}
+            visible={filter.batchHistory}
+          />
 
           {data.mailboxes.some((mailbox) => mailbox.enabled) ? null : (
             <p className={styles.notice}>

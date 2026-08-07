@@ -18,6 +18,7 @@ export type MailWorkspaceFilter = {
   view: MailWorkspaceView;
   selectedId: string | null;
   compose: boolean;
+  batchHistory: boolean;
   composeUserId: string | null;
   composeTaskId: string | null;
   composeRetryMessageId: string | null;
@@ -34,6 +35,7 @@ export function parseMailWorkspaceFilter(
   const view = searchParams.view;
   const selected = searchParams.selected;
   const compose = searchParams.compose;
+  const batchHistory = searchParams.batchHistory;
   const userId = searchParams.userId;
   const taskId = searchParams.taskId;
   const retryMessageId = searchParams.retryMessageId;
@@ -48,6 +50,7 @@ export function parseMailWorkspaceFilter(
         ? selected
         : null,
     compose: compose === "1",
+    batchHistory: batchHistory === "1",
     composeUserId:
       typeof userId === "string" && userId.trim()
         ? userId

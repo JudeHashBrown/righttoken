@@ -21,6 +21,7 @@ export type MailBatchListItem = {
 
 type MailBatchListProps = {
   batches: MailBatchListItem[];
+  visible?: boolean;
 };
 
 const statusText: Record<MailBatchListItem["status"], string> = {
@@ -44,8 +45,13 @@ function dateTime(value: string): string {
 }
 
 export function MailBatchList({
-  batches
+  batches,
+  visible = false
 }: MailBatchListProps): React.JSX.Element {
+  if (!visible) {
+    return <></>;
+  }
+
   return (
     <section
       aria-label="群发进度"
