@@ -22,13 +22,11 @@ export default async function DashboardLayout({
     <div className={styles.shell}>
       <AppSidebar
         member={member}
-        unreadTasks={navigationMetrics.dueToday}
         unreadMail={navigationMetrics.awaitingReply}
       />
       <div className={styles.content}>
         <AppHeader
           memberName={member.displayName}
-          urgentCount={navigationMetrics.urgent}
           mainSiteUrl={mainSiteUrl}
         />
         {children}

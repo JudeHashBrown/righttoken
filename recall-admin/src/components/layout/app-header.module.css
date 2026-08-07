@@ -58,42 +58,6 @@
   color: #273149;
 }
 
-.notification {
-  position: relative;
-  display: grid;
-  width: 36px;
-  height: 36px;
-  place-items: center;
-  border-radius: 9px;
-  color: #596179;
-  text-decoration: none;
-  transition:
-    background-color 180ms ease-out,
-    color 180ms ease-out;
-}
-
-.notification:hover {
-  background: #f0f2f7;
-  color: #273149;
-}
-
-.notification span {
-  position: absolute;
-  top: 2px;
-  right: 0;
-  display: grid;
-  min-width: 17px;
-  height: 17px;
-  place-items: center;
-  border: 2px solid #ffffff;
-  border-radius: 999px;
-  background: #e24e5d;
-  color: #ffffff;
-  padding: 0 3px;
-  font-size: 12px;
-  font-weight: 750;
-}
-
 .memberName {
   color: #394157;
   font-size: 14px;
@@ -119,7 +83,6 @@
   color: #293149;
 }
 
-.notification:focus-visible,
 .mainSiteLink:focus-visible,
 .logout:focus-visible {
   outline: 3px solid rgb(102 117 232 / 22%);

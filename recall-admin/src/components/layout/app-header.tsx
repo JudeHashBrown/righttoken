@@ -1,19 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, Bell, Menu } from "lucide-react";
+import { ArrowLeft, Menu } from "lucide-react";
 import styles from "./app-header.module.css";
 
 type AppHeaderProps = {
   memberName: string;
-  urgentCount: number;
   mainSiteUrl: string;
 };
 
 export function AppHeader({
   memberName,
-  urgentCount,
   mainSiteUrl
 }: AppHeaderProps): React.JSX.Element {
   const pathname = usePathname();
@@ -25,10 +22,9 @@ export function AppHeader({
       ["/groups/b", "B-未完成支付"],
       ["/groups/a", "A-仅注册"],
       ["/groups/e", "E-余额不足"],
-      ["/groups/d", "D-长期未调用"],
       ["/groups/c", "C-充值未调用"],
+      ["/groups/d", "D-长期未调用"],
       ["/dashboard", "用户运营概览"],
-      ["/tasks", "任务中心"],
       ["/users", "用户中心"],
       ["/mail", "邮件中心"],
       ["/reports", "数据报表"],
@@ -64,16 +60,6 @@ export function AppHeader({
           />
           <span className={styles.mainSiteLabel}>返回主站</span>
         </a>
-        <Link
-          className={styles.notification}
-          href="/tasks?priority=URGENT"
-          aria-label={`紧急任务 ${urgentCount} 条`}
-        >
-          <Bell aria-hidden="true" size={18} />
-          {urgentCount > 0 ? (
-            <span>{urgentCount}</span>
-          ) : null}
-        </Link>
         <span className={styles.memberName}>{memberName}</span>
       </div>
     </header>

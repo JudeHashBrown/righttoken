@@ -24,7 +24,7 @@ describe("redactForNotification", () => {
     expect(payload.summary).toContain("上海");
     expect(payload.summary).toContain("F 组");
     expect(payload.taskUrl).toBe(
-      "https://recall.righttoken.ai/tasks/task-1"
+      "https://recall.righttoken.ai/users?query=RT-1908"
     );
   });
 });

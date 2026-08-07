@@ -345,12 +345,7 @@ export default async function UserDetailPage({
                     {user.tasks.map((task) => (
                       <tr key={task.id}>
                         <td>
-                          <Link
-                            className={styles.primaryLink}
-                            href={`/tasks/${task.id}`}
-                          >
-                            {task.title}
-                          </Link>
+                          <strong>{task.title}</strong>
                           <span className={styles.secondaryText}>
                             {presentSegmentReason(task.reason)}
                           </span>

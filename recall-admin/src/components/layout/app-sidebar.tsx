@@ -16,7 +16,6 @@ import {
   Sparkles,
   UsersRound,
   UserRoundPlus,
-  Workflow
 } from "lucide-react";
 import styles from "./app-sidebar.module.css";
 
@@ -29,7 +28,6 @@ type SidebarMember = {
 
 type AppSidebarProps = {
   member: SidebarMember;
-  unreadTasks: number;
   unreadMail: number;
 };
 
@@ -54,7 +52,6 @@ function roleLabel(role: SidebarMember["role"]): string {
 
 export function AppSidebar({
   member,
-  unreadTasks,
   unreadMail
 }: AppSidebarProps): React.JSX.Element {
   const pathname = usePathname();
@@ -83,20 +80,14 @@ export function AppSidebar({
           icon: CircleDollarSign
         },
         {
-          label: "D-长期未调用",
-          href: "/groups/d",
-          icon: CircleDollarSign
-        },
-        {
           label: "C-充值未调用",
           href: "/groups/c",
           icon: CircleDollarSign
         },
         {
-          label: "任务中心",
-          href: "/tasks",
-          icon: Workflow,
-          badge: unreadTasks
+          label: "D-长期未调用",
+          href: "/groups/d",
+          icon: CircleDollarSign
         },
         {
           label: "用户中心",

@@ -5,7 +5,7 @@ import {
 } from "@/modules/notifications/adapters/wecom-webhook";
 
 describe("WeCom webhook adapter", () => {
-  it("posts redacted markdown with a task link", async () => {
+  it("posts redacted markdown with a user link", async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ errcode: 0, errmsg: "ok" }), {
         status: 200,
@@ -33,7 +33,7 @@ describe("WeCom webhook adapter", () => {
       expect.objectContaining({
         method: "POST",
         body: expect.stringContaining(
-          "[打开任务](https://recall.righttoken.ai/tasks/task-1)"
+          "[查看用户](https://recall.righttoken.ai/tasks/task-1)"
         )
       })
     );

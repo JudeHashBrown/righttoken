@@ -220,12 +220,7 @@ export function UserTable({
                 </td>
                 <td>
                   {nextTask ? (
-                    <Link
-                      className={styles.primaryLink}
-                      href={`/tasks/${nextTask.id}`}
-                    >
-                      {nextTask.title}
-                    </Link>
+                    <strong>{nextTask.title}</strong>
                   ) : (
                     "—"
                   )}
