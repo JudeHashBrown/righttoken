@@ -92,11 +92,40 @@ describe("BGroupWorkspace", () => {
       screen.getByRole("button", { name: /登记联系方式/ })
     );
     expect(screen.getByLabelText("微信号")).toBeInTheDocument();
+    expect(screen.getByLabelText("Telegram")).toBeInTheDocument();
+    expect(screen.queryByLabelText("手机号")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("国家区号")).not.toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "根据主页页面引导、活动或者运营邮件引导，加到客户的微信/TG。"
+      )
+    ).toBeInTheDocument();
     fireEvent.click(
       screen.getByRole("button", { name: /日常维护/ })
     );
     expect(screen.getByLabelText("维护内容")).toBeInTheDocument();
     expect(screen.queryByLabelText("微信号")).not.toBeInTheDocument();
+  });
+
+  it("shows the first-deposit incentive copy", () => {
+    render(
+      <BGroupWorkspace
+        initialData={data}
+        mailboxes={[]}
+        templates={[]}
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /完成首充激励/ })
+    );
+    expect(
+      screen.getByRole("heading", { name: "完成首充激励" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/额外首单激励10RMB/)
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/USD 1\.43/)).not.toBeInTheDocument();
   });
 
   it("clears a manual maintenance entry after it is saved", async () => {

@@ -26,9 +26,7 @@ export function AGroupContactPanel({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           wechatId: form.get("wechatId"),
-          telegramHandle: form.get("telegramHandle"),
-          phoneCountryCode: form.get("phoneCountryCode"),
-          phoneNumber: form.get("phoneNumber")
+          telegramHandle: form.get("telegramHandle")
         })
       }
     );
@@ -45,10 +43,13 @@ export function AGroupContactPanel({
     <section className={styles.panel}>
       <h2>登记联系方式</h2>
       <p className={styles.panelHint}>
-        填写任意一种联系方式即可保存，保存后跨分组保留。
+        根据主页页面引导、活动或者运营邮件引导，加到客户的微信/TG。
       </p>
       <form onSubmit={submit}>
-        <div className={styles.formGrid}>
+        <div
+          className={styles.formGrid}
+          style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}
+        >
           <label>
             微信号
             <input
@@ -67,24 +68,6 @@ export function AGroupContactPanel({
               name="telegramHandle"
               placeholder="例如 @username"
             />
-          </label>
-          <label>
-            手机号
-            <span className={styles.phoneRow}>
-              <input
-                aria-label="国家区号"
-                className={styles.input}
-                defaultValue={user.contact?.phoneCountryCode ?? ""}
-                name="phoneCountryCode"
-                placeholder="+86"
-              />
-              <input
-                aria-label="手机号"
-                className={styles.input}
-                defaultValue={user.contact?.phoneNumber ?? ""}
-                name="phoneNumber"
-              />
-            </span>
           </label>
         </div>
         <div className={styles.actions}>

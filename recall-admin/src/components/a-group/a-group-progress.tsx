@@ -27,16 +27,16 @@ export function AGroupProgress({
     {
       key: "contact" as const,
       title: "登记联系方式",
-      detail: "微信 · TG · 手机号",
+      detail: "微信 · TG",
       complete: user.progress.contactComplete
     },
     {
       key: "coupon" as const,
-      title: "送优惠券",
+      title: "完成首充激励",
       detail:
         user.coupon?.status === "SUCCEEDED"
-          ? "USD 1.43 · 已送"
-          : "USD 1.43 · 尚未赠送",
+          ? "额外 10 RMB · 已发放"
+          : "额外 10 RMB · 待发放",
       complete: user.progress.couponComplete
     },
     {
