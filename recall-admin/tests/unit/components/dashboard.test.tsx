@@ -89,6 +89,7 @@ describe("DashboardOverview", () => {
     expect(screen.queryByText("2026年7月23日星期四")).not.toBeInTheDocument();
     expect(screen.getByText("近72小时注册未支付")).toBeInTheDocument();
     expect(screen.getByText("近72小时服务异常")).toBeInTheDocument();
+    expect(screen.getByText("近72小时余额快耗尽")).toBeInTheDocument();
     expect(screen.getByText("用户待回复")).toBeInTheDocument();
     expect(screen.getByText("待分配用户")).toBeInTheDocument();
     expect(screen.getByText("7 日召回转化")).toBeInTheDocument();
@@ -111,6 +112,12 @@ describe("DashboardOverview", () => {
     ).toHaveAttribute(
       "href",
       "/dashboard?focus=recent-anomaly#focus-list"
+    );
+    expect(
+      screen.getByRole("link", { name: /近72小时余额快耗尽 3/ })
+    ).toHaveAttribute(
+      "href",
+      "/dashboard?focus=recent-low-balance#focus-list"
     );
     expect(
       screen.getByRole("link", { name: /用户待回复 17/ })
@@ -197,6 +204,41 @@ describe("DashboardOverview", () => {
     expect(screen.getByText("模型服务超时")).toBeInTheDocument();
     expect(screen.getByText("异常时间")).toBeInTheDocument();
     expect(screen.getByText("未分配")).toBeInTheDocument();
+  });
+
+  it("shows recently active low-balance users", () => {
+    render(
+      <DashboardOverview
+        isAdministrator
+        snapshot={{
+          ...snapshot,
+          focus: "recent-low-balance",
+          focusUsers: [
+            {
+              id: "user-4",
+              externalUserId: "RT-90003",
+              displayName: "余额用户",
+              email: "balance@example.com",
+              region: "美国",
+              ownerName: "余额运营",
+              registeredAt: new Date("2026-07-01T08:00:00.000Z"),
+              anomalyReason: null,
+              anomalyAt: null,
+              balanceUsdMinor: 35,
+              lastCallAt: new Date("2026-08-06T10:00:00.000Z")
+            }
+          ]
+        }}
+      />
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "近72小时余额快耗尽用户" })
+    ).toBeInTheDocument();
+    expect(screen.getByText("当前余额")).toBeInTheDocument();
+    expect(screen.getByText("最近使用时间")).toBeInTheDocument();
+    expect(screen.getByText("US$0.35")).toBeInTheDocument();
+    expect(screen.getByText("余额运营")).toBeInTheDocument();
   });
 
   it("shows an empty state for a selected focus with no users", () => {

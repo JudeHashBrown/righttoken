@@ -1,4 +1,5 @@
 import {
+  BatteryLow,
   MailQuestion,
   Siren,
   TrendingUp,
@@ -42,6 +43,18 @@ export function DashboardOverview({
           icon={Siren}
           tone="danger"
           href="/dashboard?focus=recent-anomaly#focus-list"
+        />
+        <MetricCard
+          label="近72小时余额快耗尽"
+          value={metrics.recentLowBalance.toLocaleString("zh-CN")}
+          note={
+            metrics.recentLowBalance
+              ? "点击查看用户列表"
+              : "暂无符合条件用户"
+          }
+          icon={BatteryLow}
+          tone="warning"
+          href="/dashboard?focus=recent-low-balance#focus-list"
         />
         <MetricCard
           label="用户待回复"
@@ -88,7 +101,9 @@ export function DashboardOverview({
           total={
             snapshot.focus === "recent-unpaid"
               ? metrics.recentUnpaid
-              : metrics.recentAnomalies
+              : snapshot.focus === "recent-low-balance"
+                ? metrics.recentLowBalance
+                : metrics.recentAnomalies
           }
           users={snapshot.focusUsers}
         />

@@ -20,15 +20,35 @@ function formatDate(value: Date | null): string {
   }).format(value);
 }
 
+function formatUsdMinor(value: number): string {
+  return new Intl.NumberFormat("zh-CN", {
+    style: "currency",
+    currency: "USD"
+  }).format(value / 100);
+}
+
 export function DashboardFocusList({
   focus,
   total,
   users
 }: DashboardFocusListProps): React.JSX.Element {
   const isUnpaid = focus === "recent-unpaid";
+  const isLowBalance = focus === "recent-low-balance";
   const heading = isUnpaid
     ? "近72小时注册未支付用户"
-    : "近72小时服务异常用户";
+    : isLowBalance
+      ? "近72小时余额快耗尽用户"
+      : "近72小时服务异常用户";
+  const detailHeading = isUnpaid
+    ? "地区"
+    : isLowBalance
+      ? "当前余额"
+      : "异常原因";
+  const timeHeading = isUnpaid
+    ? "注册时间"
+    : isLowBalance
+      ? "最近使用时间"
+      : "异常时间";
 
   return (
     <section
@@ -57,8 +77,8 @@ export function DashboardFocusList({
               <tr>
                 <th scope="col">用户</th>
                 <th scope="col">邮箱</th>
-                <th scope="col">{isUnpaid ? "地区" : "异常原因"}</th>
-                <th scope="col">{isUnpaid ? "注册时间" : "异常时间"}</th>
+                <th scope="col">{detailHeading}</th>
+                <th scope="col">{timeHeading}</th>
                 <th scope="col">负责人</th>
               </tr>
             </thead>
@@ -75,10 +95,18 @@ export function DashboardFocusList({
                   <td>
                     {isUnpaid
                       ? user.region ?? "未识别"
+                      : isLowBalance
+                        ? formatUsdMinor(user.balanceUsdMinor)
                       : user.anomalyReason ?? "服务异常"}
                   </td>
                   <td>
-                    {formatDate(isUnpaid ? user.registeredAt : user.anomalyAt)}
+                    {formatDate(
+                      isUnpaid
+                        ? user.registeredAt
+                        : isLowBalance
+                          ? user.lastCallAt
+                          : user.anomalyAt
+                    )}
                   </td>
                   <td>{user.ownerName ?? "未分配"}</td>
                 </tr>
