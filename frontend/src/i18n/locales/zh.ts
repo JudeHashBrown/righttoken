@@ -10,6 +10,10 @@ export default {
     login: '登录',
     getStarted: '立即开始',
     goToDashboard: '进入控制台',
+    newUserBonus: {
+      title: '新用户专享测试额度',
+      description: '新用户添加客服微信，即可获赠价值 ¥5 的测试额度。'
+    },
     // 新增：面向用户的价值主张
     heroSubtitle: '一个密钥，畅用多个 AI 模型',
     heroDescription: '无需管理多个订阅账号，一站式接入 Claude、GPT、Gemini 等主流 AI 服务',
@@ -1103,6 +1107,10 @@ export default {
   dashboard: {
     title: '仪表盘',
     welcomeMessage: '欢迎回来！这是您账户的概览。',
+    newUserBonus: {
+      title: '新用户福利',
+      description: '添加客服微信，即可获赠价值 ¥5 的测试额度。'
+    },
     balance: '余额',
     apiKeys: 'API 密钥',
     todayRequests: '今日请求',

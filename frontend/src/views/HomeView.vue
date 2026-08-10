@@ -125,6 +125,20 @@
     <!-- Main Content -->
     <main class="relative z-10 flex-1 px-6 py-16">
       <div class="mx-auto max-w-6xl">
+        <div
+          class="fixed bottom-4 left-4 right-4 z-40 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/95 px-4 py-3 shadow-xl backdrop-blur-md sm:bottom-auto sm:left-auto sm:right-4 sm:top-1/2 sm:w-72 sm:-translate-y-1/2 dark:border-amber-500/30 dark:bg-dark-900/95"
+        >
+          <span class="text-xl" aria-hidden="true">🎁</span>
+          <div>
+            <p class="text-sm font-semibold text-amber-900 dark:text-amber-100 sm:text-base">
+              {{ t('home.newUserBonus.title') }}
+            </p>
+            <p class="mt-0.5 text-xs leading-relaxed text-amber-800/90 dark:text-amber-200/80 sm:mt-1 sm:text-sm">
+              {{ t('home.newUserBonus.description') }}
+            </p>
+          </div>
+        </div>
+
         <!-- Hero Section - Left/Right Layout -->
         <div class="mb-12 flex flex-col items-center justify-between gap-12 lg:flex-row lg:gap-16">
           <!-- Left: Text Content -->

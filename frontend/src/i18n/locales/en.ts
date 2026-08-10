@@ -11,6 +11,10 @@ export default {
     login: 'Login',
     getStarted: 'Get Started',
     goToDashboard: 'Go to Dashboard',
+    newUserBonus: {
+      title: 'New User Test Credit',
+      description: 'New users can add our customer service WeChat to receive $0.70 in free test credit.'
+    },
     // User-focused value proposition
     heroSubtitle: 'One Key, All AI Models',
     heroDescription: 'No need to manage multiple subscriptions. Access Claude, GPT, Gemini and more with a single API key',
@@ -1104,6 +1108,10 @@ export default {
   dashboard: {
     title: 'Dashboard',
     welcomeMessage: "Welcome back! Here's an overview of your account.",
+    newUserBonus: {
+      title: 'New User Bonus',
+      description: 'Add our customer service WeChat to receive $0.70 in free test credit.'
+    },
     balance: 'Balance',
     apiKeys: 'API Keys',
     todayRequests: 'Today Requests',
