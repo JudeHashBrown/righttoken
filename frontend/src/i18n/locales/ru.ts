@@ -12,7 +12,7 @@ export default {
     goToDashboard: 'В панель',
     newUserBonus: {
       title: 'Тестовый бонус для новых пользователей',
-      description: 'Добавьте WeChat службы поддержки и получите $0.70 тестового баланса бесплатно.'
+      description: 'Свяжитесь с поддержкой в WeChat (RightToken) или Telegram (@Rightnow_ai) и получите $0.70 тестового баланса бесплатно.'
     },
     heroSubtitle: 'Один ключ — все модели ИИ',
     heroDescription: 'Не нужно управлять несколькими подписками. Доступ к Claude, GPT, Gemini и другим — через единый API‑ключ',
@@ -965,7 +965,7 @@ export default {
     welcomeMessage: 'С возвращением! Общий обзор аккаунта.',
     newUserBonus: {
       title: 'Бонус для нового пользователя',
-      description: 'Добавьте WeChat службы поддержки и получите $0.70 тестового баланса бесплатно.'
+      description: 'Свяжитесь с поддержкой в WeChat (RightToken) или Telegram (@Rightnow_ai) и получите $0.70 тестового баланса бесплатно.'
     },
     balance: 'Баланс',
     apiKeys: 'API‑ключи',

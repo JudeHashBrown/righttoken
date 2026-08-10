@@ -13,7 +13,7 @@ export default {
     goToDashboard: 'Go to Dashboard',
     newUserBonus: {
       title: 'New User Test Credit',
-      description: 'New users can add our customer service WeChat to receive $0.70 in free test credit.'
+      description: 'New users can contact us on WeChat (RightToken) or Telegram (@Rightnow_ai) to receive $0.70 in free test credit.'
     },
     // User-focused value proposition
     heroSubtitle: 'One Key, All AI Models',
@@ -1110,7 +1110,7 @@ export default {
     welcomeMessage: "Welcome back! Here's an overview of your account.",
     newUserBonus: {
       title: 'New User Bonus',
-      description: 'Add our customer service WeChat to receive $0.70 in free test credit.'
+      description: 'Contact us on WeChat (RightToken) or Telegram (@Rightnow_ai) to receive $0.70 in free test credit.'
     },
     balance: 'Balance',
     apiKeys: 'API Keys',
