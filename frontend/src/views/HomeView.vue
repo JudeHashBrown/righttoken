@@ -588,10 +588,10 @@
 
             <!-- 4 model cards -->
             <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <!-- gpt-5 -->
+              <!-- GPT-5.6 family -->
               <div class="rounded-xl bg-white/70 p-4 dark:bg-dark-800/70">
                 <div class="mb-2 flex items-center gap-2">
-                  <span class="font-mono text-sm font-semibold text-primary-600 dark:text-primary-400">GPT-5</span>
+                  <span class="font-mono text-sm font-semibold text-primary-600 dark:text-primary-400">GPT-5.6</span>
                   <span class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">
                     {{ t('home.pricing.example.models.gpt5.tag') }}
                   </span>
@@ -643,10 +643,10 @@
                 </div>
               </div>
 
-              <!-- claude opus 4-7 -->
+              <!-- Claude Opus 5 -->
               <div class="rounded-xl bg-white/70 p-4 dark:bg-dark-800/70">
                 <div class="mb-2 flex items-center gap-2">
-                  <span class="font-mono text-sm font-semibold text-primary-600 dark:text-primary-400">Claude Opus 4.7</span>
+                  <span class="font-mono text-sm font-semibold text-primary-600 dark:text-primary-400">Claude Opus 5</span>
                   <span class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400">
                     {{ t('home.pricing.example.models.claudeOpus.tag') }}
                   </span>
@@ -860,7 +860,10 @@
             >
               <span class="text-xs font-bold text-white">G</span>
             </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">GPT</span>
+            <div>
+              <div class="text-sm font-medium text-gray-700 dark:text-dark-200">GPT-5.6</div>
+              <div class="mt-0.5 font-mono text-[10px] text-gray-500 dark:text-dark-400">Sol · Terra</div>
+            </div>
             <span
               class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
               >{{ t('home.providers.supported') }}</span
@@ -875,7 +878,10 @@
             >
               <span class="text-xs font-bold text-white">C</span>
             </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.providers.claude') }}</span>
+            <div>
+              <div class="text-sm font-medium text-gray-700 dark:text-dark-200">Claude Opus 5</div>
+              <div class="mt-0.5 text-[10px] text-gray-500 dark:text-dark-400">Claude Code</div>
+            </div>
             <span
               class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
               >{{ t('home.providers.supported') }}</span
@@ -1104,13 +1110,13 @@ const pricingTab = ref<'standard' | 'shared'>('standard')
 // inputUsd / outputUsd = official upstream price for comparison
 // OpenAI group multiplier = 0.7 (30% off), Gemini group multiplier = 0.3 (70% off)
 const pricingRows = [
-  { model: 'gpt-5',            inputUsd: '1.25', outputUsd: '10',   userIn: '0.88',  userOut: '7.00',  discount: '30%' },
-  { model: 'gpt-5.4',          inputUsd: '1.25', outputUsd: '10',   userIn: '0.88',  userOut: '7.00',  discount: '30%' },
+  { model: 'gpt-5.6-sol',      inputUsd: '1.25', outputUsd: '10',   userIn: '0.88',  userOut: '7.00',  discount: '30%' },
+  { model: 'gpt-5.6-terra',    inputUsd: '1.25', outputUsd: '10',   userIn: '0.88',  userOut: '7.00',  discount: '30%' },
   { model: 'gpt-4o',           inputUsd: '2.50', outputUsd: '10',   userIn: '1.75',  userOut: '7.00',  discount: '30%' },
   { model: 'gpt-4o-mini',      inputUsd: '0.15', outputUsd: '0.60', userIn: '0.11',  userOut: '0.42', discount: '30%' },
   { model: 'o3',               inputUsd: '2.00', outputUsd: '8.00', userIn: '1.40',  userOut: '5.60', discount: '30%' },
   { model: 'o4-mini',          inputUsd: '1.10', outputUsd: '4.40', userIn: '0.77',  userOut: '3.08', discount: '30%' },
-  { model: 'claude-opus-4-7',  inputUsd: '5.00', outputUsd: '25.00', userIn: '2.50', userOut: '12.50', discount: '50%' },
+  { model: 'claude-opus-5',    inputUsd: '5.00', outputUsd: '25.00', userIn: '2.50', userOut: '12.50', discount: '50%' },
   { model: 'claude-opus-4-6',  inputUsd: '5.00', outputUsd: '25.00', userIn: '2.50', userOut: '12.50', discount: '50%' },
   { model: 'claude-sonnet-4-5', inputUsd: '3.00', outputUsd: '15.00', userIn: '1.50', userOut: '7.50',  discount: '50%' },
   { model: 'claude-haiku-4-5', inputUsd: '1.00', outputUsd: '5.00',  userIn: '0.50',  userOut: '2.50',  discount: '50%' },
